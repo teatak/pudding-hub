@@ -1,10 +1,10 @@
 # Pudding Hub
 
+[中文](README.zh-CN.md)
+
 Pudding Hub is the official public resource hub for Pudding. It hosts installable widgets and their editable source files.
 
-Pudding Hub 是 Pudding 的官方公共资源仓库，用来发布可安装的小组件以及对应源码。
-
-## Registry URL / 注册表地址
+## Registry URL
 
 Widgets registry:
 
@@ -14,9 +14,7 @@ https://raw.githubusercontent.com/teatak/pudding-hub/main/widgets/registry.json
 
 Use this URL in Pudding to discover and install official widgets.
 
-在 Pudding 中添加上面的地址，即可发现并安装官方小组件。
-
-## Repository Layout / 仓库结构
+## Repository Layout
 
 ```text
 pudding-hub/
@@ -47,19 +45,9 @@ Key files:
 - `widgets/<name>/card.pudding-card.json`: installable runtime snapshot.
 - `scripts/package-widget.mjs`: local packaging script.
 
-关键文件：
-
-- `widgets/registry.json`：Pudding 读取的小组件注册表。
-- `widgets/<name>/manifest.json`：单个小组件的元数据。
-- `widgets/<name>/source/`：可编辑源码。
-- `widgets/<name>/card.pudding-card.json`：可安装的运行快照。
-- `scripts/package-widget.mjs`：本仓库内置打包脚本。
-
-## Widget ID Rules / 小组件 ID 规则
+## Widget ID Rules
 
 Official widgets use the same format as third-party GitHub widgets. There is no special short namespace.
-
-官方小组件和第三方 GitHub 小组件使用同一套完整命名，不做特殊短命名。
 
 Format:
 
@@ -81,13 +69,7 @@ Recommended validation rule:
 - Widget names should use lowercase kebab-case: `rps-decider`, `weather-card`.
 - The `id` is the stable install and upgrade key.
 
-建议校验规则：
-
-- 如果 registry 来自 `github.com/<owner>/<repo>`，其中的 item id 应该以 `<owner>/<repo>/` 开头。
-- 小组件名使用小写 kebab-case，例如 `rps-decider`、`weather-card`。
-- `id` 是安装和升级的稳定唯一键。
-
-## Package Widgets / 打包小组件
+## Package Widgets
 
 Install dependencies if needed:
 
@@ -115,15 +97,7 @@ The packaging script:
 4. Writes `widgets/<name>/card.pudding-card.json`.
 5. Updates `card_sha256` in both `manifest.json` and `widgets/registry.json`.
 
-打包脚本会：
-
-1. 读取 `widgets/<name>/manifest.json`。
-2. 读取 `widgets/<name>/source/index.html`。
-3. 内联同一个 `source/` 目录里的本地 CSS 和 JS。
-4. 写回 `widgets/<name>/card.pudding-card.json`。
-5. 同步更新 `manifest.json` 和 `widgets/registry.json` 中的 `card_sha256`。
-
-## Add A Widget / 添加小组件
+## Add A Widget
 
 1. Create a directory under `widgets/<name>/`.
 2. Put editable files under `widgets/<name>/source/`.
@@ -131,15 +105,9 @@ The packaging script:
 4. Run `pnpm package-widget <name>`.
 5. Commit the updated source, card snapshot, manifest, and registry.
 
-步骤：
+For the full development guide, see [Pudding Widget Development](docs/widget-development.md).
 
-1. 在 `widgets/<name>/` 下创建目录。
-2. 将源码放到 `widgets/<name>/source/`。
-3. 创建 `widgets/<name>/manifest.json`。
-4. 运行 `pnpm package-widget <name>`。
-5. 提交源码、运行快照、manifest 和 registry。
-
-## Manifest Example / Manifest 示例
+## Manifest Example
 
 ```json
 {
@@ -166,12 +134,8 @@ The packaging script:
 }
 ```
 
-## Source vs Snapshot / 源码与快照
+## Source vs Snapshot
 
 `source/` is for humans and maintainers. Pudding installs `card.pudding-card.json`.
 
-`source/` 给维护者编辑；Pudding 安装的是 `card.pudding-card.json`。
-
 Do not edit `card.pudding-card.json` by hand unless you are debugging packaging output. Change source files, then run the package command.
-
-除非调试打包产物，不要手改 `card.pudding-card.json`。应修改源码，然后重新运行打包命令。
