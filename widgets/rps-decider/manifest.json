@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "kind": "pudding.widget",
+  "id": "teatak/pudding-hub/widgets/rps-decider",
+  "name": "rps-decider",
+  "title": {
+    "zh-CN": "分歧终端机",
+    "zh-TW": "分歧終端機",
+    "en": "RPS Decider"
+  },
+  "widget_version": "1.0.0",
+  "description": {
+    "zh-CN": "用石头剪刀布快速裁决分歧。",
+    "zh-TW": "用猜拳快速裁決分歧。",
+    "en": "Resolve small disagreements with rock-paper-scissors."
+  },
+  "card": "./card.pudding-card.json",
+  "card_sha256": "686f789e849c6c90f8f7f912ff2116146b6cffc1270a2625cee447157fd03040",
+  "screenshots": [],
+  "tags": [
+    "game",
+    "decision",
+    "multi-session"
+  ],
+  "orientation": "portrait",
+  "author": {
+    "name": "Pudding"
+  },
+  "source": "./source/index.html",
+  "initial_state": {
+    "status": "init",
+    "locale": "zh-CN",
+    "topic": null,
+    "round": 1,
+    "best_of": null,
+    "score": {}
+  }
+}
