@@ -151,6 +151,13 @@ function sha256Text(text) {
   return crypto.createHash("sha256").update(text).digest("hex");
 }
 
+function registryWidgetPath(name, value) {
+  if (typeof value !== "string") return value;
+  const rel = value.trim();
+  if (!rel || rel.startsWith("/") || rel.startsWith("//") || /^[a-z][a-z0-9+.-]*:/i.test(rel)) return value;
+  return `./${name}/${rel.replace(/^\.\//, "")}`;
+}
+
 async function updateRegistry(name, manifest, cardHash) {
   const registryPath = path.join(ROOT, "widgets/registry.json");
   let registry;
@@ -159,7 +166,6 @@ async function updateRegistry(name, manifest, cardHash) {
   } catch {
     registry = { version: 1, kind: REGISTRY_KIND, name: "Pudding Widgets", items: [] };
   }
-  registry.updated_at = new Date().toISOString();
   const item = {
     id: manifest.id,
     kind: "widget",
@@ -167,7 +173,7 @@ async function updateRegistry(name, manifest, cardHash) {
     title: manifest.title,
     widget_version: manifest.widget_version,
     description: manifest.description || {},
-    icon: manifest.icon,
+    icon: registryWidgetPath(name, manifest.icon),
     manifest: `./${name}/manifest.json`,
     card: `./${name}/card.pudding-card.json`,
     card_sha256: cardHash,
@@ -208,7 +214,9 @@ async function packageWidget(name) {
     },
   };
   if (localizedTitle) card.card.localized_title = localizedTitle;
-  if (manifest.icon && typeof manifest.icon === "object" && !Array.isArray(manifest.icon)) {
+  if (typeof manifest.icon === "string" && manifest.icon.trim()) {
+    card.card.icon = manifest.icon.trim();
+  } else if (manifest.icon && typeof manifest.icon === "object" && !Array.isArray(manifest.icon)) {
     card.card.icon = manifest.icon;
   }
   const cardPath = path.join(dir, "card.pudding-card.json");

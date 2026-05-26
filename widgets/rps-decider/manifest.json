@@ -8,21 +8,15 @@
     "zh-TW": "分歧終端機",
     "en": "RPS Decider"
   },
-  "widget_version": "1.0.1",
+  "widget_version": "1.0.2",
   "description": {
     "zh-CN": "用石头剪刀布快速裁决分歧。",
     "zh-TW": "用猜拳快速裁決分歧。",
     "en": "Resolve small disagreements with rock-paper-scissors."
   },
   "card": "./card.pudding-card.json",
-  "card_sha256": "28ee32df0001ffdd17442e81d471796fac35d9e3c674d5fcc53bf542f3cee41d",
-  "icon": {
-    "name": "zap",
-    "tone": "amber",
-    "size": "md",
-    "variant": "tile",
-    "label": "RPS Decider"
-  },
+  "card_sha256": "9e88b0e2b46542d543c8fd81c34b336d86ed570e8fedf0a2c4b68edd4278253a",
+  "icon": "./assets/icon.svg",
   "screenshots": [],
   "tags": [
     "game",

@@ -8,21 +8,15 @@
     "zh-TW": "五子棋",
     "en": "Gomoku"
   },
-  "widget_version": "1.0.1",
+  "widget_version": "1.0.2",
   "description": {
     "zh-CN": "支持用户和多个 AI 会话对弈的五子棋小组件。",
     "zh-TW": "支援使用者和多個 AI 會話對弈的五子棋小組件。",
     "en": "A Gomoku widget for human and multi-session AI matches."
   },
   "card": "./card.pudding-card.json",
-  "card_sha256": "71395f44ce90e00646918ea32bd52ff5fbd96464f25b7511129eddbccdee5a91",
-  "icon": {
-    "name": "table",
-    "tone": "green",
-    "size": "md",
-    "variant": "tile",
-    "label": "Gomoku"
-  },
+  "card_sha256": "bf4c1ca3d5045a672824dabd629a4bfe0ba776743f9d37f6bba3fa1b26640482",
+  "icon": "./assets/icon.svg",
   "screenshots": [],
   "tags": [
     "game",

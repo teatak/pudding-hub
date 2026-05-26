@@ -2,7 +2,6 @@
   "version": 1,
   "kind": "pudding.widget.registry",
   "name": "Pudding Widgets",
-  "updated_at": "2026-05-26T17:09:40.843Z",
   "items": [
     {
       "id": "teatak/pudding-hub/widgets/gomoku",
@@ -13,22 +12,16 @@
         "zh-TW": "五子棋",
         "en": "Gomoku"
       },
-      "widget_version": "1.0.1",
+      "widget_version": "1.0.2",
       "description": {
         "zh-CN": "支持用户和多个 AI 会话对弈的五子棋小组件。",
         "zh-TW": "支援使用者和多個 AI 會話對弈的五子棋小組件。",
         "en": "A Gomoku widget for human and multi-session AI matches."
       },
-      "icon": {
-        "name": "table",
-        "tone": "green",
-        "size": "md",
-        "variant": "tile",
-        "label": "Gomoku"
-      },
+      "icon": "./gomoku/assets/icon.svg",
       "manifest": "./gomoku/manifest.json",
       "card": "./gomoku/card.pudding-card.json",
-      "card_sha256": "71395f44ce90e00646918ea32bd52ff5fbd96464f25b7511129eddbccdee5a91",
+      "card_sha256": "bf4c1ca3d5045a672824dabd629a4bfe0ba776743f9d37f6bba3fa1b26640482",
       "screenshots": [],
       "tags": [
         "game",
@@ -47,22 +40,16 @@
         "zh-TW": "分歧終端機",
         "en": "RPS Decider"
       },
-      "widget_version": "1.0.1",
+      "widget_version": "1.0.2",
       "description": {
         "zh-CN": "用石头剪刀布快速裁决分歧。",
         "zh-TW": "用猜拳快速裁決分歧。",
         "en": "Resolve small disagreements with rock-paper-scissors."
       },
-      "icon": {
-        "name": "zap",
-        "tone": "amber",
-        "size": "md",
-        "variant": "tile",
-        "label": "RPS Decider"
-      },
+      "icon": "./rps-decider/assets/icon.svg",
       "manifest": "./rps-decider/manifest.json",
       "card": "./rps-decider/card.pudding-card.json",
-      "card_sha256": "28ee32df0001ffdd17442e81d471796fac35d9e3c674d5fcc53bf542f3cee41d",
+      "card_sha256": "9e88b0e2b46542d543c8fd81c34b336d86ed570e8fedf0a2c4b68edd4278253a",
       "screenshots": [],
       "tags": [
         "game",

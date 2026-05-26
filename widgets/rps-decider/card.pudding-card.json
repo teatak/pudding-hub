@@ -5,7 +5,7 @@
     "id": "teatak/pudding-hub/widgets/rps-decider",
     "kind": "widget",
     "title": "分歧终端机",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "widget_id": "teatak/pudding-hub/widgets/rps-decider",
     "size": "l",
     "orientation": "portrait",
@@ -23,12 +23,6 @@
       "zh-TW": "分歧終端機",
       "en": "RPS Decider"
     },
-    "icon": {
-      "name": "zap",
-      "tone": "amber",
-      "size": "md",
-      "variant": "tile",
-      "label": "RPS Decider"
-    }
+    "icon": "./assets/icon.svg"
   }
 }
