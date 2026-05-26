@@ -1,12 +1,11 @@
 {
   "kind": "pudding.card.export",
   "version": 1,
-  "exported_at": "2026-05-26T15:40:17.601Z",
   "card": {
     "id": "teatak/pudding-hub/widgets/gomoku",
     "kind": "widget",
     "title": "五子棋",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "widget_id": "teatak/pudding-hub/widgets/gomoku",
     "size": "l",
     "orientation": "landscape",
@@ -30,6 +29,13 @@
       "zh-CN": "五子棋",
       "zh-TW": "五子棋",
       "en": "Gomoku"
+    },
+    "icon": {
+      "name": "table",
+      "tone": "green",
+      "size": "md",
+      "variant": "tile",
+      "label": "Gomoku"
     }
   }
 }

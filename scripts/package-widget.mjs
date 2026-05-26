@@ -167,6 +167,7 @@ async function updateRegistry(name, manifest, cardHash) {
     title: manifest.title,
     widget_version: manifest.widget_version,
     description: manifest.description || {},
+    icon: manifest.icon,
     manifest: `./${name}/manifest.json`,
     card: `./${name}/card.pudding-card.json`,
     card_sha256: cardHash,
@@ -194,7 +195,6 @@ async function packageWidget(name) {
   const card = {
     kind: EXPORT_KIND,
     version: EXPORT_VERSION,
-    exported_at: new Date().toISOString(),
     card: {
       id: manifest.id,
       kind: "widget",
@@ -208,6 +208,9 @@ async function packageWidget(name) {
     },
   };
   if (localizedTitle) card.card.localized_title = localizedTitle;
+  if (manifest.icon && typeof manifest.icon === "object" && !Array.isArray(manifest.icon)) {
+    card.card.icon = manifest.icon;
+  }
   const cardPath = path.join(dir, "card.pudding-card.json");
   const cardText = JSON.stringify(card, null, 2) + "\n";
   await fs.writeFile(cardPath, cardText, "utf8");
