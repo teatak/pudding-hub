@@ -175,7 +175,7 @@ async function updateRegistry(name, manifest, cardHash) {
     description: manifest.description || {},
     icon: registryWidgetPath(name, manifest.icon),
     manifest: `./${name}/manifest.json`,
-    card: `./${name}/card.pudding-card.json`,
+    card: `./${name}/widget.pudding-card.json`,
     card_sha256: cardHash,
     screenshots: manifest.screenshots || [],
     tags: manifest.tags || [],
@@ -219,11 +219,11 @@ async function packageWidget(name) {
   } else if (manifest.icon && typeof manifest.icon === "object" && !Array.isArray(manifest.icon)) {
     card.card.icon = manifest.icon;
   }
-  const cardPath = path.join(dir, "card.pudding-card.json");
+  const cardPath = path.join(dir, "widget.pudding-card.json");
   const cardText = JSON.stringify(card, null, 2) + "\n";
   await fs.writeFile(cardPath, cardText, "utf8");
   const cardHash = sha256Text(cardText);
-  manifest.card = "./card.pudding-card.json";
+  manifest.card = "./widget.pudding-card.json";
   manifest.card_sha256 = cardHash;
   manifest.source = source;
   await writeJSON(manifestPath, manifest);

@@ -34,6 +34,7 @@
   var clearScoreBtn = document.getElementById("clear-score-btn");
 
   var currentSortKey = "win"; // 默认按胜利场次排序
+  var LEADERBOARD_DATA_KEY = "leaderboard";
 
   var isCountdownTimerStarted = false; 
   var lastRenderedHistoryLength = 0; 
@@ -270,6 +271,63 @@
     if (state.status === undefined) state.status = "idle";
 
     return withDerivedState(state);
+  }
+
+  function normalizeScore(raw) {
+    var score = raw && typeof raw === "object" && !Array.isArray(raw) ? JSON.parse(JSON.stringify(raw)) : {};
+    for (var name in score) {
+      var entry = score[name];
+      if (typeof entry === "number") {
+        score[name] = { win: entry, lose: 0, draw: 0, total: entry };
+      } else if (entry && typeof entry === "object") {
+        entry.win = entry.win || 0;
+        entry.lose = entry.lose || 0;
+        entry.draw = entry.draw || 0;
+        entry.total = entry.total || 0;
+      } else {
+        delete score[name];
+      }
+    }
+    return score;
+  }
+
+  function scoreHasEntries(score) {
+    return !!score && typeof score === "object" && Object.keys(score).length > 0;
+  }
+
+  async function loadLeaderboardData() {
+    if (!window.pudding || typeof window.pudding.getData !== "function") return;
+    try {
+      var stored = normalizeScore(await window.pudding.getData(LEADERBOARD_DATA_KEY));
+      if (scoreHasEntries(stored)) {
+        state.score = stored;
+        publishState();
+        renderLeaderboard();
+        render();
+      } else if (scoreHasEntries(state.score)) {
+        await saveLeaderboardData(state.score);
+      }
+    } catch (err) {
+      // Leaderboard persistence should not block the board.
+    }
+  }
+
+  async function saveLeaderboardData(score) {
+    if (!window.pudding || typeof window.pudding.setData !== "function") return;
+    try {
+      await window.pudding.setData(LEADERBOARD_DATA_KEY, normalizeScore(score));
+    } catch (err) {
+      // Ignore persistence failures; the current match state is still valid.
+    }
+  }
+
+  async function deleteLeaderboardData() {
+    if (!window.pudding || typeof window.pudding.deleteData !== "function") return;
+    try {
+      await window.pudding.deleteData(LEADERBOARD_DATA_KEY);
+    } catch (err) {
+      // Ignore persistence failures; the UI still clears local score.
+    }
   }
 
   function withDerivedState(state) {
@@ -1337,16 +1395,22 @@
       return { ok: false, error: "unknown action type: " + action.type };
     }
 
-    window.pudding.onAction(function (action, context) {
+    window.pudding.onAction(async function (action, context) {
       var currState = window.pudding.getState();
       var result = _innerOnAction(action, currState, context);
       if (result && result.ok && result.state) {
         withDerivedState(result.state);
+        if (action && action.type === "clear_score") {
+          await deleteLeaderboardData();
+        } else if (action && action.type === "place_stone" && result.state.status === "game_over") {
+          await saveLeaderboardData(result.state.score);
+        }
         delete result.state.board;
       }
       return result;
     });
 
+    loadLeaderboardData();
     publishState();
   }
 

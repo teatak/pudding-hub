@@ -40,8 +40,8 @@
   const loseHead = document.getElementById("lose-head");
   const drawHead = document.getElementById("draw-head");
   const rateHead = document.getElementById("rate-head");
-  const leaderboardStorageKey = "pudding:rps-decider:leaderboard:v1";
-  let leaderboardStats = loadLeaderboard();
+  const leaderboardDataKey = "leaderboard";
+  let leaderboardStats = {};
 
   function normalizeLocale(value) {
     return value === "zh-CN" || value === "zh-TW" || value === "en" ? value : "zh-CN";
@@ -213,21 +213,32 @@
       .map((player) => announceForPlayer(player, state));
   }
 
-  function loadLeaderboard() {
+  async function loadLeaderboardData() {
     try {
-      const raw = window.localStorage.getItem(leaderboardStorageKey);
-      const parsed = raw ? JSON.parse(raw) : {};
-      return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+      if (!window.pudding || typeof window.pudding.getData !== "function") return;
+      const parsed = await window.pudding.getData(leaderboardDataKey);
+      leaderboardStats = parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+      renderLeaderboard();
     } catch (err) {
-      return {};
+      leaderboardStats = {};
     }
   }
 
-  function saveLeaderboard() {
+  async function saveLeaderboard() {
     try {
-      window.localStorage.setItem(leaderboardStorageKey, JSON.stringify(leaderboardStats));
+      if (!window.pudding || typeof window.pudding.setData !== "function") return;
+      await window.pudding.setData(leaderboardDataKey, leaderboardStats);
     } catch (err) {
-      // Ranking is UI-only; storage failures should not affect the match.
+      // Ranking persistence should not affect the match.
+    }
+  }
+
+  function normalizeLeaderboard(value) {
+    try {
+      const parsed = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+      return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+    } catch (err) {
+      return {};
     }
   }
 
@@ -240,7 +251,8 @@
     return leaderboardStats[key];
   }
 
-  function recordLeaderboard(players) {
+  async function recordLeaderboard(players) {
+    leaderboardStats = normalizeLeaderboard(leaderboardStats);
     for (const player of players || []) {
       const entry = ensureLeaderboardEntry(player.title);
       if (player.result === "win") entry.win += 1;
@@ -248,7 +260,7 @@
       else entry.draw += 1;
       entry.total += 1;
     }
-    saveLeaderboard();
+    await saveLeaderboard();
     renderLeaderboard();
   }
 
@@ -526,7 +538,7 @@
     return { ok: true, state };
   }
 
-  function revealResult() {
+  async function revealResult() {
     const state = clone(window.pudding.getState());
     if (state.status !== "waiting" || !bothPlayersReady(state.players)) {
       return { ok: true, state };
@@ -551,7 +563,7 @@
       winner_title: winner ? winner.title : t("none"),
       loser_title: loser ? loser.title : t("none"),
     };
-    recordLeaderboard(nextPlayers);
+    await recordLeaderboard(nextPlayers);
 
     const send = announcementsForAssistants(state);
     return { ok: true, state, ...(send.length ? { send } : {}) };
@@ -616,6 +628,7 @@
   applyPuddingLocale(window.pudding.locale);
   window.pudding.onLocale(applyPuddingLocale);
   window.pudding.onState(render);
+  loadLeaderboardData();
 
   window.pudding.onAction(function(action, context) {
     if (!action || typeof action !== "object") return { ok: false, error: "action must be an object" };

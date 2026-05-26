@@ -12,7 +12,7 @@
         "zh-TW": "五子棋",
         "en": "Gomoku"
       },
-      "widget_version": "1.0.2",
+      "widget_version": "1.0.3",
       "description": {
         "zh-CN": "支持用户和多个 AI 会话对弈的五子棋小组件。",
         "zh-TW": "支援使用者和多個 AI 會話對弈的五子棋小組件。",
@@ -20,8 +20,8 @@
       },
       "icon": "./gomoku/assets/icon.svg",
       "manifest": "./gomoku/manifest.json",
-      "card": "./gomoku/card.pudding-card.json",
-      "card_sha256": "bf4c1ca3d5045a672824dabd629a4bfe0ba776743f9d37f6bba3fa1b26640482",
+      "card": "./gomoku/widget.pudding-card.json",
+      "card_sha256": "d63a78f334db7b383917eb78cdb169060202aa1fa75a933ccd2e8de7e06262ed",
       "screenshots": [],
       "tags": [
         "game",
@@ -40,7 +40,7 @@
         "zh-TW": "分歧終端機",
         "en": "RPS Decider"
       },
-      "widget_version": "1.0.2",
+      "widget_version": "1.0.3",
       "description": {
         "zh-CN": "用石头剪刀布快速裁决分歧。",
         "zh-TW": "用猜拳快速裁決分歧。",
@@ -48,8 +48,8 @@
       },
       "icon": "./rps-decider/assets/icon.svg",
       "manifest": "./rps-decider/manifest.json",
-      "card": "./rps-decider/card.pudding-card.json",
-      "card_sha256": "9e88b0e2b46542d543c8fd81c34b336d86ed570e8fedf0a2c4b68edd4278253a",
+      "card": "./rps-decider/widget.pudding-card.json",
+      "card_sha256": "c49024181b257270a2d50997b327d3ddad35a2f5a1cb6f94c99b4e6b8fa545a4",
       "screenshots": [],
       "tags": [
         "game",
