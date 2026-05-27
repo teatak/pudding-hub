@@ -946,7 +946,7 @@
       if (actor.role === "human") {
         callerTitle = t("human_judge");
       } else {
-        callerTitle = actor.model || actor.title || t("smart_ai");
+        callerTitle = actor.name || t("smart_ai");
       }
 
       // 1. 选座加入对局

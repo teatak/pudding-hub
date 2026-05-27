@@ -80,7 +80,7 @@
 
   function titleForActor(actor) {
     if (!actor || actor.role === "human") return t("user");
-    return actor.model || actor.title || t("ai");
+    return actor.name || t("ai");
   }
 
   function participantID(actor) {
@@ -99,7 +99,6 @@
       session_id,
       role,
       title: titleForActor(actor),
-      model: role === "assistant" && actor ? actor.model || "" : "",
       slot,
       color: slotColors[slot],
       choice: null,
