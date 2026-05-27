@@ -1,5 +1,5 @@
 {
-  "kind": "pudding.card.export",
+  "kind": "pudding.widget.export",
   "version": 1,
   "card": {
     "id": "teatak/pudding-hub/widgets/rps-decider",

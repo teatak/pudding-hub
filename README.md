@@ -25,7 +25,7 @@ pudding-hub/
     registry.json
     rps-decider/
       manifest.json
-      widget.pudding-card.json
+      widget.pudding-widget.json
       README.md
       source/
         index.html
@@ -42,7 +42,7 @@ Key files:
 - `widgets/registry.json`: widget registry consumed by Pudding.
 - `widgets/<name>/manifest.json`: metadata for one widget.
 - `widgets/<name>/source/`: editable source files.
-- `widgets/<name>/widget.pudding-card.json`: installable runtime snapshot.
+- `widgets/<name>/widget.pudding-widget.json`: installable runtime snapshot.
 - `scripts/package-widget.mjs`: local packaging script.
 
 ## Widget ID Rules
@@ -94,7 +94,7 @@ The packaging script:
 1. Reads `widgets/<name>/manifest.json`.
 2. Reads `widgets/<name>/source/index.html`.
 3. Inlines local CSS and JS from the same `source/` directory.
-4. Writes `widgets/<name>/widget.pudding-card.json`.
+4. Writes `widgets/<name>/widget.pudding-widget.json`.
 5. Updates `card_sha256` in both `manifest.json` and `widgets/registry.json`.
 
 ## Add A Widget
@@ -126,7 +126,7 @@ For the full development guide, see [Pudding Widget Development](docs/widget-dev
     "en": "Resolve small disagreements with rock-paper-scissors."
   },
   "source": "./source/index.html",
-  "card": "./widget.pudding-card.json",
+  "card": "./widget.pudding-widget.json",
   "screenshots": [],
   "tags": ["game", "decision", "multi-session"],
   "orientation": "portrait",
@@ -136,6 +136,6 @@ For the full development guide, see [Pudding Widget Development](docs/widget-dev
 
 ## Source vs Snapshot
 
-`source/` is for humans and maintainers. Pudding installs `widget.pudding-card.json`.
+`source/` is for humans and maintainers. Pudding installs `widget.pudding-widget.json`.
 
-Do not edit `widget.pudding-card.json` by hand unless you are debugging packaging output. Change source files, then run the package command.
+Do not edit `widget.pudding-widget.json` by hand unless you are debugging packaging output. Change source files, then run the package command.

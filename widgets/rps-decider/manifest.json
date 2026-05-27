@@ -14,8 +14,8 @@
     "zh-TW": "用猜拳快速裁決分歧。",
     "en": "Resolve small disagreements with rock-paper-scissors."
   },
-  "card": "./widget.pudding-card.json",
-  "card_sha256": "cd7781f4c9dd320f2b13eaa7e90177ac850ad5a9b764bd4dc92844f549b0c0f4",
+  "card": "./widget.pudding-widget.json",
+  "card_sha256": "da691ae669c7cee02c79e3cb280d4813bc857ac481de6aa6f7b80af0a49909b6",
   "icon": "./assets/icon.svg",
   "screenshots": [],
   "tags": [

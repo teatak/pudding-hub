@@ -20,8 +20,8 @@
       },
       "icon": "./gomoku/assets/icon.svg",
       "manifest": "./gomoku/manifest.json",
-      "card": "./gomoku/widget.pudding-card.json",
-      "card_sha256": "c193899b859b01f5da50e9001f3a44c0e0b7a9d102c722fb62c2947b6bd0b948",
+      "card": "./gomoku/widget.pudding-widget.json",
+      "card_sha256": "6cf75dc8557b60b488e74b5243a42329d0cf12b2ec97e7d0fbfcad5572b48f25",
       "screenshots": [],
       "tags": [
         "game",
@@ -48,8 +48,8 @@
       },
       "icon": "./rps-decider/assets/icon.svg",
       "manifest": "./rps-decider/manifest.json",
-      "card": "./rps-decider/widget.pudding-card.json",
-      "card_sha256": "cd7781f4c9dd320f2b13eaa7e90177ac850ad5a9b764bd4dc92844f549b0c0f4",
+      "card": "./rps-decider/widget.pudding-widget.json",
+      "card_sha256": "da691ae669c7cee02c79e3cb280d4813bc857ac481de6aa6f7b80af0a49909b6",
       "screenshots": [],
       "tags": [
         "game",
