@@ -14,7 +14,7 @@
     "zh-TW": "支援使用者和多個 AI 會話對弈的五子棋小組件。",
     "en": "A Gomoku widget for human and multi-session AI matches."
   },
-  "card": "./widget.pudding-widget.json",
+  "card": "./gomoku.pudding-widget.json",
   "card_sha256": "6cf75dc8557b60b488e74b5243a42329d0cf12b2ec97e7d0fbfcad5572b48f25",
   "icon": "./assets/icon.svg",
   "screenshots": [],

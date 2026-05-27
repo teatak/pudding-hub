@@ -20,7 +20,7 @@
       },
       "icon": "./gomoku/assets/icon.svg",
       "manifest": "./gomoku/manifest.json",
-      "card": "./gomoku/widget.pudding-widget.json",
+      "card": "./gomoku/gomoku.pudding-widget.json",
       "card_sha256": "6cf75dc8557b60b488e74b5243a42329d0cf12b2ec97e7d0fbfcad5572b48f25",
       "screenshots": [],
       "tags": [
@@ -48,7 +48,7 @@
       },
       "icon": "./rps-decider/assets/icon.svg",
       "manifest": "./rps-decider/manifest.json",
-      "card": "./rps-decider/widget.pudding-widget.json",
+      "card": "./rps-decider/rps-decider.pudding-widget.json",
       "card_sha256": "da691ae669c7cee02c79e3cb280d4813bc857ac481de6aa6f7b80af0a49909b6",
       "screenshots": [],
       "tags": [

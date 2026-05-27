@@ -25,7 +25,7 @@ pudding-hub/
     registry.json
     rps-decider/
       manifest.json
-      widget.pudding-widget.json
+      rps-decider.pudding-widget.json
       README.md
       source/
         index.html
@@ -42,7 +42,7 @@ pudding-hub/
 - `widgets/registry.json`：Pudding 读取的小组件注册表。
 - `widgets/<name>/manifest.json`：单个小组件的元数据。
 - `widgets/<name>/source/`：可编辑源码。
-- `widgets/<name>/widget.pudding-widget.json`：可安装的运行快照。
+- `widgets/<name>/<name>.pudding-widget.json`：可安装的运行快照。
 - `scripts/package-widget.mjs`：本仓库内置打包脚本。
 
 ## 小组件 ID 规则
@@ -94,7 +94,7 @@ pnpm package-widgets
 1. 读取 `widgets/<name>/manifest.json`。
 2. 读取 `widgets/<name>/source/index.html`。
 3. 内联同一个 `source/` 目录里的本地 CSS 和 JS。
-4. 写回 `widgets/<name>/widget.pudding-widget.json`。
+4. 写回 `widgets/<name>/<name>.pudding-widget.json`。
 5. 同步更新 `manifest.json` 和 `widgets/registry.json` 中的 `card_sha256`。
 
 ## 添加小组件
@@ -126,7 +126,7 @@ pnpm package-widgets
     "en": "Resolve small disagreements with rock-paper-scissors."
   },
   "source": "./source/index.html",
-  "card": "./widget.pudding-widget.json",
+  "card": "./rps-decider.pudding-widget.json",
   "screenshots": [],
   "tags": ["game", "decision", "multi-session"],
   "orientation": "portrait",
@@ -136,6 +136,6 @@ pnpm package-widgets
 
 ## 源码与快照
 
-`source/` 给维护者编辑；Pudding 安装的是 `widget.pudding-widget.json`。
+`source/` 给维护者编辑；Pudding 安装的是 `<name>.pudding-widget.json`。
 
-除非调试打包产物，不要手改 `widget.pudding-widget.json`。应修改源码，然后重新运行打包命令。
+除非调试打包产物，不要手改 `<name>.pudding-widget.json`。应修改源码，然后重新运行打包命令。
