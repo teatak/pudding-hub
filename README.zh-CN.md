@@ -42,7 +42,7 @@ pudding-hub/
 - `widgets/registry.json`：Pudding 读取的小组件注册表。
 - `widgets/<name>/manifest.json`：单个小组件的元数据。
 - `widgets/<name>/source/`：可编辑源码。
-- `widgets/<name>/<name>.pudding-widget.json`：可安装的运行快照。
+- `widgets/<name>/<name>.pudding-widget.json`：可安装的package。
 - `scripts/package-widget.mjs`：本仓库内置打包脚本。
 
 ## 小组件 ID 规则
@@ -95,7 +95,7 @@ pnpm package-widgets
 2. 读取 `widgets/<name>/source/index.html`。
 3. 内联同一个 `source/` 目录里的本地 CSS 和 JS。
 4. 写回 `widgets/<name>/<name>.pudding-widget.json`。
-5. 同步更新 `manifest.json` 和 `widgets/registry.json` 中的 `card_sha256`。
+5. 同步更新 `manifest.json` 和 `widgets/registry.json` 中的 `package_sha256`。
 
 ## 添加小组件
 
@@ -103,7 +103,7 @@ pnpm package-widgets
 2. 将源码放到 `widgets/<name>/source/`。
 3. 创建 `widgets/<name>/manifest.json`。
 4. 运行 `pnpm package-widget <name>`。
-5. 提交源码、运行快照、manifest 和 registry。
+5. 提交源码、package、manifest 和 registry。
 
 完整开发指南见 [Pudding 小组件开发指南](docs/widget-development.zh-CN.md)。
 
@@ -111,8 +111,8 @@ pnpm package-widgets
 
 ```json
 {
-  "version": 1,
   "kind": "pudding.widget",
+  "schema_version": 1,
   "id": "teatak/pudding-hub/widgets/rps-decider",
   "name": "rps-decider",
   "title": {
@@ -126,7 +126,8 @@ pnpm package-widgets
     "en": "Resolve small disagreements with rock-paper-scissors."
   },
   "source": "./source/index.html",
-  "card": "./rps-decider.pudding-widget.json",
+  "package": "./rps-decider.pudding-widget.json",
+  "package_sha256": "...",
   "screenshots": [],
   "tags": ["game", "decision", "multi-session"],
   "orientation": "portrait",

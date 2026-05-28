@@ -43,8 +43,8 @@ Each widget needs `widgets/<name>/manifest.json`.
 
 ```json
 {
-  "version": 1,
   "kind": "pudding.widget",
+  "schema_version": 1,
   "id": "teatak/pudding-hub/widgets/rps-decider",
   "name": "rps-decider",
   "title": {
@@ -59,7 +59,8 @@ Each widget needs `widgets/<name>/manifest.json`.
     "en": "Resolve small disagreements with rock-paper-scissors."
   },
   "source": "./source/index.html",
-  "card": "./rps-decider.pudding-widget.json",
+  "package": "./rps-decider.pudding-widget.json",
+  "package_sha256": "...",
   "screenshots": [],
   "tags": ["game", "decision"],
   "orientation": "portrait",
@@ -75,7 +76,7 @@ Required fields:
 - `widget_version`: semantic version for upgrades.
 - `source`: entry HTML path, normally `./source/index.html`.
 - `orientation`: `auto`, `portrait`, or `landscape`.
-- `initial_state`: initial card state.
+- `initial_state`: initial widget state.
 
 ## Build And Package
 
@@ -104,7 +105,7 @@ The package script:
 3. Inlines local CSS and JS files referenced by the HTML.
 4. Minifies the runtime HTML snapshot.
 5. Writes `<name>.pudding-widget.json`.
-6. Updates `card_sha256` in `manifest.json` and `widgets/registry.json`.
+6. Updates `package_sha256` in `manifest.json` and `widgets/registry.json`.
 
 Do not edit `<name>.pudding-widget.json` by hand. Edit `source/`, then package again.
 
@@ -304,7 +305,7 @@ Before publishing:
 - `source/` contains the editable implementation.
 - `pnpm package-widget <name>` succeeds.
 - `<name>.pudding-widget.json` changed after packaging.
-- `manifest.json` and `widgets/registry.json` have updated `card_sha256`.
+- `manifest.json` and `widgets/registry.json` have updated `package_sha256`.
 - The widget works in light and dark themes.
 - The widget works with `zh-CN`, `zh-TW`, and `en`.
 - The widget does not require external network assets.

@@ -1,5 +1,4 @@
 {
-  "version": 1,
   "kind": "pudding.widget",
   "id": "teatak/pudding-hub/widgets/rps-decider",
   "name": "rps-decider",
@@ -14,8 +13,6 @@
     "zh-TW": "用猜拳快速裁決分歧。",
     "en": "Resolve small disagreements with rock-paper-scissors."
   },
-  "card": "./rps-decider.pudding-widget.json",
-  "card_sha256": "da691ae669c7cee02c79e3cb280d4813bc857ac481de6aa6f7b80af0a49909b6",
   "icon": "./assets/icon.svg",
   "screenshots": [],
   "tags": [
@@ -35,5 +32,8 @@
     "round": 1,
     "best_of": null,
     "score": {}
-  }
+  },
+  "schema_version": 1,
+  "package": "./rps-decider.pudding-widget.json",
+  "package_sha256": "f4ef8856e6771d8d0be0f376d6f903f5e85b25751812ef4d545d4ac1a905fa04"
 }

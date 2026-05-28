@@ -1,5 +1,4 @@
 {
-  "version": 1,
   "kind": "pudding.widget",
   "id": "teatak/pudding-hub/widgets/gomoku",
   "name": "gomoku",
@@ -14,8 +13,6 @@
     "zh-TW": "支援使用者和多個 AI 會話對弈的五子棋小組件。",
     "en": "A Gomoku widget for human and multi-session AI matches."
   },
-  "card": "./gomoku.pudding-widget.json",
-  "card_sha256": "6cf75dc8557b60b488e74b5243a42329d0cf12b2ec97e7d0fbfcad5572b48f25",
   "icon": "./assets/icon.svg",
   "screenshots": [],
   "tags": [
@@ -42,5 +39,8 @@
     "last_move": null,
     "winning_line": null,
     "score": {}
-  }
+  },
+  "schema_version": 1,
+  "package": "./gomoku.pudding-widget.json",
+  "package_sha256": "f42d69e5e90668645e5ed223558da1fa8c5d0713c92e10dbcd76264552e05cc5"
 }

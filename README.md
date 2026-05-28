@@ -95,7 +95,7 @@ The packaging script:
 2. Reads `widgets/<name>/source/index.html`.
 3. Inlines local CSS and JS from the same `source/` directory.
 4. Writes `widgets/<name>/<name>.pudding-widget.json`.
-5. Updates `card_sha256` in both `manifest.json` and `widgets/registry.json`.
+5. Updates `package_sha256` in both `manifest.json` and `widgets/registry.json`.
 
 ## Add A Widget
 
@@ -103,7 +103,7 @@ The packaging script:
 2. Put editable files under `widgets/<name>/source/`.
 3. Create `widgets/<name>/manifest.json`.
 4. Run `pnpm package-widget <name>`.
-5. Commit the updated source, card snapshot, manifest, and registry.
+5. Commit the updated source, package, manifest, and registry.
 
 For the full development guide, see [Pudding Widget Development](docs/widget-development.md).
 
@@ -111,8 +111,8 @@ For the full development guide, see [Pudding Widget Development](docs/widget-dev
 
 ```json
 {
-  "version": 1,
   "kind": "pudding.widget",
+  "schema_version": 1,
   "id": "teatak/pudding-hub/widgets/rps-decider",
   "name": "rps-decider",
   "title": {
@@ -126,7 +126,8 @@ For the full development guide, see [Pudding Widget Development](docs/widget-dev
     "en": "Resolve small disagreements with rock-paper-scissors."
   },
   "source": "./source/index.html",
-  "card": "./rps-decider.pudding-widget.json",
+  "package": "./rps-decider.pudding-widget.json",
+  "package_sha256": "...",
   "screenshots": [],
   "tags": ["game", "decision", "multi-session"],
   "orientation": "portrait",

@@ -6,8 +6,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const EXPORT_KIND = "pudding.widget.export";
-const EXPORT_VERSION = 1;
+const PACKAGE_KIND = "pudding.widget.package";
+const PACKAGE_SCHEMA_VERSION = 1;
 const REGISTRY_KIND = "pudding.widget.registry";
 
 function usage() {
@@ -158,7 +158,7 @@ function registryWidgetPath(name, value) {
   return `./${name}/${rel.replace(/^\.\//, "")}`;
 }
 
-async function updateRegistry(name, manifest, cardHash) {
+async function updateRegistry(name, manifest, packageHash) {
   const registryPath = path.join(ROOT, "widgets/registry.json");
   let registry;
   try {
@@ -175,8 +175,8 @@ async function updateRegistry(name, manifest, cardHash) {
     description: manifest.description || {},
     icon: registryWidgetPath(name, manifest.icon),
     manifest: `./${name}/manifest.json`,
-    card: `./${name}/${name}.pudding-widget.json`,
-    card_sha256: cardHash,
+    package: `./${name}/${name}.pudding-widget.json`,
+    package_sha256: packageHash,
     screenshots: manifest.screenshots || [],
     tags: manifest.tags || [],
     orientation: manifest.orientation || "auto",
@@ -198,38 +198,41 @@ async function packageWidget(name) {
   const entryPath = path.posix.join("widgets", name, source.replace(/^\.\//, ""));
   const html = await buildRuntimeHTML(entryPath);
   const localizedTitle = typeof manifest.title === "object" && manifest.title ? manifest.title : undefined;
-  const card = {
-    kind: EXPORT_KIND,
-    version: EXPORT_VERSION,
-    card: {
+  const widgetPackage = {
+    kind: PACKAGE_KIND,
+    schema_version: PACKAGE_SCHEMA_VERSION,
+    widget: {
       id: manifest.id,
       kind: "widget",
       title: localizedTitle ? (localizedTitle["zh-CN"] || localizedTitle.en || manifest.name || name) : (manifest.title || manifest.name || name),
       version: manifest.widget_version || "0.0.0",
-      widget_id: manifest.id,
       size: manifest.size || "l",
       orientation: manifest.orientation || "auto",
       html,
       initial_state: manifest.initial_state || {},
     },
   };
-  if (localizedTitle) card.card.localized_title = localizedTitle;
+  if (localizedTitle) widgetPackage.widget.localized_title = localizedTitle;
   if (typeof manifest.icon === "string" && manifest.icon.trim()) {
-    card.card.icon = manifest.icon.trim();
+    widgetPackage.widget.icon = manifest.icon.trim();
   } else if (manifest.icon && typeof manifest.icon === "object" && !Array.isArray(manifest.icon)) {
-    card.card.icon = manifest.icon;
+    widgetPackage.widget.icon = manifest.icon;
   }
-  const cardFilename = `${name}.pudding-widget.json`;
-  const cardPath = path.join(dir, cardFilename);
-  const cardText = JSON.stringify(card, null, 2) + "\n";
-  await fs.writeFile(cardPath, cardText, "utf8");
-  const cardHash = sha256Text(cardText);
-  manifest.card = `./${cardFilename}`;
-  manifest.card_sha256 = cardHash;
+  const packageFilename = `${name}.pudding-widget.json`;
+  const packagePath = path.join(dir, packageFilename);
+  const packageText = JSON.stringify(widgetPackage, null, 2) + "\n";
+  await fs.writeFile(packagePath, packageText, "utf8");
+  const packageHash = sha256Text(packageText);
+  manifest.schema_version = 1;
+  delete manifest.version;
+  manifest.package = `./${packageFilename}`;
+  manifest.package_sha256 = packageHash;
+  delete manifest.card;
+  delete manifest.card_sha256;
   manifest.source = source;
   await writeJSON(manifestPath, manifest);
-  await updateRegistry(name, manifest, cardHash);
-  console.log(`packaged ${name}: ${cardHash}`);
+  await updateRegistry(name, manifest, packageHash);
+  console.log(`packaged ${name}: ${packageHash}`);
 }
 
 async function widgetNamesFromRegistry() {
