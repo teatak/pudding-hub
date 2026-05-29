@@ -118,6 +118,133 @@ function minifyInlineCSS(css) {
     .trim();
 }
 
+function isJSBlock(openTag) {
+  const attrs = parseHTMLAttrs(openTag);
+  const type = (attrs.type ?? "").trim().toLowerCase();
+  return type === "" || type === "module" || type === "text/javascript" || type === "application/javascript";
+}
+
+function isIdentifierChar(ch) {
+  return /[A-Za-z0-9_$]/.test(ch);
+}
+
+function needsJSSpace(prev, next) {
+  if (!prev || !next) return false;
+  if (isIdentifierChar(prev) && isIdentifierChar(next)) return true;
+  if ((prev === "+" && next === "+") || (prev === "-" && next === "-")) return true;
+  if ((isIdentifierChar(prev) || prev === ")") && next === "/") return true;
+  return false;
+}
+
+function previousJSWord(out) {
+  const match = out.match(/[A-Za-z_$][A-Za-z0-9_$]*$/);
+  return match?.[0] ?? "";
+}
+
+function probablyRegexStart(out) {
+  const trimmed = out.trimEnd();
+  if (!trimmed) return true;
+  const prev = trimmed[trimmed.length - 1] ?? "";
+  if ("({[=,:;!&|?+-*~^<>".includes(prev)) return true;
+  return /^(return|throw|case|delete|typeof|void|new|yield|await|else|do|in|of)$/.test(previousJSWord(trimmed));
+}
+
+function copyQuotedJS(source, start, quote) {
+  let out = quote;
+  let i = start + 1;
+  for (; i < source.length; i += 1) {
+    const ch = source[i] ?? "";
+    out += ch;
+    if (ch === "\\") {
+      i += 1;
+      out += source[i] ?? "";
+      continue;
+    }
+    if (ch === quote) {
+      i += 1;
+      break;
+    }
+  }
+  return { text: out, next: i };
+}
+
+function copyRegexJS(source, start) {
+  let out = "/";
+  let inClass = false;
+  let i = start + 1;
+  for (; i < source.length; i += 1) {
+    const ch = source[i] ?? "";
+    out += ch;
+    if (ch === "\\") {
+      i += 1;
+      out += source[i] ?? "";
+      continue;
+    }
+    if (ch === "[") inClass = true;
+    else if (ch === "]") inClass = false;
+    else if (ch === "/" && !inClass) {
+      i += 1;
+      while (/[A-Za-z]/.test(source[i] ?? "")) {
+        out += source[i];
+        i += 1;
+      }
+      break;
+    }
+  }
+  return { text: out, next: i };
+}
+
+function minifyInlineJS(js) {
+  let out = "";
+  let pendingSpace = false;
+  let i = 0;
+  const append = (text) => {
+    const first = text[0] ?? "";
+    const prev = out.trimEnd().slice(-1);
+    if (pendingSpace && needsJSSpace(prev, first)) out += " ";
+    pendingSpace = false;
+    out += text;
+  };
+
+  while (i < js.length) {
+    const ch = js[i] ?? "";
+    const next = js[i + 1] ?? "";
+    if (/\s/.test(ch)) {
+      pendingSpace = true;
+      i += 1;
+      continue;
+    }
+    if (ch === "/" && next === "/") {
+      i += 2;
+      while (i < js.length && js[i] !== "\n" && js[i] !== "\r") i += 1;
+      pendingSpace = true;
+      continue;
+    }
+    if (ch === "/" && next === "*") {
+      i += 2;
+      while (i < js.length && !(js[i] === "*" && js[i + 1] === "/")) i += 1;
+      i += 2;
+      pendingSpace = true;
+      continue;
+    }
+    if (ch === "'" || ch === "\"" || ch === "`") {
+      const copied = copyQuotedJS(js, i, ch);
+      append(copied.text);
+      i = copied.next;
+      continue;
+    }
+    if (ch === "/" && probablyRegexStart(out)) {
+      const copied = copyRegexJS(js, i);
+      append(copied.text);
+      i = copied.next;
+      continue;
+    }
+    append(ch);
+    i += 1;
+  }
+  return out.trim();
+}
+
 function minifyWidgetHTML(html) {
   const blocks = [];
   const token = (index) => `%%%PUDDING_WIDGET_RAW_${index}%%%`;
@@ -127,6 +254,8 @@ function minifyWidgetHTML(html) {
     const lower = String(tagName).toLowerCase();
     if (lower === "style") {
       blocks.push(block.replace(/(<style\b[^>]*>)([\s\S]*?)(<\/style>)/i, (_, open, css, close) => open + minifyInlineCSS(css) + close));
+    } else if (lower === "script") {
+      blocks.push(block.replace(/(<script\b[^>]*>)([\s\S]*?)(<\/script>)/i, (_, open, js, close) => open + (isJSBlock(open) ? minifyInlineJS(js) : js.trim()) + close));
     } else {
       blocks.push(block.trim());
     }
@@ -185,7 +314,9 @@ async function copyDirIfExists(from, to) {
 }
 
 function todayISODate() {
-  return new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  const local = new Date(now.getTime() - now.getTimezoneOffset() * 60_000);
+  return local.toISOString().slice(0, 10);
 }
 
 async function updateRegistry(name, manifest, packageHash) {
