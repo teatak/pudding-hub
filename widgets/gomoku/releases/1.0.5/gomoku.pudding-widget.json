@@ -1,6 +1,9 @@
 {
   "kind": "pudding.widget.package",
   "schema_version": 1,
+  "requires": {
+    "widget_api": "^1.0.0"
+  },
   "widget": {
     "id": "teatak/pudding-hub/widgets/gomoku",
     "kind": "widget",

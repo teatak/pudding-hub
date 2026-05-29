@@ -41,7 +41,7 @@
     "score": {}
   },
   "schema_version": 1,
-  "package": "./releases/1.0.5/gomoku.pudding-widget.json",
+  "package": "./gomoku.pudding-widget.json",
   "package_sha256": "dfc8e69a30b328be10c9a22a82efccae7c377a4fb99abb49867061adb01e0cc0",
   "requires": {
     "widget_api": "^1.0.0"

@@ -34,7 +34,7 @@
     "score": {}
   },
   "schema_version": 1,
-  "package": "./releases/1.0.5/rps-decider.pudding-widget.json",
+  "package": "./rps-decider.pudding-widget.json",
   "package_sha256": "7bf2f23634632de34bf71e5046c95a7a6f865c088c725dbd43a5a0ea3cd0958a",
   "requires": {
     "widget_api": "^1.0.0"

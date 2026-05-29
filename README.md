@@ -25,7 +25,6 @@ pudding-hub/
     registry.json
     rps-decider/
       manifest.json
-      rps-decider.pudding-widget.json
       README.md
       source/
         index.html
@@ -35,6 +34,13 @@ pudding-hub/
           i18n.js
       screenshots/
         .gitkeep
+      releases/
+        1.0.0/
+          manifest.json
+          rps-decider.pudding-widget.json
+          assets/
+          source/
+          screenshots/
 ```
 
 Key files:
@@ -42,7 +48,7 @@ Key files:
 - `widgets/registry.json`: widget registry consumed by Pudding.
 - `widgets/<name>/manifest.json`: metadata for one widget.
 - `widgets/<name>/source/`: editable source files.
-- `widgets/<name>/<name>.pudding-widget.json`: installable runtime snapshot.
+- `widgets/<name>/releases/<version>/`: immutable release snapshot installed by Pudding.
 - `scripts/package-widget.mjs`: local packaging script.
 
 ## Widget ID Rules
@@ -94,8 +100,9 @@ The packaging script:
 1. Reads `widgets/<name>/manifest.json`.
 2. Reads `widgets/<name>/source/index.html`.
 3. Inlines local CSS and JS from the same `source/` directory.
-4. Writes `widgets/<name>/<name>.pudding-widget.json`.
-5. Updates `package_sha256` in both `manifest.json` and `widgets/registry.json`.
+4. Writes `widgets/<name>/releases/<widget_version>/<name>.pudding-widget.json`.
+5. Copies release assets, source, screenshots, and manifest into the release directory.
+6. Updates `package_sha256` in both `manifest.json` and `widgets/registry.json`.
 
 ## Add A Widget
 
@@ -103,7 +110,7 @@ The packaging script:
 2. Put editable files under `widgets/<name>/source/`.
 3. Create `widgets/<name>/manifest.json`.
 4. Run `pnpm package-widget <name>`.
-5. Commit the updated source, package, manifest, and registry.
+5. Commit the updated source, release snapshot, manifest, and registry.
 
 For the full development guide, see [Pudding Widget Development](docs/widget-development.md).
 
@@ -126,8 +133,11 @@ For the full development guide, see [Pudding Widget Development](docs/widget-dev
     "en": "Resolve small disagreements with rock-paper-scissors."
   },
   "source": "./source/index.html",
-  "package": "./rps-decider.pudding-widget.json",
+  "package": "./releases/1.0.0/rps-decider.pudding-widget.json",
   "package_sha256": "...",
+  "requires": {
+    "widget_api": "^1.0.0"
+  },
   "screenshots": [],
   "tags": ["game", "decision", "multi-session"],
   "orientation": "portrait",
@@ -137,6 +147,6 @@ For the full development guide, see [Pudding Widget Development](docs/widget-dev
 
 ## Source vs Snapshot
 
-`source/` is for humans and maintainers. Pudding installs `<name>.pudding-widget.json`.
+`source/` is for humans and maintainers. Pudding installs the snapshot under `releases/<version>/`.
 
-Do not edit `<name>.pudding-widget.json` by hand unless you are debugging packaging output. Change source files, then run the package command.
+Do not edit files under `releases/<version>/` by hand unless you are debugging packaging output. Change source files, bump `widget_version` when needed, then run the package command.

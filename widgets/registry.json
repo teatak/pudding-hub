@@ -18,10 +18,14 @@
         "zh-TW": "支援使用者和多個 AI 會話對弈的五子棋小組件。",
         "en": "A Gomoku widget for human and multi-session AI matches."
       },
-      "icon": "./gomoku/assets/icon.svg",
-      "manifest": "./gomoku/manifest.json",
-      "package": "./gomoku/gomoku.pudding-widget.json",
-      "package_sha256": "f42d69e5e90668645e5ed223558da1fa8c5d0713c92e10dbcd76264552e05cc5",
+      "icon": "./gomoku/releases/1.0.5/assets/icon.svg",
+      "manifest": "./gomoku/releases/1.0.5/manifest.json",
+      "package": "./gomoku/releases/1.0.5/gomoku.pudding-widget.json",
+      "package_sha256": "dfc8e69a30b328be10c9a22a82efccae7c377a4fb99abb49867061adb01e0cc0",
+      "requires": {
+        "widget_api": "^1.0.0"
+      },
+      "schema_version": 1,
       "screenshots": [],
       "tags": [
         "game",
@@ -29,7 +33,20 @@
         "multi-session"
       ],
       "orientation": "landscape",
-      "source": "./gomoku/source/index.html"
+      "source": "./gomoku/releases/1.0.5/source/index.html",
+      "releases": [
+        {
+          "widget_version": "1.0.5",
+          "manifest": "./gomoku/releases/1.0.5/manifest.json",
+          "package": "./gomoku/releases/1.0.5/gomoku.pudding-widget.json",
+          "package_sha256": "dfc8e69a30b328be10c9a22a82efccae7c377a4fb99abb49867061adb01e0cc0",
+          "requires": {
+            "widget_api": "^1.0.0"
+          },
+          "schema_version": 1,
+          "released_at": "2026-05-29"
+        }
+      ]
     },
     {
       "id": "teatak/pudding-hub/widgets/rps-decider",
@@ -46,10 +63,14 @@
         "zh-TW": "用猜拳快速裁決分歧。",
         "en": "Resolve small disagreements with rock-paper-scissors."
       },
-      "icon": "./rps-decider/assets/icon.svg",
-      "manifest": "./rps-decider/manifest.json",
-      "package": "./rps-decider/rps-decider.pudding-widget.json",
-      "package_sha256": "f4ef8856e6771d8d0be0f376d6f903f5e85b25751812ef4d545d4ac1a905fa04",
+      "icon": "./rps-decider/releases/1.0.5/assets/icon.svg",
+      "manifest": "./rps-decider/releases/1.0.5/manifest.json",
+      "package": "./rps-decider/releases/1.0.5/rps-decider.pudding-widget.json",
+      "package_sha256": "7bf2f23634632de34bf71e5046c95a7a6f865c088c725dbd43a5a0ea3cd0958a",
+      "requires": {
+        "widget_api": "^1.0.0"
+      },
+      "schema_version": 1,
       "screenshots": [],
       "tags": [
         "game",
@@ -57,7 +78,20 @@
         "multi-session"
       ],
       "orientation": "portrait",
-      "source": "./rps-decider/source/index.html"
+      "source": "./rps-decider/releases/1.0.5/source/index.html",
+      "releases": [
+        {
+          "widget_version": "1.0.5",
+          "manifest": "./rps-decider/releases/1.0.5/manifest.json",
+          "package": "./rps-decider/releases/1.0.5/rps-decider.pudding-widget.json",
+          "package_sha256": "7bf2f23634632de34bf71e5046c95a7a6f865c088c725dbd43a5a0ea3cd0958a",
+          "requires": {
+            "widget_api": "^1.0.0"
+          },
+          "schema_version": 1,
+          "released_at": "2026-05-29"
+        }
+      ]
     }
   ]
 }

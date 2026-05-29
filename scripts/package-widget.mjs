@@ -7,6 +7,9 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const PACKAGE_KIND = "pudding.widget.package";
+const WIDGET_API_VERSION = "1.0.0";
+const WIDGET_API_RANGE = "^1.0.0";
+const WIDGET_SCHEMA_VERSION = 1;
 const PACKAGE_SCHEMA_VERSION = 1;
 const REGISTRY_KIND = "pudding.widget.registry";
 
@@ -158,7 +161,38 @@ function registryWidgetPath(name, value) {
   return `./${name}/${rel.replace(/^\.\//, "")}`;
 }
 
+function releaseWidgetPath(name, version, value) {
+  if (typeof value !== "string") return value;
+  const rel = value.trim();
+  if (!rel || rel.startsWith("/") || rel.startsWith("//") || /^[a-z][a-z0-9+.-]*:/i.test(rel)) return value;
+  return `./${name}/releases/${version}/${rel.replace(/^\.\//, "")}`;
+}
+
+function normalizedRequires(manifest) {
+  const raw = manifest.requires && typeof manifest.requires === "object" && !Array.isArray(manifest.requires)
+    ? { ...manifest.requires }
+    : {};
+  if (typeof raw.widget_api !== "string" || !raw.widget_api.trim()) {
+    raw.widget_api = WIDGET_API_RANGE;
+  }
+  return raw;
+}
+
+async function copyDirIfExists(from, to) {
+  if (!fsSync.existsSync(from)) return;
+  await fs.rm(to, { recursive: true, force: true });
+  await fs.cp(from, to, { recursive: true });
+}
+
+function todayISODate() {
+  return new Date().toISOString().slice(0, 10);
+}
+
 async function updateRegistry(name, manifest, packageHash) {
+  const widgetVersion = manifest.widget_version || "0.0.0";
+  const releaseManifest = `./${name}/releases/${widgetVersion}/manifest.json`;
+  const releasePackage = `./${name}/releases/${widgetVersion}/${name}.pudding-widget.json`;
+  const requires = normalizedRequires(manifest);
   const registryPath = path.join(ROOT, "widgets/registry.json");
   let registry;
   try {
@@ -171,19 +205,37 @@ async function updateRegistry(name, manifest, packageHash) {
     kind: "widget",
     name: manifest.name || name,
     title: manifest.title,
-    widget_version: manifest.widget_version,
+    widget_version: widgetVersion,
     description: manifest.description || {},
-    icon: registryWidgetPath(name, manifest.icon),
-    manifest: `./${name}/manifest.json`,
-    package: `./${name}/${name}.pudding-widget.json`,
+    icon: releaseWidgetPath(name, widgetVersion, manifest.icon),
+    manifest: releaseManifest,
+    package: releasePackage,
     package_sha256: packageHash,
+    requires,
+    schema_version: manifest.schema_version,
     screenshots: manifest.screenshots || [],
     tags: manifest.tags || [],
     orientation: manifest.orientation || "auto",
-    source: `./${name}/source/index.html`,
+    source: `./${name}/releases/${widgetVersion}/source/index.html`,
   };
   const items = Array.isArray(registry.items) ? registry.items : [];
   const index = items.findIndex((existing) => existing.id === manifest.id || existing.name === name);
+  const previous = index >= 0 && items[index] && typeof items[index] === "object" ? items[index] : {};
+  const releases = Array.isArray(previous.releases) ? previous.releases : [];
+  const release = {
+    widget_version: widgetVersion,
+    manifest: releaseManifest,
+    package: releasePackage,
+    package_sha256: packageHash,
+    requires,
+    schema_version: manifest.schema_version,
+    released_at: releases.find((entry) => entry && entry.widget_version === widgetVersion)?.released_at || todayISODate(),
+  };
+  const nextReleases = [
+    release,
+    ...releases.filter((entry) => entry && entry.widget_version !== widgetVersion),
+  ];
+  item.releases = nextReleases;
   if (index >= 0) items[index] = item;
   else items.push(item);
   registry.items = items.sort((a, b) => String(a.id).localeCompare(String(b.id)));
@@ -195,12 +247,15 @@ async function packageWidget(name) {
   const manifestPath = path.join(dir, "manifest.json");
   const manifest = await readJSON(manifestPath);
   const source = manifest.source || "./source/index.html";
+  manifest.schema_version = WIDGET_SCHEMA_VERSION;
+  manifest.requires = normalizedRequires(manifest);
   const entryPath = path.posix.join("widgets", name, source.replace(/^\.\//, ""));
   const html = await buildRuntimeHTML(entryPath);
   const localizedTitle = typeof manifest.title === "object" && manifest.title ? manifest.title : undefined;
   const widgetPackage = {
     kind: PACKAGE_KIND,
     schema_version: PACKAGE_SCHEMA_VERSION,
+    requires: manifest.requires,
     widget: {
       id: manifest.id,
       kind: "widget",
@@ -219,18 +274,25 @@ async function packageWidget(name) {
     widgetPackage.widget.icon = manifest.icon;
   }
   const packageFilename = `${name}.pudding-widget.json`;
-  const packagePath = path.join(dir, packageFilename);
+  const widgetVersion = manifest.widget_version || "0.0.0";
+  const releaseDir = path.join(dir, "releases", widgetVersion);
+  await fs.mkdir(releaseDir, { recursive: true });
+  await copyDirIfExists(path.join(dir, "assets"), path.join(releaseDir, "assets"));
+  await copyDirIfExists(path.join(dir, "screenshots"), path.join(releaseDir, "screenshots"));
+  await copyDirIfExists(path.join(dir, "source"), path.join(releaseDir, "source"));
+  const packagePath = path.join(releaseDir, packageFilename);
   const packageText = JSON.stringify(widgetPackage, null, 2) + "\n";
   await fs.writeFile(packagePath, packageText, "utf8");
   const packageHash = sha256Text(packageText);
-  manifest.schema_version = 1;
   delete manifest.version;
-  manifest.package = `./${packageFilename}`;
+  manifest.package = `./releases/${widgetVersion}/${packageFilename}`;
   manifest.package_sha256 = packageHash;
   delete manifest.card;
   delete manifest.card_sha256;
   manifest.source = source;
   await writeJSON(manifestPath, manifest);
+  const releaseManifest = { ...manifest, package: `./${packageFilename}` };
+  await writeJSON(path.join(releaseDir, "manifest.json"), releaseManifest);
   await updateRegistry(name, manifest, packageHash);
   console.log(`packaged ${name}: ${packageHash}`);
 }
