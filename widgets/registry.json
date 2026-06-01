@@ -1,18 +1,16 @@
 {
-  "version": 1,
   "kind": "pudding.widget.registry",
   "name": "Pudding Widgets",
   "items": [
     {
       "id": "teatak/pudding-hub/widgets/gomoku",
-      "kind": "widget",
       "name": "gomoku",
       "title": {
         "zh-CN": "五子棋",
         "zh-TW": "五子棋",
         "en": "Gomoku"
       },
-      "widget_version": "1.0.6",
+      "version": "1.0.6",
       "description": {
         "zh-CN": "支持用户和多个 AI 会话对弈的五子棋小组件。",
         "zh-TW": "支援使用者和多個 AI 會話對弈的五子棋小組件。",
@@ -21,11 +19,10 @@
       "icon": "./gomoku/releases/1.0.6/assets/icon.svg",
       "manifest": "./gomoku/releases/1.0.6/manifest.json",
       "package": "./gomoku/releases/1.0.6/gomoku.pudding-widget.json",
-      "package_sha256": "8182582ace7f3948e0848887ef2cc9f77d4700856df63b30baa714a0d055fc62",
+      "package_sha256": "16e5ce1699e3e5bba4492bafe6df6e48e4f50eb7183b848defe38b3aa04ceb75",
       "requires": {
         "widget_api": "^1.0.0"
       },
-      "schema_version": 1,
       "screenshots": [],
       "tags": [
         "game",
@@ -33,42 +30,38 @@
         "multi-session"
       ],
       "orientation": "landscape",
-      "source": "./gomoku/releases/1.0.6/source/index.html",
       "releases": [
         {
-          "widget_version": "1.0.6",
+          "version": "1.0.6",
           "manifest": "./gomoku/releases/1.0.6/manifest.json",
           "package": "./gomoku/releases/1.0.6/gomoku.pudding-widget.json",
-          "package_sha256": "8182582ace7f3948e0848887ef2cc9f77d4700856df63b30baa714a0d055fc62",
+          "package_sha256": "16e5ce1699e3e5bba4492bafe6df6e48e4f50eb7183b848defe38b3aa04ceb75",
           "requires": {
             "widget_api": "^1.0.0"
           },
-          "schema_version": 1,
           "released_at": "2026-05-30"
         },
         {
-          "widget_version": "1.0.5",
+          "version": "1.0.5",
           "manifest": "./gomoku/releases/1.0.5/manifest.json",
           "package": "./gomoku/releases/1.0.5/gomoku.pudding-widget.json",
-          "package_sha256": "dfc8e69a30b328be10c9a22a82efccae7c377a4fb99abb49867061adb01e0cc0",
+          "package_sha256": "d0a9df3c13c77ba8d54f76a8850013efd0c072d78df1e6434a5905fa43488495",
           "requires": {
             "widget_api": "^1.0.0"
           },
-          "schema_version": 1,
           "released_at": "2026-05-29"
         }
       ]
     },
     {
       "id": "teatak/pudding-hub/widgets/rps-decider",
-      "kind": "widget",
       "name": "rps-decider",
       "title": {
         "zh-CN": "分歧终端机",
         "zh-TW": "分歧終端機",
         "en": "RPS Decider"
       },
-      "widget_version": "1.0.6",
+      "version": "1.0.6",
       "description": {
         "zh-CN": "用石头剪刀布快速裁决分歧。",
         "zh-TW": "用猜拳快速裁決分歧。",
@@ -77,11 +70,10 @@
       "icon": "./rps-decider/releases/1.0.6/assets/icon.svg",
       "manifest": "./rps-decider/releases/1.0.6/manifest.json",
       "package": "./rps-decider/releases/1.0.6/rps-decider.pudding-widget.json",
-      "package_sha256": "68d6175f76bcc1a4245f23d255b55cdb3aa3c148c3150f5cebe30e7ab2dcc5e5",
+      "package_sha256": "2fd7ff5d98acf0ee5e84b6f982fde764d1ce3a6eabf74e89a9e97b427f9ea3ff",
       "requires": {
         "widget_api": "^1.0.0"
       },
-      "schema_version": 1,
       "screenshots": [],
       "tags": [
         "game",
@@ -89,31 +81,29 @@
         "multi-session"
       ],
       "orientation": "portrait",
-      "source": "./rps-decider/releases/1.0.6/source/index.html",
       "releases": [
         {
-          "widget_version": "1.0.6",
+          "version": "1.0.6",
           "manifest": "./rps-decider/releases/1.0.6/manifest.json",
           "package": "./rps-decider/releases/1.0.6/rps-decider.pudding-widget.json",
-          "package_sha256": "68d6175f76bcc1a4245f23d255b55cdb3aa3c148c3150f5cebe30e7ab2dcc5e5",
+          "package_sha256": "2fd7ff5d98acf0ee5e84b6f982fde764d1ce3a6eabf74e89a9e97b427f9ea3ff",
           "requires": {
             "widget_api": "^1.0.0"
           },
-          "schema_version": 1,
           "released_at": "2026-05-30"
         },
         {
-          "widget_version": "1.0.5",
+          "version": "1.0.5",
           "manifest": "./rps-decider/releases/1.0.5/manifest.json",
           "package": "./rps-decider/releases/1.0.5/rps-decider.pudding-widget.json",
-          "package_sha256": "7bf2f23634632de34bf71e5046c95a7a6f865c088c725dbd43a5a0ea3cd0958a",
+          "package_sha256": "1451c33aecc84f89c15e365f8a2d0a71b5fcc968abed90783add83bf40ccd537",
           "requires": {
             "widget_api": "^1.0.0"
           },
-          "schema_version": 1,
           "released_at": "2026-05-29"
         }
       ]
     }
-  ]
+  ],
+  "schema_version": 1
 }

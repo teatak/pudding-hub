@@ -1,5 +1,6 @@
 {
-  "kind": "pudding.widget",
+  "kind": "pudding.widget.manifest",
+  "schema_version": 1,
   "id": "teatak/pudding-hub/widgets/rps-decider",
   "name": "rps-decider",
   "title": {
@@ -7,7 +8,7 @@
     "zh-TW": "分歧終端機",
     "en": "RPS Decider"
   },
-  "widget_version": "1.0.6",
+  "version": "1.0.6",
   "description": {
     "zh-CN": "用石头剪刀布快速裁决分歧。",
     "zh-TW": "用猜拳快速裁決分歧。",
@@ -20,22 +21,13 @@
     "decision",
     "multi-session"
   ],
+  "size": "lg",
   "orientation": "portrait",
   "author": {
     "name": "Pudding"
   },
-  "source": "./source/index.html",
-  "initial_state": {
-    "status": "init",
-    "locale": "zh-CN",
-    "topic": null,
-    "round": 1,
-    "best_of": null,
-    "score": {}
-  },
-  "schema_version": 1,
   "package": "./releases/1.0.6/rps-decider.pudding-widget.json",
-  "package_sha256": "68d6175f76bcc1a4245f23d255b55cdb3aa3c148c3150f5cebe30e7ab2dcc5e5",
+  "package_sha256": "2fd7ff5d98acf0ee5e84b6f982fde764d1ce3a6eabf74e89a9e97b427f9ea3ff",
   "requires": {
     "widget_api": "^1.0.0"
   }

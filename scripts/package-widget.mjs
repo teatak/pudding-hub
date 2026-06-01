@@ -12,10 +12,13 @@ const WIDGET_API_RANGE = "^1.0.0";
 const WIDGET_SCHEMA_VERSION = 1;
 const PACKAGE_SCHEMA_VERSION = 1;
 const REGISTRY_KIND = "pudding.widget.registry";
+const WIDGET_MANIFEST_KIND = "pudding.widget.manifest";
+const WIDGET_SIZE_VALUES = new Set(["sm", "md", "lg"]);
 
 function usage() {
   console.log(`Usage:
   pnpm package-widget <name>
+  pnpm package-widget <name> --dev
   pnpm package-widgets
 `);
 }
@@ -25,7 +28,11 @@ function parseArgs(argv) {
     usage();
     process.exit(0);
   }
-  return { all: argv.includes("--all"), name: argv.find((arg) => !arg.startsWith("--")) || "" };
+  return {
+    all: argv.includes("--all"),
+    dev: argv.includes("--dev"),
+    name: argv.find((arg) => !arg.startsWith("--")) || "",
+  };
 }
 
 async function readJSON(file) {
@@ -319,8 +326,72 @@ function todayISODate() {
   return local.toISOString().slice(0, 10);
 }
 
+function requireWidgetVersion(manifest) {
+  const version = typeof manifest.version === "string" ? manifest.version.trim() : "";
+  if (!version) throw new Error(`widget ${manifest.name || manifest.id || "unknown"} is missing manifest.version`);
+  return version;
+}
+
+function requireWidgetID(manifest) {
+  const id = typeof manifest.id === "string" ? manifest.id.trim() : "";
+  if (!id) throw new Error(`widget ${manifest.name || "unknown"} is missing manifest.id`);
+  return id;
+}
+
+function normalizedWidgetSize(manifest) {
+  const size = typeof manifest.size === "string" ? manifest.size.trim() : "";
+  if (!size) return "lg";
+  if (!WIDGET_SIZE_VALUES.has(size)) {
+    throw new Error(`widget ${manifest.name || manifest.id || "unknown"} manifest.size must be sm, md, or lg`);
+  }
+  return size;
+}
+
+function buildRootManifest(manifest, packageRef, packageHash) {
+  const widgetVersion = requireWidgetVersion(manifest);
+  const widgetID = requireWidgetID(manifest);
+  return {
+    kind: WIDGET_MANIFEST_KIND,
+    schema_version: WIDGET_SCHEMA_VERSION,
+    id: widgetID,
+    name: manifest.name,
+    title: manifest.title,
+    version: widgetVersion,
+    description: manifest.description || {},
+    icon: manifest.icon ? `./${String(manifest.icon).replace(/^\.\//, "")}` : undefined,
+    screenshots: manifest.screenshots || [],
+    tags: manifest.tags || [],
+    size: normalizedWidgetSize(manifest),
+    orientation: manifest.orientation || "auto",
+    author: manifest.author || { name: "Pudding" },
+    package: packageRef,
+    package_sha256: packageHash,
+    requires: normalizedRequires(manifest),
+  };
+}
+
+function buildReleaseManifest(manifest, packageFilename, packageHash) {
+  const widgetVersion = requireWidgetVersion(manifest);
+  const widgetID = requireWidgetID(manifest);
+  return {
+    kind: WIDGET_MANIFEST_KIND,
+    schema_version: WIDGET_SCHEMA_VERSION,
+    id: widgetID,
+    name: manifest.name,
+    title: manifest.title,
+    version: widgetVersion,
+    icon: manifest.icon ? `./${String(manifest.icon).replace(/^\.\//, "")}` : undefined,
+    size: normalizedWidgetSize(manifest),
+    orientation: manifest.orientation || "auto",
+    package: `./${packageFilename}`,
+    package_sha256: packageHash,
+    requires: normalizedRequires(manifest),
+  };
+}
+
 async function updateRegistry(name, manifest, packageHash) {
-  const widgetVersion = manifest.widget_version || "0.0.0";
+  const widgetVersion = requireWidgetVersion(manifest);
+  const widgetID = requireWidgetID(manifest);
   const releaseManifest = `./${name}/releases/${widgetVersion}/manifest.json`;
   const releasePackage = `./${name}/releases/${widgetVersion}/${name}.pudding-widget.json`;
   const requires = normalizedRequires(manifest);
@@ -329,42 +400,43 @@ async function updateRegistry(name, manifest, packageHash) {
   try {
     registry = await readJSON(registryPath);
   } catch {
-    registry = { version: 1, kind: REGISTRY_KIND, name: "Pudding Widgets", items: [] };
+    registry = { schema_version: 1, kind: REGISTRY_KIND, name: "Pudding Widgets", items: [] };
   }
+  registry.kind = REGISTRY_KIND;
+  registry.schema_version = WIDGET_SCHEMA_VERSION;
+  delete registry.version;
   const item = {
-    id: manifest.id,
-    kind: "widget",
+    id: widgetID,
     name: manifest.name || name,
     title: manifest.title,
-    widget_version: widgetVersion,
+    version: widgetVersion,
     description: manifest.description || {},
     icon: releaseWidgetPath(name, widgetVersion, manifest.icon),
     manifest: releaseManifest,
     package: releasePackage,
     package_sha256: packageHash,
     requires,
-    schema_version: manifest.schema_version,
     screenshots: manifest.screenshots || [],
     tags: manifest.tags || [],
     orientation: manifest.orientation || "auto",
-    source: `./${name}/releases/${widgetVersion}/source/index.html`,
   };
   const items = Array.isArray(registry.items) ? registry.items : [];
-  const index = items.findIndex((existing) => existing.id === manifest.id || existing.name === name);
+  const index = items.findIndex((existing) => existing.id === widgetID || existing.name === name);
   const previous = index >= 0 && items[index] && typeof items[index] === "object" ? items[index] : {};
-  const releases = Array.isArray(previous.releases) ? previous.releases : [];
+  const releases = (Array.isArray(previous.releases) ? previous.releases : [])
+    .map((entry) => normalizeRegistryRelease(entry))
+    .filter((entry) => entry && releaseFileExists(entry.manifest));
   const release = {
-    widget_version: widgetVersion,
+    version: widgetVersion,
     manifest: releaseManifest,
     package: releasePackage,
     package_sha256: packageHash,
     requires,
-    schema_version: manifest.schema_version,
-    released_at: releases.find((entry) => entry && entry.widget_version === widgetVersion)?.released_at || todayISODate(),
+    released_at: releases.find((entry) => entry && entry.version === widgetVersion)?.released_at || todayISODate(),
   };
   const nextReleases = [
     release,
-    ...releases.filter((entry) => entry && entry.widget_version !== widgetVersion),
+    ...releases.filter((entry) => entry && entry.version !== widgetVersion),
   ];
   item.releases = nextReleases;
   if (index >= 0) items[index] = item;
@@ -373,13 +445,37 @@ async function updateRegistry(name, manifest, packageHash) {
   await writeJSON(registryPath, registry);
 }
 
-async function packageWidget(name) {
+function normalizeRegistryRelease(entry) {
+  if (!entry || typeof entry !== "object") return null;
+  const version = typeof entry.version === "string" ? entry.version.trim() : "";
+  if (!version) return null;
+  return {
+    version,
+    manifest: entry.manifest,
+    package: entry.package,
+    package_sha256: entry.package_sha256,
+    requires: entry.requires,
+    released_at: entry.released_at,
+  };
+}
+
+function releaseFileExists(rel) {
+  if (typeof rel !== "string" || !rel.trim()) return false;
+  const clean = rel.replace(/^\.\//, "");
+  return fsSync.existsSync(path.join(ROOT, "widgets", clean));
+}
+
+async function packageWidget(name, options = {}) {
   const dir = path.join(ROOT, "widgets", name);
   const manifestPath = path.join(dir, "manifest.json");
   const manifest = await readJSON(manifestPath);
-  const source = manifest.source || "./source/index.html";
+  const source = "./source/index.html";
+  manifest.version = requireWidgetVersion(manifest);
+  manifest.id = requireWidgetID(manifest);
+  manifest.kind = WIDGET_MANIFEST_KIND;
   manifest.schema_version = WIDGET_SCHEMA_VERSION;
   manifest.requires = normalizedRequires(manifest);
+  manifest.size = normalizedWidgetSize(manifest);
   const entryPath = path.posix.join("widgets", name, source.replace(/^\.\//, ""));
   const html = await buildRuntimeHTML(entryPath);
   const localizedTitle = typeof manifest.title === "object" && manifest.title ? manifest.title : undefined;
@@ -389,42 +485,96 @@ async function packageWidget(name) {
     requires: manifest.requires,
     widget: {
       id: manifest.id,
-      kind: "widget",
       title: localizedTitle ? (localizedTitle["zh-CN"] || localizedTitle.en || manifest.name || name) : (manifest.title || manifest.name || name),
-      version: manifest.widget_version || "0.0.0",
-      size: manifest.size || "l",
+      version: manifest.version,
+      size: manifest.size,
       orientation: manifest.orientation || "auto",
       html,
-      initial_state: manifest.initial_state || {},
+      initial_state: {},
     },
   };
-  if (localizedTitle) widgetPackage.widget.localized_title = localizedTitle;
   if (typeof manifest.icon === "string" && manifest.icon.trim()) {
     widgetPackage.widget.icon = manifest.icon.trim();
   } else if (manifest.icon && typeof manifest.icon === "object" && !Array.isArray(manifest.icon)) {
     widgetPackage.widget.icon = manifest.icon;
   }
   const packageFilename = `${name}.pudding-widget.json`;
-  const widgetVersion = manifest.widget_version || "0.0.0";
+  if (localizedTitle) widgetPackage.widget.title = localizedTitle;
+  const widgetVersion = manifest.version || "0.0.0";
+  if (options.dev) {
+    const devDir = path.join(dir, "dev");
+    const devPackageFilename = `${name}.dev.pudding-widget.json`;
+    const packagePath = path.join(devDir, devPackageFilename);
+    const manifestPath = path.join(devDir, "manifest.json");
+    const devID = `${manifest.id}-dev`;
+    const devName = `${name}-dev`;
+    const devVersion = `${widgetVersion}-dev`;
+    const baseTitle = localizedTitle
+      ? (localizedTitle["zh-CN"] || localizedTitle.en || Object.values(localizedTitle).find((value) => typeof value === "string" && value.trim()) || manifest.name || name)
+      : (typeof widgetPackage.widget.title === "string" ? widgetPackage.widget.title : manifest.name || name);
+    const devTitle = `${baseTitle} Dev`;
+    const devLocalizedTitle = localizedTitle
+      ? Object.fromEntries(Object.entries(localizedTitle).map(([locale, title]) => [locale, `${title} Dev`]))
+      : undefined;
+    widgetPackage.widget.id = devID;
+    widgetPackage.widget.title = devTitle;
+    widgetPackage.widget.version = devVersion;
+    if (devLocalizedTitle) widgetPackage.widget.title = devLocalizedTitle;
+    const packageText = JSON.stringify(widgetPackage, null, 2) + "\n";
+    const packageHash = sha256Text(packageText);
+    const devManifest = {
+      kind: WIDGET_MANIFEST_KIND,
+      schema_version: WIDGET_SCHEMA_VERSION,
+      id: devID,
+      name: devName,
+      title: devLocalizedTitle || devTitle,
+      version: devVersion,
+      icon: manifest.icon ? `./${String(manifest.icon).replace(/^\.\//, "")}` : undefined,
+      size: manifest.size,
+      orientation: manifest.orientation || "auto",
+      package: `./${devPackageFilename}`,
+      package_sha256: packageHash,
+      requires: manifest.requires,
+    };
+    await fs.mkdir(devDir, { recursive: true });
+    await fs.writeFile(packagePath, packageText, "utf8");
+    await writeJSON(manifestPath, devManifest);
+    console.log(`packaged ${name} dev: ${packageHash}`);
+    return;
+  }
   const releaseDir = path.join(dir, "releases", widgetVersion);
-  await fs.mkdir(releaseDir, { recursive: true });
-  await copyDirIfExists(path.join(dir, "assets"), path.join(releaseDir, "assets"));
-  await copyDirIfExists(path.join(dir, "screenshots"), path.join(releaseDir, "screenshots"));
-  await copyDirIfExists(path.join(dir, "source"), path.join(releaseDir, "source"));
   const packagePath = path.join(releaseDir, packageFilename);
   const packageText = JSON.stringify(widgetPackage, null, 2) + "\n";
-  await fs.writeFile(packagePath, packageText, "utf8");
   const packageHash = sha256Text(packageText);
-  delete manifest.version;
-  manifest.package = `./releases/${widgetVersion}/${packageFilename}`;
-  manifest.package_sha256 = packageHash;
-  delete manifest.card;
-  delete manifest.card_sha256;
-  manifest.source = source;
-  await writeJSON(manifestPath, manifest);
-  const releaseManifest = { ...manifest, package: `./${packageFilename}` };
+  const releaseExists = fsSync.existsSync(releaseDir);
+  const allowRepack = process.env.PUDDING_WIDGET_REPACK === "1";
+  if (releaseExists) {
+    if (!fsSync.existsSync(packagePath)) {
+      throw new Error(`release ${name}@${widgetVersion} already exists without ${packageFilename}`);
+    }
+    const existingPackageText = await fs.readFile(packagePath, "utf8");
+    const existingPackageHash = sha256Text(existingPackageText);
+    if (existingPackageHash !== packageHash && !allowRepack) {
+      throw new Error(`release ${name}@${widgetVersion} already exists with a different package hash; bump version before publishing`);
+    }
+    if (existingPackageHash !== packageHash && allowRepack) {
+      await copyDirIfExists(path.join(dir, "assets"), path.join(releaseDir, "assets"));
+      await copyDirIfExists(path.join(dir, "screenshots"), path.join(releaseDir, "screenshots"));
+      await copyDirIfExists(path.join(dir, "source"), path.join(releaseDir, "source"));
+      await fs.writeFile(packagePath, packageText, "utf8");
+    }
+  } else {
+    await fs.mkdir(releaseDir, { recursive: true });
+    await copyDirIfExists(path.join(dir, "assets"), path.join(releaseDir, "assets"));
+    await copyDirIfExists(path.join(dir, "screenshots"), path.join(releaseDir, "screenshots"));
+    await copyDirIfExists(path.join(dir, "source"), path.join(releaseDir, "source"));
+    await fs.writeFile(packagePath, packageText, "utf8");
+  }
+  const rootManifest = buildRootManifest(manifest, `./releases/${widgetVersion}/${packageFilename}`, packageHash);
+  await writeJSON(manifestPath, rootManifest);
+  const releaseManifest = buildReleaseManifest(rootManifest, packageFilename, packageHash);
   await writeJSON(path.join(releaseDir, "manifest.json"), releaseManifest);
-  await updateRegistry(name, manifest, packageHash);
+  await updateRegistry(name, rootManifest, packageHash);
   console.log(`packaged ${name}: ${packageHash}`);
 }
 
@@ -434,9 +584,13 @@ async function widgetNamesFromRegistry() {
 }
 
 const args = parseArgs(process.argv.slice(2));
+if (args.all && args.dev) {
+  console.error("--dev can only package one widget at a time");
+  process.exit(1);
+}
 const names = args.all ? await widgetNamesFromRegistry() : [args.name];
 if (!names.length || !names[0]) {
   usage();
   process.exit(1);
 }
-for (const name of names) await packageWidget(name);
+for (const name of names) await packageWidget(name, { dev: args.dev });

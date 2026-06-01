@@ -1,5 +1,6 @@
 {
-  "kind": "pudding.widget",
+  "kind": "pudding.widget.manifest",
+  "schema_version": 1,
   "id": "teatak/pudding-hub/widgets/gomoku",
   "name": "gomoku",
   "title": {
@@ -7,42 +8,11 @@
     "zh-TW": "五子棋",
     "en": "Gomoku"
   },
-  "widget_version": "1.0.5",
-  "description": {
-    "zh-CN": "支持用户和多个 AI 会话对弈的五子棋小组件。",
-    "zh-TW": "支援使用者和多個 AI 會話對弈的五子棋小組件。",
-    "en": "A Gomoku widget for human and multi-session AI matches."
-  },
+  "version": "1.0.5",
   "icon": "./assets/icon.svg",
-  "screenshots": [],
-  "tags": [
-    "game",
-    "board",
-    "multi-session"
-  ],
   "orientation": "landscape",
-  "author": {
-    "name": "Pudding"
-  },
-  "source": "./source/index.html",
-  "initial_state": {
-    "status": "idle",
-    "locale": "zh-CN",
-    "board": [],
-    "turn": null,
-    "black_player": null,
-    "white_player": null,
-    "black_ready": false,
-    "white_ready": false,
-    "history": [],
-    "battle_log": [],
-    "last_move": null,
-    "winning_line": null,
-    "score": {}
-  },
-  "schema_version": 1,
   "package": "./gomoku.pudding-widget.json",
-  "package_sha256": "dfc8e69a30b328be10c9a22a82efccae7c377a4fb99abb49867061adb01e0cc0",
+  "package_sha256": "d0a9df3c13c77ba8d54f76a8850013efd0c072d78df1e6434a5905fa43488495",
   "requires": {
     "widget_api": "^1.0.0"
   }

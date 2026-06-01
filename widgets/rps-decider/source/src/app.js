@@ -116,6 +116,18 @@
     };
   }
 
+  function normalizeState(raw) {
+    const base = emptyState(currentLocale);
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return base;
+    const state = Object.assign(base, clone(raw));
+    state.status = typeof state.status === "string" && state.status ? state.status : "init";
+    state.locale = normalizeLocale(state.locale || currentLocale);
+    state.topic = typeof state.topic === "string" ? state.topic : null;
+    state.players = Array.isArray(state.players) ? state.players : [];
+    state.result_summary = state.result_summary && typeof state.result_summary === "object" ? state.result_summary : null;
+    return state;
+  }
+
   function nextOpenSlot(players) {
     const occupied = new Set((players || []).map((player) => player.slot));
     return slotOrder.find((slot) => !occupied.has(slot)) || "";
@@ -447,7 +459,7 @@
   }
 
   function render(state) {
-    if (!state) return;
+    state = normalizeState(state);
     latestState = state;
 
     const topic = state.topic || "";
@@ -514,7 +526,7 @@
     const gesture = normalizeChoice(action.gesture || action.choice);
     if (!gesture) return { ok: false, error: "gesture must be rock, paper, or scissors" };
 
-    const state = clone(window.pudding.getState());
+    const state = normalizeState(window.pudding.getState());
     if (state.status !== "waiting") return { ok: true, state };
     const actor = context && context.actor ? context.actor : { role: "human" };
     const id = participantID(actor);
@@ -538,7 +550,7 @@
   }
 
   async function revealResult() {
-    const state = clone(window.pudding.getState());
+    const state = normalizeState(window.pudding.getState());
     if (state.status !== "waiting" || !bothPlayersReady(state.players)) {
       return { ok: true, state };
     }
@@ -569,7 +581,7 @@
   }
 
   function reset(action, context) {
-    const state = clone(window.pudding.getState());
+    const state = normalizeState(window.pudding.getState());
     if (action.reset_topic) {
       return { ok: true, state: emptyState(currentLocale) };
     }
@@ -627,6 +639,7 @@
   applyPuddingLocale(window.pudding.locale);
   window.pudding.onLocale(applyPuddingLocale);
   window.pudding.onState(render);
+  render(window.pudding.getState());
   loadLeaderboardData();
 
   window.pudding.onAction(function(action, context) {
