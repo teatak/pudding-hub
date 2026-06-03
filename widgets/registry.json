@@ -19,7 +19,7 @@
       "icon": "./gomoku/releases/1.0.6/assets/icon.svg",
       "manifest": "./gomoku/releases/1.0.6/manifest.json",
       "package": "./gomoku/releases/1.0.6/gomoku.pudding-widget.json",
-      "package_sha256": "16e5ce1699e3e5bba4492bafe6df6e48e4f50eb7183b848defe38b3aa04ceb75",
+      "package_sha256": "ba81463d16ff159116ab2e6eaf70e20026ca3d08999994ef014a4fdcab7466f0",
       "requires": {
         "widget_api": "^1.0.0"
       },
@@ -35,21 +35,11 @@
           "version": "1.0.6",
           "manifest": "./gomoku/releases/1.0.6/manifest.json",
           "package": "./gomoku/releases/1.0.6/gomoku.pudding-widget.json",
-          "package_sha256": "16e5ce1699e3e5bba4492bafe6df6e48e4f50eb7183b848defe38b3aa04ceb75",
+          "package_sha256": "ba81463d16ff159116ab2e6eaf70e20026ca3d08999994ef014a4fdcab7466f0",
           "requires": {
             "widget_api": "^1.0.0"
           },
           "released_at": "2026-05-30"
-        },
-        {
-          "version": "1.0.5",
-          "manifest": "./gomoku/releases/1.0.5/manifest.json",
-          "package": "./gomoku/releases/1.0.5/gomoku.pudding-widget.json",
-          "package_sha256": "d0a9df3c13c77ba8d54f76a8850013efd0c072d78df1e6434a5905fa43488495",
-          "requires": {
-            "widget_api": "^1.0.0"
-          },
-          "released_at": "2026-05-29"
         }
       ]
     },
@@ -70,7 +60,7 @@
       "icon": "./rps-decider/releases/1.0.6/assets/icon.svg",
       "manifest": "./rps-decider/releases/1.0.6/manifest.json",
       "package": "./rps-decider/releases/1.0.6/rps-decider.pudding-widget.json",
-      "package_sha256": "2fd7ff5d98acf0ee5e84b6f982fde764d1ce3a6eabf74e89a9e97b427f9ea3ff",
+      "package_sha256": "baf597f0e69d318ebf96fc2a6b7ca9171b175a469b34130ad27926eb915bf571",
       "requires": {
         "widget_api": "^1.0.0"
       },
@@ -86,21 +76,11 @@
           "version": "1.0.6",
           "manifest": "./rps-decider/releases/1.0.6/manifest.json",
           "package": "./rps-decider/releases/1.0.6/rps-decider.pudding-widget.json",
-          "package_sha256": "2fd7ff5d98acf0ee5e84b6f982fde764d1ce3a6eabf74e89a9e97b427f9ea3ff",
+          "package_sha256": "baf597f0e69d318ebf96fc2a6b7ca9171b175a469b34130ad27926eb915bf571",
           "requires": {
             "widget_api": "^1.0.0"
           },
           "released_at": "2026-05-30"
-        },
-        {
-          "version": "1.0.5",
-          "manifest": "./rps-decider/releases/1.0.5/manifest.json",
-          "package": "./rps-decider/releases/1.0.5/rps-decider.pudding-widget.json",
-          "package_sha256": "1451c33aecc84f89c15e365f8a2d0a71b5fcc968abed90783add83bf40ccd537",
-          "requires": {
-            "widget_api": "^1.0.0"
-          },
-          "released_at": "2026-05-29"
         }
       ]
     }

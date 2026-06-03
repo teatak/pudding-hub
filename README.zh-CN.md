@@ -169,6 +169,8 @@ pnpm package-widgets
 
 `size` 可选 `sm`、`md`、`lg`；不填时默认 `lg`。Pudding 当前将 `lg` 映射为横向/自动窗口至少 800x600，纵向窗口 600x800。
 
+manifest 里的 `icon` 只用于 hub 展示，可以指向本地资源，例如 `./assets/icon.svg`。安装包里的 `widget.icon` 也叫 `icon`，但由约定文件 `assets/icon.svg` 内联生成，格式为 `data:image/svg+xml;base64,...`，确保生成的 `.pudding-widget.json` 自包含；不能使用 `icon_url`、相对路径或远程 URL。
+
 打包脚本固定从约定路径 `source/index.html` 读取源码。小组件默认状态属于源码逻辑；生成的 package 使用空 `initial_state` 对象。
 
 Release 快照内也会包含精简的 `releases/<version>/manifest.json`，用于版本审计。

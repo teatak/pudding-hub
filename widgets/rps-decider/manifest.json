@@ -27,7 +27,7 @@
     "name": "Pudding"
   },
   "package": "./releases/1.0.6/rps-decider.pudding-widget.json",
-  "package_sha256": "2fd7ff5d98acf0ee5e84b6f982fde764d1ce3a6eabf74e89a9e97b427f9ea3ff",
+  "package_sha256": "baf597f0e69d318ebf96fc2a6b7ca9171b175a469b34130ad27926eb915bf571",
   "requires": {
     "widget_api": "^1.0.0"
   }

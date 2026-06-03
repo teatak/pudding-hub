@@ -290,6 +290,24 @@ function sha256Text(text) {
   return crypto.createHash("sha256").update(text).digest("hex");
 }
 
+function imageMimeFromPath(file) {
+  const ext = path.extname(file).toLowerCase();
+  if (ext === ".svg") return "image/svg+xml";
+  if (ext === ".png") return "image/png";
+  if (ext === ".webp") return "image/webp";
+  if (ext === ".jpg" || ext === ".jpeg") return "image/jpeg";
+  throw new Error(`unsupported widget icon file type: ${file}`);
+}
+
+async function packageWidgetIcon(name) {
+  const assetPath = path.posix.join("widgets", name, "assets", "icon.svg");
+  const abs = path.resolve(ROOT, assetPath);
+  if (!fsSync.existsSync(abs)) return undefined;
+  const bytes = await fs.readFile(abs);
+  if (bytes.byteLength > 512 * 1024) throw new Error(`widget icon is too large: ${assetPath}`);
+  return `data:${imageMimeFromPath(assetPath)};base64,${bytes.toString("base64")}`;
+}
+
 function registryWidgetPath(name, value) {
   if (typeof value !== "string") return value;
   const rel = value.trim();
@@ -493,11 +511,8 @@ async function packageWidget(name, options = {}) {
       initial_state: {},
     },
   };
-  if (typeof manifest.icon === "string" && manifest.icon.trim()) {
-    widgetPackage.widget.icon = manifest.icon.trim();
-  } else if (manifest.icon && typeof manifest.icon === "object" && !Array.isArray(manifest.icon)) {
-    widgetPackage.widget.icon = manifest.icon;
-  }
+  const packageIcon = await packageWidgetIcon(name);
+  if (packageIcon) widgetPackage.widget.icon = packageIcon;
   const packageFilename = `${name}.pudding-widget.json`;
   if (localizedTitle) widgetPackage.widget.title = localizedTitle;
   const widgetVersion = manifest.version || "0.0.0";
