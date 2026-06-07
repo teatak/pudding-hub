@@ -14,6 +14,25 @@ https://raw.githubusercontent.com/teatak/pudding-hub/main/widgets/registry.json
 
 Use this URL in Pudding to discover and install official widgets.
 
+## Registry Metadata
+
+`widgets/registry.json` includes source-level display metadata:
+
+```json
+{
+  "kind": "pudding.widget.registry",
+  "name": "pudding-widgets",
+  "title": {
+    "zh-CN": "Pudding 小组件",
+    "zh-TW": "Pudding 小組件",
+    "en": "Pudding Widgets"
+  },
+  "items": []
+}
+```
+
+`name` is the stable source identifier. `title` is the localized display name. Pudding displays `title`, then falls back to `name`, then the registry URL.
+
 ## Repository Layout
 
 ```text

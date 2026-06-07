@@ -14,6 +14,25 @@ https://raw.githubusercontent.com/teatak/pudding-hub/main/widgets/registry.json
 
 在 Pudding 中添加上面的地址，即可发现并安装官方小组件。
 
+## 注册表元信息
+
+`widgets/registry.json` 包含源级展示信息：
+
+```json
+{
+  "kind": "pudding.widget.registry",
+  "name": "pudding-widgets",
+  "title": {
+    "zh-CN": "Pudding 小组件",
+    "zh-TW": "Pudding 小組件",
+    "en": "Pudding Widgets"
+  },
+  "items": []
+}
+```
+
+`name` 是稳定的源标识。`title` 是多语言展示名。Pudding 展示时优先使用 `title`，没有时降级到 `name`，再没有时显示 registry URL。
+
 ## 仓库结构
 
 ```text

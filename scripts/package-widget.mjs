@@ -12,6 +12,12 @@ const WIDGET_API_RANGE = "^1.0.0";
 const WIDGET_SCHEMA_VERSION = 1;
 const PACKAGE_SCHEMA_VERSION = 1;
 const REGISTRY_KIND = "pudding.widget.registry";
+const REGISTRY_NAME = "pudding-widgets";
+const REGISTRY_TITLE = {
+  "zh-CN": "Pudding 小组件",
+  "zh-TW": "Pudding 小組件",
+  en: "Pudding Widgets",
+};
 const WIDGET_MANIFEST_KIND = "pudding.widget.manifest";
 const WIDGET_SIZE_VALUES = new Set(["sm", "md", "lg"]);
 
@@ -418,10 +424,12 @@ async function updateRegistry(name, manifest, packageHash) {
   try {
     registry = await readJSON(registryPath);
   } catch {
-    registry = { schema_version: 1, kind: REGISTRY_KIND, name: "Pudding Widgets", items: [] };
+    registry = { schema_version: 1, kind: REGISTRY_KIND, name: REGISTRY_NAME, title: REGISTRY_TITLE, items: [] };
   }
   registry.kind = REGISTRY_KIND;
   registry.schema_version = WIDGET_SCHEMA_VERSION;
+  if (typeof registry.name !== "string" || !registry.name.trim()) registry.name = REGISTRY_NAME;
+  if (!registry.title || typeof registry.title !== "object" || Array.isArray(registry.title)) registry.title = REGISTRY_TITLE;
   delete registry.version;
   const item = {
     id: widgetID,

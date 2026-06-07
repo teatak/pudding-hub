@@ -1,6 +1,11 @@
 {
   "kind": "pudding.widget.registry",
-  "name": "Pudding Widgets",
+  "name": "pudding-widgets",
+  "title": {
+    "zh-CN": "Pudding 小组件",
+    "zh-TW": "Pudding 小組件",
+    "en": "Pudding Widgets"
+  },
   "items": [
     {
       "id": "teatak/pudding-hub/widgets/gomoku",
