@@ -1,0 +1,20 @@
+{
+  "kind": "pudding.widget.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/widgets/rps-decider-dev",
+  "name": "rps-decider-dev",
+  "title": {
+    "zh-CN": "分歧终端机 Dev",
+    "zh-TW": "分歧終端機 Dev",
+    "en": "RPS Decider Dev"
+  },
+  "version": "1.0.6-dev",
+  "icon": "./assets/icon.svg",
+  "size": "lg",
+  "orientation": "portrait",
+  "package": "./rps-decider.dev.pudding-widget.json",
+  "package_sha256": "f458fab190f902761a26cdcda8553ae72ad0ee88760734da3cc748a15b285cd5",
+  "requires": {
+    "widget_api": "^1.0.0"
+  }
+}

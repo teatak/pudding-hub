@@ -11,8 +11,10 @@
   let nextRoundLockedUntil = 0;
   let nextRoundRevealTimer = null;
   let nextRoundRevealKey = "";
+  let countdownTimer = null;
 
-  const initView = document.getElementById("init-view");
+  const conflictModal = document.getElementById("conflict-modal");
+  const conflictClose = document.getElementById("conflict-close");
   const matchView = document.getElementById("match-view");
   const conflictInput = document.getElementById("conflict-input");
   const btnStartArbitrate = document.getElementById("btn-start-arbitrate");
@@ -41,7 +43,9 @@
   const drawHead = document.getElementById("draw-head");
   const rateHead = document.getElementById("rate-head");
   const leaderboardDataKey = "leaderboard";
+  const topicDataKey = "custom_topic";
   let leaderboardStats = {};
+  let savedCustomTopic = "";
 
   function normalizeLocale(value) {
     return value === "zh-CN" || value === "zh-TW" || value === "en" ? value : "zh-CN";
@@ -108,9 +112,9 @@
 
   function emptyState(locale) {
     return {
-      status: "init",
+      status: "waiting",
       locale,
-      topic: null,
+      topic: savedCustomTopic || t("defaultTopic"),
       players: [],
       result_summary: null,
     };
@@ -120,9 +124,9 @@
     const base = emptyState(currentLocale);
     if (!raw || typeof raw !== "object" || Array.isArray(raw)) return base;
     const state = Object.assign(base, clone(raw));
-    state.status = typeof state.status === "string" && state.status ? state.status : "init";
+    state.status = typeof state.status === "string" && state.status ? state.status : "waiting";
     state.locale = normalizeLocale(state.locale || currentLocale);
-    state.topic = typeof state.topic === "string" ? state.topic : null;
+    state.topic = typeof state.topic === "string" && state.topic ? state.topic : (savedCustomTopic || t("defaultTopic"));
     state.players = Array.isArray(state.players) ? state.players : [];
     state.result_summary = state.result_summary && typeof state.result_summary === "object" ? state.result_summary : null;
     return state;
@@ -235,6 +239,20 @@
     }
   }
 
+  async function loadTopicData() {
+    try {
+      if (!window.pudding || typeof window.pudding.getData !== "function") return;
+      const saved = await window.pudding.getData(topicDataKey);
+      if (typeof saved === "string" && saved.trim()) {
+        savedCustomTopic = saved.trim();
+        if (latestState && latestState.topic === t("defaultTopic")) {
+          latestState.topic = savedCustomTopic;
+          render(latestState);
+        }
+      }
+    } catch (err) {}
+  }
+
   async function saveLeaderboard() {
     try {
       if (!window.pudding || typeof window.pudding.setData !== "function") return;
@@ -242,6 +260,14 @@
     } catch (err) {
       // Ranking persistence should not affect the match.
     }
+  }
+
+  async function saveCustomTopic(topic) {
+    try {
+      savedCustomTopic = String(topic || "").trim();
+      if (!window.pudding || typeof window.pudding.setData !== "function") return;
+      await window.pudding.setData(topicDataKey, savedCustomTopic);
+    } catch (err) {}
   }
 
   function normalizeLeaderboard(value) {
@@ -345,10 +371,9 @@
   function localizeStatic() {
     btnStartArbitrate.textContent = t("start");
     conflictInput.placeholder = t("inputPlaceholder");
-    btnChangeConflict.title = t("reset_topic");
-    btnChangeConflict.setAttribute("aria-label", t("reset_topic"));
-    btnNextRound.title = t("nextRound");
-    btnNextRound.setAttribute("aria-label", t("nextRound"));
+    btnChangeConflict.title = t("editTopic");
+    btnChangeConflict.setAttribute("aria-label", t("editTopic"));
+    btnNextRound.textContent = t("invitePlayers");
     btnLeaderboard.title = t("leaderboard");
     btnLeaderboard.setAttribute("aria-label", t("leaderboard"));
     leaderboardTitle.textContent = t("leaderboardTitle");
@@ -402,15 +427,11 @@
     if (nextRoundRevealKey === key) return;
     if (nextRoundRevealTimer) clearTimeout(nextRoundRevealTimer);
     nextRoundRevealKey = key;
-    btnNextRound.style.display = "none";
-    btnNextRound.classList.remove("fade-in");
+    btnNextRound.disabled = true;
     nextRoundRevealTimer = setTimeout(() => {
       nextRoundRevealTimer = null;
       if (latestState && latestState.status === "resolved" && revealKeyForState(latestState) === key) {
-        btnNextRound.style.display = "flex";
-        btnNextRound.classList.remove("fade-in");
-        void btnNextRound.offsetWidth;
-        btnNextRound.classList.add("fade-in");
+        btnNextRound.disabled = false;
       }
     }, 760);
   }
@@ -423,22 +444,33 @@
     }, 450);
   }
 
+  function clearCountdown() {
+    if (countdownTimer) {
+      clearInterval(countdownTimer);
+      countdownTimer = null;
+    }
+    isCountingDown = false;
+    countdownOverlay.style.display = "none";
+    setGestureButtonsDisabled(false);
+  }
+
   function runCountdownAndReveal() {
     if (isCountingDown) return;
     isCountingDown = true;
     setGestureButtonsDisabled(true);
-    btnNextRound.style.display = "none";
     countdownOverlay.style.display = "flex";
     const values = ["3", "2", "1"];
     let index = 0;
     countdownText.textContent = values[index];
-    const timer = setInterval(() => {
+    if (countdownTimer) clearInterval(countdownTimer);
+    countdownTimer = setInterval(() => {
       index += 1;
       if (index < values.length) {
         countdownText.textContent = values[index];
         return;
       }
-      clearInterval(timer);
+      clearInterval(countdownTimer);
+      countdownTimer = null;
       countdownOverlay.style.display = "none";
       triggerLeverEffect(() => {
         isCountingDown = false;
@@ -463,22 +495,14 @@
     latestState = state;
 
     const topic = state.topic || "";
-    tickerText.textContent = state.status === "init" ? t("waitingTopic") : t("topicLabel", { topic });
+    tickerText.textContent = t("topicLabel", { topic });
     tickerText.title = tickerText.textContent;
-    btnChangeConflict.style.display = state.status === "init" ? "none" : "flex";
+    btnChangeConflict.style.display = "flex";
 
-    if (state.status === "init") {
-      clearNextRoundRevealDelay();
-      initView.style.display = "flex";
-      matchView.style.display = "none";
-      labelTop.textContent = t("waitingPlayer");
-      labelBottom.textContent = t("waitingPlayer");
-      btnNextRound.style.display = "flex";
-      return;
+    if (state.status !== "waiting" || !bothPlayersReady(state.players)) {
+      clearCountdown();
     }
 
-    initView.style.display = "none";
-    matchView.style.display = "flex";
     const topPlayer = playerForSlot(state, "top");
     const bottomPlayer = playerForSlot(state, "bottom");
     renderLabel(labelTop, topPlayer, "waitingPlayer");
@@ -504,7 +528,9 @@
     const humanPlayer = (state.players || []).find((player) => player.role === "human");
     const seatsFull = sortedPlayers(state.players).length >= 2;
     setGestureButtonsDisabled(Boolean(humanPlayer && humanPlayer.choice) || (seatsFull && !humanPlayer));
-    btnNextRound.style.display = "flex";
+    
+    btnNextRound.disabled = isCountingDown || (Date.now() < nextRoundLockedUntil);
+
     gestureButtons.style.display = "flex";
 
     if (state.status === "waiting" && bothPlayersReady(state.players)) {
@@ -519,7 +545,8 @@
     state.status = "waiting";
     state.topic = topic;
     state.players = [];
-    return { ok: true, state, send: requestForOpenRound(state, false) };
+    saveCustomTopic(topic);
+    return { ok: true, state };
   }
 
   function chooseGesture(action, context) {
@@ -583,6 +610,7 @@
   function reset(action, context) {
     const state = normalizeState(window.pudding.getState());
     if (action.reset_topic) {
+      saveCustomTopic("");
       return { ok: true, state: emptyState(currentLocale) };
     }
 
@@ -597,6 +625,7 @@
     const topic = conflictInput.value.trim();
     if (!topic) return;
     window.pudding.dispatch({ type: "start_topic", topic });
+    conflictModal.classList.remove("show");
   });
 
   gestureButtons.addEventListener("click", function(event) {
@@ -609,14 +638,28 @@
     const now = Date.now();
     if (now < nextRoundLockedUntil) return;
     nextRoundLockedUntil = now + 800;
+    btnNextRound.disabled = true;
+    setTimeout(() => {
+      if (!isCountingDown && latestState && latestState.status !== "resolved") {
+        btnNextRound.disabled = false;
+      }
+    }, 800);
     triggerLeverEffect(() => window.pudding.dispatch({ type: "reset", reset_topic: false }));
   });
 
   btnChangeConflict.addEventListener("click", function() {
-    triggerLeverEffect(() => {
-      conflictInput.value = "";
-      window.pudding.dispatch({ type: "reset", reset_topic: true });
-    });
+    conflictInput.value = latestState && latestState.topic ? latestState.topic : "";
+    conflictModal.classList.add("show");
+  });
+
+  conflictClose.addEventListener("click", function() {
+    conflictModal.classList.remove("show");
+  });
+
+  conflictModal.addEventListener("click", function(event) {
+    if (event.target === conflictModal) {
+      conflictModal.classList.remove("show");
+    }
   });
 
   btnLeaderboard.addEventListener("click", function() {
@@ -641,6 +684,7 @@
   window.pudding.onState(render);
   render(window.pudding.getState());
   loadLeaderboardData();
+  loadTopicData();
 
   window.pudding.onAction(function(action, context) {
     if (!action || typeof action !== "object") return { ok: false, error: "action must be an object" };

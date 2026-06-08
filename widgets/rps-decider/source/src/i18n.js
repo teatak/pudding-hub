@@ -1,6 +1,9 @@
 (function() {
   window.RPS_DECIDER_I18N = {
         'zh-CN': {
+          defaultTopic: '剪刀石头布对决',
+          editTopic: '修改分歧',
+          invitePlayers: '发起邀请',
           waitingTopic: '分歧事项：等待输入',
           topicLabel: '分歧事项：{topic}',
           reset_topic: '重设分歧',
@@ -14,7 +17,7 @@
           close: '关闭',
           unknownPlayer: '未知选手',
           emptyLeaderboard: '暂无对战数据',
-          start: '启动终端机',
+          start: '保存分歧',
           inputPlaceholder: '输入需要解决的分歧事项... (例如：谁去拿快递，谁今天去洗碗，或者今天谁最美)\n支持多行输入...',
           user: '用户',
           ai: 'AI',
@@ -31,6 +34,9 @@
           announceInstruction: '猜拳结果已揭晓。\n- 主题：“{topic}”。\n- 你是“{selfTitle}”，出了 {selfGesture}。\n- 对手是“{opponentTitle}”，出了 {opponentGesture}。\n- 胜者：{winner_title}。\n- 败者：{loser_title}。\n- 你的结果：{self_result}。\n请用你的参赛者视角在聊天中宣布本局细节和结论。不要调用 canvas_dispatch_widget。不要说自己是小白或布丁助手；本次对局里你的身份就是 self.title。'
         },
         'zh-TW': {
+          defaultTopic: '剪刀石頭布對決',
+          editTopic: '修改分歧',
+          invitePlayers: '發起邀請',
           waitingTopic: '分歧事項：等待輸入',
           topicLabel: '分歧事項：{topic}',
           reset_topic: '重設分歧',
@@ -44,7 +50,7 @@
           close: '關閉',
           unknownPlayer: '未知選手',
           emptyLeaderboard: '暫無對戰資料',
-          start: '啟動終端機',
+          start: '保存分歧',
           inputPlaceholder: '輸入需要解決的分歧事項... (例如：誰去拿快遞，誰今天去洗碗，或者今天誰最美)\n支援多行輸入...',
           user: '使用者',
           ai: 'AI',
@@ -61,6 +67,9 @@
           announceInstruction: '猜拳結果已揭曉。\n- 主題：「{topic}」。\n- 你是「{selfTitle}」，出了 {selfGesture}。\n- 對手是「{opponentTitle}」，出了 {opponentGesture}。\n- 勝者：{winner_title}。\n- 敗者：{loser_title}。\n- 你的結果：{self_result}。\n請用你的參賽者視角在聊天中宣布本局細節和結論。不要呼叫 canvas_dispatch_widget。不要說自己是小白或布丁助手；本次對局裡你的身份就是 self.title。'
         },
         en: {
+          defaultTopic: 'Rock-Paper-Scissors Match',
+          editTopic: 'Edit Topic',
+          invitePlayers: 'Invite Players',
           waitingTopic: 'Topic: waiting for input',
           topicLabel: 'Topic: {topic}',
           reset_topic: 'Reset topic',
@@ -74,7 +83,7 @@
           close: 'Close',
           unknownPlayer: 'Unknown player',
           emptyLeaderboard: 'No match data yet',
-          start: 'Start decider',
+          start: 'Save Topic',
           inputPlaceholder: 'Enter the topic to resolve... (for example: who gets the package, who washes dishes today, or who is the prettiest today)\nMultiline input is supported...',
           user: 'User',
           ai: 'AI',
