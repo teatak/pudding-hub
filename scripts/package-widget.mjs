@@ -4,6 +4,9 @@ import fsSync from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { build } from "vite";
+import preact from "@preact/preset-vite";
+import { viteSingleFile } from "vite-plugin-singlefile";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const PACKAGE_KIND = "pudding.widget.package";
@@ -49,247 +52,42 @@ async function writeJSON(file, value) {
   await fs.writeFile(file, JSON.stringify(value, null, 2) + "\n", "utf8");
 }
 
-function parseHTMLAttrs(tag) {
-  const attrs = {};
-  const attrRe = /([A-Za-z_:][-A-Za-z0-9_:.]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/g;
-  for (const match of tag.matchAll(attrRe)) {
-    attrs[(match[1] || "").toLowerCase()] = match[2] ?? match[3] ?? match[4] ?? "";
-  }
-  return attrs;
-}
-
-function stripHTMLAttr(tag, attrName) {
-  return tag.replace(new RegExp(`\\s${attrName}\\s*=\\s*(?:"[^"]*"|'[^']*'|[^\\s"'=<>` + "`" + `]+)`, "i"), "");
-}
-
-function scriptEscape(value) {
-  return value.replace(/<\/script/gi, "<\\/script");
-}
-
-function resolveWidgetAssetPath(entryPath, rawRef) {
-  const ref = rawRef.trim().replaceAll("\\", "/");
-  if (!ref || ref.startsWith("/") || ref.startsWith("//") || /^[a-z][a-z0-9+.-]*:/i.test(ref) || ref.includes("?") || ref.includes("#")) {
-    throw new Error(`external or absolute widget asset is not allowed: ${rawRef}`);
-  }
-  const entryParts = entryPath.split("/");
-  const baseParts = entryParts.slice(0, -1);
-  const rootParts = entryParts.slice(0, 3);
-  const out = [...baseParts];
-  for (const part of ref.split("/")) {
-    if (!part || part === ".") continue;
-    if (part === "..") throw new Error(`widget asset must stay inside ${rootParts.join("/")}/: ${rawRef}`);
-    out.push(part);
-  }
-  if (out.length <= rootParts.length || out[0] !== rootParts[0] || out[1] !== rootParts[1] || out[2] !== rootParts[2]) {
-    throw new Error(`widget asset must stay inside ${rootParts.join("/")}/: ${rawRef}`);
-  }
-  return out.join("/");
-}
-
-async function inlineWidgetAssets(entryPath, html) {
-  const readText = async (rel) => fs.readFile(path.resolve(ROOT, rel), "utf8");
-  const scriptRe = /<script\b[^>]*\bsrc\s*=\s*(["'])(.*?)\1[^>]*>\s*<\/script>/gi;
-  let output = "";
-  let lastIndex = 0;
-  for (const match of html.matchAll(scriptRe)) {
-    const tag = match[0];
-    const ref = match[2];
-    if (!ref) continue;
-    const assetPath = resolveWidgetAssetPath(entryPath, ref);
-    const js = await readText(assetPath);
-    output += html.slice(lastIndex, match.index);
-    output += `${stripHTMLAttr(tag.replace(/>\s*<\/script>$/i, ">"), "src")}${scriptEscape(js)}</script>`;
-    lastIndex = (match.index ?? 0) + tag.length;
-  }
-  output += html.slice(lastIndex);
-
-  html = output;
-  output = "";
-  lastIndex = 0;
-  const linkRe = /<link\b[^>]*>/gi;
-  for (const match of html.matchAll(linkRe)) {
-    const tag = match[0];
-    const attrs = parseHTMLAttrs(tag);
-    const rel = attrs.rel?.split(/\s+/).map((v) => v.toLowerCase()) ?? [];
-    if (!rel.includes("stylesheet") || !attrs.href) continue;
-    const assetPath = resolveWidgetAssetPath(entryPath, attrs.href);
-    const css = await readText(assetPath);
-    output += html.slice(lastIndex, match.index);
-    output += `<style data-inlined-from="${assetPath}">\n${css}\n</style>`;
-    lastIndex = (match.index ?? 0) + tag.length;
-  }
-  output += html.slice(lastIndex);
-  return output;
-}
-
-function minifyInlineCSS(css) {
-  return css
-    .replace(/\/\*[\s\S]*?\*\//g, "")
-    .replace(/\s+/g, " ")
-    .replace(/\s*([{}:;,>])\s*/g, "$1")
-    .replace(/;}/g, "}")
-    .trim();
-}
-
-function isJSBlock(openTag) {
-  const attrs = parseHTMLAttrs(openTag);
-  const type = (attrs.type ?? "").trim().toLowerCase();
-  return type === "" || type === "module" || type === "text/javascript" || type === "application/javascript";
-}
-
-function isIdentifierChar(ch) {
-  return /[A-Za-z0-9_$]/.test(ch);
-}
-
-function needsJSSpace(prev, next) {
-  if (!prev || !next) return false;
-  if (isIdentifierChar(prev) && isIdentifierChar(next)) return true;
-  if ((prev === "+" && next === "+") || (prev === "-" && next === "-")) return true;
-  if ((isIdentifierChar(prev) || prev === ")") && next === "/") return true;
-  return false;
-}
-
-function previousJSWord(out) {
-  const match = out.match(/[A-Za-z_$][A-Za-z0-9_$]*$/);
-  return match?.[0] ?? "";
-}
-
-function probablyRegexStart(out) {
-  const trimmed = out.trimEnd();
-  if (!trimmed) return true;
-  const prev = trimmed[trimmed.length - 1] ?? "";
-  if ("({[=,:;!&|?+-*~^<>".includes(prev)) return true;
-  return /^(return|throw|case|delete|typeof|void|new|yield|await|else|do|in|of)$/.test(previousJSWord(trimmed));
-}
-
-function copyQuotedJS(source, start, quote) {
-  let out = quote;
-  let i = start + 1;
-  for (; i < source.length; i += 1) {
-    const ch = source[i] ?? "";
-    out += ch;
-    if (ch === "\\") {
-      i += 1;
-      out += source[i] ?? "";
-      continue;
-    }
-    if (ch === quote) {
-      i += 1;
-      break;
-    }
-  }
-  return { text: out, next: i };
-}
-
-function copyRegexJS(source, start) {
-  let out = "/";
-  let inClass = false;
-  let i = start + 1;
-  for (; i < source.length; i += 1) {
-    const ch = source[i] ?? "";
-    out += ch;
-    if (ch === "\\") {
-      i += 1;
-      out += source[i] ?? "";
-      continue;
-    }
-    if (ch === "[") inClass = true;
-    else if (ch === "]") inClass = false;
-    else if (ch === "/" && !inClass) {
-      i += 1;
-      while (/[A-Za-z]/.test(source[i] ?? "")) {
-        out += source[i];
-        i += 1;
-      }
-      break;
-    }
-  }
-  return { text: out, next: i };
-}
-
-function minifyInlineJS(js) {
-  let out = "";
-  let pendingSpace = false;
-  let i = 0;
-  const append = (text) => {
-    const first = text[0] ?? "";
-    const prev = out.trimEnd().slice(-1);
-    if (pendingSpace && needsJSSpace(prev, first)) out += " ";
-    pendingSpace = false;
-    out += text;
-  };
-
-  while (i < js.length) {
-    const ch = js[i] ?? "";
-    const next = js[i + 1] ?? "";
-    if (/\s/.test(ch)) {
-      pendingSpace = true;
-      i += 1;
-      continue;
-    }
-    if (ch === "/" && next === "/") {
-      i += 2;
-      while (i < js.length && js[i] !== "\n" && js[i] !== "\r") i += 1;
-      pendingSpace = true;
-      continue;
-    }
-    if (ch === "/" && next === "*") {
-      i += 2;
-      while (i < js.length && !(js[i] === "*" && js[i + 1] === "/")) i += 1;
-      i += 2;
-      pendingSpace = true;
-      continue;
-    }
-    if (ch === "'" || ch === "\"" || ch === "`") {
-      const copied = copyQuotedJS(js, i, ch);
-      append(copied.text);
-      i = copied.next;
-      continue;
-    }
-    if (ch === "/" && probablyRegexStart(out)) {
-      const copied = copyRegexJS(js, i);
-      append(copied.text);
-      i = copied.next;
-      continue;
-    }
-    append(ch);
-    i += 1;
-  }
-  return out.trim();
-}
-
-function minifyWidgetHTML(html) {
-  const blocks = [];
-  const token = (index) => `%%%PUDDING_WIDGET_RAW_${index}%%%`;
-  const rawRe = /<(script|style|pre|textarea)\b[^>]*>[\s\S]*?<\/\1>/gi;
-  const protectedHTML = html.replace(rawRe, (block, tagName) => {
-    const index = blocks.length;
-    const lower = String(tagName).toLowerCase();
-    if (lower === "style") {
-      blocks.push(block.replace(/(<style\b[^>]*>)([\s\S]*?)(<\/style>)/i, (_, open, css, close) => open + minifyInlineCSS(css) + close));
-    } else if (lower === "script") {
-      blocks.push(block.replace(/(<script\b[^>]*>)([\s\S]*?)(<\/script>)/i, (_, open, js, close) => open + (isJSBlock(open) ? minifyInlineJS(js) : js.trim()) + close));
-    } else {
-      blocks.push(block.trim());
-    }
-    return token(index);
-  });
-  let minified = protectedHTML
-    .replace(/<!--(?!\[if)[\s\S]*?-->/g, "")
-    .replace(/\s+/g, " ")
-    .replace(/>\s+</g, "><")
-    .trim();
-  blocks.forEach((block, index) => {
-    minified = minified.replace(token(index), block);
-  });
-  return minified;
-}
-
 async function buildRuntimeHTML(entryPath) {
   const entryAbs = path.resolve(ROOT, entryPath);
   if (!entryAbs.startsWith(path.join(ROOT, "widgets") + path.sep)) throw new Error("widget source must be under widgets/");
-  const html = await fs.readFile(entryAbs, "utf8");
-  return minifyWidgetHTML(await inlineWidgetAssets(entryPath, html));
+
+  const entryParts = entryPath.split("/");
+  const widgetDir = path.resolve(ROOT, entryParts[0], entryParts[1]);
+  const sourceDir = path.resolve(widgetDir, "source");
+  const distDir = path.resolve(sourceDir, "dist");
+
+  await build({
+    root: sourceDir,
+    base: "./",
+    plugins: [
+      preact(),
+      viteSingleFile(),
+    ],
+    build: {
+      outDir: distDir,
+      assetsDir: "./",
+      emptyOutDir: true,
+      minify: true,
+      cssMinify: true,
+      rollupOptions: {
+        input: path.resolve(sourceDir, "index.html"),
+      },
+    },
+    configFile: false,
+    logLevel: "warn",
+  });
+
+  const distHtmlPath = path.resolve(distDir, "index.html");
+  const html = await fs.readFile(distHtmlPath, "utf8");
+
+  await fs.rm(distDir, { recursive: true, force: true });
+
+  return html;
 }
 
 function sha256Text(text) {

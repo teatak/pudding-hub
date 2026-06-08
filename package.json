@@ -3,5 +3,13 @@
   "scripts": {
     "package-widget": "node scripts/package-widget.mjs",
     "package-widgets": "node scripts/package-widget.mjs --all"
+  },
+  "dependencies": {
+    "preact": "^10.22.0"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.8.2",
+    "vite": "^5.2.11",
+    "vite-plugin-singlefile": "^2.0.1"
   }
 }
