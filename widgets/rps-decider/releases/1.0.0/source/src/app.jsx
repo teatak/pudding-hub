@@ -13,6 +13,8 @@ let latestState = null;
 let savedCustomTopic = "";
 let updateAppInstance = null;
 let leaderboardStatsGlobal = {};
+let realChoices = {};
+let waitingPlayers = [];
 
 function normalizeLocale(value) {
   return value === "zh-CN" || value === "zh-TW" || value === "en" ? value : "zh-CN";
@@ -35,7 +37,7 @@ function clone(value) {
 }
 
 function normalizeChoice(value) {
-  return gestures.includes(value) ? value : "";
+  return gestures.includes(value) || value === "hidden" ? value : "";
 }
 
 function choice_label(locale, choice) {
@@ -82,7 +84,6 @@ function emptyState(locale) {
     status: "waiting",
     locale,
     topic: savedCustomTopic || t(locale, "defaultTopic"),
-    players: [],
     result_summary: null,
   };
 }
@@ -161,11 +162,11 @@ function announceForPlayer(locale, player, state) {
     data: {
       locale,
       topic: state.topic,
-      self_result: player.result || "draw",
       self: {
         title: player.title,
         gesture: player.choice,
         gesture_label: choice_label(locale, player.choice),
+        result: player.result || "draw",
       },
       opponent: opponent ? {
         title: opponent.title,
@@ -174,7 +175,6 @@ function announceForPlayer(locale, player, state) {
         result: opponent.result || "draw",
       } : null,
       match_result: resultSummary,
-      next_action: "announce_only",
       instruction: t(locale, "announceInstruction", {
         topic: state.topic,
         selfTitle: player.title,
@@ -237,8 +237,10 @@ function startTopic(action, context) {
   const state = emptyState(currentLocale);
   state.status = "waiting";
   state.topic = topic;
-  state.players = [];
+  delete state.players;
   savedCustomTopic = topic;
+  realChoices = {}; // 重置私有暂存
+  waitingPlayers = []; // 重置等待玩家
   try {
     if (window.pudding && typeof window.pudding.setData === "function") {
       window.pudding.setData("custom_topic", topic);
@@ -253,41 +255,55 @@ function chooseGesture(action, context) {
 
   const state = normalizeState(window.pudding.getState(), currentLocale);
   if (state.status !== "waiting") return { ok: true, state };
+
   const actor = context && context.actor ? context.actor : { role: "human" };
   const id = participantID(actor);
-  let players = Array.isArray(state.players) ? state.players : [];
-  let player = participantByID(players, id);
+  let player = participantByID(waitingPlayers, id);
 
   if (!player) {
-    const slot = nextOpenSlot(players);
+    const slot = nextOpenSlot(waitingPlayers);
     if (!slot) return { ok: true, state };
     player = playerFromActor(currentLocale, actor, slot);
-    players = [...players, player];
+    waitingPlayers = [...waitingPlayers, player];
   }
 
-  state.players = players.map((item) =>
+  realChoices[player.id] = gesture;
+
+  waitingPlayers = waitingPlayers.map((item) =>
     item.id === player.id
-      ? { ...item, title: titleForActor(currentLocale, actor), choice: gesture, result: null }
+      ? { ...item, title: titleForActor(currentLocale, actor), choice: "hidden", result: null }
       : item
   );
+
+  delete state.players;
   state.result_summary = null;
   return { ok: true, state };
 }
 
 async function revealResult() {
   const state = normalizeState(window.pudding.getState(), currentLocale);
-  if (state.status !== "waiting" || !bothPlayersReady(state.players)) {
+  
+  if (state.status !== "waiting" || !bothPlayersReady(waitingPlayers)) {
     return { ok: true, state };
   }
 
-  const players = sortedPlayers(state.players);
+  const players = sortedPlayers(waitingPlayers);
   const top = players.find((player) => player.slot === "top");
   const bottom = players.find((player) => player.slot === "bottom");
-  const topVsBottom = resultForChoices(top.choice, bottom.choice);
+
+  const topRealChoice = realChoices[top.id];
+  const bottomRealChoice = realChoices[bottom.id];
+
+  if (!topRealChoice || !bottomRealChoice) {
+    return { ok: true, state };
+  }
+
+  const topVsBottom = resultForChoices(topRealChoice, bottomRealChoice);
   const bottomResult = topVsBottom === "draw" ? "draw" : (topVsBottom === "win" ? "lose" : "win");
   const nextPlayers = players.map((player) => {
-    if (player.id === top.id) return { ...player, result: topVsBottom };
-    if (player.id === bottom.id) return { ...player, result: bottomResult };
+    const realGesture = realChoices[player.id];
+    if (player.id === top.id) return { ...player, choice: realGesture, result: topVsBottom };
+    if (player.id === bottom.id) return { ...player, choice: realGesture, result: bottomResult };
     return player;
   });
   const winner = nextPlayers.find((player) => player.result === "win") || null;
@@ -306,6 +322,8 @@ async function revealResult() {
 }
 
 function reset(action, context) {
+  realChoices = {}; // 重置私有暂存
+  waitingPlayers = []; // 重置等待玩家
   const state = normalizeState(window.pudding.getState(), currentLocale);
   if (action.reset_topic) {
     savedCustomTopic = "";
@@ -319,7 +337,7 @@ function reset(action, context) {
 
   state.status = "waiting";
   state.locale = currentLocale;
-  state.players = [];
+  delete state.players;
   state.result_summary = null;
   return { ok: true, state, send: requestForOpenRound(currentLocale, state, true) };
 }
@@ -329,13 +347,23 @@ function App() {
   const [state, setState] = useState(() => emptyState(currentLocale));
   const [locale, setLocale] = useState(currentLocale);
   const [themeMode, setThemeMode] = useState("dark");
+  const [localPlayers, setLocalPlayers] = useState([]);
+  const [isInitialized, setIsInitialized] = useState(false);
   
   useEffect(() => {
     document.documentElement.dataset.puddingTheme = themeMode;
   }, [themeMode]);
+
+  const loadPlayersData = (currentState) => {
+    if (currentState && currentState.status === "resolved") {
+      setLocalPlayers(currentState.players || []);
+      return;
+    }
+    setLocalPlayers(waitingPlayers);
+  };
   
-  const topPlayer = (state.players || []).find(p => p && p.slot === "top") || null;
-  const bottomPlayer = (state.players || []).find(p => p && p.slot === "bottom") || null;
+  const topPlayer = (localPlayers || []).find(p => p && p.slot === "top") || null;
+  const bottomPlayer = (localPlayers || []).find(p => p && p.slot === "bottom") || null;
   const [isCountingDown, setIsCountingDown] = useState(false);
   const [countdownVal, setCountdownVal] = useState(3);
   const [nextRoundRevealLocked, setNextRoundRevealLocked] = useState(false);
@@ -382,10 +410,14 @@ function App() {
       loadLeaderboardData();
     };
 
-    setState(normalizeState(window.pudding.getState(), currentLocale));
+    const initialNorm = normalizeState(window.pudding.getState(), currentLocale);
+    setState(initialNorm);
+    loadPlayersData(initialNorm);
+    setIsInitialized(true);
     const handleState = (next) => {
       const norm = normalizeState(next, currentLocale);
       setState(norm);
+      loadPlayersData(norm);
     };
     window.pudding.onState(handleState);
 
@@ -413,7 +445,7 @@ function App() {
     };
   }, []);
 
-  const isReadyToStart = state.status === "waiting" && bothPlayersReady(state.players);
+  const isReadyToStart = isInitialized && state.status === "waiting" && bothPlayersReady(localPlayers);
   useEffect(() => {
     if (isReadyToStart) {
       if (isCountingDown) return;
@@ -448,7 +480,7 @@ function App() {
     };
   }, [isReadyToStart]);
 
-  const revealKey = sortedPlayers(state.players)
+  const revealKey = sortedPlayers(localPlayers)
     .map((player) => `${player.id}:${player.choice}:${player.result}`)
     .join("|");
 
@@ -492,8 +524,18 @@ function App() {
     setConflictVisible(false);
   };
 
-  const humanPlayer = (state.players || []).find((player) => player.role === "human");
-  const seatsFull = sortedPlayers(state.players).length >= 2;
+  const handleClearLeaderboard = async () => {
+    leaderboardStatsGlobal = {};
+    setLeaderboardStats({});
+    try {
+      if (window.pudding && typeof window.pudding.setData === "function") {
+        await window.pudding.setData("leaderboard", {});
+      }
+    } catch (err) {}
+  };
+
+  const humanPlayer = (localPlayers || []).find((player) => player.role === "human");
+  const seatsFull = sortedPlayers(localPlayers).length >= 2;
 
   const topPlayerReady = topPlayer && normalizeChoice(topPlayer.choice);
   const bottomPlayerReady = bottomPlayer && normalizeChoice(bottomPlayer.choice);
@@ -552,6 +594,7 @@ function App() {
       <div class="modal-content" onClick={(e) => e.stopPropagation()}>
         <div class="modal-header">
           <span class="modal-title">{translate("leaderboardTitle")}</span>
+          <button class="btn-clear-leaderboard" onClick={handleClearLeaderboard}>{translate("clearLeaderboard")}</button>
           <button class="modal-close" aria-label={translate("close")} onClick={() => setLeaderboardVisible(false)}>×</button>
         </div>
         <div class="leaderboard-table-container">
@@ -704,11 +747,11 @@ try {
   console.error("Render Error:", err);
 }
 
-window.pudding.onAction(function(action, context) {
+window.pudding.onAction(async function(action, context) {
   if (!action || typeof action !== "object") return { ok: false, error: "action must be an object" };
   if (action.type === "start_topic") return startTopic(action, context || {});
   if (action.type === "choose_gesture") return chooseGesture(action, context || {});
-  if (action.type === "reveal_result") return revealResult();
+  if (action.type === "reveal_result") return await revealResult();
   if (action.type === "reset") return reset(action, context || {});
   return { ok: false, error: `unsupported action type: ${action.type}` };
 });

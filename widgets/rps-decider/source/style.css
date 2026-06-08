@@ -772,6 +772,23 @@
       color: var(--surface-fg);
     }
 
+    .btn-clear-leaderboard {
+      border: 1px solid var(--surface-border);
+      background: var(--surface-card);
+      color: var(--surface-muted-fg);
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+      margin-left: auto;
+    }
+
+    .btn-clear-leaderboard:hover {
+      background: var(--surface-accent);
+      color: var(--surface-fg);
+    }
+
     .leaderboard-table-container {
       max-height: 320px;
       overflow-y: auto;

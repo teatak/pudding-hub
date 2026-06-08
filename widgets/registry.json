@@ -56,16 +56,16 @@
         "zh-TW": "分歧終端機",
         "en": "RPS Decider"
       },
-      "version": "1.0.7",
+      "version": "1.0.0",
       "description": {
         "zh-CN": "用石头剪刀布快速裁决分歧。",
         "zh-TW": "用猜拳快速裁決分歧。",
         "en": "Resolve small disagreements with rock-paper-scissors."
       },
-      "icon": "./rps-decider/releases/1.0.7/assets/icon.svg",
-      "manifest": "./rps-decider/releases/1.0.7/manifest.json",
-      "package": "./rps-decider/releases/1.0.7/rps-decider.pudding-widget.json",
-      "package_sha256": "95f8ebb224e1b43ca93b1271dc17a23f5f1283d506d7fc42415c3467377ac550",
+      "icon": "./rps-decider/releases/1.0.0/assets/icon.svg",
+      "manifest": "./rps-decider/releases/1.0.0/manifest.json",
+      "package": "./rps-decider/releases/1.0.0/rps-decider.pudding-widget.json",
+      "package_sha256": "69666da7ac44a3734aad12afd7524e294bd79173edba0958ba7dff3664321113",
       "requires": {
         "widget_api": "^1.0.0"
       },
@@ -78,24 +78,14 @@
       "orientation": "portrait",
       "releases": [
         {
-          "version": "1.0.7",
-          "manifest": "./rps-decider/releases/1.0.7/manifest.json",
-          "package": "./rps-decider/releases/1.0.7/rps-decider.pudding-widget.json",
-          "package_sha256": "95f8ebb224e1b43ca93b1271dc17a23f5f1283d506d7fc42415c3467377ac550",
+          "version": "1.0.0",
+          "manifest": "./rps-decider/releases/1.0.0/manifest.json",
+          "package": "./rps-decider/releases/1.0.0/rps-decider.pudding-widget.json",
+          "package_sha256": "69666da7ac44a3734aad12afd7524e294bd79173edba0958ba7dff3664321113",
           "requires": {
             "widget_api": "^1.0.0"
           },
           "released_at": "2026-06-09"
-        },
-        {
-          "version": "1.0.6",
-          "manifest": "./rps-decider/releases/1.0.6/manifest.json",
-          "package": "./rps-decider/releases/1.0.6/rps-decider.pudding-widget.json",
-          "package_sha256": "baf597f0e69d318ebf96fc2a6b7ca9171b175a469b34130ad27926eb915bf571",
-          "requires": {
-            "widget_api": "^1.0.0"
-          },
-          "released_at": "2026-05-30"
         }
       ]
     }

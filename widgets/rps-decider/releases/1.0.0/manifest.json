@@ -8,12 +8,12 @@
     "zh-TW": "分歧終端機",
     "en": "RPS Decider"
   },
-  "version": "1.0.7",
+  "version": "1.0.0",
   "icon": "./assets/icon.svg",
   "size": "lg",
   "orientation": "portrait",
   "package": "./rps-decider.pudding-widget.json",
-  "package_sha256": "95f8ebb224e1b43ca93b1271dc17a23f5f1283d506d7fc42415c3467377ac550",
+  "package_sha256": "69666da7ac44a3734aad12afd7524e294bd79173edba0958ba7dff3664321113",
   "requires": {
     "widget_api": "^1.0.0"
   }
