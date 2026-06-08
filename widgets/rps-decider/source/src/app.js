@@ -377,6 +377,8 @@
     btnLeaderboard.title = t("leaderboard");
     btnLeaderboard.setAttribute("aria-label", t("leaderboard"));
     leaderboardTitle.textContent = t("leaderboardTitle");
+    const conflictModalTitle = document.getElementById("conflict-modal-title");
+    if (conflictModalTitle) conflictModalTitle.textContent = t("editTopic");
     leaderboardClose.setAttribute("aria-label", t("close"));
     rankHead.textContent = t("rank");
     playerHead.textContent = t("player");
@@ -509,13 +511,13 @@
     renderLabel(labelBottom, bottomPlayer, "waitingPlayer");
 
     cylinderBody.className = "cylinder";
-    displayTop.textContent = "?";
-    displayBottom.textContent = "?";
+    displayTop.textContent = "";
+    displayBottom.textContent = "";
 
     if (state.status === "resolved") {
       cylinderBody.classList.add("revealed");
-      if (topPlayer) displayTop.textContent = emojiMap[topPlayer.choice] || "?";
-      if (bottomPlayer) displayBottom.textContent = emojiMap[bottomPlayer.choice] || "?";
+      if (topPlayer) displayTop.textContent = emojiMap[topPlayer.choice] || "";
+      if (bottomPlayer) displayBottom.textContent = emojiMap[bottomPlayer.choice] || "";
       if (topPlayer && topPlayer.result === "win") cylinderBody.classList.add("win-top");
       if (bottomPlayer && bottomPlayer.result === "win") cylinderBody.classList.add("win-bottom");
       setGestureButtonsDisabled(true);

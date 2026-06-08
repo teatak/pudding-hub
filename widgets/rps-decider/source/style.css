@@ -167,11 +167,20 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .btn-header-reset svg {
+      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .btn-header-reset:hover {
       background: var(--surface-accent);
       color: var(--surface-fg);
+    }
+
+    .btn-header-reset:hover svg {
+      transform: rotate(-15deg);
     }
 
     .btn-header-icon {
@@ -219,7 +228,7 @@
       min-width: 0;
     }
 
-    /* 气闸圆筒：保留独特的立体金属质感 */
+    /* 气闸圆筒：保留独特的立体金属质感，融入科幻玻璃拟态 */
     .cylinder {
       width: 180px;
       height: 320px;
@@ -229,9 +238,15 @@
       border-radius: 20px;
       position: relative;
       overflow: hidden;
-      box-shadow: inset 0 6px 18px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.05);
+      box-shadow: 
+        inset 0 0 24px rgba(255, 255, 255, 0.03),
+        inset 0 1px 1px rgba(255, 255, 255, 0.05),
+        inset 0 6px 18px rgba(0, 0, 0, 0.25),
+        0 8px 32px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
       display: flex;
       flex-direction: column;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
 
     .btn-next-round {
@@ -291,13 +306,13 @@
       border-bottom: none;
     }
 
-    .cylinder.revealed .chamber-top {
-      border-bottom: 1px dashed rgba(120, 120, 130, 0.18);
-    }
-
     /* 精致的 Shadcn Badge 名字标签 */
     .chamber-label {
       position: relative;
+      display: block;
+      text-align: center;
+      height: 38px;
+      line-height: 36px;
       font-size: 22px;
       font-weight: 700;
       letter-spacing: 0.5px;
@@ -305,7 +320,7 @@
       background: var(--surface-card);
       border: 1px solid var(--surface-border);
       color: var(--surface-muted-fg);
-      padding: 6px 18px;
+      padding: 0 18px;
       border-radius: 9999px;
       width: 260px;
       max-width: 260px;
@@ -334,18 +349,16 @@
 
     .label-top-outer.ready.winner-glow {
       color: var(--player-yellow);
-      border-color: color-mix(in srgb, var(--player-yellow) 70%, transparent);
-      background: rgba(255, 145, 0, 0.12);
-      box-shadow: 0 0 0 1px rgba(255, 145, 0, 0.35), 0 0 18px rgba(255, 145, 0, 0.62), 0 0 42px rgba(255, 145, 0, 0.36);
-      text-shadow: 0 0 14px rgba(255, 145, 0, 0.8);
+      background: rgba(255, 145, 0, 0.15);
+      backdrop-filter: blur(4px);
+      animation: labelGlowPulseYellow 1.0s infinite alternate ease-in-out;
     }
-
+ 
     .label-bottom-outer.ready.winner-glow {
       color: var(--player-blue);
-      border-color: color-mix(in srgb, var(--player-blue) 70%, transparent);
-      background: rgba(0, 229, 255, 0.1);
-      box-shadow: 0 0 0 1px rgba(0, 229, 255, 0.32), 0 0 18px rgba(0, 229, 255, 0.62), 0 0 42px rgba(0, 229, 255, 0.36);
-      text-shadow: 0 0 14px rgba(0, 229, 255, 0.78);
+      background: rgba(0, 229, 255, 0.13);
+      backdrop-filter: blur(4px);
+      animation: labelGlowPulseBlue 1.0s infinite alternate ease-in-out;
     }
 
     /* 金属遮门：保留独特的开启遮蔽动画及质感 */
@@ -356,25 +369,19 @@
       height: 100%;
       background: var(--shutter-bg);
       z-index: 5;
-      transition: height 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+      transition: height 0.65s cubic-bezier(0.25, 1, 0.5, 1.04);
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: inset 0 1px 2px rgba(255,255,255,0.05);
     }
 
     .shutter-top {
       top: 0;
+      height: calc(100% + 1px);
     }
 
     .shutter-bottom {
       bottom: 0;
-    }
-
-    .shutter-icon {
-      font-size: 20px;
-      opacity: 0.15;
-      color: var(--shutter-icon-color);
     }
 
     /* 指示灯 */
@@ -461,10 +468,27 @@
     }
 
     @keyframes countPulse {
-      0% { transform: scale(0.5); opacity: 0; }
-      20% { transform: scale(1.1); opacity: 1; }
-      80% { transform: scale(1); opacity: 1; }
-      100% { transform: scale(1.3); opacity: 0; }
+      0% { 
+        transform: scale(0.3) rotate(-10deg); 
+        filter: blur(8px);
+        opacity: 0; 
+      }
+      15% { 
+        transform: scale(1.15) rotate(5deg); 
+        filter: blur(0px);
+        opacity: 1; 
+        text-shadow: 0 0 25px rgba(255, 215, 0, 0.9), 0 0 50px rgba(255, 215, 0, 0.4);
+      }
+      80% { 
+        transform: scale(1) rotate(0deg); 
+        filter: blur(0px);
+        opacity: 1; 
+      }
+      100% { 
+        transform: scale(1.4) rotate(10deg); 
+        filter: blur(6px);
+        opacity: 0; 
+      }
     }
 
     /* 物理拉杆 */
@@ -596,7 +620,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      transition: all 0.2s;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
       box-shadow: 0 1px 2px rgba(0,0,0,0.02);
       flex-shrink: 0;
     }
@@ -604,7 +628,13 @@
     .btn-gesture:hover:not(:disabled) {
       background: var(--surface-accent);
       border-color: var(--surface-border);
-      transform: translateY(-1px);
+      transform: translateY(-2px) scale(1.08);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-gesture:active:not(:disabled) {
+      transform: translateY(0) scale(0.95);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
 
     .btn-gesture:disabled {
@@ -612,15 +642,79 @@
       cursor: not-allowed;
     }
 
-    /* 胜利圆柱发光 */
-    .cylinder.win-bottom {
-      box-shadow: 0 0 0 1px rgba(0, 229, 255, 0.78), 0 0 28px rgba(0, 229, 255, 0.52), 0 0 70px rgba(0, 229, 255, 0.2), inset 0 0 18px rgba(0, 229, 255, 0.16);
-      border-color: var(--player-blue);
+
+
+    /* 胜利手势呼吸与缩放动效 */
+    .cylinder.win-top .chamber-top .gesture-display {
+      animation: gestureGlowYellow 1.0s infinite alternate ease-in-out;
     }
 
-    .cylinder.win-top {
-      box-shadow: 0 0 0 1px rgba(255, 145, 0, 0.78), 0 0 28px rgba(255, 145, 0, 0.5), 0 0 70px rgba(255, 145, 0, 0.2), inset 0 0 18px rgba(255, 145, 0, 0.16);
-      border-color: var(--player-yellow);
+    .cylinder.win-bottom .chamber-bottom .gesture-display {
+      animation: gestureGlowBlue 1.0s infinite alternate ease-in-out;
+    }
+
+    @keyframes gestureGlowYellow {
+      0% {
+        transform: rotate(180deg) scale(1.08);
+        filter: drop-shadow(0 0 2px rgba(255, 145, 0, 0.45));
+      }
+      100% {
+        transform: rotate(180deg) scale(1.20);
+        filter: drop-shadow(0 0 10px rgba(255, 145, 0, 0.85));
+      }
+    }
+
+    @keyframes gestureGlowBlue {
+      0% {
+        transform: scale(1.08);
+        filter: drop-shadow(0 0 2px rgba(0, 229, 255, 0.45));
+      }
+      100% {
+        transform: scale(1.20);
+        filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.85));
+      }
+    }
+
+    @keyframes labelGlowPulseYellow {
+      0% {
+        border-color: color-mix(in srgb, var(--player-yellow) 40%, transparent);
+        background: rgba(255, 145, 0, 0.08);
+        box-shadow: 
+          0 0 0 1.5px rgba(255, 145, 0, 0.25),
+          0 2px 10px rgba(255, 145, 0, 0.12),
+          0 0 18px rgba(255, 145, 0, 0.22);
+        text-shadow: 0 0 4px rgba(255, 145, 0, 0.5);
+      }
+      100% {
+        border-color: color-mix(in srgb, var(--player-yellow) 90%, transparent);
+        background: rgba(255, 145, 0, 0.22);
+        box-shadow: 
+          0 0 0 1.5px rgba(255, 145, 0, 0.65),
+          0 6px 26px rgba(255, 145, 0, 0.38),
+          0 0 54px rgba(255, 145, 0, 0.68);
+        text-shadow: 0 0 12px rgba(255, 145, 0, 0.95);
+      }
+    }
+
+    @keyframes labelGlowPulseBlue {
+      0% {
+        border-color: color-mix(in srgb, var(--player-blue) 40%, transparent);
+        background: rgba(0, 229, 255, 0.07);
+        box-shadow: 
+          0 0 0 1.5px rgba(0, 229, 255, 0.22),
+          0 2px 10px rgba(0, 229, 255, 0.12),
+          0 0 18px rgba(0, 229, 255, 0.22);
+        text-shadow: 0 0 4px rgba(0, 229, 255, 0.5);
+      }
+      100% {
+        border-color: color-mix(in srgb, var(--player-blue) 90%, transparent);
+        background: rgba(0, 229, 255, 0.20);
+        box-shadow: 
+          0 0 0 1.5px rgba(0, 229, 255, 0.60),
+          0 6px 26px rgba(0, 229, 255, 0.38),
+          0 0 54px rgba(0, 229, 255, 0.68);
+        text-shadow: 0 0 12px rgba(0, 229, 255, 0.95);
+      }
     }
 
     .modal-overlay {
