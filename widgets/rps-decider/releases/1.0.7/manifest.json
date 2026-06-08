@@ -9,24 +9,10 @@
     "en": "RPS Decider"
   },
   "version": "1.0.7",
-  "description": {
-    "zh-CN": "用石头剪刀布快速裁决分歧。",
-    "zh-TW": "用猜拳快速裁決分歧。",
-    "en": "Resolve small disagreements with rock-paper-scissors."
-  },
   "icon": "./assets/icon.svg",
-  "screenshots": [],
-  "tags": [
-    "game",
-    "decision",
-    "multi-session"
-  ],
   "size": "lg",
   "orientation": "portrait",
-  "author": {
-    "name": "Pudding"
-  },
-  "package": "./releases/1.0.7/rps-decider.pudding-widget.json",
+  "package": "./rps-decider.pudding-widget.json",
   "package_sha256": "bf0b60be2f7522c7ca526dd13b0dffdc83727e846e133d6741b4d41a2d2a7630",
   "requires": {
     "widget_api": "^1.0.0"

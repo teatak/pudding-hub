@@ -56,16 +56,16 @@
         "zh-TW": "分歧終端機",
         "en": "RPS Decider"
       },
-      "version": "1.0.6",
+      "version": "1.0.7",
       "description": {
         "zh-CN": "用石头剪刀布快速裁决分歧。",
         "zh-TW": "用猜拳快速裁決分歧。",
         "en": "Resolve small disagreements with rock-paper-scissors."
       },
-      "icon": "./rps-decider/releases/1.0.6/assets/icon.svg",
-      "manifest": "./rps-decider/releases/1.0.6/manifest.json",
-      "package": "./rps-decider/releases/1.0.6/rps-decider.pudding-widget.json",
-      "package_sha256": "baf597f0e69d318ebf96fc2a6b7ca9171b175a469b34130ad27926eb915bf571",
+      "icon": "./rps-decider/releases/1.0.7/assets/icon.svg",
+      "manifest": "./rps-decider/releases/1.0.7/manifest.json",
+      "package": "./rps-decider/releases/1.0.7/rps-decider.pudding-widget.json",
+      "package_sha256": "bf0b60be2f7522c7ca526dd13b0dffdc83727e846e133d6741b4d41a2d2a7630",
       "requires": {
         "widget_api": "^1.0.0"
       },
@@ -77,6 +77,16 @@
       ],
       "orientation": "portrait",
       "releases": [
+        {
+          "version": "1.0.7",
+          "manifest": "./rps-decider/releases/1.0.7/manifest.json",
+          "package": "./rps-decider/releases/1.0.7/rps-decider.pudding-widget.json",
+          "package_sha256": "bf0b60be2f7522c7ca526dd13b0dffdc83727e846e133d6741b4d41a2d2a7630",
+          "requires": {
+            "widget_api": "^1.0.0"
+          },
+          "released_at": "2026-06-09"
+        },
         {
           "version": "1.0.6",
           "manifest": "./rps-decider/releases/1.0.6/manifest.json",
