@@ -1,0 +1,9 @@
+export const SIZE = 15;
+export const EMPTY = " ";
+export const BLACK = "●";
+export const WHITE = "○";
+export const BLACK_SIDE = "black";
+export const WHITE_SIDE = "white";
+export const DESIGN_BOARD_SIZE = 420;
+export const STARS = [[3, 3], [3, 11], [7, 7], [11, 3], [11, 11]];
+export const LEADERBOARD_DATA_KEY = "leaderboard";

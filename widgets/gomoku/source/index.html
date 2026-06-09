@@ -1,122 +1,13 @@
 <!doctype html>
 <html lang="zh-CN">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Gomoku Arena</title>
-<link rel="stylesheet" href="./style.css">
-</head>
-<body>
-<div id="gomoku-container">
-  
-  <div class="arena-layout">
-    
-    <!-- 中间主对弈区 -->
-    <div class="center-panel">
-      <!-- 顶栏 -->
-      <div class="arena-header">
-        <span class="arena-title" id="arena-title-id">Pudding Cup</span>
-      </div>
-
-      <!-- 棋盘包装盒（包含绝对定位的选手卡片） -->
-      <div id="board-wrapper">
-        
-        <!-- 左侧黑方：绝对定位贴齐包装盒左侧，顶部贴齐 -->
-        <div class="player-panel side-black" id="panel-black">
-          <div class="player-card">
-            <div class="speech-bubble bubble-left" id="bubble-black"></div>
-            <!-- 头部：头像与局数并排 -->
-            <div class="card-header">
-              <div class="avatar-wrapper" id="avatar-black-container"></div>
-              <div class="player-score" id="score-black-display">0</div>
-            </div>
-            <!-- 中部：名称与角色 -->
-            <div class="player-info">
-              <div class="player-name" id="name-black">Waiting...</div>
-            </div>
-            <!-- 底部：状态与按钮同一行 -->
-            <div class="card-footer" id="footer-black">
-              <span class="player-status-badge" id="status-badge-black">Empty</span>
-              <div class="panel-action" id="action-black-btn-container"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 棋盘 -->
-        <div id="gomoku-board">
-          <svg id="board-svg" width="420" height="420" viewBox="0 0 420 420" aria-hidden="true"></svg>
-          <div id="spots-layer"></div>
-        </div>
-
-        <!-- 右侧白方：绝对定位贴齐包装盒右侧，底部贴齐 -->
-        <div class="player-panel side-white" id="panel-white">
-          <div class="player-card">
-            <div class="speech-bubble bubble-right" id="bubble-white"></div>
-            <!-- 头部：头像与局数并排 -->
-            <div class="card-header">
-              <div class="avatar-wrapper" id="avatar-white-container"></div>
-              <div class="player-score" id="score-white-display">0</div>
-            </div>
-            <!-- 中部：名称与角色 -->
-            <div class="player-info">
-              <div class="player-name" id="name-white">Waiting...</div>
-            </div>
-            <!-- 底部：状态与按钮同一行 -->
-            <div class="card-footer" id="footer-white">
-              <span class="player-status-badge" id="status-badge-white">Empty</span>
-              <div class="panel-action" id="action-white-btn-container"></div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- 对局日志：固定3行高，完全没有跳变 -->
-      <div id="battle-log"></div>
-
-      <!-- 操作按钮 -->
-      <div class="buttons">
-        <button id="ready-btn" class="control primary" type="button" style="display: none;">Ready</button>
-        <button id="undo-btn" class="control" type="button" disabled>Undo</button>
-        <button id="leaderboard-btn" class="control" type="button">🏆 Leaderboard</button>
-        <button id="reset-btn" class="control" type="button">Reset board</button>
-        <button id="clear-score-btn" class="control" type="button">Clear score</button>
-      </div>
-
-    </div>
-
-  </div>
-</div>
-
-<!-- 排行榜弹窗 -->
-<div id="leaderboard-modal" class="modal-overlay">
-  <div class="modal-content">
-    <div class="modal-header">
-      <span class="modal-title" id="leaderboard-title">🏆 Match Leaderboard</span>
-      <button class="modal-close" id="modal-close-btn">&times;</button>
-    </div>
-    <div class="leaderboard-table-container">
-      <table class="leaderboard-table">
-        <thead>
-          <tr>
-            <th style="width: 50px;" id="th-rank">Rank</th>
-            <th id="th-player">Player</th>
-            <th style="width: 70px; text-align: center;" class="sortable" id="th-total">Games</th>
-            <th style="width: 55px; text-align: center; color: #22c55e;" class="sortable" id="th-win">Win</th>
-            <th style="width: 55px; text-align: center; color: #ef4444;" id="th-lose">Loss</th>
-            <th style="width: 55px; text-align: center; color: #a1a1aa;" id="th-draw">Draw</th>
-            <th style="width: 70px; text-align: center; color: #eab308;" class="sortable" id="th-winRate">Win rate</th>
-          </tr>
-        </thead>
-        <tbody id="leaderboard-tbody">
-          <!-- 动态渲染 -->
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<script type="module" src="./src/i18n.js"></script>
-<script type="module" src="./src/app.js"></script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gomoku Arena</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="./src/app.jsx"></script>
+  </body>
 </html>
