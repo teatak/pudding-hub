@@ -344,10 +344,10 @@
     if (state.status === "ready_checking") {
       var mySide = getMySide(state);
       if (mySide === BLACK_SIDE && !state.black_ready) {
-        return { tool: "canvas_dispatch_widget", action: { type: "ready" } };
+        return { tool: "canvas_widget_dispatch", action: { type: "ready" } };
       }
       if (mySide === WHITE_SIDE && !state.white_ready) {
-        return { tool: "canvas_dispatch_widget", action: { type: "ready" } };
+        return { tool: "canvas_widget_dispatch", action: { type: "ready" } };
       }
     }
     if (state.status === "playing" && state.turn) {
@@ -355,7 +355,7 @@
       var activePlayer = state[currentTurnSide + "_player"];
       if (activePlayer && activePlayer.session_id !== "human") {
         return {
-          tool: "canvas_dispatch_widget",
+          tool: "canvas_widget_dispatch",
           action: { type: "place_stone", row: "1-15", col: "1-15" },
           example: { type: "place_stone", row: 8, col: 8 }
         };
@@ -364,7 +364,7 @@
     if (state.status === "game_over") {
       var mySide = getMySide(state);
       if (mySide) {
-        return { tool: "canvas_dispatch_widget", action: { type: "leave_game" } };
+        return { tool: "canvas_widget_dispatch", action: { type: "leave_game" } };
       }
     }
     return null;

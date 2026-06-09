@@ -30,9 +30,8 @@
           win: '获胜',
           lose: '落败',
           none: '无',
-          requestInstructionStart: '猜拳定输赢已开始，主题为：“{topic}”。本局独立且不记名，提交手势后才会成为本局参与者。请选择一个手势：rock、paper 或 scissors。只调用工具提交选择；不要在聊天回复或思考内容里透露、描述或暗示你的选择。',
-          requestInstructionNext: '新的猜拳已开始，主题为：“{topic}”。本局独立且重新抢位。请选择一个手势：rock、paper 或 scissors。只调用工具提交选择；不要在聊天回复或思考内容里透露、描述或暗示你的选择。',
-          announceInstruction: '猜拳结果已揭晓。\n- 主题：“{topic}”。\n- 你是“{selfTitle}”，出了 {selfGesture}。\n- 对手是“{opponentTitle}”，出了 {opponentGesture}。\n- 胜者：{winner_title}。\n- 败者：{loser_title}。\n- 你的结果：{self_result}。\n请以你在此局中的选手角色（{selfTitle}）就主题“{topic}”履行最终裁决。不要调用 canvas_dispatch_widget。'
+          requestInstruction: '猜拳对决已开始，主题为：“{topic}”。本局独立且重新抢位。请选择一个手势：rock、paper 或 scissors。必须调用 canvas_widget_dispatch 工具提交你的选择；不要在聊天回复或思考内容里透露、描述或暗示你的选择。',
+          announceInstruction: '猜拳结果已揭晓。\n- 主题：“{topic}”。\n- 你是“{selfTitle}”，出了 {selfGesture}。\n- 对手是“{opponentTitle}”，出了 {opponentGesture}。\n- 胜者：{winner_title}。\n- 败者：{loser_title}。\n- 你的结果：{self_result}。\n请以你在此局中的选手角色（{selfTitle}）就主题“{topic}”履行最终裁决。不要调用 canvas_widget_dispatch。'
         },
         'zh-TW': {
           defaultTopic: '剪刀石頭布對決',
@@ -64,9 +63,8 @@
           win: '獲勝',
           lose: '落敗',
           none: '無',
-          requestInstructionStart: '猜拳定輸贏已開始，主題為：「{topic}」。本局獨立且不記名，提交手勢後才會成為本局參與者。請選擇一個手勢：rock、paper 或 scissors。只呼叫工具提交選擇；不要在聊天回覆或思考內容裡透露、描述或暗示你的選擇。',
-          requestInstructionNext: '新的猜拳已開始，主題為：「{topic}」。本局獨立且重新搶位。請選擇一個手勢：rock、paper 或 scissors。只呼叫工具提交選擇；不要在聊天回覆或思考內容裡透露、描述或暗示你的選擇。',
-          announceInstruction: '猜拳結果已揭曉。\n- 主題：「{topic}」。\n- 你是「{selfTitle}」，出了 {selfGesture}。\n- 對手是「{opponentTitle}」，出了 {opponentGesture}。\n- 勝者：{winner_title}。\n- 敗者：{loser_title}。\n- 你的結果：{self_result}。\n請以你在此局中的選手角色（{selfTitle}）就主題「{topic}」履行最終裁決。不要呼叫 canvas_dispatch_widget。'
+          requestInstruction: '猜拳對決已開始，主題為：「{topic}」。本局獨立且重新搶位。請選擇一個手勢：rock、paper 或 scissors。必須呼叫 canvas_widget_dispatch 工具提交你的選擇；不要在聊天回覆或思考內容裡透露、描述或暗示你的選擇。',
+          announceInstruction: '猜拳結果已揭曉。\n- 主題：「{topic}」。\n- 你是「{selfTitle}」，出了 {selfGesture}。\n- 對手是「{opponentTitle}」，出了 {opponentGesture}。\n- 勝者：{winner_title}。\n- 敗者：{loser_title}。\n- 你的結果：{self_result}。\n請以你在此局中的選手角色（{selfTitle}）就主題「{topic}」履行最終裁決。不要呼叫 canvas_widget_dispatch。'
         },
         en: {
           defaultTopic: 'Rock-Paper-Scissors Match',
@@ -98,9 +96,8 @@
           win: 'Win',
           lose: 'Lose',
           none: 'None',
-          requestInstructionStart: 'A rock-paper-scissors decider has started for this topic: "{topic}". This match is independent and anonymous until you submit a gesture. Choose one gesture: rock, paper, or scissors. Call the widget tool only; do not reveal, describe, or hint at your chosen gesture in chat or reasoning.',
-          requestInstructionNext: 'A new rock-paper-scissors match has started for this topic: "{topic}". This match is independent and seats are filled again. Choose one gesture: rock, paper, or scissors. Call the widget tool only; do not reveal, describe, or hint at your chosen gesture in chat or reasoning.',
-          announceInstruction: 'The rock-paper-scissors result is resolved.\n- Topic: "{topic}".\n- You are "{selfTitle}" and chose {selfGesture}.\n- Your opponent is "{opponentTitle}" and chose {opponentGesture}.\n- Winner: {winner_title}.\n- Loser: {loser_title}.\n- Your result: {self_result}.\nPlease reply in chat as your participant character ({selfTitle}) to resolve and fulfill the decision for the topic: "{topic}". Do not call canvas_dispatch_widget.'
+          requestInstruction: 'A rock-paper-scissors decider has started for this topic: "{topic}". This match is independent and seats are filled again. Choose one gesture: rock, paper, or scissors. You must call the canvas_widget_dispatch tool to submit your choice; do not reveal, describe, or hint at your chosen gesture in chat or reasoning.',
+          announceInstruction: 'The rock-paper-scissors result is resolved.\n- Topic: "{topic}".\n- You are "{selfTitle}" and chose {selfGesture}.\n- Your opponent is "{opponentTitle}" and chose {opponentGesture}.\n- Winner: {winner_title}.\n- Loser: {loser_title}.\n- Your result: {self_result}.\nPlease reply in chat as your participant character ({selfTitle}) to resolve and fulfill the decision for the topic: "{topic}". Do not call canvas_widget_dispatch.'
         }
       }
 })();

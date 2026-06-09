@@ -132,7 +132,7 @@ function resultForChoices(a, b) {
   return "lose";
 }
 
-function requestForOpenRound(locale, state, isNextRound) {
+function requestForOpenRound(locale, state) {
   return {
     type: "request_gesture",
     to: "visible",
@@ -146,7 +146,7 @@ function requestForOpenRound(locale, state, isNextRound) {
         type: "choose_gesture",
         gesture: "rock",
       },
-      instruction: t(locale, isNextRound ? "requestInstructionNext" : "requestInstructionStart", {
+      instruction: t(locale, "requestInstruction", {
         topic: state.topic,
       }),
     },
@@ -339,7 +339,7 @@ function reset(action, context) {
   state.locale = currentLocale;
   delete state.players;
   state.result_summary = null;
-  return { ok: true, state, send: requestForOpenRound(currentLocale, state, true) };
+  return { ok: true, state, send: requestForOpenRound(currentLocale, state) };
 }
 
 // Preact Root Component

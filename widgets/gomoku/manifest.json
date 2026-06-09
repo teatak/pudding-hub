@@ -27,7 +27,7 @@
     "name": "Pudding"
   },
   "package": "./releases/1.0.6/gomoku.pudding-widget.json",
-  "package_sha256": "ba81463d16ff159116ab2e6eaf70e20026ca3d08999994ef014a4fdcab7466f0",
+  "package_sha256": "8e93462ee93de3eddba3c5bfb2a313f006c4700f64b0df8735a908a1405a1170",
   "requires": {
     "widget_api": "^1.0.0"
   }
