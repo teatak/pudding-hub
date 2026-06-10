@@ -188,7 +188,7 @@ action 要小而明确，不要把完整 state 放进 action。
 
 ### 发送消息到会话
 
-当小组件需要让某个 AI 或用户会话收到消息时，使用 `window.pudding.send(...)`。
+当小组件需要让某个 AI 或用户会话收到消息时，使用 `window.pudding.send(...)`。**请注意：不再支持在动作处理函数 (onAction) 的返回值中带 `send` 与 `result`**。
 
 ```js
 window.pudding.send({
@@ -198,21 +198,6 @@ window.pudding.send({
   data: { topic: "who washes dishes" },
   lock_until_done: false
 });
-```
-
-也可以从 action 处理函数返回 `send`：
-
-```js
-return {
-  ok: true,
-  state: nextState,
-  send: {
-    type: "announce_result",
-    to: { sessions: [winnerSessionID] },
-    data: resultPayload,
-    lock_until_done: false
-  }
-};
 ```
 
 `lock_until_done` 默认是 `false`。只有需要防止重复点击，并且必须等目标会话回复完成后再解锁时，才设置为 `true`。

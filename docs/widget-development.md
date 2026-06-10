@@ -188,7 +188,7 @@ Keep actions small. Do not pass the full state through actions.
 
 ### Sending Messages To Sessions
 
-Use `window.pudding.send(...)` when a widget needs an AI or user session to receive a message.
+Use `window.pudding.send(...)` when a widget needs an AI or user session to receive a message. **Note: Returning `send` or `result` in the action handler (onAction) return value is no longer supported.**
 
 ```js
 window.pudding.send({
@@ -198,21 +198,6 @@ window.pudding.send({
   data: { topic: "who washes dishes" },
   lock_until_done: false
 });
-```
-
-You can also return `send` from an action handler:
-
-```js
-return {
-  ok: true,
-  state: nextState,
-  send: {
-    type: "announce_result",
-    to: { sessions: [winnerSessionID] },
-    data: resultPayload,
-    lock_until_done: false
-  }
-};
 ```
 
 `lock_until_done` defaults to `false`. Set it to `true` only when the widget must block repeat clicks until the target session finishes its response.

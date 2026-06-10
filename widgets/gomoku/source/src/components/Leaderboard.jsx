@@ -1,6 +1,6 @@
 import { t } from "../utils.js";
 
-export function Leaderboard({ state, leaderboardOpen, setLeaderboardOpen, currentSortKey, setCurrentSortKey }) {
+export function Leaderboard({ state, leaderboardOpen, setLeaderboardOpen, currentSortKey, setCurrentSortKey, onClearScore }) {
   const getSortedLeaderboard = () => {
     const list = [];
     for (const name in state.score) {
@@ -39,7 +39,7 @@ export function Leaderboard({ state, leaderboardOpen, setLeaderboardOpen, curren
     <div id="leaderboard-modal" className={`modal-overlay${leaderboardOpen ? " show" : ""}`} onClick={(e) => e.target.id === "leaderboard-modal" && setLeaderboardOpen(false)}>
       <div className="modal-content">
         <div className="modal-header">
-          <span className="modal-title" id="leaderboard-title">🏆 {t("leaderboard_title")}</span>
+          <span className="modal-title" id="leaderboard-title">{t("leaderboard_title")}</span>
           <button className="modal-close" id="modal-close-btn" onClick={() => setLeaderboardOpen(false)}>&times;</button>
         </div>
         <div className="leaderboard-table-container">
@@ -108,6 +108,11 @@ export function Leaderboard({ state, leaderboardOpen, setLeaderboardOpen, curren
               )}
             </tbody>
           </table>
+        </div>
+        <div className="modal-footer">
+          <button id="modal-clear-score-btn" className="modal-clear-btn" onClick={onClearScore}>
+            {t("clear_score")}
+          </button>
         </div>
       </div>
     </div>

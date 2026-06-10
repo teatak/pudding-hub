@@ -2,8 +2,8 @@ import { render } from "preact";
 import { useState, useEffect, useRef } from "preact/hooks";
 
 import { DESIGN_BOARD_SIZE, LEADERBOARD_DATA_KEY, BLACK_SIDE, WHITE_SIDE } from "./constants.js";
-import { t, normalizeLocale, setGlobalLocale, applyPuddingTheme, sideForStone, public_row, public_col, isHuman, formatBoardText } from "./utils.js";
-import { normalizeState, innerOnAction, normalizeScore, withDerivedState } from "./gameLogic.js";
+import { t, normalizeLocale, setGlobalLocale, applyPuddingTheme, sideForStone, public_row, public_col, isHuman, formatBoardText, getBattleLogs } from "./utils.js";
+import { normalizeState, innerOnAction, normalizeScore, withDerivedState, publicState } from "./gameLogic.js";
 
 import { PlayerCard } from "./components/PlayerCard.jsx";
 import { Leaderboard } from "./components/Leaderboard.jsx";
@@ -23,7 +23,8 @@ function App() {
   const [lastMoveAnimated, setLastMoveAnimated] = useState(false);
   const [bubbleTextBlack, setBubbleTextBlack] = useState("");
   const [bubbleTextWhite, setBubbleTextWhite] = useState("");
-  const [countdownNum, setCountdownNum] = useState(3);
+  const [uiCountdown, setUiCountdown] = useState(null);
+  const prevStatusRef = useRef(state.status);
 
   const boardRef = useRef(null);
   const logRef = useRef(null);
@@ -56,6 +57,11 @@ function App() {
         setState(nextNormalized);
       };
       window.pudding.onState(onStateHandler);
+
+      const currentState = window.pudding.getState();
+      if (!currentState || !currentState.actions_schema) {
+        window.pudding.dispatch({ type: "init" });
+      }
     }
   }, []);
 
@@ -97,7 +103,7 @@ function App() {
     if (logRef.current) {
       logRef.current.scrollTop = logRef.current.scrollHeight;
     }
-  }, [state.battle_log]);
+  }, [state.history.length, state.status]);
 
   useEffect(() => {
     if (state.history.length > prevHistoryLengthRef.current) {
@@ -138,24 +144,25 @@ function App() {
   }, [lastMoveAnimated, state.history.length]);
 
   useEffect(() => {
-    if (state.status === "countdown") {
-      setCountdownNum(3);
+    if (state.status === "ready_checking" && prevStatusRef.current !== "ready_checking") {
+      setUiCountdown(3);
       if (navigator.vibrate) navigator.vibrate(15);
       let count = 0;
       const timer = setInterval(() => {
         count++;
         if (count < 3) {
-          setCountdownNum(3 - count);
+          setUiCountdown(3 - count);
           if (navigator.vibrate) navigator.vibrate(15);
         } else {
           clearInterval(timer);
-          if (window.pudding && typeof window.pudding.dispatch === "function") {
-            window.pudding.dispatch({ type: "start_ready_check" });
-          }
+          setUiCountdown(null);
         }
       }, 1000);
       return () => clearInterval(timer);
+    } else if (state.status !== "ready_checking") {
+      setUiCountdown(null);
     }
+    prevStatusRef.current = state.status;
   }, [state.status]);
 
   const onBoardClick = (row, col) => {
@@ -180,7 +187,9 @@ function App() {
     }
   };
 
-  const isHumanReadyCheck = state.status === "ready_checking" && (
+  const displayState = uiCountdown !== null ? { ...state, status: "countdown" } : state;
+
+  const isHumanReadyCheck = state.status === "ready_checking" && uiCountdown === null && (
     (isHuman(state.black_player?.session_id) && !state.black_ready) ||
     (isHuman(state.white_player?.session_id) && !state.white_ready)
   );
@@ -197,15 +206,15 @@ function App() {
           </div>
 
           <div id="board-wrapper">
-            <PlayerCard state={state} side={BLACK_SIDE} onSeatAction={onSeatAction} countdownNum={countdownNum} bubbleText={bubbleTextBlack} />
-            <div ref={boardRef} style={{ display: "flex", flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <PlayerCard state={displayState} side={BLACK_SIDE} onSeatAction={onSeatAction} countdownNum={uiCountdown} bubbleText={bubbleTextBlack} />
+            <div className="board-container-wrapper" ref={boardRef} style={{ display: "flex", flex: 1, justifyContent: "center", alignItems: "center" }}>
               <Board boardWidth={boardWidth} state={state} lastMoveAnimated={lastMoveAnimated} onBoardClick={onBoardClick} />
             </div>
-            <PlayerCard state={state} side={WHITE_SIDE} onSeatAction={onSeatAction} countdownNum={countdownNum} bubbleText={bubbleTextWhite} />
+            <PlayerCard state={displayState} side={WHITE_SIDE} onSeatAction={onSeatAction} countdownNum={uiCountdown} bubbleText={bubbleTextWhite} />
           </div>
 
           <div id="battle-log" ref={logRef}>
-            {state.battle_log.map((item, idx) => {
+            {getBattleLogs(state).map((item, idx) => {
               let className = "log-system";
               if (item.type === "black") className = "log-black";
               else if (item.type === "white") className = "log-white";
@@ -234,13 +243,10 @@ function App() {
             <button id="reset-btn" className="control" type="button" onClick={() => onSeatAction("reset")}>
               {t("reset_board")}
             </button>
-            <button id="clear-score-btn" className="control" type="button" onClick={() => onSeatAction("clear_score")}>
-              {t("clear_score")}
-            </button>
           </div>
         </div>
 
-        <Leaderboard state={state} leaderboardOpen={leaderboardOpen} setLeaderboardOpen={setLeaderboardOpen} currentSortKey={currentSortKey} setCurrentSortKey={setCurrentSortKey} />
+        <Leaderboard state={state} leaderboardOpen={leaderboardOpen} setLeaderboardOpen={setLeaderboardOpen} currentSortKey={currentSortKey} setCurrentSortKey={setCurrentSortKey} onClearScore={() => onSeatAction("clear_score")} />
       </div>
     </div>
   );
@@ -292,7 +298,9 @@ if (window.pudding) {
       } else if (action && action.type === "place_stone" && result.state.status === "game_over") {
         await saveLeaderboardData(result.state.score);
       }
-      delete result.state.board;
+      
+      // 直接把返回给宿主和大模型的 state 转换为公开格式
+      result.state = publicState(result.state);
     }
     return result;
   });

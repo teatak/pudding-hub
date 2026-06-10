@@ -79,13 +79,41 @@ function playerFromActor(locale, actor, slot) {
   };
 }
 
-function emptyState(locale) {
+function buildActionSchema(locale) {
   return {
+    start_topic: {
+      description: t(locale, "action_start_topic_desc"),
+      action: { type: "start_topic", topic: "string" }
+    },
+    choose_gesture: {
+      description: t(locale, "action_choose_gesture_desc"),
+      action: { type: "choose_gesture", gesture: "rock | paper | scissors" }
+    },
+    reset: {
+      description: t(locale, "action_reset_desc"),
+      action: { type: "reset", reset_topic: "boolean (optional)" }
+    }
+  };
+}
+
+function buildGuide(locale) {
+  return t(locale, "guide");
+}
+
+function withDerivedState(state, locale) {
+  state.actions_schema = buildActionSchema(locale);
+  state.guide = buildGuide(locale);
+  return state;
+}
+
+function emptyState(locale) {
+  const state = {
     status: "waiting",
     locale,
     topic: savedCustomTopic || t(locale, "defaultTopic"),
     result_summary: null,
   };
+  return withDerivedState(state, locale);
 }
 
 function normalizeState(raw, locale) {
@@ -97,7 +125,7 @@ function normalizeState(raw, locale) {
   state.topic = typeof state.topic === "string" && state.topic ? state.topic : (savedCustomTopic || t(state.locale, "defaultTopic"));
   state.players = Array.isArray(state.players) ? state.players : [];
   state.result_summary = state.result_summary && typeof state.result_summary === "object" ? state.result_summary : null;
-  return state;
+  return withDerivedState(state, state.locale);
 }
 
 function nextOpenSlot(players) {
@@ -318,7 +346,10 @@ async function revealResult() {
   await recordLeaderboard(currentLocale, nextPlayers);
 
   const send = announcementsForAssistants(currentLocale, state);
-  return { ok: true, state, ...(send.length ? { send } : {}) };
+  if (send && send.length > 0) {
+    window.pudding?.send(send);
+  }
+  return { ok: true, state };
 }
 
 function reset(action, context) {
@@ -339,7 +370,11 @@ function reset(action, context) {
   state.locale = currentLocale;
   delete state.players;
   state.result_summary = null;
-  return { ok: true, state, send: requestForOpenRound(currentLocale, state) };
+  const send = requestForOpenRound(currentLocale, state);
+  if (send) {
+    window.pudding?.send(send);
+  }
+  return { ok: true, state };
 }
 
 // Preact Root Component
@@ -420,6 +455,11 @@ function App() {
       loadPlayersData(norm);
     };
     window.pudding.onState(handleState);
+
+    const currentState = window.pudding.getState();
+    if (!currentState || !currentState.actions_schema) {
+      window.pudding.dispatch({ type: "init" });
+    }
 
     const handleTheme = (theme) => {
       setThemeMode(theme && theme.mode === "light" ? "light" : "dark");
@@ -749,9 +789,25 @@ try {
 
 window.pudding.onAction(async function(action, context) {
   if (!action || typeof action !== "object") return { ok: false, error: "action must be an object" };
-  if (action.type === "start_topic") return startTopic(action, context || {});
-  if (action.type === "choose_gesture") return chooseGesture(action, context || {});
-  if (action.type === "reveal_result") return await revealResult();
-  if (action.type === "reset") return reset(action, context || {});
-  return { ok: false, error: `unsupported action type: ${action.type}` };
+  let result;
+  if (action.type === "init") {
+    const loc = currentLocale || "zh-CN";
+    result = { ok: true, state: normalizeState(window.pudding.getState(), loc) };
+  } else if (action.type === "start_topic") {
+    result = startTopic(action, context || {});
+  } else if (action.type === "choose_gesture") {
+    result = chooseGesture(action, context || {});
+  } else if (action.type === "reveal_result") {
+    result = await revealResult();
+  } else if (action.type === "reset") {
+    result = reset(action, context || {});
+  } else {
+    result = { ok: false, error: `unsupported action type: ${action.type}` };
+  }
+
+  if (result && result.ok && result.send) {
+    window.pudding.send(result.send);
+    delete result.send;
+  }
+  return result;
 });

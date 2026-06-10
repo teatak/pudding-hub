@@ -30,8 +30,12 @@
           win: '获胜',
           lose: '落败',
           none: '无',
-          requestInstruction: '猜拳对决已开始，主题为：“{topic}”。本局独立且重新抢位。请选择一个手势：rock、paper 或 scissors。必须调用 canvas_widget_dispatch 工具提交你的选择；不要在聊天回复或思考内容里透露、描述或暗示你的选择。',
-          announceInstruction: '猜拳结果已揭晓。\n- 主题：“{topic}”。\n- 你是“{selfTitle}”，出了 {selfGesture}。\n- 对手是“{opponentTitle}”，出了 {opponentGesture}。\n- 胜者：{winner_title}。\n- 败者：{loser_title}。\n- 你的结果：{self_result}。\n请以你在此局中的选手角色（{selfTitle}）就主题“{topic}”履行最终裁决。不要调用 canvas_widget_dispatch。'
+          requestInstruction: '猜拳对决已开始，主题为：“{topic}”。请在 rock、paper 或 scissors 中做出选择。请勿在聊天回复或思考内容里透露、描述或暗示你的选择。',
+          announceInstruction: '猜拳结果已揭晓。\n- 主题：“{topic}”。\n- 你是“{selfTitle}”，出了 {selfGesture}。\n- 对手是“{opponentTitle}”，出了 {opponentGesture}。\n- 胜者：{winner_title}。\n- 败者：{loser_title}。\n- 你的结果：{self_result}。\n请以你在此局中的选手角色（{selfTitle}）就主题“{topic}”在聊天中进行回应，履行最终裁决。',
+          guide: '这是一个分歧终端机小组件（猜拳对决）。\n当有需要解决的分歧事项或决定时，可使用本组件进行公平的剪刀石头布对局。\n- 任何人或 AI 均可通过 dispatch choose_gesture 动作来加入并出拳，出拳选项包括：rock（石头）、paper（布）、scissors（剪刀）。\n- 双方均完成出拳后，结果将会自动揭晓或使用 reveal_result 揭晓，分歧终端机将会判定胜负，并给出裁决指引。\n- 可派发 reset 动作来重置对决状态以开启新的一局。',
+          action_start_topic_desc: '设置或修改猜拳解决的分歧事项/主题',
+          action_choose_gesture_desc: '在当前的猜拳对决中秘密提交你选择的出拳手势',
+          action_reset_desc: '重置对决状态以开启新一轮'
         },
         'zh-TW': {
           defaultTopic: '剪刀石頭布對決',
@@ -63,8 +67,12 @@
           win: '獲勝',
           lose: '落敗',
           none: '無',
-          requestInstruction: '猜拳對決已開始，主題為：「{topic}」。本局獨立且重新搶位。請選擇一個手勢：rock、paper 或 scissors。必須呼叫 canvas_widget_dispatch 工具提交你的選擇；不要在聊天回覆或思考內容裡透露、描述或暗示你的選擇。',
-          announceInstruction: '猜拳結果已揭曉。\n- 主題：「{topic}」。\n- 你是「{selfTitle}」，出了 {selfGesture}。\n- 對手是「{opponentTitle}」，出了 {opponentGesture}。\n- 勝者：{winner_title}。\n- 敗者：{loser_title}。\n- 你的結果：{self_result}。\n請以你在此局中的選手角色（{selfTitle}）就主題「{topic}」履行最終裁決。不要呼叫 canvas_widget_dispatch。'
+          requestInstruction: '猜拳對決已開始，主題為：「{topic}」。請在 rock、paper 或 scissors 中做出選擇。請勿在聊天回覆或思考內容裡透露、描述或暗示你的選擇。',
+          announceInstruction: '猜拳結果已揭曉。\n- 主題：「{topic}」。\n- 你是「{selfTitle}」，出了 {selfGesture}。\n- 對手是「{opponentTitle}」，出了 {opponentGesture}。\n- 勝者：{winner_title}。\n- 敗者：{loser_title}。\n- 你的結果：{self_result}。\n請以你在此局中的選手角色（{selfTitle}）就主題「{topic}」在聊天中進行回應，履行最終裁決。',
+          guide: '這是一個分歧終端機小元件（猜拳對決）。\n當有需要解決的分歧事項或決定時，可使用本元件進行公平的剪刀石頭布對局。\n- 任何人或 AI 均可通過 dispatch choose_gesture 動作來加入並出拳，出拳選項包括：rock（石頭）、paper（布）、scissors（剪刀）。\n- 雙方均完成出拳後，結果將會自動揭曉或使用 reveal_result 揭曉，分歧終端機將會判定勝負，並給出裁決指引。\n- 可派發 reset 動作來重置對決狀態以開啟新的一局。',
+          action_start_topic_desc: '設置或修改猜拳解決的分歧事項/主題',
+          action_choose_gesture_desc: '在當前的猜拳對決中秘密提交你選擇的出拳手勢',
+          action_reset_desc: '重置對決狀態以開啟新一輪'
         },
         en: {
           defaultTopic: 'Rock-Paper-Scissors Match',
@@ -96,8 +104,12 @@
           win: 'Win',
           lose: 'Lose',
           none: 'None',
-          requestInstruction: 'A rock-paper-scissors decider has started for this topic: "{topic}". This match is independent and seats are filled again. Choose one gesture: rock, paper, or scissors. You must call the canvas_widget_dispatch tool to submit your choice; do not reveal, describe, or hint at your chosen gesture in chat or reasoning.',
-          announceInstruction: 'The rock-paper-scissors result is resolved.\n- Topic: "{topic}".\n- You are "{selfTitle}" and chose {selfGesture}.\n- Your opponent is "{opponentTitle}" and chose {opponentGesture}.\n- Winner: {winner_title}.\n- Loser: {loser_title}.\n- Your result: {self_result}.\nPlease reply in chat as your participant character ({selfTitle}) to resolve and fulfill the decision for the topic: "{topic}". Do not call canvas_widget_dispatch.'
+          requestInstruction: 'A rock-paper-scissors decider has started for this topic: "{topic}". Choose one gesture from rock, paper, or scissors. Do not reveal, describe, or hint at your chosen gesture in chat or reasoning.',
+          announceInstruction: 'The rock-paper-scissors result is resolved.\n- Topic: "{topic}".\n- You are "{selfTitle}" and chose {selfGesture}.\n- Your opponent is "{opponentTitle}" and chose {opponentGesture}.\n- Winner: {winner_title}.\n- Loser: {loser_title}.\n- Your result: {self_result}.\nPlease reply in chat as your participant character ({selfTitle}) to resolve and fulfill the decision for the topic: "{topic}".',
+          guide: 'This is a Rock-Paper-Scissors Decider widget.\nWhen there is a conflict or decision to resolve, you can use this widget for a fair duel.\n- Anyone or AI can join and submit their choice by dispatching the choose_gesture action. Options: rock, paper, or scissors.\n- After both participants have submitted their gestures, the results will be revealed. The widget determines the winner and guides participants to fulfill the decision.\n- Use the reset action to clear status and start a new round.',
+          action_start_topic_desc: 'Set or update the match topic or conflict to resolve.',
+          action_choose_gesture_desc: 'Secretly choose and submit your gesture (rock, paper, or scissors) for the current duel.',
+          action_reset_desc: 'Reset the duel status to start a new round.'
         }
       }
 })();

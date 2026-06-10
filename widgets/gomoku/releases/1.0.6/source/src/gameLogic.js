@@ -5,7 +5,7 @@ export function buildActionSchema() {
   return {
     join_game: {
       description: t("action_join_desc"),
-      action: { type: "join_game", side: "black | white" }
+      action: { type: "join_game", side: "black" }
     },
     leave_game: {
       description: t("action_leave_desc"),
@@ -17,7 +17,7 @@ export function buildActionSchema() {
     },
     place_stone: {
       description: t("action_place_desc"),
-      action: { type: "place_stone", row: "integer 1-15", col: "integer 1-15", message: "string (optional)" }
+      action: { type: "place_stone", row: "integer 1-15 (1 at bottom, 15 at top)", col: "string A-O (A at left, O at right)", message: "string (optional)" }
     }
   };
 }
@@ -41,7 +41,6 @@ export function freshState() {
     last_move: null,
     winning_line: null,
     score: {},
-    battle_log: [{ type: "system", text: t("system_ready") }],
     actions_schema: buildActionSchema(),
     guide: buildGuide(),
     next_action: null
@@ -64,6 +63,33 @@ export function normalizeState(raw) {
 
   const state = JSON.parse(JSON.stringify(raw));
   if (!Array.isArray(state.history)) state.history = [];
+
+  state.history = state.history.map((move) => {
+    if (move && typeof move.col === "string") {
+      const coord = toInternalCoord(move.row, move.col);
+      if (coord) {
+        return {
+          row: coord.row,
+          col: coord.col,
+          public_row: move.row,
+          public_col: move.col,
+          stone: move.stone,
+          display: move.display,
+          message: move.message
+        };
+      }
+    }
+    return move;
+  });
+
+  // 将 last_move 从公开坐标还原为内部坐标
+  if (state.last_move && typeof state.last_move.col === "string") {
+    const coord = toInternalCoord(state.last_move.row, state.last_move.col);
+    if (coord) {
+      state.last_move = { row: coord.row, col: coord.col, message: state.last_move.message };
+    }
+  }
+
   if (!state.board) state.board = boardFromHistory(state.history);
 
   if (!state.score) state.score = {};
@@ -79,7 +105,6 @@ export function normalizeState(raw) {
     }
   }
 
-  if (!state.battle_log) state.battle_log = [{ type: "system", text: t("system_ready") }];
   if (state.black_player === undefined) state.black_player = null;
   if (state.white_player === undefined) state.white_player = null;
   if (state.black_ready === undefined) state.black_ready = false;
@@ -92,6 +117,14 @@ export function normalizeState(raw) {
       state.black_ready = false;
       state.white_ready = false;
       state.turn = null;
+    }
+  }
+  // 当 game_over 且 winning_line 丢失时，从棋盘重新计算
+  if (state.status === "game_over" && !Array.isArray(state.winning_line) && state.history.length > 0) {
+    const lastMove = state.history[state.history.length - 1];
+    if (lastMove) {
+      const stone = toStone(lastMove.stone);
+      state.winning_line = checkWin(state.board, stone);
     }
   }
 
@@ -128,21 +161,33 @@ export function withDerivedState(state) {
 
 export function nextModelActionForState(state) {
   if (state.status === "idle") {
-    if (state.white_player && isHuman(state.white_player.session_id) && !state.black_player) {
-      return {
-        tool: "canvas_widget_dispatch",
-        action: { type: "join_game", side: "black" }
-      };
-    }
-    if (state.black_player && isHuman(state.black_player.session_id) && !state.white_player) {
+    if (state.black_player && !state.white_player) {
       return {
         tool: "canvas_widget_dispatch",
         action: { type: "join_game", side: "white" }
       };
     }
+    if (state.white_player && !state.black_player) {
+      return {
+        tool: "canvas_widget_dispatch",
+        action: { type: "join_game", side: "black" }
+      };
+    }
     return null;
   }
   if (state.status === "ready_checking") {
+    if (state.black_player && !isHuman(state.black_player.session_id) && !state.black_ready) {
+      return {
+        tool: "canvas_widget_dispatch",
+        action: { type: "ready" }
+      };
+    }
+    if (state.white_player && !isHuman(state.white_player.session_id) && !state.white_ready) {
+      return {
+        tool: "canvas_widget_dispatch",
+        action: { type: "ready" }
+      };
+    }
     return null;
   }
   if (state.status === "playing" && state.turn) {
@@ -151,8 +196,8 @@ export function nextModelActionForState(state) {
     if (activePlayer && !isHuman(activePlayer.session_id)) {
       return {
         tool: "canvas_widget_dispatch",
-        action: { type: "place_stone", row: "1-15", col: "1-15" },
-        example: { type: "place_stone", row: 8, col: 8 }
+        action: { type: "place_stone", row: "1-15 (1 at bottom, 15 at top)", col: "A-O (A at left, O at right)" },
+        example: { type: "place_stone", row: 8, col: "H" }
       };
     }
   }
@@ -160,9 +205,29 @@ export function nextModelActionForState(state) {
 }
 
 export function publicState(state) {
-  withDerivedState(state);
   const p = JSON.parse(JSON.stringify(state));
   delete p.board;
+  delete p.winning_line;
+
+  if (p.last_move) {
+    p.last_move = {
+      row: public_row(p.last_move.row),
+      col: public_col(p.last_move.col),
+      message: p.last_move.message
+    };
+  }
+
+  if (Array.isArray(p.history)) {
+    p.history = p.history.map((move) => {
+      return {
+        row: move.public_row,
+        col: move.public_col,
+        stone: move.stone,
+        display: move.display,
+        message: move.message
+      };
+    });
+  }
   return p;
 }
 
@@ -191,6 +256,9 @@ export function checkWin(board, stone) {
 
 export function innerOnAction(action, currState, context) {
   const nextState = normalizeState(currState || freshState());
+  if (action && action.type === "init") {
+    return { ok: true, state: nextState };
+  }
   const ctx = context || {};
 
   const actor = ctx.actor || {};
@@ -202,6 +270,30 @@ export function innerOnAction(action, currState, context) {
     callerTitle = actor.name || t("smart_ai");
   }
 
+  const getOtherRecipients = () => {
+    const recipients = new Set();
+    const rawCaller = getRawSessionID(callerID);
+
+    if (ctx && Array.isArray(ctx.visible_sessions)) {
+      ctx.visible_sessions.forEach(function (sess) {
+        if (sess && sess.session_id) {
+          recipients.add(sess.session_id);
+        }
+      });
+    }
+
+    [nextState.black_player, nextState.white_player].forEach(function (p) {
+      if (p && p.session_id && !isHuman(p.session_id)) {
+        recipients.add(getRawSessionID(p.session_id));
+      }
+    });
+
+    if (actor && actor.role === "assistant") {
+      recipients.delete(rawCaller);
+    }
+    return Array.from(recipients);
+  };
+
   // 1. 选座加入对局
   if (action.type === "join_game") {
     const side = action.side;
@@ -210,31 +302,52 @@ export function innerOnAction(action, currState, context) {
       return { ok: false, error: t("err_seat_taken", { side: side_label(side) }) };
     }
 
+    const otherSide = side === BLACK_SIDE ? WHITE_SIDE : BLACK_SIDE;
+    if (nextState[otherSide + "_player"] && nextState[otherSide + "_player"].session_id === callerID) {
+      return { ok: false, error: t("err_already_seated") };
+    }
+
     nextState[side + "_player"] = { session_id: callerID, title: callerTitle };
     if (!nextState.score[callerTitle] || typeof nextState.score[callerTitle] === "number") {
       nextState.score[callerTitle] = { win: 0, lose: 0, draw: 0, total: 0 };
     }
-    const logText = t("system_joined", { player: callerTitle, side: side_label(side) });
-    nextState.battle_log.push({ type: "system", text: logText });
 
-    let isFull = false;
     if (nextState.black_player !== null && nextState.white_player !== null) {
-      nextState.status = "countdown";
+      nextState.status = "ready_checking";
       nextState.black_ready = false;
       nextState.white_ready = false;
-      isFull = true;
-    } else {
-      nextState.status = "idle";
-    }
 
-    if (isFull) {
+      const rawCaller = actor && actor.role === "assistant" ? getRawSessionID(callerID) : null;
+      const recipients = [];
+      if (nextState.black_player && !isHuman(nextState.black_player.session_id)) {
+        const raw = getRawSessionID(nextState.black_player.session_id);
+        if (raw !== rawCaller) recipients.push(raw);
+      }
+      if (nextState.white_player && !isHuman(nextState.white_player.session_id)) {
+        const raw = getRawSessionID(nextState.white_player.session_id);
+        if (raw !== rawCaller) recipients.push(raw);
+      }
+
+      if (recipients.length > 0) {
+        window.pudding?.send({
+          type: "ready_check",
+          data: {
+            instruction: t("instruction_ready_check")
+          },
+          to: { sessions: recipients }
+        });
+        return {
+          ok: true,
+          state: nextState
+        };
+      }
       return { ok: true, state: nextState };
     } else {
+      nextState.status = "idle";
       const otherSide = side === BLACK_SIDE ? WHITE_SIDE : BLACK_SIDE;
-      return {
-        ok: true,
-        state: nextState,
-        send: {
+      const recipients = getOtherRecipients();
+      if (recipients.length > 0) {
+        window.pudding?.send({
           type: "player_joined",
           data: {
             side: side,
@@ -243,12 +356,23 @@ export function innerOnAction(action, currState, context) {
             instruction: t("announce_join_waiting", {
               player: callerTitle,
               side: side_label(side),
-              other_side: side_label(otherSide),
-              command: command({ type: "join_game", side: otherSide })
-            })
-          }
-        }
-      };
+              other_side: side_label(otherSide)
+            }) + t("instruct_join_dispatch") + "```json\n" + JSON.stringify({
+              id: window.pudding?.id || "",
+              action: {
+                type: "join_game",
+                side: otherSide
+              }
+            }, null, 2) + "\n```"
+          },
+          to: { sessions: recipients }
+        });
+        return {
+          ok: true,
+          state: nextState
+        };
+      }
+      return { ok: true, state: nextState };
     }
   }
 
@@ -260,25 +384,32 @@ export function innerOnAction(action, currState, context) {
       return { ok: false, error: t("err_seat_taken", { side: side_label(side) }) };
     }
 
-    const logText = t("system_invite_ai", { side: side_label(side) });
-    nextState.battle_log.push({ type: "system", text: logText });
-
-    return {
-      ok: true,
-      state: nextState,
-      send: {
+    const recipients = getOtherRecipients();
+    if (recipients.length > 0) {
+      window.pudding?.send({
         type: "player_joined",
         data: {
           side: side,
           player: null,
           status: nextState.status,
           instruction: t("announce_invite_ai", {
-            side: side_label(side),
-            command: command({ type: "join_game", side: side })
-          })
-        }
-      }
-    };
+            side: side_label(side)
+          }) + t("instruct_invite_dispatch") + "```json\n" + JSON.stringify({
+            id: window.pudding?.id || "",
+            action: {
+              type: "join_game",
+              side: side
+            }
+          }, null, 2) + "\n```"
+        },
+        to: { sessions: recipients }
+      });
+      return {
+        ok: true,
+        state: nextState
+      };
+    }
+    return { ok: true, state: nextState };
   }
 
   // 2. 离席重置
@@ -289,8 +420,7 @@ export function innerOnAction(action, currState, context) {
 
     if (!leftSide) return { ok: false, error: t("err_not_seated") };
 
-    const leftPlayerName = nextState[leftSide + "_player"].title;
-    nextState.battle_log.push({ type: "system", text: t("system_left", { player: leftPlayerName }) });
+    const leftPlayer = nextState[leftSide + "_player"];
     nextState[leftSide + "_player"] = null;
     nextState.black_ready = false;
     nextState.white_ready = false;
@@ -298,21 +428,24 @@ export function innerOnAction(action, currState, context) {
     nextState.status = "idle";
     nextState.turn = null;
 
-    const broadcastMsg = t("announce_left", { player: leftPlayerName, command: command({ type: "join_game", side: "black | white" }) });
-
-    return {
-      ok: true,
-      state: nextState,
-      send: {
+    const recipients = getOtherRecipients();
+    if (recipients.length > 0) {
+      window.pudding?.send({
         type: "player_left",
         data: {
           side: leftSide,
-          player_title: leftPlayerName,
+          player: leftPlayer,
           status: nextState.status,
-          instruction: broadcastMsg
-        }
-      }
-    };
+          instruction: t("announce_left", { player: callerTitle })
+        },
+        to: { sessions: recipients }
+      });
+      return {
+        ok: true,
+        state: nextState
+      };
+    }
+    return { ok: true, state: nextState };
   }
 
   // 3. 请离席位（踢人）
@@ -321,8 +454,8 @@ export function innerOnAction(action, currState, context) {
     if (kickSide !== BLACK_SIDE && kickSide !== WHITE_SIDE) return { ok: false, error: "invalid side type" };
     if (nextState[kickSide + "_player"] === null) return { ok: false, error: t("err_empty_seat") };
 
-    const kickedPlayerName = nextState[kickSide + "_player"].title;
-    nextState.battle_log.push({ type: "system", text: t("system_kicked", { player: kickedPlayerName }) });
+    const kickedPlayer = nextState[kickSide + "_player"];
+    const kickedPlayerTitle = kickedPlayer ? kickedPlayer.title : t("unknown");
     nextState[kickSide + "_player"] = null;
     nextState.black_ready = false;
     nextState.white_ready = false;
@@ -330,47 +463,28 @@ export function innerOnAction(action, currState, context) {
     nextState.status = "idle";
     nextState.turn = null;
 
-    const broadcastMsg = t("announce_kicked", { player: kickedPlayerName, command: command({ type: "join_game", side: "black | white" }) });
+    const recipients = getOtherRecipients();
+    const rawKickedSession = kickedPlayer ? getRawSessionID(kickedPlayer.session_id) : null;
+    if (rawKickedSession && rawKickedSession !== getRawSessionID(callerID) && !recipients.includes(rawKickedSession)) {
+      recipients.push(rawKickedSession);
+    }
 
-    return {
-      ok: true,
-      state: nextState,
-      send: {
+    if (recipients.length > 0) {
+      window.pudding?.send({
         type: "player_kicked",
         data: {
           side: kickSide,
-          player_title: kickedPlayerName,
+          player: kickedPlayer,
           status: nextState.status,
-          instruction: broadcastMsg
-        }
-      }
-    };
-  }
-
-  // 4. 准备就绪制造阶段拉起
-  if (action.type === "start_ready_check") {
-    if (nextState.status !== "countdown") return { ok: true, state: nextState };
-    nextState.status = "ready_checking";
-    nextState.battle_log.push({ type: "system", text: t("system_ready_check") });
-
-    const recipients = [];
-    if (nextState.black_player && !isHuman(nextState.black_player.session_id) && !nextState.black_ready) recipients.push(getRawSessionID(nextState.black_player.session_id));
-    if (nextState.white_player && !isHuman(nextState.white_player.session_id) && !nextState.white_ready) recipients.push(getRawSessionID(nextState.white_player.session_id));
-
-    if (recipients.length > 0) {
+          instruction: t("announce_kicked", { player: kickedPlayerTitle })
+        },
+        to: { sessions: recipients }
+      });
       return {
         ok: true,
-        state: nextState,
-        send: {
-          type: "ready_check",
-          data: {
-            instruction: t("instruction_ready_check", { command: command({ type: "ready" }) })
-          },
-          to: { sessions: recipients }
-        }
+        state: nextState
       };
     }
-
     return { ok: true, state: nextState };
   }
 
@@ -380,11 +494,9 @@ export function innerOnAction(action, currState, context) {
 
     if (nextState.black_player && nextState.black_player.session_id === callerID) {
       nextState.black_ready = true;
-      nextState.battle_log.push({ type: "system", text: t("system_player_ready", { player: nextState.black_player.title, side: t("black_side") }) });
     }
     else if (nextState.white_player && nextState.white_player.session_id === callerID) {
       nextState.white_ready = true;
-      nextState.battle_log.push({ type: "system", text: t("system_player_ready", { player: nextState.white_player.title, side: t("white_side") }) });
     } else {
       return { ok: false, error: t("err_not_player") };
     }
@@ -396,20 +508,19 @@ export function innerOnAction(action, currState, context) {
       nextState.history = [];
       nextState.last_move = null;
       nextState.winning_line = null;
-      nextState.battle_log.push({ type: "system", text: t("system_game_start") });
 
       if (!isHuman(nextState.black_player.session_id)) {
+        window.pudding?.send({
+          type: "place_stone",
+          data: {
+            board_text: formatBoardText(nextState.board),
+            instruction: t("instruction_first_move")
+          },
+          to: { sessions: [getRawSessionID(nextState.black_player.session_id)] }
+        });
         return {
           ok: true,
-          state: nextState,
-          send: {
-            type: "place_stone",
-            data: {
-              board_text: formatBoardText(nextState.board),
-              instruction: t("instruction_first_move", { command: command({ type: "place_stone", row: 8, col: 8 }) })
-            },
-            to: { sessions: [getRawSessionID(nextState.black_player.session_id)] }
-          }
+          state: nextState
         };
       }
     }
@@ -448,16 +559,6 @@ export function innerOnAction(action, currState, context) {
     });
     nextState.last_move = { row: coord.row, col: coord.col, message: msg };
 
-    const sideLabel = currentTurnSide === BLACK_SIDE ? t("black_side") + " ●" : t("white_side") + " ○";
-    let logText = t("system_move", { side: sideLabel, player: expectedPlayer.title, coord: displayCoord(coord.row, coord.col) });
-    if (msg) {
-      logText += " 💬 \"" + msg + "\"";
-    }
-    nextState.battle_log.push({
-      type: currentTurnSide,
-      text: logText
-    });
-
     // 胜负判定
     const winLine = checkWin(nextState.board, stone);
     if (winLine) {
@@ -482,31 +583,25 @@ export function innerOnAction(action, currState, context) {
       nextState.score[loserTitle].lose += 1;
       nextState.score[loserTitle].total += 1;
 
-      nextState.battle_log.push({ type: "win", text: t("system_win", { winner: winner_title }) });
-
-      const gameOverRecipients = [];
-      if (nextState.black_player && !isHuman(nextState.black_player.session_id)) gameOverRecipients.push(getRawSessionID(nextState.black_player.session_id));
-      if (nextState.white_player && !isHuman(nextState.white_player.session_id)) gameOverRecipients.push(getRawSessionID(nextState.white_player.session_id));
-
-      if (gameOverRecipients.length > 0) {
+      const recipients = getOtherRecipients();
+      if (recipients.length > 0) {
+        window.pudding?.send({
+          type: "game_over",
+          data: {
+            winner: currentTurnSide,
+            winner_title: winner_title,
+            instruction: t("instruction_game_over", {
+              winner: winner_title,
+              stone: currentTurnSide === BLACK_SIDE ? t("black_stone") : t("white_stone")
+            })
+          },
+          to: { sessions: recipients }
+        });
         return {
           ok: true,
-          state: nextState,
-          send: {
-            type: "game_over",
-            data: {
-              winner: currentTurnSide,
-              winner_title: winner_title,
-              instruction: t("instruction_game_over", {
-                winner: winner_title,
-                stone: currentTurnSide === BLACK_SIDE ? t("black_stone") : t("white_stone")
-              })
-            },
-            to: { sessions: gameOverRecipients }
-          }
+          state: nextState
         };
       }
-
       return { ok: true, state: nextState };
     }
 
@@ -531,27 +626,21 @@ export function innerOnAction(action, currState, context) {
       nextState.score[p2Title].draw += 1;
       nextState.score[p2Title].total += 1;
 
-      nextState.battle_log.push({ type: "system", text: t("system_draw") });
-
-      const drawRecipients = [];
-      if (nextState.black_player && !isHuman(nextState.black_player.session_id)) drawRecipients.push(getRawSessionID(nextState.black_player.session_id));
-      if (nextState.white_player && !isHuman(nextState.white_player.session_id)) drawRecipients.push(getRawSessionID(nextState.white_player.session_id));
-
-      if (drawRecipients.length > 0) {
+      const recipients = getOtherRecipients();
+      if (recipients.length > 0) {
+        window.pudding?.send({
+          type: "game_over",
+          data: {
+            winner: "draw",
+            instruction: t("instruction_draw")
+          },
+          to: { sessions: recipients }
+        });
         return {
           ok: true,
-          state: nextState,
-          send: {
-            type: "game_over",
-            data: {
-              winner: "draw",
-              instruction: t("instruction_draw")
-            },
-            to: { sessions: drawRecipients }
-          }
+          state: nextState
         };
       }
-
       return { ok: true, state: nextState };
     }
 
@@ -561,30 +650,24 @@ export function innerOnAction(action, currState, context) {
     const nextPlayer = nextState[nextTurnSide + "_player"];
 
     if (nextPlayer && !isHuman(nextPlayer.session_id)) {
-      let opponentMsgHint = "";
-      if (msg) {
-        opponentMsgHint = t("opponent_message", { message: msg });
-      }
+      window.pudding?.send({
+        type: "place_stone",
+        data: {
+          board_text: formatBoardText(nextState.board),
+          opponent_last_move: {
+            row: public_row(coord.row),
+            col: public_col(coord.col)
+          },
+          instruction: t("instruction_next_move", {
+            hint: "",
+            side: nextTurnSide === BLACK_SIDE ? t("black_stone") : t("white_stone")
+          })
+        },
+        to: { sessions: [getRawSessionID(nextPlayer.session_id)] }
+      });
       return {
         ok: true,
-        state: nextState,
-        send: {
-          type: "place_stone",
-          data: {
-            board_text: formatBoardText(nextState.board),
-            opponent_last_move: {
-              row: public_row(coord.row),
-              col: public_col(coord.col),
-              message: msg
-            },
-            instruction: t("instruction_next_move", {
-              hint: opponentMsgHint,
-              side: nextTurnSide === BLACK_SIDE ? t("black_side") : t("white_side"),
-              command: command({ type: "place_stone", row: 8, col: 8, message: "..." })
-            })
-          },
-          to: { sessions: [getRawSessionID(nextPlayer.session_id)] }
-        }
+        state: nextState
       };
     }
 
@@ -614,24 +697,23 @@ export function innerOnAction(action, currState, context) {
 
     const nextTurnSide = nextState.history.length % 2 === 0 ? BLACK_SIDE : WHITE_SIDE;
     nextState.turn = nextTurnSide;
-    nextState.battle_log.push({ type: "system", text: t("system_undo") });
 
     const nextPlayer = nextState[nextTurnSide + "_player"];
     if (nextPlayer && !isHuman(nextPlayer.session_id)) {
+      window.pudding?.send({
+        type: "place_stone",
+        data: {
+          board_text: formatBoardText(nextState.board),
+          instruction: t("instruction_next_move", {
+            hint: "",
+            side: nextTurnSide === BLACK_SIDE ? t("black_side") : t("white_side")
+          })
+        },
+        to: { sessions: [getRawSessionID(nextPlayer.session_id)] }
+      });
       return {
         ok: true,
-        state: nextState,
-        send: {
-          type: "place_stone",
-          data: {
-            board_text: formatBoardText(nextState.board),
-            instruction: t("instruction_undo_move", {
-              side: nextTurnSide === BLACK_SIDE ? t("black_side") : t("white_side"),
-              command: command({ type: "place_stone", row: 8, col: 8 })
-            })
-          },
-          to: { sessions: [getRawSessionID(nextPlayer.session_id)] }
-        }
+        state: nextState
       };
     }
 
@@ -649,19 +731,57 @@ export function innerOnAction(action, currState, context) {
     nextState.winning_line = null;
 
     if (nextState.black_player !== null && nextState.white_player !== null) {
-      nextState.status = "countdown";
+      nextState.status = "ready_checking";
+
+      const rawCaller = actor && actor.role === "assistant" ? getRawSessionID(callerID) : null;
+      const recipients = [];
+      if (nextState.black_player && !isHuman(nextState.black_player.session_id)) {
+        const raw = getRawSessionID(nextState.black_player.session_id);
+        if (raw !== rawCaller) recipients.push(raw);
+      }
+      if (nextState.white_player && !isHuman(nextState.white_player.session_id)) {
+        const raw = getRawSessionID(nextState.white_player.session_id);
+        if (raw !== rawCaller) recipients.push(raw);
+      }
+
+      if (recipients.length > 0) {
+        window.pudding?.send({
+          type: "ready_check",
+          data: {
+            instruction: t("instruction_ready_check")
+          },
+          to: { sessions: recipients }
+        });
+        return {
+          ok: true,
+          state: nextState
+        };
+      }
     } else {
       nextState.status = "idle";
     }
 
-    nextState.battle_log.push({ type: "system", text: t("system_reset") });
+    const recipients = getOtherRecipients();
+    if (recipients.length > 0) {
+      window.pudding?.send({
+        type: "reset",
+        data: {
+          status: nextState.status,
+          instruction: t("system_reset")
+        },
+        to: { sessions: recipients }
+      });
+      return {
+        ok: true,
+        state: nextState
+      };
+    }
     return { ok: true, state: nextState };
   }
 
   // 9. 清空积分
   if (action.type === "clear_score") {
     nextState.score = {};
-    nextState.battle_log.push({ type: "system", text: t("system_clear_score") });
     return { ok: true, state: nextState };
   }
 

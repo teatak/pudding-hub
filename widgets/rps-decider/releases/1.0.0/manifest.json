@@ -13,7 +13,7 @@
   "size": "lg",
   "orientation": "portrait",
   "package": "./rps-decider.pudding-widget.json",
-  "package_sha256": "0330a6355a93142e668e83cbd3da029f2c183662525279e45a448baed73291ad",
+  "package_sha256": "dbbe9d4ddd6184dae328cdd5c89edfa4878bcc3854992ef3d7ebff052dcadbed",
   "requires": {
     "widget_api": "^1.0.0"
   }

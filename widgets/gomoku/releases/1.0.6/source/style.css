@@ -97,12 +97,12 @@
   #gomoku-container {
     width: 100%;
     height: 100%;
-    max-width: 760px;
+    max-width: 800px;
     background: transparent;
     padding: 16px;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: visible;
   }
 
   .arena-layout {
@@ -113,14 +113,14 @@
     justify-content: center;
     width: 100%;
     height: 100%;
-    overflow: hidden;
+    overflow: visible;
   }
 
   /* 选手面板在 flex 布局下自适应对齐 */
   .player-panel {
     position: relative;
-    width: 140px;
-    height: 156px;
+    width: 160px;
+    height: 120px;
     flex-shrink: 0;
     z-index: 10;
   }
@@ -139,8 +139,8 @@
   /* 选手卡片高度和宽度强锁，防跳变 */
   .player-card {
     position: relative;
-    width: 140px;
-    height: 156px;
+    width: 160px;
+    height: 120px;
     border-radius: var(--radius);
     display: flex;
     flex-direction: column;
@@ -153,11 +153,6 @@
   .player-card.empty-state {
     background: transparent;
     border: 1.5px dashed rgba(161, 161, 170, 0.35);
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
     cursor: default;
   }
 
@@ -200,74 +195,70 @@
   }
 
   .card-top-half {
-    width: 100%;
-    height: 60px;
-    padding: 10px 12px 0 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     flex-shrink: 0;
   }
 
   .card-bottom-half {
-    width: 100%;
     flex: 1;
-    padding: 8px 12px 10px 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
   }
 
-  /* A（黑方卡片特殊颜色样式的定义） */
-  .player-panel.side-black .player-card.occupied {
-    background: #18181b;
-    border: 1px solid #3f3f46;
-    color: #ffffff;
+  /* 统一卡片背景样式 */
+  .player-card.occupied {
+    background: var(--pudding-card-bg, hsl(var(--card)));
+    border: 1px solid var(--pudding-border, hsl(var(--border)));
+    color: var(--pudding-text, hsl(var(--card-foreground)));
   }
 
-  .player-panel.side-black .card-divider {
-    background: rgba(255, 255, 255, 0.08);
+  /* 选手头像背景颜色区分黑白棋 */
+  /* 默认/暗黑模式（以 :root 变量为准） */
+  .avatar-wrapper.avatar-black {
+    background: #09090b !important;
+    border: 2px solid var(--pudding-border, #303038) !important;
+    color: #ffffff !important;
   }
 
-  .player-panel.side-black .player-card.occupied .player-score {
-    color: #ffffff;
+  .avatar-wrapper.avatar-white {
+    background: #ffffff !important;
+    border: 2px solid #ffffff !important;
+    color: #18181b !important;
   }
 
-  .player-panel.side-black .player-card.occupied .player-role {
-    color: #a1a1aa;
+  /* 空置头像占位符适配黑白棋背景 */
+  .empty-avatar-placeholder.avatar-black {
+    background: rgba(0, 0, 0, 0.2) !important;
+    border: 2px dashed rgba(255, 255, 255, 0.2) !important;
+    color: rgba(255, 255, 255, 0.4) !important;
   }
 
-  .player-panel.side-black .avatar-wrapper {
-    background: #27272a;
-    border-color: rgba(255, 255, 255, 0.15);
-    color: #ffffff;
+  .empty-avatar-placeholder.avatar-white {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 2px dashed var(--pudding-border, #303038) !important;
+    color: rgba(255, 255, 255, 0.4) !important;
   }
 
-  /* B（白方卡片特殊颜色样式的定义） */
-  .player-panel.side-white .player-card.occupied {
-    background: #f4f4f5;
-    border: 1px solid #e4e4e7;
-    color: #18181b;
+  /* 亮色模式适配 */
+  :root[data-pudding-theme="light"] .avatar-wrapper.avatar-black {
+    background: #18181b !important;
+    border: 2px solid #18181b !important;
+    color: #ffffff !important;
   }
 
-  .player-panel.side-white .card-divider {
-    background: rgba(0, 0, 0, 0.06);
+  :root[data-pudding-theme="light"] .avatar-wrapper.avatar-white {
+    background: #ffffff !important;
+    border: 2px solid var(--pudding-border, #e4e4e7) !important;
+    color: #18181b !important;
   }
 
-  .player-panel.side-white .player-card.occupied .player-score {
-    color: #18181b;
+  :root[data-pudding-theme="light"] .empty-avatar-placeholder.avatar-black {
+    background: rgba(24, 24, 27, 0.05) !important;
+    border: 2px dashed rgba(24, 24, 27, 0.2) !important;
+    color: rgba(24, 24, 27, 0.4) !important;
   }
 
-  .player-panel.side-white .player-card.occupied .player-role {
-    color: #52525b;
-  }
-
-  .player-panel.side-white .avatar-wrapper {
-    background: #ffffff;
-    border-color: rgba(0, 0, 0, 0.08);
-    color: #18181b;
+  :root[data-pudding-theme="light"] .empty-avatar-placeholder.avatar-white {
+    background: #ffffff !important;
+    border: 2px dashed var(--pudding-border, #e4e4e7) !important;
+    color: rgba(24, 24, 27, 0.4) !important;
   }
 
   /* 准备就绪状态：绿发光 */
@@ -279,33 +270,35 @@
   /* 当前回合状态呼吸发光 */
   .player-panel.side-black .player-card.active-turn {
     border-color: #3b82f6 !important;
-    box-shadow: 0 0 16px rgba(59, 130, 246, 0.5) !important;
-    animation: turn-pulse-black 1.5s ease-in-out infinite alternate;
+    animation: turn-pulse-black 1.0s ease-in-out infinite alternate;
   }
 
   .player-panel.side-white .player-card.active-turn {
     border-color: #3b82f6 !important;
-    box-shadow: 0 0 16px rgba(59, 130, 246, 0.35) !important;
-    animation: turn-pulse-white 1.5s ease-in-out infinite alternate;
+    animation: turn-pulse-white 1.0s ease-in-out infinite alternate;
   }
 
   @keyframes turn-pulse-black {
     from {
-      box-shadow: 0 0 6px rgba(59, 130, 246, 0.25);
+      border-color: rgba(59, 130, 246, 0.4) !important;
+      box-shadow: 0 0 4px rgba(59, 130, 246, 0.25), 0 0 8px rgba(59, 130, 246, 0.12);
     }
 
     to {
-      box-shadow: 0 0 18px rgba(59, 130, 246, 0.65);
+      border-color: rgba(59, 130, 246, 1) !important;
+      box-shadow: 0 0 16px rgba(59, 130, 246, 0.9), 0 0 32px rgba(59, 130, 246, 0.5);
     }
   }
 
   @keyframes turn-pulse-white {
     from {
-      box-shadow: 0 0 6px rgba(59, 130, 246, 0.15);
+      border-color: rgba(59, 130, 246, 0.4) !important;
+      box-shadow: 0 0 4px rgba(59, 130, 246, 0.2), 0 0 8px rgba(59, 130, 246, 0.08);
     }
 
     to {
-      box-shadow: 0 0 18px rgba(59, 130, 246, 0.5);
+      border-color: rgba(59, 130, 246, 1) !important;
+      box-shadow: 0 0 16px rgba(59, 130, 246, 0.8), 0 0 32px rgba(59, 130, 246, 0.4);
     }
   }
 
@@ -335,9 +328,6 @@
     height: 34px !important;
   }
 
-  .player-card.active-turn .avatar-wrapper {
-    transform: scale(1.05);
-  }
 
   .player-score {
     font-size: 26px;
@@ -410,16 +400,8 @@
     justify-content: center;
     letter-spacing: 0.3px;
     flex-shrink: 0;
-  }
-
-  .player-panel.side-black .player-status-badge {
-    background: #27272a;
-    color: #a1a1aa;
-  }
-
-  .player-panel.side-white .player-status-badge {
-    background: #f4f4f5;
-    color: #71717a;
+    background: var(--pudding-bg, hsl(var(--secondary)));
+    color: var(--pudding-text, hsl(var(--muted-foreground)));
   }
 
   .player-status-badge.ready {
@@ -447,32 +429,17 @@
     cursor: pointer;
     transition: all 0.2s;
     text-align: center;
+    background: var(--pudding-bg, hsl(var(--secondary)));
+    color: var(--pudding-text, hsl(var(--foreground)));
+    border: 1px solid var(--pudding-border, hsl(var(--border)));
   }
 
-  /* 执黑卡片内按钮 */
-  .player-panel.side-black .seat-btn {
-    background: #27272a;
-    color: #ffffff;
-    border: 1px solid #3f3f46;
-  }
-
-  .player-panel.side-black .seat-btn:hover {
-    background: #3f3f46;
-  }
-
-  /* 执白卡片内按钮 */
-  .player-panel.side-white .seat-btn {
-    background: #f4f4f5;
-    color: #18181b;
-    border: 1px solid #e4e4e7;
-  }
-
-  .player-panel.side-white .seat-btn:hover {
-    background: #e4e4e7;
+  .seat-btn:hover {
+    background: var(--pudding-border, hsl(var(--accent)));
   }
 
   .seat-btn.join-btn {
-    padding: 2px 14px;
+    padding: 2px 8px;
     font-size: 11px;
     height: 24px;
     line-height: 18px;
@@ -487,13 +454,11 @@
     line-height: 14px;
     border-radius: 3px;
     width: auto;
-  }
-
-  .seat-btn.kick-btn {
     border-color: rgba(239, 68, 68, 0.3) !important;
     color: #ef4444 !important;
   }
 
+  .seat-btn.leave-btn:hover,
   .seat-btn.kick-btn:hover {
     background: rgba(239, 68, 68, 0.1) !important;
   }
@@ -502,7 +467,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: visible;
     align-items: center;
     justify-content: center;
     width: 100%;
@@ -543,7 +508,7 @@
     pointer-events: none;
   }
 
-  /* 黑棋（左上角）气泡在下方弹出：对应黑背景使用白气泡，右对齐向左扩展 */
+  /* 黑棋（左侧）气泡在下方弹出：向外侧（左边）延伸，防遮挡棋盘 */
   .bubble-left {
     top: 100%;
     right: 0;
@@ -580,7 +545,7 @@
     margin-bottom: -1px;
   }
 
-  /* 白棋（右下角）气泡在上方弹出：对应白背景使用黑气泡，左对齐向右扩展 */
+  /* 白棋（右侧）气泡在上方弹出：向外侧（右边）延伸，防遮挡棋盘 */
   .bubble-right {
     bottom: 100%;
     left: 0;
@@ -617,15 +582,16 @@
     margin-top: -1px;
   }
 
-  /* 棋盘包装盒定位基准：宽度为 100% 最大限制 760px，高度 440px */
+  /* 棋盘包装盒定位基准：宽度为 100% 最大限制 800px，高度 450px 并预留垂直 padding 防发光截断 */
   #board-wrapper {
     position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 760px;
-    height: 440px;
+    max-width: 800px;
+    height: 450px;
+    padding: 5px 0;
     margin-bottom: 8px;
     flex-shrink: 0;
   }
@@ -991,6 +957,36 @@
     color: hsl(var(--muted-foreground));
   }
 
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid hsl(var(--border));
+    padding-top: 14px;
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+
+  .modal-clear-btn {
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: var(--radius);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    background: transparent;
+    color: #ef4444;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .modal-clear-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: #ef4444;
+  }
+
+  .modal-clear-btn:active {
+    background: rgba(239, 68, 68, 0.2);
+  }
+
   #app {
     width: 100%;
     height: 100%;
@@ -1015,6 +1011,16 @@
       align-items: center;
       justify-content: flex-start;
       gap: 8px;
+    }
+
+    .board-container-wrapper {
+      flex: none !important;
+      width: 100% !important;
+      max-width: 320px !important;
+      aspect-ratio: 1 / 1 !important;
+      display: flex !important;
+      justify-content: center;
+      align-items: center;
     }
 
     #gomoku-board {
@@ -1054,31 +1060,7 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
     }
 
-    .player-panel.side-black .player-card.occupied {
-      background: #18181b !important;
-      color: #ffffff !important;
-      border: 1px solid #3f3f46 !important;
-    }
 
-    .player-panel.side-white .player-card.occupied {
-      background: #f4f4f5 !important;
-      color: #18181b !important;
-      border: 1px solid #e4e4e7 !important;
-    }
-
-    .player-panel.side-black .player-card.occupied .card-header,
-    .player-panel.side-black .player-card.occupied .player-info,
-    .player-panel.side-black .player-card.occupied .player-name,
-    .player-panel.side-black .player-card.occupied .player-score {
-      color: #ffffff !important;
-    }
-
-    .player-panel.side-white .player-card.occupied .card-header,
-    .player-panel.side-white .player-card.occupied .player-info,
-    .player-panel.side-white .player-card.occupied .player-name,
-    .player-panel.side-white .player-card.occupied .player-score {
-      color: #18181b !important;
-    }
 
     .card-divider {
       display: none !important;

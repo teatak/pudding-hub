@@ -24,7 +24,7 @@
       "icon": "./gomoku/releases/1.0.6/assets/icon.svg",
       "manifest": "./gomoku/releases/1.0.6/manifest.json",
       "package": "./gomoku/releases/1.0.6/gomoku.pudding-widget.json",
-      "package_sha256": "04cc0d669832a835f3fbf28780961a871686329da48ea16185b13cfa1ca9cc96",
+      "package_sha256": "7d2ba3d7cea84c6abd89459d41c7c2f44f7f2584f7e509d00ee9d5aaeb8fd2e9",
       "requires": {
         "widget_api": "^1.0.0"
       },
@@ -40,7 +40,7 @@
           "version": "1.0.6",
           "manifest": "./gomoku/releases/1.0.6/manifest.json",
           "package": "./gomoku/releases/1.0.6/gomoku.pudding-widget.json",
-          "package_sha256": "04cc0d669832a835f3fbf28780961a871686329da48ea16185b13cfa1ca9cc96",
+          "package_sha256": "7d2ba3d7cea84c6abd89459d41c7c2f44f7f2584f7e509d00ee9d5aaeb8fd2e9",
           "requires": {
             "widget_api": "^1.0.0"
           },
@@ -65,7 +65,7 @@
       "icon": "./rps-decider/releases/1.0.0/assets/icon.svg",
       "manifest": "./rps-decider/releases/1.0.0/manifest.json",
       "package": "./rps-decider/releases/1.0.0/rps-decider.pudding-widget.json",
-      "package_sha256": "0330a6355a93142e668e83cbd3da029f2c183662525279e45a448baed73291ad",
+      "package_sha256": "dbbe9d4ddd6184dae328cdd5c89edfa4878bcc3854992ef3d7ebff052dcadbed",
       "requires": {
         "widget_api": "^1.0.0"
       },
@@ -81,7 +81,7 @@
           "version": "1.0.0",
           "manifest": "./rps-decider/releases/1.0.0/manifest.json",
           "package": "./rps-decider/releases/1.0.0/rps-decider.pudding-widget.json",
-          "package_sha256": "0330a6355a93142e668e83cbd3da029f2c183662525279e45a448baed73291ad",
+          "package_sha256": "dbbe9d4ddd6184dae328cdd5c89edfa4878bcc3854992ef3d7ebff052dcadbed",
           "requires": {
             "widget_api": "^1.0.0"
           },
