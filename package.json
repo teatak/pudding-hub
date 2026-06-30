@@ -2,7 +2,9 @@
   "private": true,
   "scripts": {
     "package-widget": "node scripts/package-widget.mjs",
-    "package-widgets": "node scripts/package-widget.mjs --all"
+    "package-widgets": "node scripts/package-widget.mjs --all",
+    "package-app": "node scripts/package-app.mjs",
+    "package-apps": "node scripts/package-app.mjs --all"
   },
   "dependencies": {
     "preact": "^10.22.0"

@@ -1,0 +1,17 @@
+id: github
+name: GitHub
+version: 1.0.0
+description: Access GitHub repositories, issues, pull requests, and GraphQL data through configured endpoints.
+icon: assets/icon.svg
+endpoints:
+  github_rest:
+    kind: rest
+    url: https://api.github.com
+    description: GitHub REST API.
+  github_graphql:
+    kind: graphql
+    url: https://api.github.com/graphql
+    description: GitHub GraphQL API.
+skills:
+  - skills/repositories/SKILL.md
+  - skills/issues/SKILL.md

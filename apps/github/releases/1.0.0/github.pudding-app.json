@@ -1,0 +1,28 @@
+{
+  "kind": "pudding.app.package",
+  "schema_version": 1,
+  "app": {
+    "id": "github",
+    "name": "GitHub",
+    "version": "1.0.0",
+    "description": "Connect GitHub REST and GraphQL APIs for repositories, issues, pull requests, and file contents."
+  },
+  "files": [
+    {
+      "path": "app.yaml",
+      "content": "id: github\nname: GitHub\nversion: 1.0.0\ndescription: Access GitHub repositories, issues, pull requests, and GraphQL data through configured endpoints.\nicon: assets/icon.svg\nendpoints:\n  github_rest:\n    kind: rest\n    url: https://api.github.com\n    description: GitHub REST API.\n  github_graphql:\n    kind: graphql\n    url: https://api.github.com/graphql\n    description: GitHub GraphQL API.\nskills:\n  - skills/repositories/SKILL.md\n  - skills/issues/SKILL.md\n"
+    },
+    {
+      "path": "skills/repositories/SKILL.md",
+      "content": "---\nname: github-repositories\ndescription: Use when the user asks to inspect GitHub repositories, branches, commits, contents, pull requests, or repository metadata through a connected GitHub app.\n---\n\n# GitHub Repositories\n\nUse this skill when a GitHub connection is available and the user asks about repository data.\n\n## Endpoints\n\n- Use `github_rest` with `builtin_rest_request` for REST paths under `https://api.github.com`.\n- Use `github_graphql` with `builtin_graphql_request` for GraphQL queries.\n\n## REST examples\n\n- Repository metadata: `GET /repos/{owner}/{repo}`\n- Branches: `GET /repos/{owner}/{repo}/branches`\n- Pull requests: `GET /repos/{owner}/{repo}/pulls`\n- File contents: `GET /repos/{owner}/{repo}/contents/{path}`\n\n## Guidance\n\n- Ask for the repository owner/name if it is not clear from context.\n- Prefer GraphQL when the request needs several related resources in one response.\n- Do not mutate GitHub state unless the user explicitly asks for a write operation.\n"
+    },
+    {
+      "path": "skills/issues/SKILL.md",
+      "content": "---\nname: github-issues\ndescription: Use when the user asks to find, summarize, triage, or inspect GitHub issues and issue comments through a connected GitHub app.\n---\n\n# GitHub Issues\n\nUse this skill when a GitHub connection is available and the user asks about GitHub issues.\n\n## Endpoints\n\n- Use `github_rest` with `builtin_rest_request` for REST paths under `https://api.github.com`.\n- Use `github_graphql` with `builtin_graphql_request` when labels, assignees, comments, and timeline data are needed together.\n\n## REST examples\n\n- List repository issues: `GET /repos/{owner}/{repo}/issues`\n- Read one issue: `GET /repos/{owner}/{repo}/issues/{issue_number}`\n- Issue comments: `GET /repos/{owner}/{repo}/issues/{issue_number}/comments`\n\n## Guidance\n\n- Ask for the repository owner/name when it is missing.\n- Keep triage summaries short and separate facts from recommendations.\n- Do not create, edit, close, label, or comment on issues unless the user explicitly asks.\n"
+    },
+    {
+      "path": "assets/icon.svg",
+      "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 64 64\" fill=\"none\">\n  <rect width=\"64\" height=\"64\" rx=\"16\" fill=\"#f2f2f2\"/>\n  <path d=\"M32 10c-12.15 0-22 9.85-22 22 0 9.72 6.3 17.96 15.04 20.87 1.1.2 1.5-.48 1.5-1.06 0-.52-.02-2.25-.03-4.08-6.12 1.33-7.41-2.6-7.41-2.6-1-2.54-2.45-3.22-2.45-3.22-2-.1.15-1.96.15-1.96 2.21.16 3.38 2.27 3.38 2.27 1.97 3.37 5.16 2.4 6.42 1.83.2-1.43.77-2.4 1.4-2.95-4.88-.56-10.02-2.44-10.02-10.86 0-2.4.86-4.37 2.27-5.9-.23-.56-.98-2.8.22-5.83 0 0 1.85-.59 6.05 2.25A21.1 21.1 0 0 1 32 20c1.87 0 3.75.25 5.51.76 4.2-2.84 6.04-2.25 6.04-2.25 1.2 3.03.45 5.27.22 5.83 1.41 1.53 2.27 3.5 2.27 5.9 0 8.44-5.15 10.29-10.05 10.83.79.68 1.5 2.02 1.5 4.07 0 2.94-.03 5.31-.03 6.03 0 .59.4 1.27 1.51 1.06A22.01 22.01 0 0 0 54 32c0-12.15-9.85-22-22-22Z\" fill=\"#1f2328\"/>\n</svg>\n"
+    }
+  ]
+}
