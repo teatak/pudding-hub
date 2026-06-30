@@ -9,9 +9,19 @@
     "en": "GitHub"
   },
   "version": "1.0.0",
-  "icon": "./assets/icon.svg",
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "color": {
+      "light": "#111111",
+      "dark": "#ffffff"
+    },
+    "background": {
+      "light": "#ffffff",
+      "dark": "#111111"
+    }
+  },
   "package": "./github.pudding-app.json",
-  "package_sha256": "601096d0f7a755581eeeeeb5f3745afec14644b47e832ecc79572cc8575c090a",
+  "package_sha256": "44e55a3f9c0474fdab3aaab3cd2b28ed190f8415ccfe5871ca97e9f93efedb20",
   "requires": {
     "pudding_app": "^1.0.0"
   }
