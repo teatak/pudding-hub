@@ -8,7 +8,7 @@
     "zh-TW": "Gmail",
     "en": "Gmail"
   },
-  "version": "1.0.0",
+  "version": "1.0.0-preview.1",
   "description": {
     "zh-CN": "连接 Gmail API，用于邮件搜索、线程读取、标签查看和收件箱整理。",
     "zh-TW": "連接 Gmail API，用於郵件搜尋、對話串讀取、標籤查看和收件匣整理。",
@@ -22,14 +22,16 @@
     "skills/mailbox/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.0/manifest.json",
-  "package": "./releases/1.0.0/gmail.pudding-app.json",
-  "package_sha256": "ded137f1182305c8c8c54b583941443815f3a46a9e3446ad8938d75d036e143b",
+  "manifest": "./releases/1.0.0-preview.1/manifest.json",
+  "package": "./releases/1.0.0-preview.1/gmail.pudding-app.json",
+  "package_sha256": "1df39faddc31242a894148aded0b52a344403bc9f8284078965c771666d49f06",
   "requires": {
     "pudding_app": "^1.0.0"
   },
   "tags": [
     "email",
     "gmail"
-  ]
+  ],
+  "channel": "preview",
+  "preview": true
 }

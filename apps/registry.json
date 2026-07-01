@@ -16,7 +16,6 @@
         "zh-TW": "GitHub",
         "en": "GitHub"
       },
-      "version": "1.0.0",
       "description": {
         "zh-CN": "连接 GitHub REST 与 GraphQL API，用于仓库、Issue、PR 和文件内容查询。",
         "zh-TW": "連接 GitHub REST 與 GraphQL API，用於倉庫、Issue、PR 和檔案內容查詢。",
@@ -33,16 +32,17 @@
           "dark": "#111111"
         }
       },
+      "tags": [
+        "code",
+        "github"
+      ],
+      "version": "1.0.0",
       "manifest": "./github/releases/1.0.0/manifest.json",
       "package": "./github/releases/1.0.0/github.pudding-app.json",
       "package_sha256": "7d1c3afa2773a1ce822f4fb5a5e220dec4d1fb4c05b8920491fb4d8aba34bbe7",
       "requires": {
         "pudding_app": "^1.0.0"
       },
-      "tags": [
-        "code",
-        "github"
-      ],
       "releases": [
         {
           "version": "1.0.0",
@@ -64,20 +64,13 @@
         "zh-TW": "Gmail",
         "en": "Gmail"
       },
-      "version": "1.0.0",
       "description": {
         "zh-CN": "连接 Gmail API，用于邮件搜索、线程读取、标签查看和收件箱整理。",
         "zh-TW": "連接 Gmail API，用於郵件搜尋、對話串讀取、標籤查看和收件匣整理。",
         "en": "Connect Gmail APIs for mail search, thread reading, labels, and inbox triage."
       },
       "icon": {
-        "svg": "./gmail/releases/1.0.0/assets/icon.svg"
-      },
-      "manifest": "./gmail/releases/1.0.0/manifest.json",
-      "package": "./gmail/releases/1.0.0/gmail.pudding-app.json",
-      "package_sha256": "ded137f1182305c8c8c54b583941443815f3a46a9e3446ad8938d75d036e143b",
-      "requires": {
-        "pudding_app": "^1.0.0"
+        "svg": "./gmail/releases/1.0.0-preview.1/assets/icon.svg"
       },
       "tags": [
         "email",
@@ -85,14 +78,16 @@
       ],
       "releases": [
         {
-          "version": "1.0.0",
-          "manifest": "./gmail/releases/1.0.0/manifest.json",
-          "package": "./gmail/releases/1.0.0/gmail.pudding-app.json",
-          "package_sha256": "ded137f1182305c8c8c54b583941443815f3a46a9e3446ad8938d75d036e143b",
+          "version": "1.0.0-preview.1",
+          "manifest": "./gmail/releases/1.0.0-preview.1/manifest.json",
+          "package": "./gmail/releases/1.0.0-preview.1/gmail.pudding-app.json",
+          "package_sha256": "1df39faddc31242a894148aded0b52a344403bc9f8284078965c771666d49f06",
           "requires": {
             "pudding_app": "^1.0.0"
           },
-          "released_at": "2026-07-01"
+          "released_at": "2026-07-02",
+          "channel": "preview",
+          "preview": true
         }
       ]
     }

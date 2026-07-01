@@ -96,6 +96,25 @@ function normalizeRegistryRelease(entry) {
   return entry && typeof entry === "object" && typeof entry.version === "string" ? entry : null;
 }
 
+function releaseChannel(value) {
+  return typeof value === "string" ? value.trim().toLowerCase() : "";
+}
+
+function isPreviewRelease(value) {
+  const channel = releaseChannel(value?.channel);
+  return Boolean(value?.preview || channel === "preview" || channel === "dev");
+}
+
+function withReleaseMetadata(target, source) {
+  if (typeof source.channel === "string" && source.channel.trim()) {
+    target.channel = source.channel.trim();
+  }
+  if (source.preview === true) {
+    target.preview = true;
+  }
+  return target;
+}
+
 async function packageApp(name) {
   const appDir = path.join(ROOT, "apps", name);
   const manifest = await readJSON(path.join(appDir, "manifest.json"));
@@ -150,7 +169,7 @@ async function packageApp(name) {
 }
 
 function buildRootManifest(name, manifest, version, packageFilename, packageHash) {
-  return {
+  return withReleaseMetadata({
     kind: APP_MANIFEST_KIND,
     schema_version: 1,
     id: manifest.id || `teatak/pudding-hub/apps/${name}`,
@@ -165,11 +184,11 @@ function buildRootManifest(name, manifest, version, packageFilename, packageHash
     package_sha256: packageHash,
     requires: manifest.requires || { pudding_app: "^1.0.0" },
     tags: manifest.tags || [],
-  };
+  }, manifest);
 }
 
 function buildReleaseManifest(manifest, packageFilename, packageHash) {
-  return {
+  return withReleaseMetadata({
     kind: APP_MANIFEST_KIND,
     schema_version: 1,
     id: manifest.id,
@@ -180,7 +199,7 @@ function buildReleaseManifest(manifest, packageFilename, packageHash) {
     package: `./${packageFilename}`,
     package_sha256: packageHash,
     requires: manifest.requires || { pudding_app: "^1.0.0" },
-  };
+  }, manifest);
 }
 
 async function updateRegistry(name, manifest, packageHash) {
@@ -198,17 +217,13 @@ async function updateRegistry(name, manifest, packageHash) {
 
   const releaseManifest = `./${name}/releases/${manifest.version}/manifest.json`;
   const releasePackage = `./${name}/releases/${manifest.version}/${name}.pudding-app.json`;
+  const requires = manifest.requires || { pudding_app: "^1.0.0" };
   const item = {
     id: manifest.id,
     name: manifest.name,
     title: manifest.title,
-    version: manifest.version,
     description: manifest.description || {},
     icon: rewriteReleaseIcon(name, manifest.version, manifest.icon),
-    manifest: releaseManifest,
-    package: releasePackage,
-    package_sha256: packageHash,
-    requires: manifest.requires || { pudding_app: "^1.0.0" },
     tags: manifest.tags || [],
   };
   const items = Array.isArray(registry.items) ? registry.items : [];
@@ -217,16 +232,24 @@ async function updateRegistry(name, manifest, packageHash) {
   const releases = (Array.isArray(previous.releases) ? previous.releases : [])
     .map((entry) => normalizeRegistryRelease(entry))
     .filter((entry) => entry && releaseFileExists(entry.manifest));
-  const release = {
+  const release = withReleaseMetadata({
     version: manifest.version,
     manifest: releaseManifest,
     package: releasePackage,
     package_sha256: packageHash,
-    requires: item.requires,
+    requires,
     released_at: releases.find((entry) => entry.version === manifest.version)?.released_at || todayISODate(),
-  };
+  }, manifest);
   const nextReleases = [release, ...releases.filter((entry) => entry.version !== manifest.version)];
   nextReleases.sort((a, b) => b.version.localeCompare(a.version, undefined, { numeric: true }));
+  const defaultRelease = nextReleases.find((entry) => !isPreviewRelease(entry));
+  if (defaultRelease) {
+    item.version = defaultRelease.version;
+    item.manifest = defaultRelease.manifest;
+    item.package = defaultRelease.package;
+    item.package_sha256 = defaultRelease.package_sha256;
+    item.requires = defaultRelease.requires;
+  }
   item.releases = nextReleases;
   if (index >= 0) {
     items[index] = item;
