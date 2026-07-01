@@ -10,7 +10,7 @@
   "files": [
     {
       "path": "app.yaml",
-      "content": "id: github\nname: GitHub\nversion: 1.0.0\ndescription: Access GitHub repositories, issues, pull requests, and GraphQL data through configured endpoints.\noauth: true\nicon:\n  svg: assets/icon.svg\n  color:\n    light: \"#111111\"\n    dark: \"#ffffff\"\n  background:\n    light: \"#ffffff\"\n    dark: \"#111111\"\nendpoints:\n  github_rest:\n    kind: rest\n    url: https://api.github.com\n    description: GitHub REST API.\n  github_graphql:\n    kind: graphql\n    url: https://api.github.com/graphql\n    description: GitHub GraphQL API.\nskills:\n  - skills/repositories/SKILL.md\n  - skills/issues/SKILL.md\n"
+      "content": "id: github\nname: GitHub\nversion: 1.0.0\ndescription: Access GitHub repositories, issues, pull requests, and GraphQL data through configured endpoints.\nauth:\n  required: true\n  methods:\n    - id: github-oauth\n      type: oauth2\n      provider: github\n      label: GitHub OAuth\n      default: true\n    - id: github-pat\n      type: bearer\n      label: Personal access token\nicon:\n  svg: assets/icon.svg\n  color:\n    light: \"#111111\"\n    dark: \"#ffffff\"\n  background:\n    light: \"#ffffff\"\n    dark: \"#111111\"\nendpoints:\n  github_rest:\n    kind: rest\n    url: https://api.github.com\n    description: GitHub REST API.\n  github_graphql:\n    kind: graphql\n    url: https://api.github.com/graphql\n    description: GitHub GraphQL API.\nskills:\n  - skills/repositories/SKILL.md\n  - skills/issues/SKILL.md\n"
     },
     {
       "path": "skills/repositories/SKILL.md",

@@ -2,7 +2,17 @@ id: github
 name: GitHub
 version: 1.0.0
 description: Access GitHub repositories, issues, pull requests, and GraphQL data through configured endpoints.
-oauth: true
+auth:
+  required: true
+  methods:
+    - id: github-oauth
+      type: oauth2
+      provider: github
+      label: GitHub OAuth
+      default: true
+    - id: github-pat
+      type: bearer
+      label: Personal access token
 icon:
   svg: assets/icon.svg
   color:

@@ -2,7 +2,14 @@ id: gmail
 name: Gmail
 version: 1.0.0
 description: Access Gmail messages, threads, labels, and mailbox search through configured endpoints.
-oauth: true
+auth:
+  required: true
+  methods:
+    - id: google-oauth
+      type: oauth2
+      provider: gmail
+      label: Google OAuth
+      default: true
 icon:
   svg: assets/icon.svg
 endpoints:

@@ -10,7 +10,7 @@
   "files": [
     {
       "path": "app.yaml",
-      "content": "id: gmail\nname: Gmail\nversion: 1.0.0\ndescription: Access Gmail messages, threads, labels, and mailbox search through configured endpoints.\noauth: true\nicon:\n  svg: assets/icon.svg\nendpoints:\n  gmail_rest:\n    kind: rest\n    url: https://gmail.googleapis.com/gmail/v1\n    description: Gmail REST API.\nskills:\n  - skills/mailbox/SKILL.md\n"
+      "content": "id: gmail\nname: Gmail\nversion: 1.0.0\ndescription: Access Gmail messages, threads, labels, and mailbox search through configured endpoints.\nauth:\n  required: true\n  methods:\n    - id: google-oauth\n      type: oauth2\n      provider: gmail\n      label: Google OAuth\n      default: true\nicon:\n  svg: assets/icon.svg\nendpoints:\n  gmail_rest:\n    kind: rest\n    url: https://gmail.googleapis.com/gmail/v1\n    description: Gmail REST API.\nskills:\n  - skills/mailbox/SKILL.md\n"
     },
     {
       "path": "skills/mailbox/SKILL.md",
