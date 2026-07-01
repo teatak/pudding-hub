@@ -1,0 +1,24 @@
+{
+  "kind": "pudding.app.package",
+  "schema_version": 1,
+  "app": {
+    "id": "gmail",
+    "name": "Gmail",
+    "version": "1.0.0",
+    "description": "Connect Gmail APIs for mail search, thread reading, labels, and inbox triage."
+  },
+  "files": [
+    {
+      "path": "app.yaml",
+      "content": "id: gmail\nname: Gmail\nversion: 1.0.0\ndescription: Access Gmail messages, threads, labels, and mailbox search through configured endpoints.\noauth: true\nicon:\n  svg: assets/icon.svg\nendpoints:\n  gmail_rest:\n    kind: rest\n    url: https://gmail.googleapis.com/gmail/v1\n    description: Gmail REST API.\nskills:\n  - skills/mailbox/SKILL.md\n"
+    },
+    {
+      "path": "skills/mailbox/SKILL.md",
+      "content": "---\nname: gmail-mailbox\ndescription: Use when the user asks to search, inspect, summarize, or triage Gmail messages, threads, labels, or inbox state through a connected Gmail app.\n---\n\n# Gmail Mailbox\n\nUse this skill when a Gmail connection is available and the user asks about mailbox content.\n\n## Endpoint\n\nUse `gmail_rest` with `builtin_rest_request` for Gmail API paths under `https://gmail.googleapis.com/gmail/v1`.\n\n## Read examples\n\n- Search messages: `GET /users/me/messages` with query `q` and `maxResults`.\n- Get a message: `GET /users/me/messages/{id}` with query `format=metadata` or `format=full`.\n- Get a thread: `GET /users/me/threads/{id}` with query `format=metadata` or `format=full`.\n- List labels: `GET /users/me/labels`.\n\n## Guidance\n\n- Prefer Gmail search syntax in `q` instead of fetching broad inbox pages.\n- Summarize only the messages needed for the user request.\n- This app is currently read-only; do not claim to send, archive, delete, or label messages unless write scopes and tools are added later.\n"
+    },
+    {
+      "path": "assets/icon.svg",
+      "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 64 64\" role=\"img\" aria-label=\"Gmail\">\n  <rect width=\"64\" height=\"64\" rx=\"14\" fill=\"#fff\"/>\n  <path d=\"M13 21.5v24c0 2.5 2 4.5 4.5 4.5h6V29.2L13 21.5Z\" fill=\"#4285F4\"/>\n  <path d=\"M40.5 50h6c2.5 0 4.5-2 4.5-4.5v-24l-10.5 7.7V50Z\" fill=\"#34A853\"/>\n  <path d=\"M40.5 21.7 32 28.1l-8.5-6.4V29.2L32 35.6l8.5-6.4v-7.5Z\" fill=\"#EA4335\"/>\n  <path d=\"M13 21.5c0-3.6 4.1-5.7 7-3.6l3.5 2.6v8.7L13 21.5Z\" fill=\"#C5221F\"/>\n  <path d=\"M51 21.5c0-3.6-4.1-5.7-7-3.6l-3.5 2.6v8.7L51 21.5Z\" fill=\"#FBBC04\"/>\n</svg>\n"
+    }
+  ]
+}

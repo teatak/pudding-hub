@@ -35,7 +35,7 @@
       },
       "manifest": "./github/releases/1.0.0/manifest.json",
       "package": "./github/releases/1.0.0/github.pudding-app.json",
-      "package_sha256": "44e55a3f9c0474fdab3aaab3cd2b28ed190f8415ccfe5871ca97e9f93efedb20",
+      "package_sha256": "8e97117da80c2a5957a46104d203c014ed06277f22e14b6b5a898ab796ab8d04",
       "requires": {
         "pudding_app": "^1.0.0"
       },
@@ -48,11 +48,51 @@
           "version": "1.0.0",
           "manifest": "./github/releases/1.0.0/manifest.json",
           "package": "./github/releases/1.0.0/github.pudding-app.json",
-          "package_sha256": "44e55a3f9c0474fdab3aaab3cd2b28ed190f8415ccfe5871ca97e9f93efedb20",
+          "package_sha256": "8e97117da80c2a5957a46104d203c014ed06277f22e14b6b5a898ab796ab8d04",
           "requires": {
             "pudding_app": "^1.0.0"
           },
           "released_at": "2026-06-30"
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/apps/gmail",
+      "name": "gmail",
+      "title": {
+        "zh-CN": "Gmail",
+        "zh-TW": "Gmail",
+        "en": "Gmail"
+      },
+      "version": "1.0.0",
+      "description": {
+        "zh-CN": "连接 Gmail API，用于邮件搜索、线程读取、标签查看和收件箱整理。",
+        "zh-TW": "連接 Gmail API，用於郵件搜尋、對話串讀取、標籤查看和收件匣整理。",
+        "en": "Connect Gmail APIs for mail search, thread reading, labels, and inbox triage."
+      },
+      "icon": {
+        "svg": "./gmail/releases/1.0.0/assets/icon.svg"
+      },
+      "manifest": "./gmail/releases/1.0.0/manifest.json",
+      "package": "./gmail/releases/1.0.0/gmail.pudding-app.json",
+      "package_sha256": "10a2f1a4978342425333efd8e971a0390c5e4315dd50e8ea4473e58c6753b9f0",
+      "requires": {
+        "pudding_app": "^1.0.0"
+      },
+      "tags": [
+        "email",
+        "gmail"
+      ],
+      "releases": [
+        {
+          "version": "1.0.0",
+          "manifest": "./gmail/releases/1.0.0/manifest.json",
+          "package": "./gmail/releases/1.0.0/gmail.pudding-app.json",
+          "package_sha256": "10a2f1a4978342425333efd8e971a0390c5e4315dd50e8ea4473e58c6753b9f0",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-01"
         }
       ]
     }

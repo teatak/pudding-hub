@@ -1,0 +1,35 @@
+{
+  "kind": "pudding.app.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/apps/gmail",
+  "name": "gmail",
+  "title": {
+    "zh-CN": "Gmail",
+    "zh-TW": "Gmail",
+    "en": "Gmail"
+  },
+  "version": "1.0.0",
+  "description": {
+    "zh-CN": "连接 Gmail API，用于邮件搜索、线程读取、标签查看和收件箱整理。",
+    "zh-TW": "連接 Gmail API，用於郵件搜尋、對話串讀取、標籤查看和收件匣整理。",
+    "en": "Connect Gmail APIs for mail search, thread reading, labels, and inbox triage."
+  },
+  "icon": {
+    "svg": "./assets/icon.svg"
+  },
+  "files": [
+    "app.yaml",
+    "skills/mailbox/SKILL.md",
+    "assets/icon.svg"
+  ],
+  "manifest": "./releases/1.0.0/manifest.json",
+  "package": "./releases/1.0.0/gmail.pudding-app.json",
+  "package_sha256": "10a2f1a4978342425333efd8e971a0390c5e4315dd50e8ea4473e58c6753b9f0",
+  "requires": {
+    "pudding_app": "^1.0.0"
+  },
+  "tags": [
+    "email",
+    "gmail"
+  ]
+}

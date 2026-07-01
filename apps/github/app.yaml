@@ -2,6 +2,7 @@ id: github
 name: GitHub
 version: 1.0.0
 description: Access GitHub repositories, issues, pull requests, and GraphQL data through configured endpoints.
+oauth: true
 icon:
   svg: assets/icon.svg
   color:

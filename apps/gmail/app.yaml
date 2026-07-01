@@ -1,0 +1,14 @@
+id: gmail
+name: Gmail
+version: 1.0.0
+description: Access Gmail messages, threads, labels, and mailbox search through configured endpoints.
+oauth: true
+icon:
+  svg: assets/icon.svg
+endpoints:
+  gmail_rest:
+    kind: rest
+    url: https://gmail.googleapis.com/gmail/v1
+    description: Gmail REST API.
+skills:
+  - skills/mailbox/SKILL.md

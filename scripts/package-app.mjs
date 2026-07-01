@@ -73,6 +73,25 @@ function releaseFileExists(value) {
   return fsSync.existsSync(path.join(ROOT, "apps", rel));
 }
 
+function iconSVGPath(icon) {
+  if (!icon) return "";
+  if (typeof icon === "string") return icon;
+  if (typeof icon === "object" && typeof icon.svg === "string") return icon.svg;
+  return "";
+}
+
+function rewriteReleaseIcon(name, version, icon) {
+  if (!icon) return undefined;
+  if (typeof icon === "string") return releaseAppPath(name, version, icon);
+  if (typeof icon === "object" && !Array.isArray(icon)) {
+    return {
+      ...icon,
+      svg: typeof icon.svg === "string" ? releaseAppPath(name, version, icon.svg) : icon.svg,
+    };
+  }
+  return undefined;
+}
+
 function normalizeRegistryRelease(entry) {
   return entry && typeof entry === "object" && typeof entry.version === "string" ? entry : null;
 }
@@ -113,8 +132,9 @@ async function packageApp(name) {
   const packageFilename = `${name}.pudding-app.json`;
   const releaseDir = path.join(appDir, "releases", version);
   await fs.mkdir(releaseDir, { recursive: true });
-  if (manifest.icon) {
-    const iconRel = String(manifest.icon).replace(/^\.\//, "");
+  const iconRelRaw = iconSVGPath(manifest.icon);
+  if (iconRelRaw) {
+    const iconRel = iconRelRaw.replace(/^\.\//, "");
     await fs.mkdir(path.dirname(path.join(releaseDir, iconRel)), { recursive: true });
     await fs.copyFile(path.join(appDir, iconRel), path.join(releaseDir, iconRel));
   }
@@ -138,7 +158,7 @@ function buildRootManifest(name, manifest, version, packageFilename, packageHash
     title: manifest.title,
     version,
     description: manifest.description || {},
-    icon: manifest.icon ? `./${String(manifest.icon).replace(/^\.\//, "")}` : undefined,
+    icon: manifest.icon,
     files: manifest.files || [],
     manifest: `./releases/${version}/manifest.json`,
     package: `./releases/${version}/${packageFilename}`,
@@ -156,7 +176,7 @@ function buildReleaseManifest(manifest, packageFilename, packageHash) {
     name: manifest.name,
     title: manifest.title,
     version: manifest.version,
-    icon: manifest.icon ? `./${String(manifest.icon).replace(/^\.\//, "")}` : undefined,
+    icon: manifest.icon,
     package: `./${packageFilename}`,
     package_sha256: packageHash,
     requires: manifest.requires || { pudding_app: "^1.0.0" },
@@ -184,7 +204,7 @@ async function updateRegistry(name, manifest, packageHash) {
     title: manifest.title,
     version: manifest.version,
     description: manifest.description || {},
-    icon: releaseAppPath(name, manifest.version, manifest.icon),
+    icon: rewriteReleaseIcon(name, manifest.version, manifest.icon),
     manifest: releaseManifest,
     package: releasePackage,
     package_sha256: packageHash,

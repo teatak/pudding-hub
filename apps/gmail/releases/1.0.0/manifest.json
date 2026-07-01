@@ -1,0 +1,20 @@
+{
+  "kind": "pudding.app.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/apps/gmail",
+  "name": "gmail",
+  "title": {
+    "zh-CN": "Gmail",
+    "zh-TW": "Gmail",
+    "en": "Gmail"
+  },
+  "version": "1.0.0",
+  "icon": {
+    "svg": "./assets/icon.svg"
+  },
+  "package": "./gmail.pudding-app.json",
+  "package_sha256": "10a2f1a4978342425333efd8e971a0390c5e4315dd50e8ea4473e58c6753b9f0",
+  "requires": {
+    "pudding_app": "^1.0.0"
+  }
+}
