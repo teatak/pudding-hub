@@ -75,7 +75,7 @@
       },
       "manifest": "./gmail/releases/1.0.0/manifest.json",
       "package": "./gmail/releases/1.0.0/gmail.pudding-app.json",
-      "package_sha256": "10a2f1a4978342425333efd8e971a0390c5e4315dd50e8ea4473e58c6753b9f0",
+      "package_sha256": "2e46427b78e4e0f6f47c5e5ec3b7793f19d005e4e1fe78567ab92e2ddeb81f86",
       "requires": {
         "pudding_app": "^1.0.0"
       },
@@ -88,7 +88,7 @@
           "version": "1.0.0",
           "manifest": "./gmail/releases/1.0.0/manifest.json",
           "package": "./gmail/releases/1.0.0/gmail.pudding-app.json",
-          "package_sha256": "10a2f1a4978342425333efd8e971a0390c5e4315dd50e8ea4473e58c6753b9f0",
+          "package_sha256": "2e46427b78e4e0f6f47c5e5ec3b7793f19d005e4e1fe78567ab92e2ddeb81f86",
           "requires": {
             "pudding_app": "^1.0.0"
           },
