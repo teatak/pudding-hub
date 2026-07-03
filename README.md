@@ -151,6 +151,7 @@ The packaging script:
 6. Commit the updated source, release snapshot, manifest, and registry.
 
 For the full development guide, see [Pudding Widget Development](docs/widget-development.md).
+For app package development, see [Pudding App Development](docs/app-development.md).
 
 ## Source Manifest Example
 

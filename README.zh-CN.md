@@ -151,6 +151,7 @@ pnpm package-widgets
 6. 提交源码、release 快照、manifest 和 registry。
 
 完整开发指南见 [Pudding 小组件开发指南](docs/widget-development.zh-CN.md)。
+App 包开发见 [Pudding App 开发](docs/app-development.zh-CN.md)。
 
 ## 源码 Manifest 示例
 
