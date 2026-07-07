@@ -1,0 +1,24 @@
+{
+  "kind": "pudding.app.package",
+  "schema_version": 1,
+  "app": {
+    "id": "sequential-thinking",
+    "name": "Sequential Thinking",
+    "version": "1.0.0-preview.1",
+    "description": "Connect the Sequential Thinking MCP server for step-by-step decomposition, revision, and tracking of complex problems."
+  },
+  "files": [
+    {
+      "path": "app.yaml",
+      "content": "id: sequential-thinking\nname: Sequential Thinking\nversion: 1.0.0-preview.1\ndescription: Run the Sequential Thinking MCP server for step-by-step problem decomposition and revision.\nauth:\n  required: false\n  methods:\n    - id: none\n      type: none\n      label: No authentication\n      default: true\nicon:\n  svg: assets/icon.svg\n  background:\n    light: \"#F1F5F9\"\n    dark: \"#111827\"\nendpoints:\n  sequential_thinking_mcp:\n    kind: mcp\n    transport: stdio\n    command: npx\n    args:\n      - -y\n      - \"@modelcontextprotocol/server-sequential-thinking\"\n    description: Sequential Thinking MCP server over stdio.\nskills:\n  - skills/sequential-thinking/SKILL.md\n"
+    },
+    {
+      "path": "skills/sequential-thinking/SKILL.md",
+      "content": "# Sequential Thinking MCP\n\nUse this app when the user wants structured reasoning, step-by-step problem decomposition, or a revisable plan for a complex task.\n\n- This app exposes tools from the Sequential Thinking MCP server.\n- The app uses a stdio MCP endpoint and does not require authentication.\n- Prefer the MCP tools when the task benefits from explicit intermediate thoughts, revisions, branching, or tracking how many thinking steps remain.\n- Do not use it for simple one-step questions where a direct answer is enough.\n"
+    },
+    {
+      "path": "assets/icon.svg",
+      "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 64 64\">\n  <defs>\n    <linearGradient id=\"st-a\" x1=\"12\" x2=\"52\" y1=\"52\" y2=\"12\" gradientUnits=\"userSpaceOnUse\">\n      <stop stop-color=\"#4F46E5\"/>\n      <stop offset=\"1\" stop-color=\"#06B6D4\"/>\n    </linearGradient>\n  </defs>\n  <path d=\"M18 19.5C18 13.7 22.7 9 28.5 9h7C41.3 9 46 13.7 46 19.5c0 3.6-1.8 6.8-4.6 8.7A11 11 0 0 1 48 38.3C48 45.8 41.8 52 34.3 52H26a10 10 0 0 1-10-10c0-3.2 1.5-6.1 3.8-8A10.4 10.4 0 0 1 18 19.5Z\" fill=\"url(#st-a)\"/>\n  <path d=\"M25 22h14M23 32h18M25 42h14\" fill=\"none\" stroke=\"#fff\" stroke-linecap=\"round\" stroke-width=\"4\"/>\n  <circle cx=\"18\" cy=\"32\" r=\"3\" fill=\"#A5F3FC\"/>\n  <circle cx=\"46\" cy=\"32\" r=\"3\" fill=\"#C4B5FD\"/>\n</svg>\n"
+    }
+  ]
+}
