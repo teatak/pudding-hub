@@ -17,7 +17,7 @@
     }
   },
   "package": "./sequential-thinking.pudding-app.json",
-  "package_sha256": "4fd70875f4aa2802c6e49872461d1d2bb8a4f896217fd0499fb7c57335b20537",
+  "package_sha256": "21be7aad52bfbd48ec3b5b80ba0213d6a64a3182994d6c1af04ada0101dae661",
   "requires": {
     "pudding_app": "^1.0.0"
   },

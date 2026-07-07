@@ -10,7 +10,7 @@
   "files": [
     {
       "path": "app.yaml",
-      "content": "id: sequential-thinking\nname: Sequential Thinking\nversion: 1.0.0-preview.1\ndescription: Run the Sequential Thinking MCP server for step-by-step problem decomposition and revision.\nauth:\n  required: false\n  methods:\n    - id: none\n      type: none\n      label: No authentication\n      default: true\nicon:\n  svg: assets/icon.svg\n  background:\n    light: \"#F1F5F9\"\n    dark: \"#111827\"\nendpoints:\n  sequential_thinking_mcp:\n    kind: mcp\n    transport: stdio\n    command: npx\n    args:\n      - -y\n      - \"@modelcontextprotocol/server-sequential-thinking\"\n    description: Sequential Thinking MCP server over stdio.\nskills:\n  - skills/sequential-thinking/SKILL.md\n"
+      "content": "id: sequential-thinking\nname: Sequential Thinking\nversion: 1.0.0-preview.1\ndescription: Run the Sequential Thinking MCP server for step-by-step problem decomposition and revision.\nauth:\n  required: false\nicon:\n  svg: assets/icon.svg\n  background:\n    light: \"#F1F5F9\"\n    dark: \"#111827\"\nendpoints:\n  sequential_thinking_mcp:\n    kind: mcp\n    transport: stdio\n    command: npx\n    args:\n      - -y\n      - \"@modelcontextprotocol/server-sequential-thinking\"\n    description: Sequential Thinking MCP server over stdio.\nskills:\n  - skills/sequential-thinking/SKILL.md\n"
     },
     {
       "path": "skills/sequential-thinking/SKILL.md",

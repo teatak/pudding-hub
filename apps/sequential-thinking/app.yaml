@@ -4,11 +4,6 @@ version: 1.0.0-preview.1
 description: Run the Sequential Thinking MCP server for step-by-step problem decomposition and revision.
 auth:
   required: false
-  methods:
-    - id: none
-      type: none
-      label: No authentication
-      default: true
 icon:
   svg: assets/icon.svg
   background:
