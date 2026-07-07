@@ -33,7 +33,7 @@
   ],
   "manifest": "./releases/1.0.0/manifest.json",
   "package": "./releases/1.0.0/jira.pudding-app.json",
-  "package_sha256": "71335c69eb360c1fd8ee4681d50deb850b5837b4badc364d5011ce052924dbf9",
+  "package_sha256": "219778c9f27678d1901a32385ba0910b0fbc5be79291072e3242c8865296d79f",
   "requires": {
     "pudding_app": "^1.0.0"
   },

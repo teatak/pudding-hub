@@ -169,7 +169,7 @@
           "version": "1.0.0",
           "manifest": "./jira/releases/1.0.0/manifest.json",
           "package": "./jira/releases/1.0.0/jira.pudding-app.json",
-          "package_sha256": "71335c69eb360c1fd8ee4681d50deb850b5837b4badc364d5011ce052924dbf9",
+          "package_sha256": "219778c9f27678d1901a32385ba0910b0fbc5be79291072e3242c8865296d79f",
           "requires": {
             "pudding_app": "^1.0.0"
           },
@@ -257,7 +257,7 @@
           "version": "1.0.0",
           "manifest": "./notion/releases/1.0.0/manifest.json",
           "package": "./notion/releases/1.0.0/notion.pudding-app.json",
-          "package_sha256": "e2b3ccc937479b1233153fb843c8d42ac46421b1256893c5fa197e6f51a89177",
+          "package_sha256": "e4202a38688e7974b9a45baffeb3a9d1d057340eeed0d455c7f08cbb613a6a07",
           "requires": {
             "pudding_app": "^1.0.0"
           },
