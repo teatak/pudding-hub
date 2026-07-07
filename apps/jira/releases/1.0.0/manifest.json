@@ -21,7 +21,7 @@
     }
   },
   "package": "./jira.pudding-app.json",
-  "package_sha256": "fe90437d1abe52cee7b9c0454684ebef6e738f8b32f98ecd15a3c7d5a93c9847",
+  "package_sha256": "71335c69eb360c1fd8ee4681d50deb850b5837b4badc364d5011ce052924dbf9",
   "requires": {
     "pudding_app": "^1.0.0"
   }

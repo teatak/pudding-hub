@@ -33,7 +33,7 @@
   ],
   "manifest": "./releases/1.0.0/manifest.json",
   "package": "./releases/1.0.0/notion.pudding-app.json",
-  "package_sha256": "013b6645a4701cab2b0df06eb85cdde5cf8fc26d68d8f1ab78e30aec6b89be84",
+  "package_sha256": "e43b0f1dbaa770c3b1c3c1b904a890062382891314ec01006dd45677b98f3dbb",
   "requires": {
     "pudding_app": "^1.0.0"
   },

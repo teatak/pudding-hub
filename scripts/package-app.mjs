@@ -16,11 +16,15 @@ const REGISTRY_TITLE = {
   "zh-TW": "Pudding 應用",
   en: "Pudding Apps",
 };
+const JSDELIVR_PURGE_ROOT =
+  process.env.PUDDING_APP_JSDELIVR_PURGE_ROOT || "https://purge.jsdelivr.net/gh/teatak/pudding-hub@main/apps";
 
 function usage() {
   console.log(`Usage:
   pnpm package-app <name>
   pnpm package-apps
+  pnpm package-app <name> --purge
+  pnpm package-apps --purge
 `);
 }
 
@@ -31,6 +35,7 @@ function parseArgs(argv) {
   }
   return {
     all: argv.includes("--all"),
+    purge: argv.includes("--purge"),
     name: argv.find((arg) => !arg.startsWith("--")) || "",
   };
 }
@@ -166,6 +171,26 @@ async function packageApp(name) {
   await writeJSON(path.join(appDir, "manifest.json"), rootManifest);
   await writeJSON(path.join(releaseDir, "manifest.json"), releaseManifest);
   await updateRegistry(name, rootManifest, packageHash);
+  return {
+    name,
+    version,
+    purgePaths: appPurgePaths(name, version, packageFilename, iconRelRaw),
+  };
+}
+
+function appPurgePaths(name, version, packageFilename, iconRelRaw) {
+  const paths = [
+    "registry.json",
+    `${name}/manifest.json`,
+    `${name}/releases/${version}/manifest.json`,
+    `${name}/releases/${version}/${packageFilename}`,
+  ];
+  if (iconRelRaw) {
+    const iconRel = iconRelRaw.replace(/^\.\//, "");
+    paths.push(`${name}/${iconRel}`);
+    paths.push(`${name}/releases/${version}/${iconRel}`);
+  }
+  return paths;
 }
 
 function buildRootManifest(name, manifest, version, packageFilename, packageHash) {
@@ -274,10 +299,36 @@ async function main() {
     usage();
     process.exit(1);
   }
+  const purgePaths = [];
   for (const name of names) {
-    await packageApp(name);
+    const result = await packageApp(name);
+    purgePaths.push(...result.purgePaths);
     console.log(`packaged app ${name}`);
   }
+  if (args.purge) {
+    await purgeJSDelivr(purgePaths);
+  }
+}
+
+async function purgeJSDelivr(paths) {
+  const urls = [...new Set(paths.filter(Boolean).map(jsDelivrPurgeURL))];
+  for (const url of urls) {
+    const response = await fetch(url);
+    if (!response.ok) {
+      const body = await response.text().catch(() => "");
+      throw new Error(`jsDelivr purge failed (${response.status}) ${url}${body ? `: ${body}` : ""}`);
+    }
+    console.log(`purged ${url}`);
+  }
+}
+
+function jsDelivrPurgeURL(rel) {
+  const encoded = rel
+    .replace(/^\.?\//, "")
+    .split("/")
+    .map((part) => encodeURIComponent(part))
+    .join("/");
+  return `${JSDELIVR_PURGE_ROOT.replace(/\/+$/, "")}/${encoded}`;
 }
 
 main().catch((error) => {
