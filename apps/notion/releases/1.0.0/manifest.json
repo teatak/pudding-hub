@@ -24,5 +24,7 @@
   "package_sha256": "e2b3ccc937479b1233153fb843c8d42ac46421b1256893c5fa197e6f51a89177",
   "requires": {
     "pudding_app": "^1.0.0"
-  }
+  },
+  "channel": "preview",
+  "preview": true
 }

@@ -41,5 +41,7 @@
     "jira",
     "issues",
     "projects"
-  ]
+  ],
+  "channel": "preview",
+  "preview": true
 }

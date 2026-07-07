@@ -85,13 +85,6 @@
         "code",
         "issues"
       ],
-      "version": "1.0.0",
-      "manifest": "./gitlab/releases/1.0.0/manifest.json",
-      "package": "./gitlab/releases/1.0.0/gitlab.pudding-app.json",
-      "package_sha256": "adbeb4c3cfaf6bf781c97604a40825c5da9ad191c2dfb4a67267ee05bf37f75c",
-      "requires": {
-        "pudding_app": "^1.0.0"
-      },
       "releases": [
         {
           "version": "1.0.0",
@@ -101,7 +94,9 @@
           "requires": {
             "pudding_app": "^1.0.0"
           },
-          "released_at": "2026-07-07"
+          "released_at": "2026-07-07",
+          "channel": "preview",
+          "preview": true
         }
       ]
     },
@@ -169,13 +164,6 @@
         "issues",
         "projects"
       ],
-      "version": "1.0.0",
-      "manifest": "./jira/releases/1.0.0/manifest.json",
-      "package": "./jira/releases/1.0.0/jira.pudding-app.json",
-      "package_sha256": "71335c69eb360c1fd8ee4681d50deb850b5837b4badc364d5011ce052924dbf9",
-      "requires": {
-        "pudding_app": "^1.0.0"
-      },
       "releases": [
         {
           "version": "1.0.0",
@@ -185,7 +173,9 @@
           "requires": {
             "pudding_app": "^1.0.0"
           },
-          "released_at": "2026-07-07"
+          "released_at": "2026-07-07",
+          "channel": "preview",
+          "preview": true
         }
       ]
     },
@@ -218,13 +208,6 @@
         "issues",
         "projects"
       ],
-      "version": "1.0.0",
-      "manifest": "./linear/releases/1.0.0/manifest.json",
-      "package": "./linear/releases/1.0.0/linear.pudding-app.json",
-      "package_sha256": "79270718155c611ece3c48f16f157d18f337e2e04bfca08dc9f6da4b6fbb0abe",
-      "requires": {
-        "pudding_app": "^1.0.0"
-      },
       "releases": [
         {
           "version": "1.0.0",
@@ -234,7 +217,9 @@
           "requires": {
             "pudding_app": "^1.0.0"
           },
-          "released_at": "2026-07-07"
+          "released_at": "2026-07-07",
+          "channel": "preview",
+          "preview": true
         }
       ]
     },
@@ -267,13 +252,6 @@
         "docs",
         "knowledge"
       ],
-      "version": "1.0.0",
-      "manifest": "./notion/releases/1.0.0/manifest.json",
-      "package": "./notion/releases/1.0.0/notion.pudding-app.json",
-      "package_sha256": "e2b3ccc937479b1233153fb843c8d42ac46421b1256893c5fa197e6f51a89177",
-      "requires": {
-        "pudding_app": "^1.0.0"
-      },
       "releases": [
         {
           "version": "1.0.0",
@@ -283,7 +261,9 @@
           "requires": {
             "pudding_app": "^1.0.0"
           },
-          "released_at": "2026-07-07"
+          "released_at": "2026-07-07",
+          "channel": "preview",
+          "preview": true
         }
       ]
     }

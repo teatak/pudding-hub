@@ -41,5 +41,7 @@
     "notion",
     "docs",
     "knowledge"
-  ]
+  ],
+  "channel": "preview",
+  "preview": true
 }

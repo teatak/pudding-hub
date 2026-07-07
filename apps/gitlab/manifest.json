@@ -41,5 +41,7 @@
     "gitlab",
     "code",
     "issues"
-  ]
+  ],
+  "channel": "preview",
+  "preview": true
 }
