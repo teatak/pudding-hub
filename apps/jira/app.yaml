@@ -1,0 +1,27 @@
+id: jira
+name: Jira
+version: 1.0.0
+description: Access Jira Cloud projects, issues, boards, sprints, JQL search, comments, transitions, and user work through the Atlassian REST API gateway.
+auth:
+  required: true
+  methods:
+    - id: atlassian-oauth-token
+      type: bearer
+      label: Atlassian OAuth access token
+      default: true
+icon:
+  svg: assets/icon.svg
+  color:
+    light: "#0C66E4"
+    dark: "#579DFF"
+  background:
+    light: "#E9F2FF"
+    dark: "#092957"
+endpoints:
+  jira_rest:
+    kind: rest
+    url: https://api.atlassian.com
+    description: Atlassian API gateway for Jira Cloud OAuth 2.0 requests.
+skills:
+  - skills/issues/SKILL.md
+  - skills/projects/SKILL.md

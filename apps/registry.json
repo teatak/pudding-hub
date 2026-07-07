@@ -141,6 +141,55 @@
       ]
     },
     {
+      "id": "teatak/pudding-hub/apps/jira",
+      "name": "jira",
+      "title": {
+        "zh-CN": "Jira",
+        "zh-TW": "Jira",
+        "en": "Jira"
+      },
+      "description": {
+        "zh-CN": "连接 Jira Cloud REST API，用于查询项目、Issue、JQL、评论、状态流转、看板和 Sprint。",
+        "zh-TW": "連接 Jira Cloud REST API，用於查詢專案、Issue、JQL、評論、狀態流轉、看板和 Sprint。",
+        "en": "Connect the Jira Cloud REST API for projects, issues, JQL search, comments, transitions, boards, and sprints."
+      },
+      "icon": {
+        "svg": "./jira/releases/1.0.0/assets/icon.svg",
+        "color": {
+          "light": "#0C66E4",
+          "dark": "#579DFF"
+        },
+        "background": {
+          "light": "#E9F2FF",
+          "dark": "#092957"
+        }
+      },
+      "tags": [
+        "jira",
+        "issues",
+        "projects"
+      ],
+      "version": "1.0.0",
+      "manifest": "./jira/releases/1.0.0/manifest.json",
+      "package": "./jira/releases/1.0.0/jira.pudding-app.json",
+      "package_sha256": "fe90437d1abe52cee7b9c0454684ebef6e738f8b32f98ecd15a3c7d5a93c9847",
+      "requires": {
+        "pudding_app": "^1.0.0"
+      },
+      "releases": [
+        {
+          "version": "1.0.0",
+          "manifest": "./jira/releases/1.0.0/manifest.json",
+          "package": "./jira/releases/1.0.0/jira.pudding-app.json",
+          "package_sha256": "fe90437d1abe52cee7b9c0454684ebef6e738f8b32f98ecd15a3c7d5a93c9847",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-07"
+        }
+      ]
+    },
+    {
       "id": "teatak/pudding-hub/apps/linear",
       "name": "linear",
       "title": {
