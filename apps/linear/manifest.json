@@ -1,0 +1,45 @@
+{
+  "kind": "pudding.app.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/apps/linear",
+  "name": "linear",
+  "title": {
+    "zh-CN": "Linear",
+    "zh-TW": "Linear",
+    "en": "Linear"
+  },
+  "version": "1.0.0",
+  "description": {
+    "zh-CN": "连接 Linear GraphQL API，用于查询 Issue、项目、团队、周期和路线图。",
+    "zh-TW": "連接 Linear GraphQL API，用於查詢 Issue、專案、團隊、週期和路線圖。",
+    "en": "Connect Linear's GraphQL API for issues, projects, teams, cycles, and roadmap data."
+  },
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "color": {
+      "light": "#5E6AD2",
+      "dark": "#A8B1FF"
+    },
+    "background": {
+      "light": "#F5F6FF",
+      "dark": "#11131F"
+    }
+  },
+  "files": [
+    "app.yaml",
+    "skills/issues/SKILL.md",
+    "skills/projects/SKILL.md",
+    "assets/icon.svg"
+  ],
+  "manifest": "./releases/1.0.0/manifest.json",
+  "package": "./releases/1.0.0/linear.pudding-app.json",
+  "package_sha256": "29925df4ed3a536115852ccfca8c557d0f94617fd5f575cc96ff9b2f07180b5d",
+  "requires": {
+    "pudding_app": "^1.0.0"
+  },
+  "tags": [
+    "linear",
+    "issues",
+    "projects"
+  ]
+}

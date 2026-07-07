@@ -1,0 +1,37 @@
+id: notion
+name: Notion
+version: 1.0.0
+description: Access Notion pages, blocks, data sources, databases, users, comments, and search through the Notion REST API.
+auth:
+  required: true
+  methods:
+    - id: notion-token
+      type: bearer
+      label: Integration token
+      default: true
+connection:
+  fields:
+    - id: notionVersion
+      label: Notion-Version
+      description: Required Notion API version header. Use 2026-03-11 unless you need an older API version.
+      placeholder: "2026-03-11"
+      required: true
+      inject:
+        - target: header
+          name: Notion-Version
+icon:
+  svg: assets/icon.svg
+  color:
+    light: "#111111"
+    dark: "#ffffff"
+  background:
+    light: "#ffffff"
+    dark: "#111111"
+endpoints:
+  notion_rest:
+    kind: rest
+    url: https://api.notion.com
+    description: Notion REST API.
+skills:
+  - skills/pages/SKILL.md
+  - skills/data-sources/SKILL.md

@@ -90,6 +90,104 @@
           "preview": true
         }
       ]
+    },
+    {
+      "id": "teatak/pudding-hub/apps/linear",
+      "name": "linear",
+      "title": {
+        "zh-CN": "Linear",
+        "zh-TW": "Linear",
+        "en": "Linear"
+      },
+      "description": {
+        "zh-CN": "连接 Linear GraphQL API，用于查询 Issue、项目、团队、周期和路线图。",
+        "zh-TW": "連接 Linear GraphQL API，用於查詢 Issue、專案、團隊、週期和路線圖。",
+        "en": "Connect Linear's GraphQL API for issues, projects, teams, cycles, and roadmap data."
+      },
+      "icon": {
+        "svg": "./linear/releases/1.0.0/assets/icon.svg",
+        "color": {
+          "light": "#5E6AD2",
+          "dark": "#A8B1FF"
+        },
+        "background": {
+          "light": "#F5F6FF",
+          "dark": "#11131F"
+        }
+      },
+      "tags": [
+        "linear",
+        "issues",
+        "projects"
+      ],
+      "version": "1.0.0",
+      "manifest": "./linear/releases/1.0.0/manifest.json",
+      "package": "./linear/releases/1.0.0/linear.pudding-app.json",
+      "package_sha256": "29925df4ed3a536115852ccfca8c557d0f94617fd5f575cc96ff9b2f07180b5d",
+      "requires": {
+        "pudding_app": "^1.0.0"
+      },
+      "releases": [
+        {
+          "version": "1.0.0",
+          "manifest": "./linear/releases/1.0.0/manifest.json",
+          "package": "./linear/releases/1.0.0/linear.pudding-app.json",
+          "package_sha256": "29925df4ed3a536115852ccfca8c557d0f94617fd5f575cc96ff9b2f07180b5d",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-07"
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/apps/notion",
+      "name": "notion",
+      "title": {
+        "zh-CN": "Notion",
+        "zh-TW": "Notion",
+        "en": "Notion"
+      },
+      "description": {
+        "zh-CN": "连接 Notion REST API，用于页面、块、数据源、数据库、用户、评论和搜索。",
+        "zh-TW": "連接 Notion REST API，用於頁面、區塊、資料來源、資料庫、使用者、留言和搜尋。",
+        "en": "Connect Notion's REST API for pages, blocks, data sources, databases, users, comments, and search."
+      },
+      "icon": {
+        "svg": "./notion/releases/1.0.0/assets/icon.svg",
+        "color": {
+          "light": "#111111",
+          "dark": "#ffffff"
+        },
+        "background": {
+          "light": "#ffffff",
+          "dark": "#111111"
+        }
+      },
+      "tags": [
+        "notion",
+        "docs",
+        "knowledge"
+      ],
+      "version": "1.0.0",
+      "manifest": "./notion/releases/1.0.0/manifest.json",
+      "package": "./notion/releases/1.0.0/notion.pudding-app.json",
+      "package_sha256": "013b6645a4701cab2b0df06eb85cdde5cf8fc26d68d8f1ab78e30aec6b89be84",
+      "requires": {
+        "pudding_app": "^1.0.0"
+      },
+      "releases": [
+        {
+          "version": "1.0.0",
+          "manifest": "./notion/releases/1.0.0/manifest.json",
+          "package": "./notion/releases/1.0.0/notion.pudding-app.json",
+          "package_sha256": "013b6645a4701cab2b0df06eb85cdde5cf8fc26d68d8f1ab78e30aec6b89be84",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-07"
+        }
+      ]
     }
   ]
 }

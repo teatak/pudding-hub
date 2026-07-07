@@ -1,0 +1,28 @@
+id: linear
+name: Linear
+version: 1.0.0
+description: Access Linear issues, projects, teams, cycles, and roadmap data through the Linear GraphQL API.
+auth:
+  required: true
+  methods:
+    - id: linear-api-key
+      type: header
+      label: Personal API key
+      header: Authorization
+      default: true
+icon:
+  svg: assets/icon.svg
+  color:
+    light: "#5E6AD2"
+    dark: "#A8B1FF"
+  background:
+    light: "#F5F6FF"
+    dark: "#11131F"
+endpoints:
+  linear_graphql:
+    kind: graphql
+    url: https://api.linear.app/graphql
+    description: Linear GraphQL API.
+skills:
+  - skills/issues/SKILL.md
+  - skills/projects/SKILL.md
