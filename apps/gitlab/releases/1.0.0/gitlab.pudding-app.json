@@ -1,0 +1,28 @@
+{
+  "kind": "pudding.app.package",
+  "schema_version": 1,
+  "app": {
+    "id": "gitlab",
+    "name": "GitLab",
+    "version": "1.0.0",
+    "description": "Connect the GitLab REST API for projects, issues, merge requests, pipelines, commits, branches, and repository files."
+  },
+  "files": [
+    {
+      "path": "app.yaml",
+      "content": "id: gitlab\nname: GitLab\nversion: 1.0.0\ndescription: Access GitLab projects, issues, merge requests, pipelines, commits, branches, and repository files through the GitLab REST API.\nauth:\n  required: true\n  methods:\n    - id: gitlab-access-token\n      type: header\n      label: Personal, project, or group access token\n      header: PRIVATE-TOKEN\n      default: true\nicon:\n  svg: assets/icon.svg\n  color:\n    light: \"#FC6D26\"\n    dark: \"#FCA326\"\n  background:\n    light: \"#FFF3EC\"\n    dark: \"#171321\"\nendpoints:\n  gitlab_rest:\n    kind: rest\n    url: https://gitlab.com/api/v4\n    description: GitLab REST API for GitLab.com.\nskills:\n  - skills/projects/SKILL.md\n  - skills/issues/SKILL.md\n"
+    },
+    {
+      "path": "skills/projects/SKILL.md",
+      "content": "---\nname: gitlab-projects\ndescription: Use when the user asks to inspect GitLab projects, groups, branches, commits, repository files, releases, or pipelines through a connected GitLab app.\n---\n\n# GitLab Projects\n\nUse this skill when a GitLab connection is available and the user asks about GitLab project or repository data.\n\n## Endpoint\n\n- Use `gitlab_rest` with `builtin_rest_request` for REST paths under `https://gitlab.com/api/v4`.\n- Authentication is already sent as the `PRIVATE-TOKEN` header. Do not duplicate the token in query parameters or headers.\n\n## Common Requests\n\n- Current user: `GET /user`\n- Projects visible to the token: `GET /projects?membership=true&simple=true`\n- Project metadata: `GET /projects/{id}`\n- Branches: `GET /projects/{id}/repository/branches`\n- Commits: `GET /projects/{id}/repository/commits`\n- Repository tree: `GET /projects/{id}/repository/tree`\n- File metadata/content: `GET /projects/{id}/repository/files/{file_path}?ref={ref}`\n- Pipelines: `GET /projects/{id}/pipelines`\n- Pipeline jobs: `GET /projects/{id}/pipelines/{pipeline_id}/jobs`\n\n## Guidance\n\n- Ask for the project path or numeric project ID if it is not clear from context.\n- GitLab supports namespaced project paths, but `/` must be URL-encoded as `%2F`, for example `group%2Fproject`.\n- Use the `iid` field for project-scoped issues and merge requests.\n- Do not mutate GitLab state unless the user explicitly asks for a write operation.\n"
+    },
+    {
+      "path": "skills/issues/SKILL.md",
+      "content": "---\nname: gitlab-issues-merge-requests\ndescription: Use when the user asks to inspect GitLab issues, merge requests, discussions, approvals, or review status through a connected GitLab app.\n---\n\n# GitLab Issues And Merge Requests\n\nUse this skill when a GitLab connection is available and the user asks about issues, merge requests, reviews, or discussions.\n\n## Endpoint\n\n- Use `gitlab_rest` with `builtin_rest_request` for REST paths under `https://gitlab.com/api/v4`.\n- Authentication is already sent as the `PRIVATE-TOKEN` header. Do not duplicate the token in query parameters or headers.\n\n## Issues\n\n- User-visible issues: `GET /issues`\n- Project issues: `GET /projects/{id}/issues`\n- Single issue: `GET /projects/{id}/issues/{issue_iid}`\n- Issue notes: `GET /projects/{id}/issues/{issue_iid}/notes`\n\n## Merge Requests\n\n- User-visible merge requests: `GET /merge_requests`\n- Project merge requests: `GET /projects/{id}/merge_requests`\n- Single merge request: `GET /projects/{id}/merge_requests/{merge_request_iid}`\n- Merge request changes: `GET /projects/{id}/merge_requests/{merge_request_iid}/changes`\n- Merge request commits: `GET /projects/{id}/merge_requests/{merge_request_iid}/commits`\n- Merge request discussions: `GET /projects/{id}/merge_requests/{merge_request_iid}/discussions`\n- Merge request approvals: `GET /projects/{id}/merge_requests/{merge_request_iid}/approvals`\n\n## Guidance\n\n- Prefer concise summaries that mention state, assignee, author, labels, target branch, pipeline status, and blockers when present.\n- For \"my\" work, start with `/issues?scope=assigned_to_me` or `/merge_requests?scope=assigned_to_me`.\n- Use project-scoped `iid` values in issue and merge request paths, not the global `id`.\n- Do not create comments, labels, approvals, or state changes unless the user explicitly asks.\n"
+    },
+    {
+      "path": "assets/icon.svg",
+      "content": "<?xml version=\"1.0\" encoding=\"utf-8\"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->\n<svg width=\"800px\" height=\"800px\" viewBox=\"0 0 32 32\" xmlns=\"http://www.w3.org/2000/svg\"><title>file_type_gitlab</title><polygon points=\"16 28.896 16 28.896 21.156 13.029 10.844 13.029 16 28.896\" style=\"fill:#e24329\"/><polygon points=\"16 28.896 10.844 13.029 3.619 13.029 16 28.896\" style=\"fill:#fc6d26\"/><path d=\"M3.619,13.029h0L2.052,17.851a1.067,1.067,0,0,0,.388,1.193L16,28.9,3.619,13.029Z\" style=\"fill:#fca326\"/><path d=\"M3.619,13.029h7.225L7.739,3.473a.534.534,0,0,0-1.015,0L3.619,13.029Z\" style=\"fill:#e24329\"/><polygon points=\"16 28.896 21.156 13.029 28.381 13.029 16 28.896\" style=\"fill:#fc6d26\"/><path d=\"M28.381,13.029h0l1.567,4.822a1.067,1.067,0,0,1-.388,1.193L16,28.9,28.381,13.029Z\" style=\"fill:#fca326\"/><path d=\"M28.381,13.029H21.156l3.105-9.557a.534.534,0,0,1,1.015,0l3.105,9.557Z\" style=\"fill:#e24329\"/></svg>"
+    }
+  ]
+}

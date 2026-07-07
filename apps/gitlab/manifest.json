@@ -1,0 +1,45 @@
+{
+  "kind": "pudding.app.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/apps/gitlab",
+  "name": "gitlab",
+  "title": {
+    "zh-CN": "GitLab",
+    "zh-TW": "GitLab",
+    "en": "GitLab"
+  },
+  "version": "1.0.0",
+  "description": {
+    "zh-CN": "连接 GitLab REST API，用于查询项目、Issue、合并请求、流水线、提交、分支和仓库文件。",
+    "zh-TW": "連接 GitLab REST API，用於查詢專案、Issue、合併請求、流水線、提交、分支和倉庫檔案。",
+    "en": "Connect the GitLab REST API for projects, issues, merge requests, pipelines, commits, branches, and repository files."
+  },
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "color": {
+      "light": "#FC6D26",
+      "dark": "#FCA326"
+    },
+    "background": {
+      "light": "#FFF3EC",
+      "dark": "#171321"
+    }
+  },
+  "files": [
+    "app.yaml",
+    "skills/projects/SKILL.md",
+    "skills/issues/SKILL.md",
+    "assets/icon.svg"
+  ],
+  "manifest": "./releases/1.0.0/manifest.json",
+  "package": "./releases/1.0.0/gitlab.pudding-app.json",
+  "package_sha256": "adbeb4c3cfaf6bf781c97604a40825c5da9ad191c2dfb4a67267ee05bf37f75c",
+  "requires": {
+    "pudding_app": "^1.0.0"
+  },
+  "tags": [
+    "gitlab",
+    "code",
+    "issues"
+  ]
+}
