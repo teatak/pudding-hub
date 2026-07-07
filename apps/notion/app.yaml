@@ -23,7 +23,7 @@ icon:
   svg: assets/icon.svg
   color:
     light: "#111111"
-    dark: "#ffffff"
+    dark: "#111111"
   background:
     light: "#ffffff"
     dark: "#111111"
