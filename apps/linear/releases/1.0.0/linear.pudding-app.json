@@ -10,7 +10,7 @@
   "files": [
     {
       "path": "app.yaml",
-      "content": "id: linear\nname: Linear\nversion: 1.0.0\ndescription: Access Linear issues, projects, teams, cycles, and roadmap data through the Linear GraphQL API.\nauth:\n  required: true\n  methods:\n    - id: linear-api-key\n      type: header\n      label: Personal API key\n      header: Authorization\n      default: true\nicon:\n  svg: assets/icon.svg\n  color:\n    light: \"#5E6AD2\"\n    dark: \"#A8B1FF\"\n  background:\n    light: \"#F5F6FF\"\n    dark: \"#11131F\"\nendpoints:\n  linear_graphql:\n    kind: graphql\n    url: https://api.linear.app/graphql\n    description: Linear GraphQL API.\nskills:\n  - skills/issues/SKILL.md\n  - skills/projects/SKILL.md\n"
+      "content": "id: linear\nname: Linear\nversion: 1.0.0\ndescription: Access Linear issues, projects, teams, cycles, and roadmap data through the Linear GraphQL API.\nauth:\n  required: true\n  methods:\n    - id: linear-api-key\n      type: header\n      label: Personal API key\n      header: Authorization\n      default: true\nicon:\n  svg: assets/icon.svg\n  background:\n    light: \"#F5F6FF\"\n    dark: \"#11131F\"\nendpoints:\n  linear_graphql:\n    kind: graphql\n    url: https://api.linear.app/graphql\n    description: Linear GraphQL API.\nskills:\n  - skills/issues/SKILL.md\n  - skills/projects/SKILL.md\n"
     },
     {
       "path": "skills/issues/SKILL.md",

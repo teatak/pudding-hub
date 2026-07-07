@@ -10,7 +10,7 @@
   "files": [
     {
       "path": "app.yaml",
-      "content": "id: gitlab\nname: GitLab\nversion: 1.0.0\ndescription: Access GitLab projects, issues, merge requests, pipelines, commits, branches, and repository files through the GitLab REST API.\nauth:\n  required: true\n  methods:\n    - id: gitlab-access-token\n      type: header\n      label: Personal, project, or group access token\n      header: PRIVATE-TOKEN\n      default: true\nicon:\n  svg: assets/icon.svg\n  color:\n    light: \"#FC6D26\"\n    dark: \"#FCA326\"\n  background:\n    light: \"#FFF3EC\"\n    dark: \"#171321\"\nendpoints:\n  gitlab_rest:\n    kind: rest\n    url: https://gitlab.com/api/v4\n    description: GitLab REST API for GitLab.com.\nskills:\n  - skills/projects/SKILL.md\n  - skills/issues/SKILL.md\n"
+      "content": "id: gitlab\nname: GitLab\nversion: 1.0.0\ndescription: Access GitLab projects, issues, merge requests, pipelines, commits, branches, and repository files through the GitLab REST API.\nauth:\n  required: true\n  methods:\n    - id: gitlab-access-token\n      type: header\n      label: Personal, project, or group access token\n      header: PRIVATE-TOKEN\n      default: true\nicon:\n  svg: assets/icon.svg\n  background:\n    light: \"#FFF3EC\"\n    dark: \"#171321\"\nendpoints:\n  gitlab_rest:\n    kind: rest\n    url: https://gitlab.com/api/v4\n    description: GitLab REST API for GitLab.com.\nskills:\n  - skills/projects/SKILL.md\n  - skills/issues/SKILL.md\n"
     },
     {
       "path": "skills/projects/SKILL.md",

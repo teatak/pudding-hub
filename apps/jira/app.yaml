@@ -11,9 +11,6 @@ auth:
       default: true
 icon:
   svg: assets/icon.svg
-  color:
-    light: "#0C66E4"
-    dark: "#579DFF"
   background:
     light: "#E9F2FF"
     dark: "#092957"

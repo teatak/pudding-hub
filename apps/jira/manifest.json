@@ -16,10 +16,6 @@
   },
   "icon": {
     "svg": "./assets/icon.svg",
-    "color": {
-      "light": "#0C66E4",
-      "dark": "#579DFF"
-    },
     "background": {
       "light": "#E9F2FF",
       "dark": "#092957"
@@ -33,7 +29,7 @@
   ],
   "manifest": "./releases/1.0.0/manifest.json",
   "package": "./releases/1.0.0/jira.pudding-app.json",
-  "package_sha256": "219778c9f27678d1901a32385ba0910b0fbc5be79291072e3242c8865296d79f",
+  "package_sha256": "469f8784a0a16e0f703a3341c8a878f24dc09c224a3f381d6726299c2015ee46",
   "requires": {
     "pudding_app": "^1.0.0"
   },

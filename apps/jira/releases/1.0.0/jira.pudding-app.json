@@ -10,7 +10,7 @@
   "files": [
     {
       "path": "app.yaml",
-      "content": "id: jira\nname: Jira\nversion: 1.0.0\ndescription: Access Jira Cloud projects, issues, boards, sprints, JQL search, comments, transitions, and user work through the Atlassian REST API gateway.\nauth:\n  required: true\n  methods:\n    - id: atlassian-oauth-token\n      type: bearer\n      label: Atlassian OAuth access token\n      default: true\nicon:\n  svg: assets/icon.svg\n  color:\n    light: \"#0C66E4\"\n    dark: \"#579DFF\"\n  background:\n    light: \"#E9F2FF\"\n    dark: \"#092957\"\nendpoints:\n  jira_rest:\n    kind: rest\n    url: https://api.atlassian.com\n    description: Atlassian API gateway for Jira Cloud OAuth 2.0 requests.\nskills:\n  - skills/issues/SKILL.md\n  - skills/projects/SKILL.md\n"
+      "content": "id: jira\nname: Jira\nversion: 1.0.0\ndescription: Access Jira Cloud projects, issues, boards, sprints, JQL search, comments, transitions, and user work through the Atlassian REST API gateway.\nauth:\n  required: true\n  methods:\n    - id: atlassian-oauth-token\n      type: bearer\n      label: Atlassian OAuth access token\n      default: true\nicon:\n  svg: assets/icon.svg\n  background:\n    light: \"#E9F2FF\"\n    dark: \"#092957\"\nendpoints:\n  jira_rest:\n    kind: rest\n    url: https://api.atlassian.com\n    description: Atlassian API gateway for Jira Cloud OAuth 2.0 requests.\nskills:\n  - skills/issues/SKILL.md\n  - skills/projects/SKILL.md\n"
     },
     {
       "path": "skills/issues/SKILL.md",

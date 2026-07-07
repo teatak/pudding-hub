@@ -16,10 +16,6 @@
   },
   "icon": {
     "svg": "./assets/icon.svg",
-    "color": {
-      "light": "#5E6AD2",
-      "dark": "#A8B1FF"
-    },
     "background": {
       "light": "#F5F6FF",
       "dark": "#11131F"
@@ -33,7 +29,7 @@
   ],
   "manifest": "./releases/1.0.0/manifest.json",
   "package": "./releases/1.0.0/linear.pudding-app.json",
-  "package_sha256": "79270718155c611ece3c48f16f157d18f337e2e04bfca08dc9f6da4b6fbb0abe",
+  "package_sha256": "ef1ca93ce9ce4054170bc5b9c4d8361c33689177f0e7cb39b7529aa40c5643c4",
   "requires": {
     "pudding_app": "^1.0.0"
   },
