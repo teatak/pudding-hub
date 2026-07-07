@@ -6,13 +6,21 @@ Pudding Hub is the official public resource hub for Pudding. It hosts installabl
 
 ## Registry URL
 
+Apps registry:
+
+```text
+https://teatak.github.io/pudding-hub/apps/registry.json
+```
+
 Widgets registry:
 
 ```text
-https://raw.githubusercontent.com/teatak/pudding-hub/main/widgets/registry.json
+https://teatak.github.io/pudding-hub/widgets/registry.json
 ```
 
-Use this URL in Pudding to discover and install official widgets.
+Use these URLs in Pudding to discover and install official apps and widgets.
+
+GitHub Pages should be enabled for this repository with source `main` branch and folder `/ (root)`.
 
 ## Registry Metadata
 
