@@ -17,7 +17,7 @@
     }
   },
   "package": "./gitlab.pudding-app.json",
-  "package_sha256": "6ca7424d20b78c53f595b846f0a13111f8dafc329fd9339481a4082e0888ec19",
+  "package_sha256": "0ceaf4d10fe2244c0780595c05fbc803ed7231f15c37a499e9ef602fa1e898bd",
   "requires": {
     "pudding_app": "^1.0.0"
   },
