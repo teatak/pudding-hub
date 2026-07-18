@@ -1,0 +1,24 @@
+id: todoist
+name: Todoist
+version: 1.0.0-preview.1
+description: Connect Todoist to review, create, update, complete, and organize tasks through the official API.
+auth:
+  required: true
+  methods:
+    - id: todoist-personal-api-token
+      type: bearer
+      label: Personal API Token
+      default: true
+icon:
+  svg: assets/icon.svg
+  background:
+    light: "#FDF0EF"
+    dark: "#2A1514"
+endpoints:
+  todoist_rest:
+    kind: rest
+    url: https://api.todoist.com/api/v1
+    description: Official Todoist API for tasks, projects, sections, labels, and comments.
+skills:
+  - skills/tasks/SKILL.md
+  - skills/planning/SKILL.md
