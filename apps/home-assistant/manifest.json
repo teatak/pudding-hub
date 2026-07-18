@@ -1,0 +1,45 @@
+{
+  "kind": "pudding.app.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/apps/home-assistant",
+  "name": "home-assistant",
+  "title": {
+    "zh-CN": "Home Assistant",
+    "zh-TW": "Home Assistant",
+    "en": "Home Assistant"
+  },
+  "version": "1.0.0",
+  "description": {
+    "zh-CN": "连接 Home Assistant REST API，用于查询实体、状态、历史和服务，并在确认后控制家居设备。",
+    "zh-TW": "連接 Home Assistant REST API，用於查詢實體、狀態、歷史和服務，並在確認後控制家居裝置。",
+    "en": "Connect the Home Assistant REST API to inspect entities, states, history, and services, and control home devices with confirmation."
+  },
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "color": {
+      "light": "#18BCF2",
+      "dark": "#55D5FF"
+    },
+    "background": {
+      "light": "#F0FAFE",
+      "dark": "#102633"
+    }
+  },
+  "files": [
+    "app.yaml",
+    "skills/entities/SKILL.md",
+    "skills/control/SKILL.md",
+    "assets/icon.svg"
+  ],
+  "manifest": "./releases/1.0.0/manifest.json",
+  "package": "./releases/1.0.0/home-assistant.pudding-app.json",
+  "package_sha256": "22c35492be50c80222b8ee03224857f43eb84760de3f7965286767696936b1de",
+  "requires": {
+    "pudding_app": "^1.0.0"
+  },
+  "tags": [
+    "smart-home",
+    "automation",
+    "iot"
+  ]
+}
