@@ -1,0 +1,45 @@
+id: feishu
+name: Feishu
+version: 1.0.0-preview.1
+description: Read Feishu documents, bitables, and bot-visible chat history through Feishu OpenAPI.
+auth:
+  required: true
+  methods:
+    - id: feishu-app-credentials
+      type: token_exchange
+      label: App ID + App Secret
+      default: true
+      token_exchange:
+        url: https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal
+        body_fields:
+          app_id: appId
+          app_secret: appSecret
+        access_token_field: tenant_access_token
+        expires_in_field: expire
+        token_type: Bearer
+connection:
+  fields:
+    - id: appId
+      label: App ID
+      description: App ID of a Feishu custom app with only the required read permissions.
+      placeholder: cli_xxxxxxxxxxxxxxxx
+      required: true
+    - id: appSecret
+      label: App Secret
+      description: App Secret of the same Feishu custom app.
+      placeholder: App Secret
+      required: true
+      secret: true
+icon:
+  svg: assets/icon.svg
+  background:
+    light: "#F2F6FF"
+    dark: "#101A33"
+endpoints:
+  feishu_rest:
+    kind: rest
+    url: https://open.feishu.cn/open-apis
+    description: Feishu OpenAPI with an automatically exchanged and cached tenant access token.
+skills:
+  - skills/documents/SKILL.md
+  - skills/collaboration/SKILL.md

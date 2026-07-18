@@ -49,6 +49,48 @@
       ]
     },
     {
+      "id": "teatak/pudding-hub/apps/feishu",
+      "name": "feishu",
+      "title": {
+        "zh-CN": "飞书",
+        "zh-TW": "飛書",
+        "en": "Feishu"
+      },
+      "description": {
+        "zh-CN": "连接飞书自建应用，以只读方式查询云文档、多维表格和机器人可见的会话消息。",
+        "zh-TW": "連接飛書自建應用，以唯讀方式查詢雲端文件、多維表格和機器人可見的會話訊息。",
+        "en": "Connect a Feishu custom app for read-only access to documents, bitables, and bot-visible chat history."
+      },
+      "icon": {
+        "svg": "./feishu/releases/1.0.0-preview.1/assets/icon.svg",
+        "background": {
+          "light": "#F2F6FF",
+          "dark": "#101A33"
+        }
+      },
+      "tags": [
+        "productivity",
+        "documents",
+        "bitable",
+        "chat",
+        "feishu"
+      ],
+      "releases": [
+        {
+          "version": "1.0.0-preview.1",
+          "manifest": "./feishu/releases/1.0.0-preview.1/manifest.json",
+          "package": "./feishu/releases/1.0.0-preview.1/feishu.pudding-app.json",
+          "package_sha256": "88603d27a99cc08345ae303a8d38bd36209b8f949937a1c75a54a2916262fda8",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-18",
+          "channel": "preview",
+          "preview": true
+        }
+      ]
+    },
+    {
       "id": "teatak/pudding-hub/apps/github",
       "name": "github",
       "title": {
