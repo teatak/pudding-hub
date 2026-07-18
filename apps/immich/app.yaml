@@ -1,0 +1,29 @@
+id: immich
+name: Immich
+version: 1.0.0-preview.1
+description: Search and inspect photos and videos in a connected Immich library through its REST API.
+auth:
+  required: true
+  methods:
+    - id: immich-api-key
+      type: header
+      label: API Key
+      header: x-api-key
+      default: true
+icon:
+  svg: assets/icon.svg
+  background:
+    light: "#F6F7FA"
+    dark: "#1D1F24"
+endpoints:
+  immich_rest:
+    kind: rest
+    url: http://localhost:2283/api
+    url_config:
+      label: Immich API address
+      description: Root API URL of the Immich instance, including /api.
+      placeholder: https://photos.example.com/api
+      required: true
+    description: Immich REST API for read-only photo search, metadata, and thumbnails.
+skills:
+  - skills/photo-search/SKILL.md

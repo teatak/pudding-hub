@@ -312,6 +312,47 @@
       ]
     },
     {
+      "id": "teatak/pudding-hub/apps/immich",
+      "name": "immich",
+      "title": {
+        "zh-CN": "Immich",
+        "zh-TW": "Immich",
+        "en": "Immich"
+      },
+      "description": {
+        "zh-CN": "连接自托管 Immich，在照片和视频中进行智能搜索、人物与地点查找、OCR 和元数据筛选，并将缩略图展示到画布。",
+        "zh-TW": "連接自架 Immich，在照片和影片中進行智慧搜尋、人物與地點查找、OCR 和中繼資料篩選，並將縮圖展示到畫布。",
+        "en": "Connect a self-hosted Immich library for smart photo and video search, people and place lookup, OCR and metadata filtering, with thumbnail results on the canvas."
+      },
+      "icon": {
+        "svg": "./immich/releases/1.0.0-preview.1/assets/icon.svg",
+        "background": {
+          "light": "#F6F7FA",
+          "dark": "#1D1F24"
+        }
+      },
+      "tags": [
+        "photos",
+        "search",
+        "self-hosted",
+        "immich"
+      ],
+      "releases": [
+        {
+          "version": "1.0.0-preview.1",
+          "manifest": "./immich/releases/1.0.0-preview.1/manifest.json",
+          "package": "./immich/releases/1.0.0-preview.1/immich.pudding-app.json",
+          "package_sha256": "39f51080e926a48148ce59c316d68e8eefa75324d4b13a423524146db109a240",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-18",
+          "channel": "preview",
+          "preview": true
+        }
+      ]
+    },
+    {
       "id": "teatak/pudding-hub/apps/jira",
       "name": "jira",
       "title": {
