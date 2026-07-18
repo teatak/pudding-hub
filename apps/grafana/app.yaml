@@ -1,0 +1,24 @@
+id: grafana
+name: Grafana
+version: 1.0.0
+description: Inspect Grafana dashboards, data sources, queries, and alert rules through the Grafana HTTP API.
+auth:
+  required: true
+  methods:
+    - id: grafana-service-account-token
+      type: bearer
+      label: Service Account Token
+      default: true
+icon:
+  svg: assets/icon.svg
+  background:
+    light: "#FFF4EA"
+    dark: "#20130B"
+endpoints:
+  grafana_rest:
+    kind: rest
+    url: http://localhost:3000
+    description: Grafana HTTP API. Set the custom API address on the connection to the Grafana instance root URL.
+skills:
+  - skills/dashboards/SKILL.md
+  - skills/alerting/SKILL.md

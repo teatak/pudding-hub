@@ -137,6 +137,51 @@
       ]
     },
     {
+      "id": "teatak/pudding-hub/apps/grafana",
+      "name": "grafana",
+      "title": {
+        "zh-CN": "Grafana",
+        "zh-TW": "Grafana",
+        "en": "Grafana"
+      },
+      "description": {
+        "zh-CN": "连接 Grafana HTTP API，用于只读查询 Dashboard、文件夹、数据源、指标、日志和告警规则。",
+        "zh-TW": "連接 Grafana HTTP API，用於唯讀查詢 Dashboard、資料夾、資料來源、指標、日誌和告警規則。",
+        "en": "Connect the Grafana HTTP API for read-only access to dashboards, folders, data sources, metrics, logs, and alert rules."
+      },
+      "icon": {
+        "svg": "./grafana/releases/1.0.0/assets/icon.svg",
+        "background": {
+          "light": "#FFF4EA",
+          "dark": "#20130B"
+        }
+      },
+      "tags": [
+        "observability",
+        "monitoring",
+        "grafana"
+      ],
+      "version": "1.0.0",
+      "manifest": "./grafana/releases/1.0.0/manifest.json",
+      "package": "./grafana/releases/1.0.0/grafana.pudding-app.json",
+      "package_sha256": "350de0538fd74bb24f87bd73ad27168dec434395311a2e29f81612ebb3c8e32d",
+      "requires": {
+        "pudding_app": "^1.0.0"
+      },
+      "releases": [
+        {
+          "version": "1.0.0",
+          "manifest": "./grafana/releases/1.0.0/manifest.json",
+          "package": "./grafana/releases/1.0.0/grafana.pudding-app.json",
+          "package_sha256": "350de0538fd74bb24f87bd73ad27168dec434395311a2e29f81612ebb3c8e32d",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-18"
+        }
+      ]
+    },
+    {
       "id": "teatak/pudding-hub/apps/home-assistant",
       "name": "home-assistant",
       "title": {
