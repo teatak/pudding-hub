@@ -81,6 +81,13 @@
         "code",
         "issues"
       ],
+      "version": "1.0.0",
+      "manifest": "./gitlab/releases/1.0.0/manifest.json",
+      "package": "./gitlab/releases/1.0.0/gitlab.pudding-app.json",
+      "package_sha256": "0ceaf4d10fe2244c0780595c05fbc803ed7231f15c37a499e9ef602fa1e898bd",
+      "requires": {
+        "pudding_app": "^1.0.0"
+      },
       "releases": [
         {
           "version": "1.0.0",
@@ -90,9 +97,7 @@
           "requires": {
             "pudding_app": "^1.0.0"
           },
-          "released_at": "2026-07-07",
-          "channel": "preview",
-          "preview": true
+          "released_at": "2026-07-07"
         }
       ]
     },
@@ -196,6 +201,13 @@
         "issues",
         "projects"
       ],
+      "version": "1.0.0",
+      "manifest": "./linear/releases/1.0.0/manifest.json",
+      "package": "./linear/releases/1.0.0/linear.pudding-app.json",
+      "package_sha256": "ef1ca93ce9ce4054170bc5b9c4d8361c33689177f0e7cb39b7529aa40c5643c4",
+      "requires": {
+        "pudding_app": "^1.0.0"
+      },
       "releases": [
         {
           "version": "1.0.0",
@@ -205,9 +217,7 @@
           "requires": {
             "pudding_app": "^1.0.0"
           },
-          "released_at": "2026-07-07",
-          "channel": "preview",
-          "preview": true
+          "released_at": "2026-07-07"
         }
       ]
     },
@@ -240,6 +250,13 @@
         "docs",
         "knowledge"
       ],
+      "version": "1.0.0",
+      "manifest": "./notion/releases/1.0.0/manifest.json",
+      "package": "./notion/releases/1.0.0/notion.pudding-app.json",
+      "package_sha256": "e4202a38688e7974b9a45baffeb3a9d1d057340eeed0d455c7f08cbb613a6a07",
+      "requires": {
+        "pudding_app": "^1.0.0"
+      },
       "releases": [
         {
           "version": "1.0.0",
@@ -249,9 +266,7 @@
           "requires": {
             "pudding_app": "^1.0.0"
           },
-          "released_at": "2026-07-07",
-          "channel": "preview",
-          "preview": true
+          "released_at": "2026-07-07"
         }
       ]
     },
@@ -269,13 +284,20 @@
         "en": "Connect the Sequential Thinking MCP server for step-by-step decomposition, revision, and tracking of complex problems."
       },
       "icon": {
-        "svg": "./sequential-thinking/releases/1.0.0-preview.1/assets/icon.svg",
+        "svg": "./sequential-thinking/releases/1.0.0/assets/icon.svg",
         "background": {
           "light": "#F1F5F9",
           "dark": "#111827"
         }
       },
       "tags": [],
+      "version": "1.0.0",
+      "manifest": "./sequential-thinking/releases/1.0.0/manifest.json",
+      "package": "./sequential-thinking/releases/1.0.0/sequential-thinking.pudding-app.json",
+      "package_sha256": "b3813a71b087e7e753a094cd807175eb8a7ef3c96b2642ea7b9cbc119e26b9a3",
+      "requires": {
+        "pudding_app": "^1.0.0"
+      },
       "releases": [
         {
           "version": "1.0.0-preview.1",
@@ -288,6 +310,16 @@
           "released_at": "2026-07-08",
           "channel": "preview",
           "preview": true
+        },
+        {
+          "version": "1.0.0",
+          "manifest": "./sequential-thinking/releases/1.0.0/manifest.json",
+          "package": "./sequential-thinking/releases/1.0.0/sequential-thinking.pudding-app.json",
+          "package_sha256": "b3813a71b087e7e753a094cd807175eb8a7ef3c96b2642ea7b9cbc119e26b9a3",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-18"
         }
       ]
     }

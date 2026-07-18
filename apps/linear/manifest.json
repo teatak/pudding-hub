@@ -37,7 +37,5 @@
     "linear",
     "issues",
     "projects"
-  ],
-  "channel": "preview",
-  "preview": true
+  ]
 }

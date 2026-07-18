@@ -1,6 +1,6 @@
 id: sequential-thinking
 name: Sequential Thinking
-version: 1.0.0-preview.1
+version: 1.0.0
 description: Run the Sequential Thinking MCP server for step-by-step problem decomposition and revision.
 auth:
   required: false
@@ -17,6 +17,14 @@ endpoints:
     args:
       - -y
       - "@modelcontextprotocol/server-sequential-thinking"
+    platforms:
+      windows:
+        command: cmd
+        args:
+          - /c
+          - npx
+          - -y
+          - "@modelcontextprotocol/server-sequential-thinking"
     description: Sequential Thinking MCP server over stdio.
 skills:
   - skills/sequential-thinking/SKILL.md
