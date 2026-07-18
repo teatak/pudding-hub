@@ -1,0 +1,40 @@
+id: supabase
+name: Supabase
+version: 1.0.0-preview.1
+description: Inspect one Supabase project through the official read-only Supabase MCP server.
+auth:
+  required: true
+  methods:
+    - id: supabase-personal-access-token
+      type: bearer
+      label: Personal Access Token
+      default: true
+connection:
+  fields:
+    - id: projectRef
+      label: Project Ref
+      description: Project ID from Supabase project settings. This connection is restricted to that project.
+      placeholder: abcdefghijklmnopqrst
+      required: true
+      inject:
+        - target: query
+          name: project_ref
+          methods:
+            - POST
+icon:
+  svg: assets/icon.svg
+  color:
+    light: "#3ECF8E"
+    dark: "#6EE7B7"
+  background:
+    light: "#ECFDF5"
+    dark: "#10251D"
+endpoints:
+  supabase_mcp:
+    kind: mcp
+    transport: streamable_http
+    url: "https://mcp.supabase.com/mcp?read_only=true&features=database,debugging,development,docs,functions,storage"
+    description: Official Supabase MCP Server scoped to one project in read-only mode.
+skills:
+  - skills/database/SKILL.md
+  - skills/operations/SKILL.md

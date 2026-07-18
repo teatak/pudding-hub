@@ -457,6 +457,50 @@
           "released_at": "2026-07-18"
         }
       ]
+    },
+    {
+      "id": "teatak/pudding-hub/apps/supabase",
+      "name": "supabase",
+      "title": {
+        "zh-CN": "Supabase",
+        "zh-TW": "Supabase",
+        "en": "Supabase"
+      },
+      "description": {
+        "zh-CN": "以只读方式连接单个 Supabase 项目，用于查看数据库结构与数据、日志、安全建议、Edge Functions、Storage 和官方文档。",
+        "zh-TW": "以唯讀方式連接單個 Supabase 專案，用於查看資料庫結構與資料、日誌、安全建議、Edge Functions、Storage 和官方文件。",
+        "en": "Connect one Supabase project in read-only mode to inspect database schema and data, logs, advisors, Edge Functions, Storage, and official documentation."
+      },
+      "icon": {
+        "svg": "./supabase/releases/1.0.0-preview.1/assets/icon.svg",
+        "color": {
+          "light": "#3ECF8E",
+          "dark": "#6EE7B7"
+        },
+        "background": {
+          "light": "#ECFDF5",
+          "dark": "#10251D"
+        }
+      },
+      "tags": [
+        "database",
+        "mcp",
+        "supabase"
+      ],
+      "releases": [
+        {
+          "version": "1.0.0-preview.1",
+          "manifest": "./supabase/releases/1.0.0-preview.1/manifest.json",
+          "package": "./supabase/releases/1.0.0-preview.1/supabase.pudding-app.json",
+          "package_sha256": "f62f6b77eaa015f436e42ac5ad06a8f4cdb9ee46183f55c69f3a444271d5d4f2",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-18",
+          "channel": "preview",
+          "preview": true
+        }
+      ]
     }
   ]
 }
