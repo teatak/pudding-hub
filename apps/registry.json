@@ -473,10 +473,6 @@
       },
       "icon": {
         "svg": "./supabase/releases/1.0.0-preview.1/assets/icon.svg",
-        "color": {
-          "light": "#3ECF8E",
-          "dark": "#6EE7B7"
-        },
         "background": {
           "light": "#ECFDF5",
           "dark": "#10251D"
@@ -492,7 +488,7 @@
           "version": "1.0.0-preview.1",
           "manifest": "./supabase/releases/1.0.0-preview.1/manifest.json",
           "package": "./supabase/releases/1.0.0-preview.1/supabase.pudding-app.json",
-          "package_sha256": "f62f6b77eaa015f436e42ac5ad06a8f4cdb9ee46183f55c69f3a444271d5d4f2",
+          "package_sha256": "791874d85341c95a969944f0de211578646bb3b4549c90784bb6875ddc6254b1",
           "requires": {
             "pudding_app": "^1.0.0"
           },

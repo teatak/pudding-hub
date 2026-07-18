@@ -23,9 +23,6 @@ connection:
             - POST
 icon:
   svg: assets/icon.svg
-  color:
-    light: "#3ECF8E"
-    dark: "#6EE7B7"
   background:
     light: "#ECFDF5"
     dark: "#10251D"
