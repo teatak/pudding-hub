@@ -8,11 +8,11 @@
     "zh-TW": "飛書",
     "en": "Feishu"
   },
-  "version": "1.0.0-preview.2",
+  "version": "1.0.0-preview.3",
   "description": {
-    "zh-CN": "连接飞书自建应用，以只读方式查询云文档、多维表格和机器人可见的会话消息。",
-    "zh-TW": "連接飛書自建應用，以唯讀方式查詢雲端文件、多維表格和機器人可見的會話訊息。",
-    "en": "Connect a Feishu custom app for read-only access to documents, bitables, and bot-visible chat history."
+    "zh-CN": "连接飞书自建应用，读取和编辑新版云文档，并查询多维表格和机器人可见的会话消息。",
+    "zh-TW": "連接飛書自建應用，讀取和編輯新版雲端文件，並查詢多維表格和機器人可見的會話訊息。",
+    "en": "Connect a Feishu custom app to read and edit new-format documents and inspect bitables and bot-visible chat history."
   },
   "icon": {
     "svg": "./assets/icon.svg",
@@ -27,9 +27,9 @@
     "skills/collaboration/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.0-preview.2/manifest.json",
-  "package": "./releases/1.0.0-preview.2/feishu.pudding-app.json",
-  "package_sha256": "4fc394a22b75234a047330b3c4973d9bc214649bf3a912f5e392307029b6fe18",
+  "manifest": "./releases/1.0.0-preview.3/manifest.json",
+  "package": "./releases/1.0.0-preview.3/feishu.pudding-app.json",
+  "package_sha256": "ec7ae9871f4f8fbf4768c843e121934b260be4f2c0cc285bf5c82cf34afb681d",
   "requires": {
     "pudding_app": "^1.0.0"
   },
