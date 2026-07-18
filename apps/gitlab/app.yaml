@@ -1,6 +1,6 @@
 id: gitlab
 name: GitLab
-version: 1.0.0
+version: 1.0.1
 description: Access GitLab projects, issues, merge requests, pipelines, commits, branches, and repository files through the GitLab REST API.
 auth:
   required: true
@@ -19,7 +19,11 @@ endpoints:
   gitlab_rest:
     kind: rest
     url: https://gitlab.com/api/v4
-    description: GitLab REST API for GitLab.com.
+    url_config:
+      label: GitLab API address
+      description: API root URL for a self-managed GitLab instance. Leave blank for GitLab.com.
+      placeholder: https://gitlab.example.com/api/v4
+    description: GitLab REST API.
 skills:
   - skills/projects/SKILL.md
   - skills/issues/SKILL.md

@@ -1,6 +1,6 @@
 id: grafana
 name: Grafana
-version: 1.0.0
+version: 1.0.1
 description: Inspect Grafana dashboards, data sources, queries, and alert rules through the Grafana HTTP API.
 auth:
   required: true
@@ -18,7 +18,12 @@ endpoints:
   grafana_rest:
     kind: rest
     url: http://localhost:3000
-    description: Grafana HTTP API. Set the custom API address on the connection to the Grafana instance root URL.
+    url_config:
+      label: Grafana address
+      description: Root URL of the Grafana instance.
+      placeholder: https://grafana.example.com
+      required: true
+    description: Grafana HTTP API.
 skills:
   - skills/dashboards/SKILL.md
   - skills/alerting/SKILL.md

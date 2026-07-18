@@ -70,7 +70,7 @@
         "en": "Connect the GitLab REST API for projects, issues, merge requests, pipelines, commits, branches, and repository files."
       },
       "icon": {
-        "svg": "./gitlab/releases/1.0.0/assets/icon.svg",
+        "svg": "./gitlab/releases/1.0.1/assets/icon.svg",
         "background": {
           "light": "#FFF3EC",
           "dark": "#171321"
@@ -81,14 +81,24 @@
         "code",
         "issues"
       ],
-      "version": "1.0.0",
-      "manifest": "./gitlab/releases/1.0.0/manifest.json",
-      "package": "./gitlab/releases/1.0.0/gitlab.pudding-app.json",
-      "package_sha256": "0ceaf4d10fe2244c0780595c05fbc803ed7231f15c37a499e9ef602fa1e898bd",
+      "version": "1.0.1",
+      "manifest": "./gitlab/releases/1.0.1/manifest.json",
+      "package": "./gitlab/releases/1.0.1/gitlab.pudding-app.json",
+      "package_sha256": "ddc404725b1ebce0f707e9a2b7a9ad7797509725f2784cb415e3d9d4ca122e67",
       "requires": {
         "pudding_app": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.1",
+          "manifest": "./gitlab/releases/1.0.1/manifest.json",
+          "package": "./gitlab/releases/1.0.1/gitlab.pudding-app.json",
+          "package_sha256": "ddc404725b1ebce0f707e9a2b7a9ad7797509725f2784cb415e3d9d4ca122e67",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-18"
+        },
         {
           "version": "1.0.0",
           "manifest": "./gitlab/releases/1.0.0/manifest.json",
@@ -150,7 +160,7 @@
         "en": "Connect the Grafana HTTP API for read-only access to dashboards, folders, data sources, metrics, logs, and alert rules."
       },
       "icon": {
-        "svg": "./grafana/releases/1.0.0/assets/icon.svg",
+        "svg": "./grafana/releases/1.0.1/assets/icon.svg",
         "background": {
           "light": "#FFF4EA",
           "dark": "#20130B"
@@ -161,14 +171,24 @@
         "monitoring",
         "grafana"
       ],
-      "version": "1.0.0",
-      "manifest": "./grafana/releases/1.0.0/manifest.json",
-      "package": "./grafana/releases/1.0.0/grafana.pudding-app.json",
-      "package_sha256": "350de0538fd74bb24f87bd73ad27168dec434395311a2e29f81612ebb3c8e32d",
+      "version": "1.0.1",
+      "manifest": "./grafana/releases/1.0.1/manifest.json",
+      "package": "./grafana/releases/1.0.1/grafana.pudding-app.json",
+      "package_sha256": "e6f8d59e2aa0795a3416b0c0344c2c062314154f5e0344d1102fbbb76838af6b",
       "requires": {
         "pudding_app": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.1",
+          "manifest": "./grafana/releases/1.0.1/manifest.json",
+          "package": "./grafana/releases/1.0.1/grafana.pudding-app.json",
+          "package_sha256": "e6f8d59e2aa0795a3416b0c0344c2c062314154f5e0344d1102fbbb76838af6b",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-18"
+        },
         {
           "version": "1.0.0",
           "manifest": "./grafana/releases/1.0.0/manifest.json",
@@ -195,7 +215,7 @@
         "en": "Connect the Home Assistant REST API to inspect entities, states, history, and services, and control home devices with confirmation."
       },
       "icon": {
-        "svg": "./home-assistant/releases/1.0.0/assets/icon.svg",
+        "svg": "./home-assistant/releases/1.0.1/assets/icon.svg",
         "color": {
           "light": "#18BCF2",
           "dark": "#55D5FF"
@@ -210,14 +230,24 @@
         "automation",
         "iot"
       ],
-      "version": "1.0.0",
-      "manifest": "./home-assistant/releases/1.0.0/manifest.json",
-      "package": "./home-assistant/releases/1.0.0/home-assistant.pudding-app.json",
-      "package_sha256": "22c35492be50c80222b8ee03224857f43eb84760de3f7965286767696936b1de",
+      "version": "1.0.1",
+      "manifest": "./home-assistant/releases/1.0.1/manifest.json",
+      "package": "./home-assistant/releases/1.0.1/home-assistant.pudding-app.json",
+      "package_sha256": "d885d0053c8378dd8fb68ac44f2204294774b8aff379c764f76d3d7069c9a4bf",
       "requires": {
         "pudding_app": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.1",
+          "manifest": "./home-assistant/releases/1.0.1/manifest.json",
+          "package": "./home-assistant/releases/1.0.1/home-assistant.pudding-app.json",
+          "package_sha256": "d885d0053c8378dd8fb68ac44f2204294774b8aff379c764f76d3d7069c9a4bf",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-18"
+        },
         {
           "version": "1.0.0-preview.1",
           "manifest": "./home-assistant/releases/1.0.0-preview.1/manifest.json",

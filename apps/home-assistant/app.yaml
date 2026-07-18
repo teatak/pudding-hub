@@ -1,6 +1,6 @@
 id: home-assistant
 name: Home Assistant
-version: 1.0.0
+version: 1.0.1
 description: Inspect entities, states, history, and services, and control a connected Home Assistant instance through its REST API.
 auth:
   required: true
@@ -21,7 +21,12 @@ endpoints:
   home_assistant_rest:
     kind: rest
     url: http://homeassistant.local:8123
-    description: Home Assistant REST API. Set the custom API address on the connection to the instance root URL.
+    url_config:
+      label: Home Assistant address
+      description: Root URL of the Home Assistant instance.
+      placeholder: http://homeassistant.local:8123
+      required: true
+    description: Home Assistant REST API.
 skills:
   - skills/entities/SKILL.md
   - skills/control/SKILL.md
