@@ -7,6 +7,17 @@ description: Read, summarize, compare, or present Feishu documents and bitable r
 
 Use endpoint `feishu_rest`. Pudding exchanges the connection's App ID and App Secret for a tenant access token and supplies the authorization header. Never ask the user to repeat either credential and never expose credentials, tokens, or request headers.
 
+## First-time document setup
+
+Before reading a Feishu document with the app identity:
+
+1. In the Feishu developer console, grant the custom app the minimum required application-identity read permission for Docx or Bitable. Publish the app version and complete administrator approval when Feishu requires it.
+2. Create or open a new-format document whose URL contains `/docx/`.
+3. In that document, open the top-right `...` menu, choose `More`, then `Add document app`. Select the same custom app and grant it view permission.
+4. Do not use the normal Share or Invite collaborators dialog for this step; it searches users and groups rather than granting document access to an app identity.
+
+Legacy documents whose URLs contain `/docs/` and tokens start with `doccn` are not supported by this preview. Do not send those tokens to `/docx/v1`. Ask the user to use a new-format `/docx/` document instead.
+
 ## Document workflow
 
 1. Extract identifiers only from a URL or identifier supplied by the user or returned by an allowed API call. Never invent a document, wiki, app, table, view, field, or record ID.

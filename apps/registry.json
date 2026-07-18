@@ -62,7 +62,7 @@
         "en": "Connect a Feishu custom app for read-only access to documents, bitables, and bot-visible chat history."
       },
       "icon": {
-        "svg": "./feishu/releases/1.0.0-preview.1/assets/icon.svg",
+        "svg": "./feishu/releases/1.0.0-preview.2/assets/icon.svg",
         "background": {
           "light": "#F2F6FF",
           "dark": "#101A33"
@@ -76,6 +76,18 @@
         "feishu"
       ],
       "releases": [
+        {
+          "version": "1.0.0-preview.2",
+          "manifest": "./feishu/releases/1.0.0-preview.2/manifest.json",
+          "package": "./feishu/releases/1.0.0-preview.2/feishu.pudding-app.json",
+          "package_sha256": "4fc394a22b75234a047330b3c4973d9bc214649bf3a912f5e392307029b6fe18",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-19",
+          "channel": "preview",
+          "preview": true
+        },
         {
           "version": "1.0.0-preview.1",
           "manifest": "./feishu/releases/1.0.0-preview.1/manifest.json",

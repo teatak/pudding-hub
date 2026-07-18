@@ -8,7 +8,7 @@
     "zh-TW": "飛書",
     "en": "Feishu"
   },
-  "version": "1.0.0-preview.1",
+  "version": "1.0.0-preview.2",
   "description": {
     "zh-CN": "连接飞书自建应用，以只读方式查询云文档、多维表格和机器人可见的会话消息。",
     "zh-TW": "連接飛書自建應用，以唯讀方式查詢雲端文件、多維表格和機器人可見的會話訊息。",
@@ -27,9 +27,9 @@
     "skills/collaboration/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.0-preview.1/manifest.json",
-  "package": "./releases/1.0.0-preview.1/feishu.pudding-app.json",
-  "package_sha256": "88603d27a99cc08345ae303a8d38bd36209b8f949937a1c75a54a2916262fda8",
+  "manifest": "./releases/1.0.0-preview.2/manifest.json",
+  "package": "./releases/1.0.0-preview.2/feishu.pudding-app.json",
+  "package_sha256": "4fc394a22b75234a047330b3c4973d9bc214649bf3a912f5e392307029b6fe18",
   "requires": {
     "pudding_app": "^1.0.0"
   },

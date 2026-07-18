@@ -1,6 +1,6 @@
 id: feishu
 name: Feishu
-version: 1.0.0-preview.1
+version: 1.0.0-preview.2
 description: Read Feishu documents, bitables, and bot-visible chat history through Feishu OpenAPI.
 auth:
   required: true
