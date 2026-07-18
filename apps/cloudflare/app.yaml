@@ -1,0 +1,25 @@
+id: cloudflare
+name: Cloudflare
+version: 1.0.0-preview.1
+description: Inspect Cloudflare accounts, zones, DNS, Workers, storage, security, and analytics through the official Cloudflare API MCP server.
+auth:
+  required: true
+  methods:
+    - id: cloudflare-api-token
+      type: bearer
+      label: Read-only API Token
+      default: true
+icon:
+  svg: assets/icon.svg
+  background:
+    light: "#FFF7ED"
+    dark: "#20150F"
+endpoints:
+  cloudflare_mcp:
+    kind: mcp
+    transport: streamable_http
+    url: https://mcp.cloudflare.com/mcp
+    description: Official Cloudflare API MCP server using search-and-execute Code Mode.
+skills:
+  - skills/infrastructure/SKILL.md
+  - skills/security/SKILL.md

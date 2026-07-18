@@ -9,6 +9,46 @@
   },
   "items": [
     {
+      "id": "teatak/pudding-hub/apps/cloudflare",
+      "name": "cloudflare",
+      "title": {
+        "zh-CN": "Cloudflare",
+        "zh-TW": "Cloudflare",
+        "en": "Cloudflare"
+      },
+      "description": {
+        "zh-CN": "以只读方式连接 Cloudflare API MCP，用于查看账户、站点、DNS、Workers、存储、安全配置和分析数据。",
+        "zh-TW": "以唯讀方式連接 Cloudflare API MCP，用於查看帳戶、網站、DNS、Workers、儲存、安全設定和分析資料。",
+        "en": "Connect the Cloudflare API MCP in read-only mode to inspect accounts, zones, DNS, Workers, storage, security configuration, and analytics."
+      },
+      "icon": {
+        "svg": "./cloudflare/releases/1.0.0-preview.1/assets/icon.svg",
+        "background": {
+          "light": "#FFF7ED",
+          "dark": "#20150F"
+        }
+      },
+      "tags": [
+        "cloud",
+        "infrastructure",
+        "mcp"
+      ],
+      "releases": [
+        {
+          "version": "1.0.0-preview.1",
+          "manifest": "./cloudflare/releases/1.0.0-preview.1/manifest.json",
+          "package": "./cloudflare/releases/1.0.0-preview.1/cloudflare.pudding-app.json",
+          "package_sha256": "f2c357607f593dc19481495e62f849e6a5b7f7245874fb97d060e7c2d0895c50",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-18",
+          "channel": "preview",
+          "preview": true
+        }
+      ]
+    },
+    {
       "id": "teatak/pudding-hub/apps/github",
       "name": "github",
       "title": {
