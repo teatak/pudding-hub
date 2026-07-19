@@ -8,7 +8,7 @@
     "zh-TW": "Grafana",
     "en": "Grafana"
   },
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": {
     "zh-CN": "连接 Grafana HTTP API，用于只读查询 Dashboard、文件夹、数据源、指标、日志和告警规则。",
     "zh-TW": "連接 Grafana HTTP API，用於唯讀查詢 Dashboard、資料夾、資料來源、指標、日誌和告警規則。",
@@ -27,9 +27,9 @@
     "skills/alerting/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.1/manifest.json",
-  "package": "./releases/1.0.1/grafana.pudding-app.json",
-  "package_sha256": "e6f8d59e2aa0795a3416b0c0344c2c062314154f5e0344d1102fbbb76838af6b",
+  "manifest": "./releases/1.0.2/manifest.json",
+  "package": "./releases/1.0.2/grafana.pudding-app.json",
+  "package_sha256": "8e75ac152fbe849fe3e9d8f8eaeaa2d77cf88e338bd4fd6b4ef108f3b3579e1d",
   "requires": {
     "pudding_app": "^1.0.0"
   },

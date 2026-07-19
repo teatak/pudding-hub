@@ -1,6 +1,6 @@
 id: todoist
 name: Todoist
-version: 1.0.0-preview.1
+version: 1.0.0-preview.2
 description: Connect Todoist to review, create, update, complete, and organize tasks through the official API.
 auth:
   required: true
@@ -11,9 +11,6 @@ auth:
       default: true
 icon:
   svg: assets/icon.svg
-  background:
-    light: "#FDF0EF"
-    dark: "#2A1514"
 endpoints:
   todoist_rest:
     kind: rest

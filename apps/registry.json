@@ -22,7 +22,7 @@
         "en": "Connect the Cloudflare API MCP in read-only mode to inspect accounts, zones, DNS, Workers, storage, security configuration, and analytics."
       },
       "icon": {
-        "svg": "./cloudflare/releases/1.0.0-preview.1/assets/icon.svg",
+        "svg": "./cloudflare/releases/1.0.0-preview.2/assets/icon.svg",
         "background": {
           "light": "#FFF7ED",
           "dark": "#20150F"
@@ -34,6 +34,18 @@
         "mcp"
       ],
       "releases": [
+        {
+          "version": "1.0.0-preview.2",
+          "manifest": "./cloudflare/releases/1.0.0-preview.2/manifest.json",
+          "package": "./cloudflare/releases/1.0.0-preview.2/cloudflare.pudding-app.json",
+          "package_sha256": "d6ea634decba0fefb77e0a985689eda5289a9f5a0b4f0f6b32118695156b705f",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-19",
+          "channel": "preview",
+          "preview": true
+        },
         {
           "version": "1.0.0-preview.1",
           "manifest": "./cloudflare/releases/1.0.0-preview.1/manifest.json",
@@ -266,7 +278,7 @@
         "en": "Connect the Grafana HTTP API for read-only access to dashboards, folders, data sources, metrics, logs, and alert rules."
       },
       "icon": {
-        "svg": "./grafana/releases/1.0.1/assets/icon.svg",
+        "svg": "./grafana/releases/1.0.2/assets/icon.svg",
         "background": {
           "light": "#FFF4EA",
           "dark": "#20130B"
@@ -277,14 +289,24 @@
         "monitoring",
         "grafana"
       ],
-      "version": "1.0.1",
-      "manifest": "./grafana/releases/1.0.1/manifest.json",
-      "package": "./grafana/releases/1.0.1/grafana.pudding-app.json",
-      "package_sha256": "e6f8d59e2aa0795a3416b0c0344c2c062314154f5e0344d1102fbbb76838af6b",
+      "version": "1.0.2",
+      "manifest": "./grafana/releases/1.0.2/manifest.json",
+      "package": "./grafana/releases/1.0.2/grafana.pudding-app.json",
+      "package_sha256": "8e75ac152fbe849fe3e9d8f8eaeaa2d77cf88e338bd4fd6b4ef108f3b3579e1d",
       "requires": {
         "pudding_app": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.2",
+          "manifest": "./grafana/releases/1.0.2/manifest.json",
+          "package": "./grafana/releases/1.0.2/grafana.pudding-app.json",
+          "package_sha256": "8e75ac152fbe849fe3e9d8f8eaeaa2d77cf88e338bd4fd6b4ef108f3b3579e1d",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-19"
+        },
         {
           "version": "1.0.1",
           "manifest": "./grafana/releases/1.0.1/manifest.json",
@@ -321,7 +343,7 @@
         "en": "Connect the Home Assistant REST API to inspect entities, states, history, and services, and control home devices with confirmation."
       },
       "icon": {
-        "svg": "./home-assistant/releases/1.0.1/assets/icon.svg",
+        "svg": "./home-assistant/releases/1.0.2/assets/icon.svg",
         "color": {
           "light": "#18BCF2",
           "dark": "#55D5FF"
@@ -336,14 +358,24 @@
         "automation",
         "iot"
       ],
-      "version": "1.0.1",
-      "manifest": "./home-assistant/releases/1.0.1/manifest.json",
-      "package": "./home-assistant/releases/1.0.1/home-assistant.pudding-app.json",
-      "package_sha256": "d885d0053c8378dd8fb68ac44f2204294774b8aff379c764f76d3d7069c9a4bf",
+      "version": "1.0.2",
+      "manifest": "./home-assistant/releases/1.0.2/manifest.json",
+      "package": "./home-assistant/releases/1.0.2/home-assistant.pudding-app.json",
+      "package_sha256": "a4f151f755021aff13a2f0f898626c0adce7102842cecf0d4c54e43600a8b382",
       "requires": {
         "pudding_app": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.2",
+          "manifest": "./home-assistant/releases/1.0.2/manifest.json",
+          "package": "./home-assistant/releases/1.0.2/home-assistant.pudding-app.json",
+          "package_sha256": "a4f151f755021aff13a2f0f898626c0adce7102842cecf0d4c54e43600a8b382",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-19"
+        },
         {
           "version": "1.0.1",
           "manifest": "./home-assistant/releases/1.0.1/manifest.json",
@@ -659,11 +691,7 @@
         "en": "Connect Todoist to review, create, update, and complete tasks, and organize plans by project, date, priority, and label."
       },
       "icon": {
-        "svg": "./todoist/releases/1.0.0-preview.1/assets/icon.svg",
-        "background": {
-          "light": "#FDF0EF",
-          "dark": "#2A1514"
-        }
+        "svg": "./todoist/releases/1.0.0-preview.2/assets/icon.svg"
       },
       "tags": [
         "productivity",
@@ -672,6 +700,18 @@
         "todoist"
       ],
       "releases": [
+        {
+          "version": "1.0.0-preview.2",
+          "manifest": "./todoist/releases/1.0.0-preview.2/manifest.json",
+          "package": "./todoist/releases/1.0.0-preview.2/todoist.pudding-app.json",
+          "package_sha256": "075906443c6a70596d58d811a2338435e5a159086841e0f514977a31fe687430",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-19",
+          "channel": "preview",
+          "preview": true
+        },
         {
           "version": "1.0.0-preview.1",
           "manifest": "./todoist/releases/1.0.0-preview.1/manifest.json",

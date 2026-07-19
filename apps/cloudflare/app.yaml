@@ -1,6 +1,6 @@
 id: cloudflare
 name: Cloudflare
-version: 1.0.0-preview.1
+version: 1.0.0-preview.2
 description: Inspect Cloudflare accounts, zones, DNS, Workers, storage, security, and analytics through the official Cloudflare API MCP server.
 auth:
   required: true

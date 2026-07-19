@@ -8,18 +8,14 @@
     "zh-TW": "Todoist",
     "en": "Todoist"
   },
-  "version": "1.0.0-preview.1",
+  "version": "1.0.0-preview.2",
   "description": {
     "zh-CN": "连接 Todoist，查看、创建、修改和完成任务，并按项目、日期、优先级和标签整理计划。",
     "zh-TW": "連接 Todoist，查看、建立、修改和完成任務，並按專案、日期、優先順序和標籤整理計畫。",
     "en": "Connect Todoist to review, create, update, and complete tasks, and organize plans by project, date, priority, and label."
   },
   "icon": {
-    "svg": "./assets/icon.svg",
-    "background": {
-      "light": "#FDF0EF",
-      "dark": "#2A1514"
-    }
+    "svg": "./assets/icon.svg"
   },
   "files": [
     "app.yaml",
@@ -27,9 +23,9 @@
     "skills/planning/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.0-preview.1/manifest.json",
-  "package": "./releases/1.0.0-preview.1/todoist.pudding-app.json",
-  "package_sha256": "a7e17454726b83fd95b0232c591ab3e94463a0aaf92b8840e00b1496a4811e96",
+  "manifest": "./releases/1.0.0-preview.2/manifest.json",
+  "package": "./releases/1.0.0-preview.2/todoist.pudding-app.json",
+  "package_sha256": "075906443c6a70596d58d811a2338435e5a159086841e0f514977a31fe687430",
   "requires": {
     "pudding_app": "^1.0.0"
   },

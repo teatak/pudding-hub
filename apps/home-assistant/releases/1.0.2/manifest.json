@@ -1,0 +1,28 @@
+{
+  "kind": "pudding.app.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/apps/home-assistant",
+  "name": "home-assistant",
+  "title": {
+    "zh-CN": "Home Assistant",
+    "zh-TW": "Home Assistant",
+    "en": "Home Assistant"
+  },
+  "version": "1.0.2",
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "color": {
+      "light": "#18BCF2",
+      "dark": "#55D5FF"
+    },
+    "background": {
+      "light": "#F0FAFE",
+      "dark": "#102633"
+    }
+  },
+  "package": "./home-assistant.pudding-app.json",
+  "package_sha256": "a4f151f755021aff13a2f0f898626c0adce7102842cecf0d4c54e43600a8b382",
+  "requires": {
+    "pudding_app": "^1.0.0"
+  }
+}

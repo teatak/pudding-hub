@@ -1,0 +1,26 @@
+{
+  "kind": "pudding.app.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/apps/cloudflare",
+  "name": "cloudflare",
+  "title": {
+    "zh-CN": "Cloudflare",
+    "zh-TW": "Cloudflare",
+    "en": "Cloudflare"
+  },
+  "version": "1.0.0-preview.2",
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "background": {
+      "light": "#FFF7ED",
+      "dark": "#20150F"
+    }
+  },
+  "package": "./cloudflare.pudding-app.json",
+  "package_sha256": "d6ea634decba0fefb77e0a985689eda5289a9f5a0b4f0f6b32118695156b705f",
+  "requires": {
+    "pudding_app": "^1.0.0"
+  },
+  "channel": "preview",
+  "preview": true
+}
