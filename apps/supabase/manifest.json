@@ -29,7 +29,7 @@
   ],
   "manifest": "./releases/1.0.0-preview.1/manifest.json",
   "package": "./releases/1.0.0-preview.1/supabase.pudding-app.json",
-  "package_sha256": "791874d85341c95a969944f0de211578646bb3b4549c90784bb6875ddc6254b1",
+  "package_sha256": "47bc849142dc9553326b9ca27fca0f76c9717c89d353ffe8bb9df0c9f266ee6b",
   "requires": {
     "pudding_app": "^1.0.0"
   },
