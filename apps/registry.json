@@ -568,6 +568,48 @@
       ]
     },
     {
+      "id": "teatak/pudding-hub/apps/media-studio",
+      "name": "media-studio",
+      "title": {
+        "zh-CN": "本地媒体工坊",
+        "zh-TW": "本機媒體工坊",
+        "en": "Local Media Studio"
+      },
+      "description": {
+        "zh-CN": "使用本机 FFmpeg 检查和处理项目内的视频、音频与图片，支持裁剪、转码、压缩、GIF、抽帧、音频提取、波形图和联系表。",
+        "zh-TW": "使用本機 FFmpeg 檢查和處理專案內的影片、音訊與圖片，支援裁剪、轉碼、壓縮、GIF、擷取影格、音訊擷取、波形圖和聯絡表。",
+        "en": "Use local FFmpeg to inspect and transform video, audio, and images inside a Project, including trimming, transcoding, compression, GIFs, frames, audio extraction, waveforms, and contact sheets."
+      },
+      "icon": {
+        "svg": "./media-studio/releases/1.0.0-preview.1/assets/icon.svg",
+        "background": {
+          "light": "#F3F0FF",
+          "dark": "#211B36"
+        }
+      },
+      "tags": [
+        "media",
+        "local",
+        "ffmpeg",
+        "video",
+        "audio"
+      ],
+      "releases": [
+        {
+          "version": "1.0.0-preview.1",
+          "manifest": "./media-studio/releases/1.0.0-preview.1/manifest.json",
+          "package": "./media-studio/releases/1.0.0-preview.1/media-studio.pudding-app.json",
+          "package_sha256": "34d50c8668b72adba05aea77fdba8e13da877e83b9d12eaddf5836fe8adf6794",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-19",
+          "channel": "preview",
+          "preview": true
+        }
+      ]
+    },
+    {
       "id": "teatak/pudding-hub/apps/notion",
       "name": "notion",
       "title": {
@@ -613,6 +655,48 @@
             "pudding_app": "^1.0.0"
           },
           "released_at": "2026-07-07"
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/apps/obsidian",
+      "name": "obsidian",
+      "title": {
+        "zh-CN": "Obsidian",
+        "zh-TW": "Obsidian",
+        "en": "Obsidian"
+      },
+      "description": {
+        "zh-CN": "直接处理作为 Pudding Project 打开的本地 Obsidian Vault，用于检索笔记与双链、整理标签、创建和安全编辑 Markdown 笔记。",
+        "zh-TW": "直接處理作為 Pudding Project 開啟的本機 Obsidian Vault，用於搜尋筆記與雙向連結、整理標籤、建立和安全編輯 Markdown 筆記。",
+        "en": "Work directly with a local Obsidian vault opened as a Pudding Project to search notes and backlinks, organize tags, and safely create or edit Markdown notes."
+      },
+      "icon": {
+        "svg": "./obsidian/releases/1.0.0-preview.1/assets/icon.svg",
+        "background": {
+          "light": "#F3F0FF",
+          "dark": "#20182D"
+        }
+      },
+      "tags": [
+        "notes",
+        "knowledge",
+        "markdown",
+        "local",
+        "obsidian"
+      ],
+      "releases": [
+        {
+          "version": "1.0.0-preview.1",
+          "manifest": "./obsidian/releases/1.0.0-preview.1/manifest.json",
+          "package": "./obsidian/releases/1.0.0-preview.1/obsidian.pudding-app.json",
+          "package_sha256": "cd1431bdcb8ebd2924ba70ab8815e4a45a65184d885a1d11af04dc3204e680dd",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-19",
+          "channel": "preview",
+          "preview": true
         }
       ]
     },

@@ -1,0 +1,12 @@
+id: obsidian
+name: Obsidian
+version: 1.0.0-preview.1
+description: Search, organize, and edit an Obsidian vault stored in an authorized Pudding Project.
+icon:
+  svg: assets/icon.svg
+  background:
+    light: "#F3F0FF"
+    dark: "#20182D"
+skills:
+  - skills/vault-search/SKILL.md
+  - skills/note-management/SKILL.md

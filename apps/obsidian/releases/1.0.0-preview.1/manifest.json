@@ -1,0 +1,26 @@
+{
+  "kind": "pudding.app.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/apps/obsidian",
+  "name": "obsidian",
+  "title": {
+    "zh-CN": "Obsidian",
+    "zh-TW": "Obsidian",
+    "en": "Obsidian"
+  },
+  "version": "1.0.0-preview.1",
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "background": {
+      "light": "#F3F0FF",
+      "dark": "#20182D"
+    }
+  },
+  "package": "./obsidian.pudding-app.json",
+  "package_sha256": "cd1431bdcb8ebd2924ba70ab8815e4a45a65184d885a1d11af04dc3204e680dd",
+  "requires": {
+    "pudding_app": "^1.0.0"
+  },
+  "channel": "preview",
+  "preview": true
+}
