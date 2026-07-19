@@ -1,6 +1,6 @@
 id: home-assistant
 name: Home Assistant
-version: 1.0.2
+version: 1.0.3
 description: Inspect entities, states, history, and services, and control a connected Home Assistant instance through its REST API.
 auth:
   required: true

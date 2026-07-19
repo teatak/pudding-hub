@@ -22,7 +22,7 @@
         "en": "Connect the Cloudflare API MCP in read-only mode to inspect accounts, zones, DNS, Workers, storage, security configuration, and analytics."
       },
       "icon": {
-        "svg": "./cloudflare/releases/1.0.0-preview.2/assets/icon.svg",
+        "svg": "./cloudflare/releases/1.0.0-preview.3/assets/icon.svg",
         "background": {
           "light": "#FFF7ED",
           "dark": "#20150F"
@@ -34,6 +34,18 @@
         "mcp"
       ],
       "releases": [
+        {
+          "version": "1.0.0-preview.3",
+          "manifest": "./cloudflare/releases/1.0.0-preview.3/manifest.json",
+          "package": "./cloudflare/releases/1.0.0-preview.3/cloudflare.pudding-app.json",
+          "package_sha256": "92feda2c48ea47afa29b89b701c5446d792cac4241de171d89e372cfb87be1f9",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-19",
+          "channel": "preview",
+          "preview": true
+        },
         {
           "version": "1.0.0-preview.2",
           "manifest": "./cloudflare/releases/1.0.0-preview.2/manifest.json",
@@ -278,7 +290,7 @@
         "en": "Connect the Grafana HTTP API for read-only access to dashboards, folders, data sources, metrics, logs, and alert rules."
       },
       "icon": {
-        "svg": "./grafana/releases/1.0.2/assets/icon.svg",
+        "svg": "./grafana/releases/1.0.3/assets/icon.svg",
         "background": {
           "light": "#FFF4EA",
           "dark": "#20130B"
@@ -289,14 +301,24 @@
         "monitoring",
         "grafana"
       ],
-      "version": "1.0.2",
-      "manifest": "./grafana/releases/1.0.2/manifest.json",
-      "package": "./grafana/releases/1.0.2/grafana.pudding-app.json",
-      "package_sha256": "8e75ac152fbe849fe3e9d8f8eaeaa2d77cf88e338bd4fd6b4ef108f3b3579e1d",
+      "version": "1.0.3",
+      "manifest": "./grafana/releases/1.0.3/manifest.json",
+      "package": "./grafana/releases/1.0.3/grafana.pudding-app.json",
+      "package_sha256": "4bdef40e469587d125401807dfcdaf820380d3417e394afeb9e880644f79c283",
       "requires": {
         "pudding_app": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.3",
+          "manifest": "./grafana/releases/1.0.3/manifest.json",
+          "package": "./grafana/releases/1.0.3/grafana.pudding-app.json",
+          "package_sha256": "4bdef40e469587d125401807dfcdaf820380d3417e394afeb9e880644f79c283",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-19"
+        },
         {
           "version": "1.0.2",
           "manifest": "./grafana/releases/1.0.2/manifest.json",
@@ -343,7 +365,7 @@
         "en": "Connect the Home Assistant REST API to inspect entities, states, history, and services, and control home devices with confirmation."
       },
       "icon": {
-        "svg": "./home-assistant/releases/1.0.2/assets/icon.svg",
+        "svg": "./home-assistant/releases/1.0.3/assets/icon.svg",
         "color": {
           "light": "#18BCF2",
           "dark": "#55D5FF"
@@ -358,14 +380,24 @@
         "automation",
         "iot"
       ],
-      "version": "1.0.2",
-      "manifest": "./home-assistant/releases/1.0.2/manifest.json",
-      "package": "./home-assistant/releases/1.0.2/home-assistant.pudding-app.json",
-      "package_sha256": "a4f151f755021aff13a2f0f898626c0adce7102842cecf0d4c54e43600a8b382",
+      "version": "1.0.3",
+      "manifest": "./home-assistant/releases/1.0.3/manifest.json",
+      "package": "./home-assistant/releases/1.0.3/home-assistant.pudding-app.json",
+      "package_sha256": "de5eaf76a94c196fb51075213fe19eee7e72faaa56adfa4a711989b2e631b689",
       "requires": {
         "pudding_app": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.3",
+          "manifest": "./home-assistant/releases/1.0.3/manifest.json",
+          "package": "./home-assistant/releases/1.0.3/home-assistant.pudding-app.json",
+          "package_sha256": "de5eaf76a94c196fb51075213fe19eee7e72faaa56adfa4a711989b2e631b689",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-19"
+        },
         {
           "version": "1.0.2",
           "manifest": "./home-assistant/releases/1.0.2/manifest.json",
