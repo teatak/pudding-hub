@@ -691,7 +691,7 @@
         "en": "Connect Todoist to review, create, update, and complete tasks, and organize plans by project, date, priority, and label."
       },
       "icon": {
-        "svg": "./todoist/releases/1.0.0-preview.2/assets/icon.svg"
+        "svg": "./todoist/releases/1.0.0-preview.3/assets/icon.svg"
       },
       "tags": [
         "productivity",
@@ -700,6 +700,18 @@
         "todoist"
       ],
       "releases": [
+        {
+          "version": "1.0.0-preview.3",
+          "manifest": "./todoist/releases/1.0.0-preview.3/manifest.json",
+          "package": "./todoist/releases/1.0.0-preview.3/todoist.pudding-app.json",
+          "package_sha256": "e24f0487012ce5cf0a18450f84195df3001cc64bc39cc533f406a690371c4956",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-19",
+          "channel": "preview",
+          "preview": true
+        },
         {
           "version": "1.0.0-preview.2",
           "manifest": "./todoist/releases/1.0.0-preview.2/manifest.json",
