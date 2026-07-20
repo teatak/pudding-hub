@@ -22,7 +22,7 @@
         "en": "Connect the Cloudflare API MCP in read-only mode to inspect accounts, zones, DNS, Workers, storage, security configuration, and analytics."
       },
       "icon": {
-        "svg": "./cloudflare/releases/1.0.0-preview.3/assets/icon.svg",
+        "svg": "./cloudflare/releases/1.0.0/assets/icon.svg",
         "background": {
           "light": "#FFF7ED",
           "dark": "#20150F"
@@ -33,6 +33,13 @@
         "infrastructure",
         "mcp"
       ],
+      "version": "1.0.0",
+      "manifest": "./cloudflare/releases/1.0.0/manifest.json",
+      "package": "./cloudflare/releases/1.0.0/cloudflare.pudding-app.json",
+      "package_sha256": "1952b52b7e78d0172a869d80af1c9dff55b337fad1742bb84dec356062fb89d9",
+      "requires": {
+        "pudding_app": "^1.0.0"
+      },
       "releases": [
         {
           "version": "1.0.0-preview.3",
@@ -69,6 +76,16 @@
           "released_at": "2026-07-18",
           "channel": "preview",
           "preview": true
+        },
+        {
+          "version": "1.0.0",
+          "manifest": "./cloudflare/releases/1.0.0/manifest.json",
+          "package": "./cloudflare/releases/1.0.0/cloudflare.pudding-app.json",
+          "package_sha256": "1952b52b7e78d0172a869d80af1c9dff55b337fad1742bb84dec356062fb89d9",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-20"
         }
       ]
     },
@@ -86,7 +103,7 @@
         "en": "Connect a Feishu custom app to read and edit new-format documents and inspect bitables and bot-visible chat history."
       },
       "icon": {
-        "svg": "./feishu/releases/1.0.0-preview.3/assets/icon.svg",
+        "svg": "./feishu/releases/1.0.0/assets/icon.svg",
         "background": {
           "light": "#F2F6FF",
           "dark": "#101A33"
@@ -99,6 +116,13 @@
         "chat",
         "feishu"
       ],
+      "version": "1.0.0",
+      "manifest": "./feishu/releases/1.0.0/manifest.json",
+      "package": "./feishu/releases/1.0.0/feishu.pudding-app.json",
+      "package_sha256": "8d5acbaaf858d2381d4ac0d5f17dae6db8b56517a8041af4c808ed19178cf04f",
+      "requires": {
+        "pudding_app": "^1.0.0"
+      },
       "releases": [
         {
           "version": "1.0.0-preview.3",
@@ -135,6 +159,16 @@
           "released_at": "2026-07-18",
           "channel": "preview",
           "preview": true
+        },
+        {
+          "version": "1.0.0",
+          "manifest": "./feishu/releases/1.0.0/manifest.json",
+          "package": "./feishu/releases/1.0.0/feishu.pudding-app.json",
+          "package_sha256": "8d5acbaaf858d2381d4ac0d5f17dae6db8b56517a8041af4c808ed19178cf04f",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-20"
         }
       ]
     },
@@ -455,7 +489,7 @@
         "en": "Connect a self-hosted Immich library for smart photo and video search, people and place lookup, OCR and metadata filtering, with thumbnail results on the canvas."
       },
       "icon": {
-        "svg": "./immich/releases/1.0.0-preview.1/assets/icon.svg",
+        "svg": "./immich/releases/1.0.0/assets/icon.svg",
         "background": {
           "light": "#F6F7FA",
           "dark": "#1D1F24"
@@ -467,6 +501,13 @@
         "self-hosted",
         "immich"
       ],
+      "version": "1.0.0",
+      "manifest": "./immich/releases/1.0.0/manifest.json",
+      "package": "./immich/releases/1.0.0/immich.pudding-app.json",
+      "package_sha256": "c1c83fd71270e310453412a2b0dc74237d84c8609e4ccdf4ad2aa631eb580246",
+      "requires": {
+        "pudding_app": "^1.0.0"
+      },
       "releases": [
         {
           "version": "1.0.0-preview.1",
@@ -479,6 +520,16 @@
           "released_at": "2026-07-18",
           "channel": "preview",
           "preview": true
+        },
+        {
+          "version": "1.0.0",
+          "manifest": "./immich/releases/1.0.0/manifest.json",
+          "package": "./immich/releases/1.0.0/immich.pudding-app.json",
+          "package_sha256": "c1c83fd71270e310453412a2b0dc74237d84c8609e4ccdf4ad2aa631eb580246",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-20"
         }
       ]
     },
@@ -507,6 +558,13 @@
         "issues",
         "projects"
       ],
+      "version": "1.0.0",
+      "manifest": "./jira/releases/1.0.0/manifest.json",
+      "package": "./jira/releases/1.0.0/jira.pudding-app.json",
+      "package_sha256": "469f8784a0a16e0f703a3341c8a878f24dc09c224a3f381d6726299c2015ee46",
+      "requires": {
+        "pudding_app": "^1.0.0"
+      },
       "releases": [
         {
           "version": "1.0.0",
@@ -516,9 +574,7 @@
           "requires": {
             "pudding_app": "^1.0.0"
           },
-          "released_at": "2026-07-07",
-          "channel": "preview",
-          "preview": true
+          "released_at": "2026-07-07"
         }
       ]
     },
@@ -581,7 +637,7 @@
         "en": "Use local FFmpeg to inspect and transform video, audio, and images inside a Project, including trimming, transcoding, compression, GIFs, frames, audio extraction, waveforms, and contact sheets."
       },
       "icon": {
-        "svg": "./media-studio/releases/1.0.0-preview.1/assets/icon.svg",
+        "svg": "./media-studio/releases/1.0.0/assets/icon.svg",
         "background": {
           "light": "#F3F0FF",
           "dark": "#211B36"
@@ -594,6 +650,13 @@
         "video",
         "audio"
       ],
+      "version": "1.0.0",
+      "manifest": "./media-studio/releases/1.0.0/manifest.json",
+      "package": "./media-studio/releases/1.0.0/media-studio.pudding-app.json",
+      "package_sha256": "a414811cf97707e33bf5a6c76bdbac444fe003615481b2a847cf4967c8c70a8a",
+      "requires": {
+        "pudding_app": "^1.0.0"
+      },
       "releases": [
         {
           "version": "1.0.0-preview.1",
@@ -606,6 +669,16 @@
           "released_at": "2026-07-19",
           "channel": "preview",
           "preview": true
+        },
+        {
+          "version": "1.0.0",
+          "manifest": "./media-studio/releases/1.0.0/manifest.json",
+          "package": "./media-studio/releases/1.0.0/media-studio.pudding-app.json",
+          "package_sha256": "a414811cf97707e33bf5a6c76bdbac444fe003615481b2a847cf4967c8c70a8a",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-20"
         }
       ]
     },
@@ -672,7 +745,7 @@
         "en": "Work directly with a local Obsidian vault opened as a Pudding Project to search notes and backlinks, organize tags, and safely create or edit Markdown notes."
       },
       "icon": {
-        "svg": "./obsidian/releases/1.0.0-preview.1/assets/icon.svg",
+        "svg": "./obsidian/releases/1.0.0/assets/icon.svg",
         "background": {
           "light": "#F3F0FF",
           "dark": "#20182D"
@@ -685,6 +758,13 @@
         "local",
         "obsidian"
       ],
+      "version": "1.0.0",
+      "manifest": "./obsidian/releases/1.0.0/manifest.json",
+      "package": "./obsidian/releases/1.0.0/obsidian.pudding-app.json",
+      "package_sha256": "67b7bfb79d8e80cd75615892f9a9b51ce6607061b4d0b726e203a55e8ecc9255",
+      "requires": {
+        "pudding_app": "^1.0.0"
+      },
       "releases": [
         {
           "version": "1.0.0-preview.1",
@@ -697,6 +777,16 @@
           "released_at": "2026-07-19",
           "channel": "preview",
           "preview": true
+        },
+        {
+          "version": "1.0.0",
+          "manifest": "./obsidian/releases/1.0.0/manifest.json",
+          "package": "./obsidian/releases/1.0.0/obsidian.pudding-app.json",
+          "package_sha256": "67b7bfb79d8e80cd75615892f9a9b51ce6607061b4d0b726e203a55e8ecc9255",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-20"
         }
       ]
     },
@@ -767,7 +857,7 @@
         "en": "Connect one Supabase project in read-only mode to inspect database schema and data, logs, advisors, Edge Functions, Storage, and official documentation."
       },
       "icon": {
-        "svg": "./supabase/releases/1.0.0-preview.1/assets/icon.svg",
+        "svg": "./supabase/releases/1.0.0/assets/icon.svg",
         "background": {
           "light": "#ECFDF5",
           "dark": "#10251D"
@@ -778,6 +868,13 @@
         "mcp",
         "supabase"
       ],
+      "version": "1.0.0",
+      "manifest": "./supabase/releases/1.0.0/manifest.json",
+      "package": "./supabase/releases/1.0.0/supabase.pudding-app.json",
+      "package_sha256": "c8d2d7ae4c26695f58ec21d7d2d3e69baa5759724dca5a1a00545096283ff266",
+      "requires": {
+        "pudding_app": "^1.0.0"
+      },
       "releases": [
         {
           "version": "1.0.0-preview.1",
@@ -790,6 +887,16 @@
           "released_at": "2026-07-18",
           "channel": "preview",
           "preview": true
+        },
+        {
+          "version": "1.0.0",
+          "manifest": "./supabase/releases/1.0.0/manifest.json",
+          "package": "./supabase/releases/1.0.0/supabase.pudding-app.json",
+          "package_sha256": "c8d2d7ae4c26695f58ec21d7d2d3e69baa5759724dca5a1a00545096283ff266",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-20"
         }
       ]
     },
@@ -807,7 +914,7 @@
         "en": "Connect Todoist to review, create, update, and complete tasks, and organize plans by project, date, priority, and label."
       },
       "icon": {
-        "svg": "./todoist/releases/1.0.0-preview.3/assets/icon.svg"
+        "svg": "./todoist/releases/1.0.0/assets/icon.svg"
       },
       "tags": [
         "productivity",
@@ -815,6 +922,13 @@
         "planning",
         "todoist"
       ],
+      "version": "1.0.0",
+      "manifest": "./todoist/releases/1.0.0/manifest.json",
+      "package": "./todoist/releases/1.0.0/todoist.pudding-app.json",
+      "package_sha256": "606844842b0906d412b15257841d727565c90b22f1fa7107a1f7fcadc88216d9",
+      "requires": {
+        "pudding_app": "^1.0.0"
+      },
       "releases": [
         {
           "version": "1.0.0-preview.3",
@@ -851,6 +965,16 @@
           "released_at": "2026-07-19",
           "channel": "preview",
           "preview": true
+        },
+        {
+          "version": "1.0.0",
+          "manifest": "./todoist/releases/1.0.0/manifest.json",
+          "package": "./todoist/releases/1.0.0/todoist.pudding-app.json",
+          "package_sha256": "606844842b0906d412b15257841d727565c90b22f1fa7107a1f7fcadc88216d9",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-20"
         }
       ]
     }

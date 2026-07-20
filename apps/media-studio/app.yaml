@@ -1,6 +1,6 @@
 id: media-studio
 name: Local Media Studio
-version: 1.0.0-preview.1
+version: 1.0.0
 description: Inspect and transform local video, audio, and image files with FFmpeg inside an authorized Pudding Project.
 icon:
   svg: assets/icon.svg

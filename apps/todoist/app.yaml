@@ -1,6 +1,6 @@
 id: todoist
 name: Todoist
-version: 1.0.0-preview.3
+version: 1.0.0
 description: Connect Todoist to review, create, update, complete, and organize tasks through the official API.
 auth:
   required: true

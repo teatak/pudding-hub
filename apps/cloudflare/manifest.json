@@ -8,7 +8,7 @@
     "zh-TW": "Cloudflare",
     "en": "Cloudflare"
   },
-  "version": "1.0.0-preview.3",
+  "version": "1.0.0",
   "description": {
     "zh-CN": "以只读方式连接 Cloudflare API MCP，用于查看账户、站点、DNS、Workers、存储、安全配置和分析数据。",
     "zh-TW": "以唯讀方式連接 Cloudflare API MCP，用於查看帳戶、網站、DNS、Workers、儲存、安全設定和分析資料。",
@@ -27,9 +27,9 @@
     "skills/security/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.0-preview.3/manifest.json",
-  "package": "./releases/1.0.0-preview.3/cloudflare.pudding-app.json",
-  "package_sha256": "92feda2c48ea47afa29b89b701c5446d792cac4241de171d89e372cfb87be1f9",
+  "manifest": "./releases/1.0.0/manifest.json",
+  "package": "./releases/1.0.0/cloudflare.pudding-app.json",
+  "package_sha256": "1952b52b7e78d0172a869d80af1c9dff55b337fad1742bb84dec356062fb89d9",
   "requires": {
     "pudding_app": "^1.0.0"
   },
@@ -37,7 +37,5 @@
     "cloud",
     "infrastructure",
     "mcp"
-  ],
-  "channel": "preview",
-  "preview": true
+  ]
 }

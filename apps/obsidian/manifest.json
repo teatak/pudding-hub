@@ -8,7 +8,7 @@
     "zh-TW": "Obsidian",
     "en": "Obsidian"
   },
-  "version": "1.0.0-preview.1",
+  "version": "1.0.0",
   "description": {
     "zh-CN": "直接处理作为 Pudding Project 打开的本地 Obsidian Vault，用于检索笔记与双链、整理标签、创建和安全编辑 Markdown 笔记。",
     "zh-TW": "直接處理作為 Pudding Project 開啟的本機 Obsidian Vault，用於搜尋筆記與雙向連結、整理標籤、建立和安全編輯 Markdown 筆記。",
@@ -27,9 +27,9 @@
     "skills/note-management/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.0-preview.1/manifest.json",
-  "package": "./releases/1.0.0-preview.1/obsidian.pudding-app.json",
-  "package_sha256": "cd1431bdcb8ebd2924ba70ab8815e4a45a65184d885a1d11af04dc3204e680dd",
+  "manifest": "./releases/1.0.0/manifest.json",
+  "package": "./releases/1.0.0/obsidian.pudding-app.json",
+  "package_sha256": "67b7bfb79d8e80cd75615892f9a9b51ce6607061b4d0b726e203a55e8ecc9255",
   "requires": {
     "pudding_app": "^1.0.0"
   },
@@ -39,7 +39,5 @@
     "markdown",
     "local",
     "obsidian"
-  ],
-  "channel": "preview",
-  "preview": true
+  ]
 }

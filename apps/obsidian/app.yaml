@@ -1,6 +1,6 @@
 id: obsidian
 name: Obsidian
-version: 1.0.0-preview.1
+version: 1.0.0
 description: Search, organize, and edit an Obsidian vault stored in an authorized Pudding Project.
 icon:
   svg: assets/icon.svg

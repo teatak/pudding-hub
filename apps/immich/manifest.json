@@ -8,7 +8,7 @@
     "zh-TW": "Immich",
     "en": "Immich"
   },
-  "version": "1.0.0-preview.1",
+  "version": "1.0.0",
   "description": {
     "zh-CN": "连接自托管 Immich，在照片和视频中进行智能搜索、人物与地点查找、OCR 和元数据筛选，并将缩略图展示到画布。",
     "zh-TW": "連接自架 Immich，在照片和影片中進行智慧搜尋、人物與地點查找、OCR 和中繼資料篩選，並將縮圖展示到畫布。",
@@ -26,9 +26,9 @@
     "skills/photo-search/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.0-preview.1/manifest.json",
-  "package": "./releases/1.0.0-preview.1/immich.pudding-app.json",
-  "package_sha256": "39f51080e926a48148ce59c316d68e8eefa75324d4b13a423524146db109a240",
+  "manifest": "./releases/1.0.0/manifest.json",
+  "package": "./releases/1.0.0/immich.pudding-app.json",
+  "package_sha256": "c1c83fd71270e310453412a2b0dc74237d84c8609e4ccdf4ad2aa631eb580246",
   "requires": {
     "pudding_app": "^1.0.0"
   },
@@ -37,7 +37,5 @@
     "search",
     "self-hosted",
     "immich"
-  ],
-  "channel": "preview",
-  "preview": true
+  ]
 }

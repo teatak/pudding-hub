@@ -8,7 +8,7 @@
     "zh-TW": "本機媒體工坊",
     "en": "Local Media Studio"
   },
-  "version": "1.0.0-preview.1",
+  "version": "1.0.0",
   "description": {
     "zh-CN": "使用本机 FFmpeg 检查和处理项目内的视频、音频与图片，支持裁剪、转码、压缩、GIF、抽帧、音频提取、波形图和联系表。",
     "zh-TW": "使用本機 FFmpeg 檢查和處理專案內的影片、音訊與圖片，支援裁剪、轉碼、壓縮、GIF、擷取影格、音訊擷取、波形圖和聯絡表。",
@@ -26,9 +26,9 @@
     "skills/media-workflow/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.0-preview.1/manifest.json",
-  "package": "./releases/1.0.0-preview.1/media-studio.pudding-app.json",
-  "package_sha256": "34d50c8668b72adba05aea77fdba8e13da877e83b9d12eaddf5836fe8adf6794",
+  "manifest": "./releases/1.0.0/manifest.json",
+  "package": "./releases/1.0.0/media-studio.pudding-app.json",
+  "package_sha256": "a414811cf97707e33bf5a6c76bdbac444fe003615481b2a847cf4967c8c70a8a",
   "requires": {
     "pudding_app": "^1.0.0"
   },
@@ -38,7 +38,5 @@
     "ffmpeg",
     "video",
     "audio"
-  ],
-  "channel": "preview",
-  "preview": true
+  ]
 }

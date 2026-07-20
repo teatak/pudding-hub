@@ -1,6 +1,6 @@
 id: supabase
 name: Supabase
-version: 1.0.0-preview.1
+version: 1.0.0
 description: Inspect one Supabase project through the official read-only Supabase MCP server.
 auth:
   required: true

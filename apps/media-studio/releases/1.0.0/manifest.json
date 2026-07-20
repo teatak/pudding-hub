@@ -1,0 +1,24 @@
+{
+  "kind": "pudding.app.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/apps/media-studio",
+  "name": "media-studio",
+  "title": {
+    "zh-CN": "本地媒体工坊",
+    "zh-TW": "本機媒體工坊",
+    "en": "Local Media Studio"
+  },
+  "version": "1.0.0",
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "background": {
+      "light": "#F3F0FF",
+      "dark": "#211B36"
+    }
+  },
+  "package": "./media-studio.pudding-app.json",
+  "package_sha256": "a414811cf97707e33bf5a6c76bdbac444fe003615481b2a847cf4967c8c70a8a",
+  "requires": {
+    "pudding_app": "^1.0.0"
+  }
+}

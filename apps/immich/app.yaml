@@ -1,6 +1,6 @@
 id: immich
 name: Immich
-version: 1.0.0-preview.1
+version: 1.0.0
 description: Search and inspect photos and videos in a connected Immich library through its REST API.
 auth:
   required: true

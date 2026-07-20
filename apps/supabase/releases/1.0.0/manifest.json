@@ -1,0 +1,24 @@
+{
+  "kind": "pudding.app.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/apps/supabase",
+  "name": "supabase",
+  "title": {
+    "zh-CN": "Supabase",
+    "zh-TW": "Supabase",
+    "en": "Supabase"
+  },
+  "version": "1.0.0",
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "background": {
+      "light": "#ECFDF5",
+      "dark": "#10251D"
+    }
+  },
+  "package": "./supabase.pudding-app.json",
+  "package_sha256": "c8d2d7ae4c26695f58ec21d7d2d3e69baa5759724dca5a1a00545096283ff266",
+  "requires": {
+    "pudding_app": "^1.0.0"
+  }
+}

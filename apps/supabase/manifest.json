@@ -8,7 +8,7 @@
     "zh-TW": "Supabase",
     "en": "Supabase"
   },
-  "version": "1.0.0-preview.1",
+  "version": "1.0.0",
   "description": {
     "zh-CN": "以只读方式连接单个 Supabase 项目，用于查看数据库结构与数据、日志、安全建议、Edge Functions、Storage 和官方文档。",
     "zh-TW": "以唯讀方式連接單個 Supabase 專案，用於查看資料庫結構與資料、日誌、安全建議、Edge Functions、Storage 和官方文件。",
@@ -27,9 +27,9 @@
     "skills/operations/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.0-preview.1/manifest.json",
-  "package": "./releases/1.0.0-preview.1/supabase.pudding-app.json",
-  "package_sha256": "47bc849142dc9553326b9ca27fca0f76c9717c89d353ffe8bb9df0c9f266ee6b",
+  "manifest": "./releases/1.0.0/manifest.json",
+  "package": "./releases/1.0.0/supabase.pudding-app.json",
+  "package_sha256": "c8d2d7ae4c26695f58ec21d7d2d3e69baa5759724dca5a1a00545096283ff266",
   "requires": {
     "pudding_app": "^1.0.0"
   },
@@ -37,7 +37,5 @@
     "database",
     "mcp",
     "supabase"
-  ],
-  "channel": "preview",
-  "preview": true
+  ]
 }
