@@ -8,7 +8,11 @@
     "zh-TW": "Linear",
     "en": "Linear"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "targets": [
+    "desktop",
+    "mobile"
+  ],
   "description": {
     "zh-CN": "连接 Linear GraphQL API，用于查询 Issue、项目、团队、周期和路线图。",
     "zh-TW": "連接 Linear GraphQL API，用於查詢 Issue、專案、團隊、週期和路線圖。",
@@ -27,9 +31,9 @@
     "skills/projects/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.0/manifest.json",
-  "package": "./releases/1.0.0/linear.pudding-app.json",
-  "package_sha256": "ef1ca93ce9ce4054170bc5b9c4d8361c33689177f0e7cb39b7529aa40c5643c4",
+  "manifest": "./releases/1.0.1/manifest.json",
+  "package": "./releases/1.0.1/linear.pudding-app.json",
+  "package_sha256": "3a6540bcb63a241cf2878644ac27ce91acf13a0707df2221274e341d1984c2e2",
   "requires": {
     "pudding_app": "^1.0.0"
   },

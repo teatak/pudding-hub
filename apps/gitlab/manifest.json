@@ -8,7 +8,11 @@
     "zh-TW": "GitLab",
     "en": "GitLab"
   },
-  "version": "1.0.1",
+  "version": "1.0.2",
+  "targets": [
+    "desktop",
+    "mobile"
+  ],
   "description": {
     "zh-CN": "连接 GitLab REST API，用于查询项目、Issue、合并请求、流水线、提交、分支和仓库文件。",
     "zh-TW": "連接 GitLab REST API，用於查詢專案、Issue、合併請求、流水線、提交、分支和倉庫檔案。",
@@ -27,9 +31,9 @@
     "skills/issues/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.1/manifest.json",
-  "package": "./releases/1.0.1/gitlab.pudding-app.json",
-  "package_sha256": "ddc404725b1ebce0f707e9a2b7a9ad7797509725f2784cb415e3d9d4ca122e67",
+  "manifest": "./releases/1.0.2/manifest.json",
+  "package": "./releases/1.0.2/gitlab.pudding-app.json",
+  "package_sha256": "e6f738b218ffd7294e151237c96d031a5a6d60150e4c2d15235c45b581569dfa",
   "requires": {
     "pudding_app": "^1.0.0"
   },

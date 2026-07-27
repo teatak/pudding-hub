@@ -1,0 +1,24 @@
+{
+  "kind": "pudding.app.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/apps/todoist",
+  "name": "todoist",
+  "title": {
+    "zh-CN": "Todoist",
+    "zh-TW": "Todoist",
+    "en": "Todoist"
+  },
+  "version": "1.0.1",
+  "targets": [
+    "desktop",
+    "mobile"
+  ],
+  "icon": {
+    "svg": "./assets/icon.svg"
+  },
+  "package": "./todoist.pudding-app.json",
+  "package_sha256": "4ccce86dd66f2af3b1c9e2098d8ed437e0ff84bea9b564f794e5d4790fcc2bf9",
+  "requires": {
+    "pudding_app": "^1.0.0"
+  }
+}

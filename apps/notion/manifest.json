@@ -8,7 +8,11 @@
     "zh-TW": "Notion",
     "en": "Notion"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "targets": [
+    "desktop",
+    "mobile"
+  ],
   "description": {
     "zh-CN": "连接 Notion REST API，用于页面、块、数据源、数据库、用户、评论和搜索。",
     "zh-TW": "連接 Notion REST API，用於頁面、區塊、資料來源、資料庫、使用者、留言和搜尋。",
@@ -31,9 +35,9 @@
     "skills/data-sources/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.0/manifest.json",
-  "package": "./releases/1.0.0/notion.pudding-app.json",
-  "package_sha256": "e4202a38688e7974b9a45baffeb3a9d1d057340eeed0d455c7f08cbb613a6a07",
+  "manifest": "./releases/1.0.1/manifest.json",
+  "package": "./releases/1.0.1/notion.pudding-app.json",
+  "package_sha256": "731578066e0da579a9cfe40451594490b77284bc55659f11c4e64d0d3e249d6a",
   "requires": {
     "pudding_app": "^1.0.0"
   },

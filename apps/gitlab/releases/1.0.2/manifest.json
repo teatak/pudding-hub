@@ -1,0 +1,28 @@
+{
+  "kind": "pudding.app.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/apps/gitlab",
+  "name": "gitlab",
+  "title": {
+    "zh-CN": "GitLab",
+    "zh-TW": "GitLab",
+    "en": "GitLab"
+  },
+  "version": "1.0.2",
+  "targets": [
+    "desktop",
+    "mobile"
+  ],
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "background": {
+      "light": "#FFF3EC",
+      "dark": "#171321"
+    }
+  },
+  "package": "./gitlab.pudding-app.json",
+  "package_sha256": "e6f738b218ffd7294e151237c96d031a5a6d60150e4c2d15235c45b581569dfa",
+  "requires": {
+    "pudding_app": "^1.0.0"
+  }
+}

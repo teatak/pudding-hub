@@ -1,6 +1,6 @@
 id: linear
 name: Linear
-version: 1.0.0
+version: 1.0.1
 description: Access Linear issues, projects, teams, cycles, and roadmap data through the Linear GraphQL API.
 auth:
   required: true
