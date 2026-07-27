@@ -26,7 +26,7 @@
     },
     "background": {
       "light": "#ffffff",
-      "dark": "#24292e"
+      "dark": "#111111"
     }
   },
   "files": [
@@ -37,7 +37,7 @@
   ],
   "manifest": "./releases/1.0.2/manifest.json",
   "package": "./releases/1.0.2/github.pudding-app.json",
-  "package_sha256": "612399777f9be99438716707971d3a0c23f9e5a49f3f86a1e4aca7afeba425ed",
+  "package_sha256": "de943c0e31ccf5e5721c7c184bd2c94aee7c1e63a83c37346a3b21723b7e7618",
   "requires": {
     "pudding_app": "^1.0.0"
   },
