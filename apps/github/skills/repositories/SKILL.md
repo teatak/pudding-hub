@@ -1,5 +1,5 @@
 ---
-name: repositories
+name: github-repositories
 description: Use when the user asks to inspect GitHub repositories, branches, commits, contents, pull requests, or repository metadata through a connected GitHub app.
 ---
 
