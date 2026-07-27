@@ -120,6 +120,16 @@ function withReleaseMetadata(target, source) {
   return target;
 }
 
+function normalizedTargets(manifest) {
+  const raw = Array.isArray(manifest.targets) ? manifest.targets : [];
+  const targets = [];
+  for (const value of raw) {
+    const target = typeof value === "string" ? value.trim() : "";
+    if (target && !targets.includes(target)) targets.push(target);
+  }
+  return targets.length ? targets : undefined;
+}
+
 async function packageApp(name) {
   const appDir = path.join(ROOT, "apps", name);
   const manifest = await readJSON(path.join(appDir, "manifest.json"));
@@ -142,6 +152,7 @@ async function packageApp(name) {
   }
   if (!files.some((file) => file.path === "app.yaml")) throw new Error(`app ${name} must package app.yaml`);
 
+  const targets = normalizedTargets(manifest);
   const pkg = {
     kind: PACKAGE_KIND,
     schema_version: PACKAGE_SCHEMA_VERSION,
@@ -153,6 +164,7 @@ async function packageApp(name) {
     },
     files,
   };
+  if (targets) pkg.app.targets = targets;
   const packageFilename = `${name}.pudding-app.json`;
   const releaseDir = path.join(appDir, "releases", version);
   await fs.mkdir(releaseDir, { recursive: true });
@@ -194,6 +206,7 @@ function appPurgePaths(name, version, packageFilename, iconRelRaw) {
 }
 
 function buildRootManifest(name, manifest, version, packageFilename, packageHash) {
+  const targets = normalizedTargets(manifest);
   return withReleaseMetadata({
     kind: APP_MANIFEST_KIND,
     schema_version: 1,
@@ -201,6 +214,7 @@ function buildRootManifest(name, manifest, version, packageFilename, packageHash
     name: manifest.name,
     title: manifest.title,
     version,
+    ...(targets ? { targets } : {}),
     description: manifest.description || {},
     icon: manifest.icon,
     files: manifest.files || [],
@@ -213,6 +227,7 @@ function buildRootManifest(name, manifest, version, packageFilename, packageHash
 }
 
 function buildReleaseManifest(manifest, packageFilename, packageHash) {
+  const targets = normalizedTargets(manifest);
   return withReleaseMetadata({
     kind: APP_MANIFEST_KIND,
     schema_version: 1,
@@ -220,6 +235,7 @@ function buildReleaseManifest(manifest, packageFilename, packageHash) {
     name: manifest.name,
     title: manifest.title,
     version: manifest.version,
+    ...(targets ? { targets } : {}),
     icon: manifest.icon,
     package: `./${packageFilename}`,
     package_sha256: packageHash,
@@ -243,12 +259,14 @@ async function updateRegistry(name, manifest, packageHash) {
   const releaseManifest = `./${name}/releases/${manifest.version}/manifest.json`;
   const releasePackage = `./${name}/releases/${manifest.version}/${name}.pudding-app.json`;
   const requires = manifest.requires || { pudding_app: "^1.0.0" };
+  const targets = normalizedTargets(manifest);
   const item = {
     id: manifest.id,
     name: manifest.name,
     title: manifest.title,
     description: manifest.description || {},
     icon: rewriteReleaseIcon(name, manifest.version, manifest.icon),
+    ...(targets ? { targets } : {}),
     tags: manifest.tags || [],
   };
   const items = Array.isArray(registry.items) ? registry.items : [];
@@ -263,6 +281,7 @@ async function updateRegistry(name, manifest, packageHash) {
     package: releasePackage,
     package_sha256: packageHash,
     requires,
+    ...(targets ? { targets } : {}),
     released_at: releases.find((entry) => entry.version === manifest.version)?.released_at || todayISODate(),
   }, manifest);
   const nextReleases = [release, ...releases.filter((entry) => entry.version !== manifest.version)];

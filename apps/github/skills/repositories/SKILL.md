@@ -7,6 +7,8 @@ description: Use when the user asks to inspect GitHub repositories, branches, co
 
 Use this skill when a GitHub connection is available and the user asks about repository data.
 
+The connection is provided by the Pudding Connector GitHub App. Pudding supplies a GitHub App user-to-server token; do not ask the user for a Personal Access Token, OAuth code, or authorization header.
+
 ## Endpoints
 
 - Use `github_rest` with `builtin_rest_request` for REST paths under `https://api.github.com`.
@@ -23,4 +25,5 @@ Use this skill when a GitHub connection is available and the user asks about rep
 
 - Ask for the repository owner/name if it is not clear from context.
 - Prefer GraphQL when the request needs several related resources in one response.
-- Do not mutate GitHub state unless the user explicitly asks for a write operation.
+- Current Pudding Connector permissions are `contents:read`, `issues:read`, and `pull_requests:read`; treat this app as read-only.
+- Do not mutate GitHub state or ask for broader permissions from this skill.
