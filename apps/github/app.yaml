@@ -20,7 +20,7 @@ icon:
     dark: "#ffffff"
   background:
     light: "#ffffff"
-    dark: "#212121"
+    dark: "#24292e"
 endpoints:
   github_rest:
     kind: rest

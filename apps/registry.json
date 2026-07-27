@@ -193,7 +193,7 @@
         },
         "background": {
           "light": "#ffffff",
-          "dark": "#212121"
+          "dark": "#24292e"
         }
       },
       "targets": [
@@ -207,7 +207,7 @@
       "version": "1.0.2",
       "manifest": "./github/releases/1.0.2/manifest.json",
       "package": "./github/releases/1.0.2/github.pudding-app.json",
-      "package_sha256": "81c6ce3311cc207e108e0203969291b10f053ff26f98100581a496b546f744f9",
+      "package_sha256": "612399777f9be99438716707971d3a0c23f9e5a49f3f86a1e4aca7afeba425ed",
       "requires": {
         "pudding_app": "^1.0.0"
       },
@@ -216,7 +216,7 @@
           "version": "1.0.2",
           "manifest": "./github/releases/1.0.2/manifest.json",
           "package": "./github/releases/1.0.2/github.pudding-app.json",
-          "package_sha256": "81c6ce3311cc207e108e0203969291b10f053ff26f98100581a496b546f744f9",
+          "package_sha256": "612399777f9be99438716707971d3a0c23f9e5a49f3f86a1e4aca7afeba425ed",
           "requires": {
             "pudding_app": "^1.0.0"
           },
