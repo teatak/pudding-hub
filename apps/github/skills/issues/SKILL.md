@@ -1,5 +1,5 @@
 ---
-name: github-issues
+name: issues
 description: Use when the user asks to find, summarize, triage, or inspect GitHub issues and issue comments through a connected GitHub app.
 ---
 

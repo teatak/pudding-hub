@@ -1,14 +1,14 @@
 id: github
 name: GitHub
-version: 1.0.1
+version: 1.0.2
 description: Access GitHub repositories, issues, pull requests, file contents, and GraphQL data through the Pudding Connector GitHub App.
 auth:
   required: true
   methods:
-    - id: pudding-connector
+    - id: github-oauth
       type: oauth2
       provider: github
-      label: Pudding Connector
+      label: GitHub OAuth
       default: true
     - id: github-pat
       type: bearer

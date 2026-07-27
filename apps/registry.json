@@ -186,7 +186,7 @@
         "en": "Connect GitHub REST and GraphQL APIs through the Pudding Connector GitHub App for repositories, issues, pull requests, and file contents."
       },
       "icon": {
-        "svg": "./github/releases/1.0.1/assets/icon.svg",
+        "svg": "./github/releases/1.0.2/assets/icon.svg",
         "color": {
           "light": "#111111",
           "dark": "#ffffff"
@@ -204,14 +204,28 @@
         "code",
         "github"
       ],
-      "version": "1.0.1",
-      "manifest": "./github/releases/1.0.1/manifest.json",
-      "package": "./github/releases/1.0.1/github.pudding-app.json",
-      "package_sha256": "cde3d855f58ba7c9112ef04064f2f86b8c8319847afe1b74a4930718b4442b9c",
+      "version": "1.0.2",
+      "manifest": "./github/releases/1.0.2/manifest.json",
+      "package": "./github/releases/1.0.2/github.pudding-app.json",
+      "package_sha256": "7a9d2f4d61a77aabc100a2e17e47e27a1d9c9b4576a458ed3b2e221a696c5872",
       "requires": {
         "pudding_app": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.2",
+          "manifest": "./github/releases/1.0.2/manifest.json",
+          "package": "./github/releases/1.0.2/github.pudding-app.json",
+          "package_sha256": "7a9d2f4d61a77aabc100a2e17e47e27a1d9c9b4576a458ed3b2e221a696c5872",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "targets": [
+            "desktop",
+            "mobile"
+          ],
+          "released_at": "2026-07-27"
+        },
         {
           "version": "1.0.1",
           "manifest": "./github/releases/1.0.1/manifest.json",

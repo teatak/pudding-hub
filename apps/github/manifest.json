@@ -8,7 +8,7 @@
     "zh-TW": "GitHub",
     "en": "GitHub"
   },
-  "version": "1.0.1",
+  "version": "1.0.2",
   "targets": [
     "desktop",
     "mobile"
@@ -35,9 +35,9 @@
     "skills/issues/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.1/manifest.json",
-  "package": "./releases/1.0.1/github.pudding-app.json",
-  "package_sha256": "cde3d855f58ba7c9112ef04064f2f86b8c8319847afe1b74a4930718b4442b9c",
+  "manifest": "./releases/1.0.2/manifest.json",
+  "package": "./releases/1.0.2/github.pudding-app.json",
+  "package_sha256": "7a9d2f4d61a77aabc100a2e17e47e27a1d9c9b4576a458ed3b2e221a696c5872",
   "requires": {
     "pudding_app": "^1.0.0"
   },
