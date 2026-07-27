@@ -37,7 +37,7 @@
   ],
   "manifest": "./releases/1.0.2/manifest.json",
   "package": "./releases/1.0.2/github.pudding-app.json",
-  "package_sha256": "de943c0e31ccf5e5721c7c184bd2c94aee7c1e63a83c37346a3b21723b7e7618",
+  "package_sha256": "81c6ce3311cc207e108e0203969291b10f053ff26f98100581a496b546f744f9",
   "requires": {
     "pudding_app": "^1.0.0"
   },
