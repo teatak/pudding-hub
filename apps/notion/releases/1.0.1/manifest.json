@@ -25,7 +25,7 @@
     }
   },
   "package": "./notion.pudding-app.json",
-  "package_sha256": "07041c9dca1c676d43041eb22bd861e44ba77f102f60d4a007a62c7cb8a6544f",
+  "package_sha256": "665fab638b835138caf144a2653518c4177e8825ded0346548973bf650fe85bc",
   "requires": {
     "pudding_app": "^1.0.0"
   }
