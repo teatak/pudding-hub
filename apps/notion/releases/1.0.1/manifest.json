@@ -17,7 +17,7 @@
     "svg": "./assets/icon.svg",
     "color": {
       "light": "#111111",
-      "dark": "#111111"
+      "dark": "#ffffff"
     },
     "background": {
       "light": "#ffffff",
@@ -25,7 +25,7 @@
     }
   },
   "package": "./notion.pudding-app.json",
-  "package_sha256": "731578066e0da579a9cfe40451594490b77284bc55659f11c4e64d0d3e249d6a",
+  "package_sha256": "07041c9dca1c676d43041eb22bd861e44ba77f102f60d4a007a62c7cb8a6544f",
   "requires": {
     "pudding_app": "^1.0.0"
   }
