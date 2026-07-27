@@ -786,7 +786,7 @@
       "version": "1.0.1",
       "manifest": "./notion/releases/1.0.1/manifest.json",
       "package": "./notion/releases/1.0.1/notion.pudding-app.json",
-      "package_sha256": "665fab638b835138caf144a2653518c4177e8825ded0346548973bf650fe85bc",
+      "package_sha256": "ce4ff18ba9b1fb9ea19cc534cdd9c0373309f7721a14891442137830d35c0fa1",
       "requires": {
         "pudding_app": "^1.0.0"
       },
@@ -795,7 +795,7 @@
           "version": "1.0.1",
           "manifest": "./notion/releases/1.0.1/manifest.json",
           "package": "./notion/releases/1.0.1/notion.pudding-app.json",
-          "package_sha256": "665fab638b835138caf144a2653518c4177e8825ded0346548973bf650fe85bc",
+          "package_sha256": "ce4ff18ba9b1fb9ea19cc534cdd9c0373309f7721a14891442137830d35c0fa1",
           "requires": {
             "pudding_app": "^1.0.0"
           },
