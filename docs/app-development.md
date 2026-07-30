@@ -17,6 +17,26 @@ Package every app listed in `apps/registry.json`:
 pnpm package-apps
 ```
 
+## Icon Rules
+
+`apps/<name>/assets/icon.svg` is the single source of truth for the current
+display icon. The App catalog reads this outer asset directly. Packaging also
+writes the icon and the light/dark presentation values from `app.yaml` into the
+release package. After installation, Pudding always reads the local installed
+icon.
+
+Icons and theme colors are part of the package. Bump the App patch version and
+package normally after changing them:
+
+```bash
+pnpm package-app github
+```
+
+The packaging command updates the catalog's outer icon path, its independent
+`icon_sha256` cache key, and the local icon snapshot in the release. Do not
+update only the registry, because that would make the catalog and the package
+for the same version visually inconsistent.
+
 ## Connection Fields
 
 Use `connection.fields` for per-connection values that are not the auth token

@@ -8,7 +8,7 @@
     "zh-TW": "Jira",
     "en": "Jira"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": {
     "zh-CN": "连接 Jira Cloud REST API，用于查询项目、Issue、JQL、评论、状态流转、看板和 Sprint。",
     "zh-TW": "連接 Jira Cloud REST API，用於查詢專案、Issue、JQL、評論、狀態流轉、看板和 Sprint。",
@@ -16,9 +16,13 @@
   },
   "icon": {
     "svg": "./assets/icon.svg",
+    "color": {
+      "light": "#FFFFFF",
+      "dark": "#FFFFFF"
+    },
     "background": {
-      "light": "#E9F2FF",
-      "dark": "#092957"
+      "light": "#0C66E4",
+      "dark": "#0A52B8"
     }
   },
   "files": [
@@ -27,9 +31,9 @@
     "skills/projects/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.0/manifest.json",
-  "package": "./releases/1.0.0/jira.pudding-app.json",
-  "package_sha256": "469f8784a0a16e0f703a3341c8a878f24dc09c224a3f381d6726299c2015ee46",
+  "manifest": "./releases/1.0.1/manifest.json",
+  "package": "./releases/1.0.1/jira.pudding-app.json",
+  "package_sha256": "d88b1d4cf0f11c3680e239c77ab3b4edb25b456791053bfc613bdcec17b50b52",
   "requires": {
     "pudding_app": "^1.0.0"
   },

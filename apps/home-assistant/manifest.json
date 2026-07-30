@@ -8,7 +8,7 @@
     "zh-TW": "Home Assistant",
     "en": "Home Assistant"
   },
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": {
     "zh-CN": "连接 Home Assistant REST API，用于查询实体、状态、历史和服务，并在确认后控制家居设备。",
     "zh-TW": "連接 Home Assistant REST API，用於查詢實體、狀態、歷史和服務，並在確認後控制家居裝置。",
@@ -17,12 +17,12 @@
   "icon": {
     "svg": "./assets/icon.svg",
     "color": {
-      "light": "#18BCF2",
-      "dark": "#55D5FF"
+      "light": "#FFFFFF",
+      "dark": "#FFFFFF"
     },
     "background": {
-      "light": "#F0FAFE",
-      "dark": "#102633"
+      "light": "#0E8FC0",
+      "dark": "#0B6F96"
     }
   },
   "files": [
@@ -31,9 +31,9 @@
     "skills/control/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.3/manifest.json",
-  "package": "./releases/1.0.3/home-assistant.pudding-app.json",
-  "package_sha256": "de5eaf76a94c196fb51075213fe19eee7e72faaa56adfa4a711989b2e631b689",
+  "manifest": "./releases/1.0.4/manifest.json",
+  "package": "./releases/1.0.4/home-assistant.pudding-app.json",
+  "package_sha256": "8281ace65e730ffbf5f020bf93e5df186fd46a4ea226646f3ca6f2e97c1ca06b",
   "requires": {
     "pudding_app": "^1.0.0"
   },

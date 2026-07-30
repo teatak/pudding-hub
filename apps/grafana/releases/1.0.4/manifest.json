@@ -1,0 +1,28 @@
+{
+  "kind": "pudding.app.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/apps/grafana",
+  "name": "grafana",
+  "title": {
+    "zh-CN": "Grafana",
+    "zh-TW": "Grafana",
+    "en": "Grafana"
+  },
+  "version": "1.0.4",
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "color": {
+      "light": "#FFFFFF",
+      "dark": "#FFFFFF"
+    },
+    "background": {
+      "light": "#F46800",
+      "dark": "#C74F00"
+    }
+  },
+  "package": "./grafana.pudding-app.json",
+  "package_sha256": "c07c540cdf94c11eba6b38add77a9ebe413abbce2c55006989147cc771696019",
+  "requires": {
+    "pudding_app": "^1.0.0"
+  }
+}

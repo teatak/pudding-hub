@@ -65,11 +65,11 @@ function todayISODate() {
   return local.toISOString().slice(0, 10);
 }
 
-function releaseAppPath(name, version, value) {
+function registryAppPath(name, value) {
   if (typeof value !== "string") return value;
   const rel = value.trim();
   if (!rel || rel.startsWith("/") || rel.startsWith("//") || /^[a-z][a-z0-9+.-]*:/i.test(rel)) return value;
-  return `./${name}/releases/${version}/${rel.replace(/^\.\//, "")}`;
+  return `./${name}/${rel.replace(/^\.\//, "")}`;
 }
 
 function releaseFileExists(value) {
@@ -85,13 +85,13 @@ function iconSVGPath(icon) {
   return "";
 }
 
-function rewriteReleaseIcon(name, version, icon) {
+function rewriteRegistryIcon(name, icon) {
   if (!icon) return undefined;
-  if (typeof icon === "string") return releaseAppPath(name, version, icon);
+  if (typeof icon === "string") return registryAppPath(name, icon);
   if (typeof icon === "object" && !Array.isArray(icon)) {
     return {
       ...icon,
-      svg: typeof icon.svg === "string" ? releaseAppPath(name, version, icon.svg) : icon.svg,
+      svg: typeof icon.svg === "string" ? registryAppPath(name, icon.svg) : icon.svg,
     };
   }
   return undefined;
@@ -169,10 +169,13 @@ async function packageApp(name) {
   const releaseDir = path.join(appDir, "releases", version);
   await fs.mkdir(releaseDir, { recursive: true });
   const iconRelRaw = iconSVGPath(manifest.icon);
+  let iconHash = "";
   if (iconRelRaw) {
     const iconRel = iconRelRaw.replace(/^\.\//, "");
     await fs.mkdir(path.dirname(path.join(releaseDir, iconRel)), { recursive: true });
-    await fs.copyFile(path.join(appDir, iconRel), path.join(releaseDir, iconRel));
+    const iconData = await fs.readFile(path.join(appDir, iconRel));
+    iconHash = crypto.createHash("sha256").update(iconData).digest("hex");
+    await fs.writeFile(path.join(releaseDir, iconRel), iconData);
   }
   const packageText = JSON.stringify(pkg, null, 2) + "\n";
   const packageHash = sha256Text(packageText);
@@ -182,7 +185,7 @@ async function packageApp(name) {
   const releaseManifest = buildReleaseManifest(manifest, packageFilename, packageHash);
   await writeJSON(path.join(appDir, "manifest.json"), rootManifest);
   await writeJSON(path.join(releaseDir, "manifest.json"), releaseManifest);
-  await updateRegistry(name, rootManifest, packageHash);
+  await updateRegistry(name, rootManifest, packageHash, iconHash);
   return {
     name,
     version,
@@ -243,7 +246,7 @@ function buildReleaseManifest(manifest, packageFilename, packageHash) {
   }, manifest);
 }
 
-async function updateRegistry(name, manifest, packageHash) {
+async function updateRegistry(name, manifest, packageHash, iconHash) {
   const registryPath = path.join(ROOT, "apps/registry.json");
   let registry;
   try {
@@ -265,7 +268,8 @@ async function updateRegistry(name, manifest, packageHash) {
     name: manifest.name,
     title: manifest.title,
     description: manifest.description || {},
-    icon: rewriteReleaseIcon(name, manifest.version, manifest.icon),
+    icon: rewriteRegistryIcon(name, manifest.icon),
+    ...(iconHash ? { icon_sha256: iconHash } : {}),
     ...(targets ? { targets } : {}),
     tags: manifest.tags || [],
   };

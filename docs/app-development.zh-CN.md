@@ -17,6 +17,22 @@ pnpm package-app github
 pnpm package-apps
 ```
 
+## 图标规则
+
+`apps/<name>/assets/icon.svg` 是当前展示图标的唯一源码。App catalog
+直接读取这个外层图标；打包时会同时把图标和 `app.yaml` 中的明暗配色写入
+release package。安装完成后，Pudding 始终读取安装目录中的本地图标。
+
+图标与配色是 package 的一部分。修改后需要升级 App patch 版本并正常打包：
+
+```bash
+pnpm package-app github
+```
+
+打包命令会同步更新 catalog 的外层图标路径、独立 `icon_sha256` 缓存键，
+以及 release 内的本地图标快照。不要只更新 registry，避免 catalog 与同版本
+package 显示不一致。
+
 ## 连接字段
 
 `connection.fields` 用来描述“不是认证 token，但几乎每个接口都要带”的连接级参数，例如

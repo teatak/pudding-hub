@@ -1,6 +1,6 @@
 id: cloudflare
 name: Cloudflare
-version: 1.0.0
+version: 1.0.1
 description: Inspect Cloudflare accounts, zones, DNS, Workers, storage, security, and analytics through the official Cloudflare API MCP server.
 auth:
   required: true
@@ -11,9 +11,12 @@ auth:
       default: true
 icon:
   svg: assets/icon.svg
+  color:
+    light: "#FFFFFF"
+    dark: "#FFFFFF"
   background:
-    light: "#FFF7ED"
-    dark: "#20150F"
+    light: "#F38020"
+    dark: "#C85D12"
 endpoints:
   cloudflare_mcp:
     kind: mcp

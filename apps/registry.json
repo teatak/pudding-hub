@@ -22,25 +22,40 @@
         "en": "Connect the Cloudflare API MCP in read-only mode to inspect accounts, zones, DNS, Workers, storage, security configuration, and analytics."
       },
       "icon": {
-        "svg": "./cloudflare/releases/1.0.0/assets/icon.svg",
+        "svg": "./cloudflare/assets/icon.svg",
+        "color": {
+          "light": "#FFFFFF",
+          "dark": "#FFFFFF"
+        },
         "background": {
-          "light": "#FFF7ED",
-          "dark": "#20150F"
+          "light": "#F38020",
+          "dark": "#C85D12"
         }
       },
+      "icon_sha256": "90941752598060f0defa827d07b15de9aed67c393ece9faeece6ca84757421c2",
       "tags": [
         "cloud",
         "infrastructure",
         "mcp"
       ],
-      "version": "1.0.0",
-      "manifest": "./cloudflare/releases/1.0.0/manifest.json",
-      "package": "./cloudflare/releases/1.0.0/cloudflare.pudding-app.json",
-      "package_sha256": "1952b52b7e78d0172a869d80af1c9dff55b337fad1742bb84dec356062fb89d9",
+      "version": "1.0.1",
+      "manifest": "./cloudflare/releases/1.0.1/manifest.json",
+      "package": "./cloudflare/releases/1.0.1/cloudflare.pudding-app.json",
+      "package_sha256": "94417465d5cea9b05ae0e92cfe31cef588f35280b6f4a9bd3ef4cca222f8fc6c",
       "requires": {
         "pudding_app": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.1",
+          "manifest": "./cloudflare/releases/1.0.1/manifest.json",
+          "package": "./cloudflare/releases/1.0.1/cloudflare.pudding-app.json",
+          "package_sha256": "94417465d5cea9b05ae0e92cfe31cef588f35280b6f4a9bd3ef4cca222f8fc6c",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-30"
+        },
         {
           "version": "1.0.0-preview.3",
           "manifest": "./cloudflare/releases/1.0.0-preview.3/manifest.json",
@@ -103,12 +118,13 @@
         "en": "Connect a Feishu custom app to read and edit new-format documents and inspect bitables and bot-visible chat history."
       },
       "icon": {
-        "svg": "./feishu/releases/1.0.0/assets/icon.svg",
+        "svg": "./feishu/assets/icon.svg",
         "background": {
           "light": "#F2F6FF",
           "dark": "#101A33"
         }
       },
+      "icon_sha256": "2b7ce926805120c5e6c542ae8780ffa6f02ac495e16896773605b7a9a43d02c2",
       "tags": [
         "productivity",
         "documents",
@@ -186,16 +202,17 @@
         "en": "Connect GitHub REST and GraphQL APIs through the Pudding Connector GitHub App for repositories, issues, pull requests, and file contents."
       },
       "icon": {
-        "svg": "./github/releases/1.0.2/assets/icon.svg",
+        "svg": "./github/assets/icon.svg",
         "color": {
-          "light": "#111111",
-          "dark": "#ffffff"
+          "light": "#FFFFFF",
+          "dark": "#FFFFFF"
         },
         "background": {
-          "light": "#ffffff",
-          "dark": "#111111"
+          "light": "#24292F",
+          "dark": "#30363D"
         }
       },
+      "icon_sha256": "a39980997a47289f11a64fece56c4ac271ac2528ee3db7fa3cd49db48b265e8c",
       "targets": [
         "desktop",
         "mobile"
@@ -204,14 +221,28 @@
         "code",
         "github"
       ],
-      "version": "1.0.2",
-      "manifest": "./github/releases/1.0.2/manifest.json",
-      "package": "./github/releases/1.0.2/github.pudding-app.json",
-      "package_sha256": "de943c0e31ccf5e5721c7c184bd2c94aee7c1e63a83c37346a3b21723b7e7618",
+      "version": "1.0.3",
+      "manifest": "./github/releases/1.0.3/manifest.json",
+      "package": "./github/releases/1.0.3/github.pudding-app.json",
+      "package_sha256": "27434d0b6f2bc7b9ca2b12f509712b7ae378b730725be65b090db1e6345e1cf3",
       "requires": {
         "pudding_app": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.3",
+          "manifest": "./github/releases/1.0.3/manifest.json",
+          "package": "./github/releases/1.0.3/github.pudding-app.json",
+          "package_sha256": "27434d0b6f2bc7b9ca2b12f509712b7ae378b730725be65b090db1e6345e1cf3",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "targets": [
+            "desktop",
+            "mobile"
+          ],
+          "released_at": "2026-07-30"
+        },
         {
           "version": "1.0.2",
           "manifest": "./github/releases/1.0.2/manifest.json",
@@ -266,12 +297,13 @@
         "en": "Connect the GitLab REST API for projects, issues, merge requests, pipelines, commits, branches, and repository files."
       },
       "icon": {
-        "svg": "./gitlab/releases/1.0.2/assets/icon.svg",
+        "svg": "./gitlab/assets/icon.svg",
         "background": {
           "light": "#FFF3EC",
           "dark": "#171321"
         }
       },
+      "icon_sha256": "95e8cf1497da038a750e21da2251c963f0e15c02eefb3eefa9f682022209f14c",
       "targets": [
         "desktop",
         "mobile"
@@ -339,8 +371,9 @@
         "en": "Connect Gmail APIs for mail search, thread reading, labels, and inbox triage."
       },
       "icon": {
-        "svg": "./gmail/releases/1.0.0-preview.1/assets/icon.svg"
+        "svg": "./gmail/assets/icon.svg"
       },
+      "icon_sha256": "3ee8ca350e1699391e967b182c5f72c5765d1186572b9949b1c9df9853bbefdb",
       "tags": [
         "email",
         "gmail"
@@ -374,25 +407,40 @@
         "en": "Connect the Grafana HTTP API for read-only access to dashboards, folders, data sources, metrics, logs, and alert rules."
       },
       "icon": {
-        "svg": "./grafana/releases/1.0.3/assets/icon.svg",
+        "svg": "./grafana/assets/icon.svg",
+        "color": {
+          "light": "#FFFFFF",
+          "dark": "#FFFFFF"
+        },
         "background": {
-          "light": "#FFF4EA",
-          "dark": "#20130B"
+          "light": "#F46800",
+          "dark": "#C74F00"
         }
       },
+      "icon_sha256": "fbd8e2823a1fa774eb4fba8b99efbdef96160d09fde1ed21956f1feb91d8d6e2",
       "tags": [
         "observability",
         "monitoring",
         "grafana"
       ],
-      "version": "1.0.3",
-      "manifest": "./grafana/releases/1.0.3/manifest.json",
-      "package": "./grafana/releases/1.0.3/grafana.pudding-app.json",
-      "package_sha256": "4bdef40e469587d125401807dfcdaf820380d3417e394afeb9e880644f79c283",
+      "version": "1.0.4",
+      "manifest": "./grafana/releases/1.0.4/manifest.json",
+      "package": "./grafana/releases/1.0.4/grafana.pudding-app.json",
+      "package_sha256": "c07c540cdf94c11eba6b38add77a9ebe413abbce2c55006989147cc771696019",
       "requires": {
         "pudding_app": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.4",
+          "manifest": "./grafana/releases/1.0.4/manifest.json",
+          "package": "./grafana/releases/1.0.4/grafana.pudding-app.json",
+          "package_sha256": "c07c540cdf94c11eba6b38add77a9ebe413abbce2c55006989147cc771696019",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-30"
+        },
         {
           "version": "1.0.3",
           "manifest": "./grafana/releases/1.0.3/manifest.json",
@@ -449,29 +497,40 @@
         "en": "Connect the Home Assistant REST API to inspect entities, states, history, and services, and control home devices with confirmation."
       },
       "icon": {
-        "svg": "./home-assistant/releases/1.0.3/assets/icon.svg",
+        "svg": "./home-assistant/assets/icon.svg",
         "color": {
-          "light": "#18BCF2",
-          "dark": "#55D5FF"
+          "light": "#FFFFFF",
+          "dark": "#FFFFFF"
         },
         "background": {
-          "light": "#F0FAFE",
-          "dark": "#102633"
+          "light": "#0E8FC0",
+          "dark": "#0B6F96"
         }
       },
+      "icon_sha256": "779bb31df353976ffc216619dd1f63e23c8045fc515d4e273fc699c2d3eb2f18",
       "tags": [
         "smart-home",
         "automation",
         "iot"
       ],
-      "version": "1.0.3",
-      "manifest": "./home-assistant/releases/1.0.3/manifest.json",
-      "package": "./home-assistant/releases/1.0.3/home-assistant.pudding-app.json",
-      "package_sha256": "de5eaf76a94c196fb51075213fe19eee7e72faaa56adfa4a711989b2e631b689",
+      "version": "1.0.4",
+      "manifest": "./home-assistant/releases/1.0.4/manifest.json",
+      "package": "./home-assistant/releases/1.0.4/home-assistant.pudding-app.json",
+      "package_sha256": "8281ace65e730ffbf5f020bf93e5df186fd46a4ea226646f3ca6f2e97c1ca06b",
       "requires": {
         "pudding_app": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.4",
+          "manifest": "./home-assistant/releases/1.0.4/manifest.json",
+          "package": "./home-assistant/releases/1.0.4/home-assistant.pudding-app.json",
+          "package_sha256": "8281ace65e730ffbf5f020bf93e5df186fd46a4ea226646f3ca6f2e97c1ca06b",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-30"
+        },
         {
           "version": "1.0.3",
           "manifest": "./home-assistant/releases/1.0.3/manifest.json",
@@ -539,12 +598,13 @@
         "en": "Connect a self-hosted Immich library for smart photo and video search, people and place lookup, OCR and metadata filtering, with thumbnail results on the canvas."
       },
       "icon": {
-        "svg": "./immich/releases/1.0.0/assets/icon.svg",
+        "svg": "./immich/assets/icon.svg",
         "background": {
           "light": "#F6F7FA",
           "dark": "#1D1F24"
         }
       },
+      "icon_sha256": "550f6fcce5679a8327d3c18e630ba43164e5870368d9341910ec420074e4cb44",
       "tags": [
         "photos",
         "search",
@@ -597,25 +657,40 @@
         "en": "Connect the Jira Cloud REST API for projects, issues, JQL search, comments, transitions, boards, and sprints."
       },
       "icon": {
-        "svg": "./jira/releases/1.0.0/assets/icon.svg",
+        "svg": "./jira/assets/icon.svg",
+        "color": {
+          "light": "#FFFFFF",
+          "dark": "#FFFFFF"
+        },
         "background": {
-          "light": "#E9F2FF",
-          "dark": "#092957"
+          "light": "#0C66E4",
+          "dark": "#0A52B8"
         }
       },
+      "icon_sha256": "77aa48505446625403c5b8a3f393139074e042b61752298f9fc578d4697fc38c",
       "tags": [
         "jira",
         "issues",
         "projects"
       ],
-      "version": "1.0.0",
-      "manifest": "./jira/releases/1.0.0/manifest.json",
-      "package": "./jira/releases/1.0.0/jira.pudding-app.json",
-      "package_sha256": "469f8784a0a16e0f703a3341c8a878f24dc09c224a3f381d6726299c2015ee46",
+      "version": "1.0.1",
+      "manifest": "./jira/releases/1.0.1/manifest.json",
+      "package": "./jira/releases/1.0.1/jira.pudding-app.json",
+      "package_sha256": "d88b1d4cf0f11c3680e239c77ab3b4edb25b456791053bfc613bdcec17b50b52",
       "requires": {
         "pudding_app": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.1",
+          "manifest": "./jira/releases/1.0.1/manifest.json",
+          "package": "./jira/releases/1.0.1/jira.pudding-app.json",
+          "package_sha256": "d88b1d4cf0f11c3680e239c77ab3b4edb25b456791053bfc613bdcec17b50b52",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-30"
+        },
         {
           "version": "1.0.0",
           "manifest": "./jira/releases/1.0.0/manifest.json",
@@ -642,12 +717,17 @@
         "en": "Connect Linear's GraphQL API for issues, projects, teams, cycles, and roadmap data."
       },
       "icon": {
-        "svg": "./linear/releases/1.0.1/assets/icon.svg",
+        "svg": "./linear/assets/icon.svg",
+        "color": {
+          "light": "#FFFFFF",
+          "dark": "#FFFFFF"
+        },
         "background": {
-          "light": "#F5F6FF",
-          "dark": "#11131F"
+          "light": "#5E6AD2",
+          "dark": "#4752B8"
         }
       },
+      "icon_sha256": "88ed4aabde7b873193640dcaf9cf6a16255794091f80be75e014b98e94caf6d2",
       "targets": [
         "desktop",
         "mobile"
@@ -657,14 +737,28 @@
         "issues",
         "projects"
       ],
-      "version": "1.0.1",
-      "manifest": "./linear/releases/1.0.1/manifest.json",
-      "package": "./linear/releases/1.0.1/linear.pudding-app.json",
-      "package_sha256": "3a6540bcb63a241cf2878644ac27ce91acf13a0707df2221274e341d1984c2e2",
+      "version": "1.0.2",
+      "manifest": "./linear/releases/1.0.2/manifest.json",
+      "package": "./linear/releases/1.0.2/linear.pudding-app.json",
+      "package_sha256": "fff37d257788a2c8ab36b34c52eade54ea1b0b892aefe1c982fabe2e18605634",
       "requires": {
         "pudding_app": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.2",
+          "manifest": "./linear/releases/1.0.2/manifest.json",
+          "package": "./linear/releases/1.0.2/linear.pudding-app.json",
+          "package_sha256": "fff37d257788a2c8ab36b34c52eade54ea1b0b892aefe1c982fabe2e18605634",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "targets": [
+            "desktop",
+            "mobile"
+          ],
+          "released_at": "2026-07-30"
+        },
         {
           "version": "1.0.1",
           "manifest": "./linear/releases/1.0.1/manifest.json",
@@ -705,12 +799,13 @@
         "en": "Use local FFmpeg to inspect and transform video, audio, and images inside a Project, including trimming, transcoding, compression, GIFs, frames, audio extraction, waveforms, and contact sheets."
       },
       "icon": {
-        "svg": "./media-studio/releases/1.0.0/assets/icon.svg",
+        "svg": "./media-studio/assets/icon.svg",
         "background": {
           "light": "#F3F0FF",
           "dark": "#211B36"
         }
       },
+      "icon_sha256": "7d932cc29a7f44fced483d678ee696bbe2337c30e8193faee89780d55d661f45",
       "tags": [
         "media",
         "local",
@@ -764,16 +859,17 @@
         "en": "Connect Notion's REST API for pages, blocks, data sources, databases, users, comments, and search."
       },
       "icon": {
-        "svg": "./notion/releases/1.0.1/assets/icon.svg",
+        "svg": "./notion/assets/icon.svg",
         "color": {
-          "light": "#111111",
-          "dark": "#ffffff"
+          "light": "#FFFFFF",
+          "dark": "#FFFFFF"
         },
         "background": {
-          "light": "#ffffff",
-          "dark": "#111111"
+          "light": "#191919",
+          "dark": "#373737"
         }
       },
+      "icon_sha256": "5257bd17993f90d9ee9af3af9f8231d8869b677b6d83e4515b04b8a41e7d6b96",
       "targets": [
         "desktop",
         "mobile"
@@ -783,14 +879,28 @@
         "docs",
         "knowledge"
       ],
-      "version": "1.0.1",
-      "manifest": "./notion/releases/1.0.1/manifest.json",
-      "package": "./notion/releases/1.0.1/notion.pudding-app.json",
-      "package_sha256": "ce4ff18ba9b1fb9ea19cc534cdd9c0373309f7721a14891442137830d35c0fa1",
+      "version": "1.0.2",
+      "manifest": "./notion/releases/1.0.2/manifest.json",
+      "package": "./notion/releases/1.0.2/notion.pudding-app.json",
+      "package_sha256": "8a4e4a5ea24f0385d82e31f54ed9fc878c6f5d766e360de73d1282a01028a908",
       "requires": {
         "pudding_app": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.2",
+          "manifest": "./notion/releases/1.0.2/manifest.json",
+          "package": "./notion/releases/1.0.2/notion.pudding-app.json",
+          "package_sha256": "8a4e4a5ea24f0385d82e31f54ed9fc878c6f5d766e360de73d1282a01028a908",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "targets": [
+            "desktop",
+            "mobile"
+          ],
+          "released_at": "2026-07-30"
+        },
         {
           "version": "1.0.1",
           "manifest": "./notion/releases/1.0.1/manifest.json",
@@ -831,12 +941,13 @@
         "en": "Work directly with a local Obsidian vault opened as a Pudding Project to search notes and backlinks, organize tags, and safely create or edit Markdown notes."
       },
       "icon": {
-        "svg": "./obsidian/releases/1.0.0/assets/icon.svg",
+        "svg": "./obsidian/assets/icon.svg",
         "background": {
           "light": "#F3F0FF",
           "dark": "#20182D"
         }
       },
+      "icon_sha256": "355116ed30d4816d2e68694c2829a767ea1ff18314cd106ef61224a333f525af",
       "tags": [
         "notes",
         "knowledge",
@@ -890,12 +1001,13 @@
         "en": "Connect the Sequential Thinking MCP server for step-by-step decomposition, revision, and tracking of complex problems."
       },
       "icon": {
-        "svg": "./sequential-thinking/releases/1.0.0/assets/icon.svg",
+        "svg": "./sequential-thinking/assets/icon.svg",
         "background": {
           "light": "#F1F5F9",
           "dark": "#111827"
         }
       },
+      "icon_sha256": "5d2b91b37052b68164fbdd0038100934d3b8e81d76de818ca78fc690b50f4ea0",
       "tags": [],
       "version": "1.0.0",
       "manifest": "./sequential-thinking/releases/1.0.0/manifest.json",
@@ -943,25 +1055,36 @@
         "en": "Connect one Supabase project in read-only mode to inspect database schema and data, logs, advisors, Edge Functions, Storage, and official documentation."
       },
       "icon": {
-        "svg": "./supabase/releases/1.0.0/assets/icon.svg",
+        "svg": "./supabase/assets/icon.svg",
         "background": {
-          "light": "#ECFDF5",
-          "dark": "#10251D"
+          "light": "#10251D",
+          "dark": "#0D1F18"
         }
       },
+      "icon_sha256": "f914d687c5d0e34f96dab8d759b106f6a7a89476a437b8be9aacd5a9fb44f851",
       "tags": [
         "database",
         "mcp",
         "supabase"
       ],
-      "version": "1.0.0",
-      "manifest": "./supabase/releases/1.0.0/manifest.json",
-      "package": "./supabase/releases/1.0.0/supabase.pudding-app.json",
-      "package_sha256": "c8d2d7ae4c26695f58ec21d7d2d3e69baa5759724dca5a1a00545096283ff266",
+      "version": "1.0.1",
+      "manifest": "./supabase/releases/1.0.1/manifest.json",
+      "package": "./supabase/releases/1.0.1/supabase.pudding-app.json",
+      "package_sha256": "9f47655992030188b2a1a0dfa72d05b251861a972b34c3ac8cecd3219dc4ff12",
       "requires": {
         "pudding_app": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.1",
+          "manifest": "./supabase/releases/1.0.1/manifest.json",
+          "package": "./supabase/releases/1.0.1/supabase.pudding-app.json",
+          "package_sha256": "9f47655992030188b2a1a0dfa72d05b251861a972b34c3ac8cecd3219dc4ff12",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "released_at": "2026-07-30"
+        },
         {
           "version": "1.0.0-preview.1",
           "manifest": "./supabase/releases/1.0.0-preview.1/manifest.json",
@@ -1000,8 +1123,9 @@
         "en": "Connect Todoist to review, create, update, and complete tasks, and organize plans by project, date, priority, and label."
       },
       "icon": {
-        "svg": "./todoist/releases/1.0.1/assets/icon.svg"
+        "svg": "./todoist/assets/icon.svg"
       },
+      "icon_sha256": "e220c9dc90d0485861b6e2716b8a9724725feb26f8aa726512a751069f9ff139",
       "targets": [
         "desktop",
         "mobile"

@@ -1,6 +1,6 @@
 id: jira
 name: Jira
-version: 1.0.0
+version: 1.0.1
 description: Access Jira Cloud projects, issues, boards, sprints, JQL search, comments, transitions, and user work through the Atlassian REST API gateway.
 auth:
   required: true
@@ -11,9 +11,12 @@ auth:
       default: true
 icon:
   svg: assets/icon.svg
+  color:
+    light: "#FFFFFF"
+    dark: "#FFFFFF"
   background:
-    light: "#E9F2FF"
-    dark: "#092957"
+    light: "#0C66E4"
+    dark: "#0A52B8"
 endpoints:
   jira_rest:
     kind: rest

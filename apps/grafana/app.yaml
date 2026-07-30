@@ -1,6 +1,6 @@
 id: grafana
 name: Grafana
-version: 1.0.3
+version: 1.0.4
 description: Inspect Grafana dashboards, data sources, queries, and alert rules through the Grafana HTTP API.
 auth:
   required: true
@@ -11,9 +11,12 @@ auth:
       default: true
 icon:
   svg: assets/icon.svg
+  color:
+    light: "#FFFFFF"
+    dark: "#FFFFFF"
   background:
-    light: "#FFF4EA"
-    dark: "#20130B"
+    light: "#F46800"
+    dark: "#C74F00"
 endpoints:
   grafana_rest:
     kind: rest

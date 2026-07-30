@@ -1,6 +1,6 @@
 id: notion
 name: Notion
-version: 1.0.1
+version: 1.0.2
 description: Access Notion pages, blocks, data sources, databases, users, comments, and search through the Notion REST API.
 auth:
   required: true
@@ -22,11 +22,11 @@ connection:
 icon:
   svg: assets/icon.svg
   color:
-    light: "#111111"
-    dark: "#ffffff"
+    light: "#FFFFFF"
+    dark: "#FFFFFF"
   background:
-    light: "#ffffff"
-    dark: "#111111"
+    light: "#191919"
+    dark: "#373737"
 endpoints:
   notion_rest:
     kind: rest

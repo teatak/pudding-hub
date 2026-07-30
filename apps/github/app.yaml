@@ -1,6 +1,6 @@
 id: github
 name: GitHub
-version: 1.0.2
+version: 1.0.3
 description: Access GitHub repositories, issues, pull requests, file contents, and GraphQL data through the Pudding Connector GitHub App.
 auth:
   required: true
@@ -16,11 +16,11 @@ auth:
 icon:
   svg: assets/icon.svg
   color:
-    light: "#111111"
-    dark: "#ffffff"
+    light: "#FFFFFF"
+    dark: "#FFFFFF"
   background:
-    light: "#ffffff"
-    dark: "#111111"
+    light: "#24292F"
+    dark: "#30363D"
 endpoints:
   github_rest:
     kind: rest

@@ -1,6 +1,6 @@
 id: supabase
 name: Supabase
-version: 1.0.0
+version: 1.0.1
 description: Inspect one Supabase project through the official read-only Supabase MCP server.
 auth:
   required: true
@@ -24,8 +24,8 @@ connection:
 icon:
   svg: assets/icon.svg
   background:
-    light: "#ECFDF5"
-    dark: "#10251D"
+    light: "#10251D"
+    dark: "#0D1F18"
 endpoints:
   supabase_mcp:
     kind: mcp

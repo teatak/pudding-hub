@@ -1,0 +1,32 @@
+{
+  "kind": "pudding.app.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/apps/github",
+  "name": "github",
+  "title": {
+    "zh-CN": "GitHub",
+    "zh-TW": "GitHub",
+    "en": "GitHub"
+  },
+  "version": "1.0.3",
+  "targets": [
+    "desktop",
+    "mobile"
+  ],
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "color": {
+      "light": "#FFFFFF",
+      "dark": "#FFFFFF"
+    },
+    "background": {
+      "light": "#24292F",
+      "dark": "#30363D"
+    }
+  },
+  "package": "./github.pudding-app.json",
+  "package_sha256": "27434d0b6f2bc7b9ca2b12f509712b7ae378b730725be65b090db1e6345e1cf3",
+  "requires": {
+    "pudding_app": "^1.0.0"
+  }
+}

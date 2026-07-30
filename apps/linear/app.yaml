@@ -1,6 +1,6 @@
 id: linear
 name: Linear
-version: 1.0.1
+version: 1.0.2
 description: Access Linear issues, projects, teams, cycles, and roadmap data through the Linear GraphQL API.
 auth:
   required: true
@@ -12,9 +12,12 @@ auth:
       default: true
 icon:
   svg: assets/icon.svg
+  color:
+    light: "#FFFFFF"
+    dark: "#FFFFFF"
   background:
-    light: "#F5F6FF"
-    dark: "#11131F"
+    light: "#5E6AD2"
+    dark: "#4752B8"
 endpoints:
   linear_graphql:
     kind: graphql
