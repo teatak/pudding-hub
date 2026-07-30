@@ -25,7 +25,7 @@
     }
   },
   "package": "./github.pudding-app.json",
-  "package_sha256": "27434d0b6f2bc7b9ca2b12f509712b7ae378b730725be65b090db1e6345e1cf3",
+  "package_sha256": "602c29f50b95c12bd5ee9cc7c830177b284fe6bc4b5599c3a0b917367d1255d9",
   "requires": {
     "pudding_app": "^1.0.0"
   }
