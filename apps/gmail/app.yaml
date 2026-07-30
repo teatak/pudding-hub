@@ -12,6 +12,9 @@ auth:
       default: true
 icon:
   svg: assets/icon.svg
+  background:
+    light: "#FFFFFF"
+    dark: "#202124"
 endpoints:
   gmail_rest:
     kind: rest
