@@ -4,6 +4,7 @@ import fsSync from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { parse as parseYAML } from "yaml";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const PACKAGE_KIND = "pudding.app.package";
@@ -16,15 +17,11 @@ const REGISTRY_TITLE = {
   "zh-TW": "Pudding 應用",
   en: "Pudding Apps",
 };
-const JSDELIVR_PURGE_ROOT =
-  process.env.PUDDING_APP_JSDELIVR_PURGE_ROOT || "https://purge.jsdelivr.net/gh/teatak/pudding-hub@main/apps";
 
 function usage() {
   console.log(`Usage:
   pnpm package-app <name>
   pnpm package-apps
-  pnpm package-app <name> --purge
-  pnpm package-apps --purge
 `);
 }
 
@@ -33,9 +30,12 @@ function parseArgs(argv) {
     usage();
     process.exit(0);
   }
+  const unsupported = argv.find((arg) => arg.startsWith("-") && arg !== "--all");
+  if (unsupported) {
+    throw new Error(`unsupported option: ${unsupported}`);
+  }
   return {
     all: argv.includes("--all"),
-    purge: argv.includes("--purge"),
     name: argv.find((arg) => !arg.startsWith("--")) || "",
   };
 }
@@ -97,6 +97,24 @@ function rewriteRegistryIcon(name, icon) {
   return undefined;
 }
 
+function normalizeManifestIcon(icon) {
+  if (!icon) return undefined;
+  if (typeof icon === "string") return normalizeManifestFilePath(icon);
+  if (typeof icon === "object" && !Array.isArray(icon)) {
+    return {
+      ...icon,
+      svg: typeof icon.svg === "string" ? normalizeManifestFilePath(icon.svg) : icon.svg,
+    };
+  }
+  return undefined;
+}
+
+function normalizeManifestFilePath(value) {
+  const rel = value.trim();
+  if (!rel || rel.startsWith("/") || rel.startsWith("//") || /^[a-z][a-z0-9+.-]*:/i.test(rel)) return value;
+  return `./${rel.replace(/^\.\//, "")}`;
+}
+
 function normalizeRegistryRelease(entry) {
   return entry && typeof entry === "object" && typeof entry.version === "string" ? entry : null;
 }
@@ -151,6 +169,20 @@ async function packageApp(name) {
     });
   }
   if (!files.some((file) => file.path === "app.yaml")) throw new Error(`app ${name} must package app.yaml`);
+  const appYAML = files.find((file) => file.path === "app.yaml")?.content || "";
+  let appDefinition;
+  try {
+    appDefinition = parseYAML(appYAML);
+  } catch (error) {
+    throw new Error(`app ${name} app.yaml: ${error.message}`);
+  }
+  if (!appDefinition || typeof appDefinition !== "object" || Array.isArray(appDefinition)) {
+    throw new Error(`app ${name} app.yaml must contain an object`);
+  }
+  const sourceManifest = {
+    ...manifest,
+    icon: normalizeManifestIcon(appDefinition.icon),
+  };
 
   const targets = normalizedTargets(manifest);
   const pkg = {
@@ -168,7 +200,7 @@ async function packageApp(name) {
   const packageFilename = `${name}.pudding-app.json`;
   const releaseDir = path.join(appDir, "releases", version);
   await fs.mkdir(releaseDir, { recursive: true });
-  const iconRelRaw = iconSVGPath(manifest.icon);
+  const iconRelRaw = iconSVGPath(sourceManifest.icon);
   let iconHash = "";
   if (iconRelRaw) {
     const iconRel = iconRelRaw.replace(/^\.\//, "");
@@ -181,31 +213,11 @@ async function packageApp(name) {
   const packageHash = sha256Text(packageText);
   await fs.writeFile(path.join(releaseDir, packageFilename), packageText, "utf8");
 
-  const rootManifest = buildRootManifest(name, manifest, version, packageFilename, packageHash);
-  const releaseManifest = buildReleaseManifest(manifest, packageFilename, packageHash);
+  const rootManifest = buildRootManifest(name, sourceManifest, version, packageFilename, packageHash);
+  const releaseManifest = buildReleaseManifest(sourceManifest, packageFilename, packageHash);
   await writeJSON(path.join(appDir, "manifest.json"), rootManifest);
   await writeJSON(path.join(releaseDir, "manifest.json"), releaseManifest);
   await updateRegistry(name, rootManifest, packageHash, iconHash);
-  return {
-    name,
-    version,
-    purgePaths: appPurgePaths(name, version, packageFilename, iconRelRaw),
-  };
-}
-
-function appPurgePaths(name, version, packageFilename, iconRelRaw) {
-  const paths = [
-    "registry.json",
-    `${name}/manifest.json`,
-    `${name}/releases/${version}/manifest.json`,
-    `${name}/releases/${version}/${packageFilename}`,
-  ];
-  if (iconRelRaw) {
-    const iconRel = iconRelRaw.replace(/^\.\//, "");
-    paths.push(`${name}/${iconRel}`);
-    paths.push(`${name}/releases/${version}/${iconRel}`);
-  }
-  return paths;
 }
 
 function buildRootManifest(name, manifest, version, packageFilename, packageHash) {
@@ -322,36 +334,10 @@ async function main() {
     usage();
     process.exit(1);
   }
-  const purgePaths = [];
   for (const name of names) {
-    const result = await packageApp(name);
-    purgePaths.push(...result.purgePaths);
+    await packageApp(name);
     console.log(`packaged app ${name}`);
   }
-  if (args.purge) {
-    await purgeJSDelivr(purgePaths);
-  }
-}
-
-async function purgeJSDelivr(paths) {
-  const urls = [...new Set(paths.filter(Boolean).map(jsDelivrPurgeURL))];
-  for (const url of urls) {
-    const response = await fetch(url);
-    if (!response.ok) {
-      const body = await response.text().catch(() => "");
-      throw new Error(`jsDelivr purge failed (${response.status}) ${url}${body ? `: ${body}` : ""}`);
-    }
-    console.log(`purged ${url}`);
-  }
-}
-
-function jsDelivrPurgeURL(rel) {
-  const encoded = rel
-    .replace(/^\.?\//, "")
-    .split("/")
-    .map((part) => encodeURIComponent(part))
-    .join("/");
-  return `${JSDELIVR_PURGE_ROOT.replace(/\/+$/, "")}/${encoded}`;
 }
 
 main().catch((error) => {
