@@ -24,8 +24,8 @@ connection:
 icon:
   svg: assets/icon.svg
   background:
-    light: "#10251D"
-    dark: "#0D1F18"
+    light: "#ECFDF5"
+    dark: "#10251D"
 endpoints:
   supabase_mcp:
     kind: mcp
