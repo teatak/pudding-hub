@@ -7,7 +7,10 @@ description: Use when the user asks to inspect GitHub repositories, branches, co
 
 Use this skill when a GitHub connection is available and the user asks about repository data.
 
-The connection is provided by the Pudding Connector GitHub App. Pudding supplies a GitHub App user-to-server token; do not ask the user for a Personal Access Token, OAuth code, or authorization header.
+Pudding injects credentials from the selected connection. Never ask the user for a Personal Access Token, OAuth code, or authorization header. Use the non-secret auth method attached to the connection or tool result to select the correct discovery flow:
+
+- `github-app`: Pudding Connector GitHub App user access token.
+- `github-pat`: user-supplied personal access token, which may be classic or fine-grained.
 
 ## Endpoints
 
@@ -21,9 +24,25 @@ The connection is provided by the Pudding Connector GitHub App. Pudding supplies
 - Pull requests: `GET /repos/{owner}/{repo}/pulls`
 - File contents: `GET /repos/{owner}/{repo}/contents/{path}`
 
+## Repository and organization discovery
+
+For a `github-app` connection:
+
+1. Call `GET /user/installations`.
+2. Read each installation's `account.login` and `account.type` to identify user and organization owners.
+3. Call `GET /user/installations/{installation_id}/repositories` to list repositories granted to that installation.
+
+Do not use `GET /user/orgs` to determine GitHub App organization access. GitHub intentionally returns `200` with an empty list for GitHub App user access tokens and other fine-grained tokens. An empty `/user/orgs` response does not mean the user has no organization membership or installation access.
+
+For a `github-pat` connection:
+
+- `GET /user/orgs` can list organizations for an OAuth-style classic PAT when its scopes permit it.
+- A fine-grained PAT may also return `200` with an empty list from `/user/orgs`; never infer absence of organization access from that empty response.
+- Prefer `GET /user/repos` to discover repositories accessible through the PAT and derive owners from `owner.login` or `full_name`.
+
 ## Guidance
 
 - Ask for the repository owner/name if it is not clear from context.
 - Prefer GraphQL when the request needs several related resources in one response.
-- Current Pudding Connector permissions are `contents:read`, `issues:read`, and `pull_requests:read`; treat this app as read-only.
+- GitHub App permissions are `contents:read`, `issues:read`, and `pull_requests:read`; treat both connection methods as read-only in this skill.
 - Do not mutate GitHub state or ask for broader permissions from this skill.

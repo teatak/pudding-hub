@@ -7,7 +7,7 @@ description: Use when the user asks to find, summarize, triage, or inspect GitHu
 
 Use this skill when a GitHub connection is available and the user asks about GitHub issues.
 
-The connection is provided by the Pudding Connector GitHub App. Pudding supplies a GitHub App user-to-server token; do not ask the user for a Personal Access Token, OAuth code, or authorization header.
+Pudding injects credentials from the selected connection. Never ask the user for a Personal Access Token, OAuth code, or authorization header. The non-secret auth method is either `github-app` or `github-pat`.
 
 ## Endpoints
 
@@ -20,9 +20,15 @@ The connection is provided by the Pudding Connector GitHub App. Pudding supplies
 - Read one issue: `GET /repos/{owner}/{repo}/issues/{issue_number}`
 - Issue comments: `GET /repos/{owner}/{repo}/issues/{issue_number}/comments`
 
+## Repository discovery
+
+- For `github-app`, discover owners with `GET /user/installations`, then repositories with `GET /user/installations/{installation_id}/repositories`.
+- For `github-pat`, prefer `GET /user/repos` when the repository is not already known.
+- Never interpret an empty `GET /user/orgs` response as proof that the user has no organizations. GitHub App user access tokens and fine-grained PATs can intentionally receive `200` with an empty list from that endpoint.
+
 ## Guidance
 
 - Ask for the repository owner/name when it is missing.
 - Keep triage summaries short and separate facts from recommendations.
-- Current Pudding Connector permissions include `issues:read`; treat this app as read-only.
+- GitHub App permissions include `issues:read`; treat both connection methods as read-only in this skill.
 - Do not create, edit, close, label, or comment on issues, and do not ask for broader permissions from this skill.

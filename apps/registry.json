@@ -197,9 +197,9 @@
         "en": "GitHub"
       },
       "description": {
-        "zh-CN": "通过 Pudding Connector（GitHub App）连接 GitHub REST 与 GraphQL API，用于仓库、Issue、PR 和文件内容查询。",
-        "zh-TW": "透過 Pudding Connector（GitHub App）連接 GitHub REST 與 GraphQL API，用於倉庫、Issue、PR 和檔案內容查詢。",
-        "en": "Connect GitHub REST and GraphQL APIs through the Pudding Connector GitHub App for repositories, issues, pull requests, and file contents."
+        "zh-CN": "通过 GitHub App 或个人访问令牌连接 GitHub REST 与 GraphQL API，用于仓库、Issue、PR 和文件内容查询。",
+        "zh-TW": "透過 GitHub App 或個人存取權杖連接 GitHub REST 與 GraphQL API，用於倉庫、Issue、PR 和檔案內容查詢。",
+        "en": "Connect GitHub REST and GraphQL APIs through a GitHub App or personal access token for repositories, issues, pull requests, and file contents."
       },
       "icon": {
         "svg": "./github/assets/icon.svg",
@@ -221,14 +221,28 @@
         "code",
         "github"
       ],
-      "version": "1.0.3",
-      "manifest": "./github/releases/1.0.3/manifest.json",
-      "package": "./github/releases/1.0.3/github.pudding-app.json",
-      "package_sha256": "602c29f50b95c12bd5ee9cc7c830177b284fe6bc4b5599c3a0b917367d1255d9",
+      "version": "1.0.4",
+      "manifest": "./github/releases/1.0.4/manifest.json",
+      "package": "./github/releases/1.0.4/github.pudding-app.json",
+      "package_sha256": "71f7d486faeddae0d17cd2981eaebb1b6d545daf8bd5065e5b443c12762c5c36",
       "requires": {
         "pudding_app": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.4",
+          "manifest": "./github/releases/1.0.4/manifest.json",
+          "package": "./github/releases/1.0.4/github.pudding-app.json",
+          "package_sha256": "71f7d486faeddae0d17cd2981eaebb1b6d545daf8bd5065e5b443c12762c5c36",
+          "requires": {
+            "pudding_app": "^1.0.0"
+          },
+          "targets": [
+            "desktop",
+            "mobile"
+          ],
+          "released_at": "2026-08-01"
+        },
         {
           "version": "1.0.3",
           "manifest": "./github/releases/1.0.3/manifest.json",
