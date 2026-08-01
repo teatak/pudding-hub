@@ -30,5 +30,6 @@ Pudding injects credentials from the selected connection. Never ask the user for
 
 - Ask for the repository owner/name when it is missing.
 - Keep triage summaries short and separate facts from recommendations.
-- GitHub App permissions include `issues:read`; treat both connection methods as read-only in this skill.
+- Treat both connection methods as read-only in this skill.
+- The effective permissions come from the selected connection and GitHub API responses. Do not infer or audit a complete permission list from this Skill.
 - Do not create, edit, close, label, or comment on issues, and do not ask for broader permissions from this skill.

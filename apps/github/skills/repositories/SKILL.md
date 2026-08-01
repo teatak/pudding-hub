@@ -44,5 +44,6 @@ For a `github-pat` connection:
 
 - Ask for the repository owner/name if it is not clear from context.
 - Prefer GraphQL when the request needs several related resources in one response.
-- GitHub App permissions are `contents:read`, `issues:read`, and `pull_requests:read`; treat both connection methods as read-only in this skill.
+- Treat both connection methods as read-only in this skill.
+- The effective permissions come from the selected connection and GitHub API responses. Do not infer or audit a complete permission list from this Skill.
 - Do not mutate GitHub state or ask for broader permissions from this skill.
