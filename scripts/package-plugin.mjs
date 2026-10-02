@@ -1,0 +1,346 @@
+#!/usr/bin/env node
+import crypto from "node:crypto";
+import fsSync from "node:fs";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { parse as parseYAML } from "yaml";
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const PACKAGE_KIND = "pudding.plugin.package";
+const PACKAGE_SCHEMA_VERSION = 1;
+const PLUGIN_MANIFEST_KIND = "pudding.plugin.manifest";
+const REGISTRY_KIND = "pudding.plugin.registry";
+const REGISTRY_NAME = "pudding-plugins";
+const REGISTRY_TITLE = {
+  "zh-CN": "Pudding 插件",
+  "zh-TW": "Pudding 外掛",
+  en: "Pudding Plugins",
+};
+
+function usage() {
+  console.log(`Usage:
+  pnpm package-plugin <name>
+  pnpm package-plugins
+`);
+}
+
+function parseArgs(argv) {
+  if (argv.includes("--help") || argv.includes("-h")) {
+    usage();
+    process.exit(0);
+  }
+  const unsupported = argv.find((arg) => arg.startsWith("-") && arg !== "--all");
+  if (unsupported) {
+    throw new Error(`unsupported option: ${unsupported}`);
+  }
+  return {
+    all: argv.includes("--all"),
+    name: argv.find((arg) => !arg.startsWith("--")) || "",
+  };
+}
+
+async function readJSON(file) {
+  return JSON.parse(await fs.readFile(file, "utf8"));
+}
+
+async function writeJSON(file, value) {
+  await fs.mkdir(path.dirname(file), { recursive: true });
+  await fs.writeFile(file, JSON.stringify(value, null, 2) + "\n", "utf8");
+}
+
+function requireString(value, label) {
+  const text = typeof value === "string" ? value.trim() : "";
+  if (!text) throw new Error(`${label} is required`);
+  return text;
+}
+
+function sha256Text(text) {
+  return crypto.createHash("sha256").update(text).digest("hex");
+}
+
+function todayISODate() {
+  const now = new Date();
+  const local = new Date(now.getTime() - now.getTimezoneOffset() * 60_000);
+  return local.toISOString().slice(0, 10);
+}
+
+function registryPluginPath(name, value) {
+  if (typeof value !== "string") return value;
+  const rel = value.trim();
+  if (!rel || rel.startsWith("/") || rel.startsWith("//") || /^[a-z][a-z0-9+.-]*:/i.test(rel)) return value;
+  return `./${name}/${rel.replace(/^\.\//, "")}`;
+}
+
+function releaseFileExists(value) {
+  if (typeof value !== "string") return false;
+  const rel = value.replace(/^\.\//, "");
+  return fsSync.existsSync(path.join(ROOT, "plugins", rel));
+}
+
+function iconSVGPath(icon) {
+  if (!icon) return "";
+  if (typeof icon === "string") return icon;
+  if (typeof icon === "object" && typeof icon.svg === "string") return icon.svg;
+  return "";
+}
+
+function rewriteRegistryIcon(name, icon) {
+  if (!icon) return undefined;
+  if (typeof icon === "string") return registryPluginPath(name, icon);
+  if (typeof icon === "object" && !Array.isArray(icon)) {
+    return {
+      ...icon,
+      svg: typeof icon.svg === "string" ? registryPluginPath(name, icon.svg) : icon.svg,
+    };
+  }
+  return undefined;
+}
+
+function normalizeManifestIcon(icon) {
+  if (!icon) return undefined;
+  if (typeof icon === "string") return normalizeManifestFilePath(icon);
+  if (typeof icon === "object" && !Array.isArray(icon)) {
+    return {
+      ...icon,
+      svg: typeof icon.svg === "string" ? normalizeManifestFilePath(icon.svg) : icon.svg,
+    };
+  }
+  return undefined;
+}
+
+function normalizeManifestFilePath(value) {
+  const rel = value.trim();
+  if (!rel || rel.startsWith("/") || rel.startsWith("//") || /^[a-z][a-z0-9+.-]*:/i.test(rel)) return value;
+  return `./${rel.replace(/^\.\//, "")}`;
+}
+
+function normalizeRegistryRelease(entry) {
+  return entry && typeof entry === "object" && typeof entry.version === "string" ? entry : null;
+}
+
+function releaseChannel(value) {
+  return typeof value === "string" ? value.trim().toLowerCase() : "";
+}
+
+function isPreviewRelease(value) {
+  const channel = releaseChannel(value?.channel);
+  return Boolean(value?.preview || channel === "preview" || channel === "dev");
+}
+
+function withReleaseMetadata(target, source) {
+  if (typeof source.channel === "string" && source.channel.trim()) {
+    target.channel = source.channel.trim();
+  }
+  if (source.preview === true) {
+    target.preview = true;
+  }
+  return target;
+}
+
+function normalizedTargets(manifest) {
+  const raw = Array.isArray(manifest.targets) ? manifest.targets : [];
+  const targets = [];
+  for (const value of raw) {
+    const target = typeof value === "string" ? value.trim() : "";
+    if (target && !targets.includes(target)) targets.push(target);
+  }
+  return targets.length ? targets : undefined;
+}
+
+async function packagePlugin(name) {
+  const pluginDir = path.join(ROOT, "plugins", name);
+  const manifest = await readJSON(path.join(pluginDir, "manifest.json"));
+  if (manifest.kind && manifest.kind !== PLUGIN_MANIFEST_KIND) {
+    throw new Error(`unsupported plugin manifest kind: ${manifest.kind}`);
+  }
+  const pluginID = requireString(manifest.name, `plugin ${name} manifest.name`);
+  const version = requireString(manifest.version, `plugin ${name} manifest.version`);
+  const fileList = Array.isArray(manifest.files) ? manifest.files : [];
+  if (fileList.length === 0) throw new Error(`plugin ${name} manifest.files is required`);
+
+  const files = [];
+  for (const rel of fileList) {
+    const file = requireString(rel, `plugin ${name} file path`).replace(/^\.\//, "");
+    if (file.startsWith("/") || file.includes("..")) throw new Error(`invalid plugin file path: ${file}`);
+    files.push({
+      path: file,
+      content: await fs.readFile(path.join(pluginDir, file), "utf8"),
+    });
+  }
+  if (!files.some((file) => file.path === "plugin.yaml")) throw new Error(`plugin ${name} must package plugin.yaml`);
+  const pluginYAML = files.find((file) => file.path === "plugin.yaml")?.content || "";
+  let pluginDefinition;
+  try {
+    pluginDefinition = parseYAML(pluginYAML);
+  } catch (error) {
+    throw new Error(`plugin ${name} plugin.yaml: ${error.message}`);
+  }
+  if (!pluginDefinition || typeof pluginDefinition !== "object" || Array.isArray(pluginDefinition)) {
+    throw new Error(`plugin ${name} plugin.yaml must contain an object`);
+  }
+  const sourceManifest = {
+    ...manifest,
+    icon: normalizeManifestIcon(pluginDefinition.icon),
+  };
+
+  const targets = normalizedTargets(manifest);
+  const pkg = {
+    kind: PACKAGE_KIND,
+    schema_version: PACKAGE_SCHEMA_VERSION,
+    plugin: {
+      id: pluginID,
+      name: manifest.title?.en || manifest.title?.["zh-CN"] || pluginID,
+      version,
+      description: manifest.description?.en || manifest.description?.["zh-CN"] || "",
+    },
+    files,
+  };
+  if (targets) pkg.plugin.targets = targets;
+  const packageFilename = `${name}.pudding-plugin.json`;
+  const releaseDir = path.join(pluginDir, "releases", version);
+  await fs.mkdir(releaseDir, { recursive: true });
+  const iconRelRaw = iconSVGPath(sourceManifest.icon);
+  let iconHash = "";
+  if (iconRelRaw) {
+    const iconRel = iconRelRaw.replace(/^\.\//, "");
+    await fs.mkdir(path.dirname(path.join(releaseDir, iconRel)), { recursive: true });
+    const iconData = await fs.readFile(path.join(pluginDir, iconRel));
+    iconHash = crypto.createHash("sha256").update(iconData).digest("hex");
+    await fs.writeFile(path.join(releaseDir, iconRel), iconData);
+  }
+  const packageText = JSON.stringify(pkg, null, 2) + "\n";
+  const packageHash = sha256Text(packageText);
+  await fs.writeFile(path.join(releaseDir, packageFilename), packageText, "utf8");
+
+  const rootManifest = buildRootManifest(name, sourceManifest, version, packageFilename, packageHash);
+  const releaseManifest = buildReleaseManifest(sourceManifest, packageFilename, packageHash);
+  await writeJSON(path.join(pluginDir, "manifest.json"), rootManifest);
+  await writeJSON(path.join(releaseDir, "manifest.json"), releaseManifest);
+  await updateRegistry(name, rootManifest, packageHash, iconHash);
+}
+
+function buildRootManifest(name, manifest, version, packageFilename, packageHash) {
+  const targets = normalizedTargets(manifest);
+  return withReleaseMetadata({
+    kind: PLUGIN_MANIFEST_KIND,
+    schema_version: 1,
+    id: manifest.id || `teatak/pudding-hub/plugins/${name}`,
+    name: manifest.name,
+    title: manifest.title,
+    version,
+    ...(targets ? { targets } : {}),
+    description: manifest.description || {},
+    icon: manifest.icon,
+    files: manifest.files || [],
+    manifest: `./releases/${version}/manifest.json`,
+    package: `./releases/${version}/${packageFilename}`,
+    package_sha256: packageHash,
+    requires: manifest.requires || { pudding_plugin: "^1.0.0" },
+    tags: manifest.tags || [],
+  }, manifest);
+}
+
+function buildReleaseManifest(manifest, packageFilename, packageHash) {
+  const targets = normalizedTargets(manifest);
+  return withReleaseMetadata({
+    kind: PLUGIN_MANIFEST_KIND,
+    schema_version: 1,
+    id: manifest.id,
+    name: manifest.name,
+    title: manifest.title,
+    version: manifest.version,
+    ...(targets ? { targets } : {}),
+    icon: manifest.icon,
+    package: `./${packageFilename}`,
+    package_sha256: packageHash,
+    requires: manifest.requires || { pudding_plugin: "^1.0.0" },
+  }, manifest);
+}
+
+async function updateRegistry(name, manifest, packageHash, iconHash) {
+  const registryPath = path.join(ROOT, "plugins/registry.json");
+  let registry;
+  try {
+    registry = await readJSON(registryPath);
+  } catch {
+    registry = { kind: REGISTRY_KIND, schema_version: 1, name: REGISTRY_NAME, title: REGISTRY_TITLE, items: [] };
+  }
+  registry.kind = REGISTRY_KIND;
+  registry.schema_version = 1;
+  if (typeof registry.name !== "string" || !registry.name.trim()) registry.name = REGISTRY_NAME;
+  if (!registry.title || typeof registry.title !== "object" || Array.isArray(registry.title)) registry.title = REGISTRY_TITLE;
+
+  const releaseManifest = `./${name}/releases/${manifest.version}/manifest.json`;
+  const releasePackage = `./${name}/releases/${manifest.version}/${name}.pudding-plugin.json`;
+  const requires = manifest.requires || { pudding_plugin: "^1.0.0" };
+  const targets = normalizedTargets(manifest);
+  const item = {
+    id: manifest.id,
+    name: manifest.name,
+    title: manifest.title,
+    description: manifest.description || {},
+    icon: rewriteRegistryIcon(name, manifest.icon),
+    ...(iconHash ? { icon_sha256: iconHash } : {}),
+    ...(targets ? { targets } : {}),
+    tags: manifest.tags || [],
+  };
+  const items = Array.isArray(registry.items) ? registry.items : [];
+  const index = items.findIndex((existing) => existing.id === item.id || existing.name === item.name);
+  const previous = index >= 0 && items[index] && typeof items[index] === "object" ? items[index] : {};
+  const releases = (Array.isArray(previous.releases) ? previous.releases : [])
+    .map((entry) => normalizeRegistryRelease(entry))
+    .filter((entry) => entry && releaseFileExists(entry.manifest));
+  const release = withReleaseMetadata({
+    version: manifest.version,
+    manifest: releaseManifest,
+    package: releasePackage,
+    package_sha256: packageHash,
+    requires,
+    ...(targets ? { targets } : {}),
+    released_at: releases.find((entry) => entry.version === manifest.version)?.released_at || todayISODate(),
+  }, manifest);
+  const nextReleases = [release, ...releases.filter((entry) => entry.version !== manifest.version)];
+  nextReleases.sort((a, b) => b.version.localeCompare(a.version, undefined, { numeric: true }));
+  const defaultRelease = nextReleases.find((entry) => !isPreviewRelease(entry));
+  if (defaultRelease) {
+    item.version = defaultRelease.version;
+    item.manifest = defaultRelease.manifest;
+    item.package = defaultRelease.package;
+    item.package_sha256 = defaultRelease.package_sha256;
+    item.requires = defaultRelease.requires;
+  }
+  item.releases = nextReleases;
+  if (index >= 0) {
+    items[index] = item;
+  } else {
+    items.push(item);
+  }
+  items.sort((a, b) => String(a.name || a.id).localeCompare(String(b.name || b.id)));
+  registry.items = items;
+  await writeJSON(registryPath, registry);
+}
+
+async function main() {
+  const args = parseArgs(process.argv.slice(2));
+  let names = [];
+  if (args.all) {
+    names = (await fs.readdir(path.join(ROOT, "plugins"), { withFileTypes: true }))
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name);
+  } else if (args.name) {
+    names = [args.name];
+  } else {
+    usage();
+    process.exit(1);
+  }
+  for (const name of names) {
+    await packagePlugin(name);
+    console.log(`packaged plugin ${name}`);
+  }
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

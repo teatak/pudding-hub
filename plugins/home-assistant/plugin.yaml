@@ -1,0 +1,32 @@
+id: home-assistant
+name: Home Assistant
+version: 1.0.4
+description: Inspect entities, states, history, and services, and control a connected Home Assistant instance through its REST API.
+auth:
+  required: true
+  methods:
+    - id: home-assistant-token
+      type: bearer
+      label: Long-Lived Access Token
+      default: true
+icon:
+  svg: assets/icon.svg
+  color:
+    light: "#FFFFFF"
+    dark: "#FFFFFF"
+  background:
+    light: "#0E8FC0"
+    dark: "#0B6F96"
+endpoints:
+  home_assistant_rest:
+    kind: rest
+    url: http://homeassistant.local:8123
+    url_config:
+      label: Home Assistant address
+      description: Root URL of the Home Assistant instance.
+      placeholder: http://homeassistant.local:8123
+      required: true
+    description: Home Assistant REST API.
+skills:
+  - skills/entities/SKILL.md
+  - skills/control/SKILL.md

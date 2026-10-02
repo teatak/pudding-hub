@@ -1,0 +1,29 @@
+id: gitlab
+name: GitLab
+version: 1.0.2
+description: Access GitLab projects, issues, merge requests, pipelines, commits, branches, and repository files through the GitLab REST API.
+auth:
+  required: true
+  methods:
+    - id: gitlab-access-token
+      type: header
+      label: Personal, project, or group access token
+      header: PRIVATE-TOKEN
+      default: true
+icon:
+  svg: assets/icon.svg
+  background:
+    light: "#FFF3EC"
+    dark: "#171321"
+endpoints:
+  gitlab_rest:
+    kind: rest
+    url: https://gitlab.com/api/v4
+    url_config:
+      label: GitLab API address
+      description: API root URL for a self-managed GitLab instance. Leave blank for GitLab.com.
+      placeholder: https://gitlab.example.com/api/v4
+    description: GitLab REST API.
+skills:
+  - skills/projects/SKILL.md
+  - skills/issues/SKILL.md

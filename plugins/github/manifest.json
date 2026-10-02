@@ -1,0 +1,48 @@
+{
+  "kind": "pudding.plugin.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/plugins/github",
+  "name": "github",
+  "title": {
+    "zh-CN": "GitHub",
+    "zh-TW": "GitHub",
+    "en": "GitHub"
+  },
+  "version": "1.0.5",
+  "targets": [
+    "desktop",
+    "mobile"
+  ],
+  "description": {
+    "zh-CN": "通过 GitHub App 或个人访问令牌连接 GitHub REST 与 GraphQL API，用于仓库、Issue、PR 和文件内容查询。",
+    "zh-TW": "透過 GitHub App 或個人存取權杖連接 GitHub REST 與 GraphQL API，用於倉庫、Issue、PR 和檔案內容查詢。",
+    "en": "Connect GitHub REST and GraphQL APIs through a GitHub App or personal access token for repositories, issues, pull requests, and file contents."
+  },
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "color": {
+      "light": "#111111",
+      "dark": "#FFFFFF"
+    },
+    "background": {
+      "light": "#FFFFFF",
+      "dark": "#111111"
+    }
+  },
+  "files": [
+    "plugin.yaml",
+    "skills/repositories/SKILL.md",
+    "skills/issues/SKILL.md",
+    "assets/icon.svg"
+  ],
+  "manifest": "./releases/1.0.5/manifest.json",
+  "package": "./releases/1.0.5/github.pudding-plugin.json",
+  "package_sha256": "dfceb160754101a3f9cb0ed5e74beb31ab89f80a2b5fd5654e8d06dbb5770a30",
+  "requires": {
+    "pudding_plugin": "^1.0.0"
+  },
+  "tags": [
+    "code",
+    "github"
+  ]
+}

@@ -1,0 +1,35 @@
+id: github
+name: GitHub
+version: 1.0.5
+description: Access GitHub repositories, issues, pull requests, file contents, and GraphQL data through a GitHub App or personal access token.
+auth:
+  required: true
+  methods:
+    - id: github-app
+      type: oauth2
+      provider: github
+      label: GitHub App
+      default: true
+    - id: github-pat
+      type: bearer
+      label: Personal access token
+icon:
+  svg: assets/icon.svg
+  color:
+    light: "#111111"
+    dark: "#FFFFFF"
+  background:
+    light: "#FFFFFF"
+    dark: "#111111"
+endpoints:
+  github_rest:
+    kind: rest
+    url: https://api.github.com
+    description: GitHub REST API.
+  github_graphql:
+    kind: graphql
+    url: https://api.github.com/graphql
+    description: GitHub GraphQL API.
+skills:
+  - skills/repositories/SKILL.md
+  - skills/issues/SKILL.md

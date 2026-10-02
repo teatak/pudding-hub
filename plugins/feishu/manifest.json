@@ -1,0 +1,43 @@
+{
+  "kind": "pudding.plugin.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/plugins/feishu",
+  "name": "feishu",
+  "title": {
+    "zh-CN": "飞书",
+    "zh-TW": "飛書",
+    "en": "Feishu"
+  },
+  "version": "1.0.0",
+  "description": {
+    "zh-CN": "连接飞书自建应用，读取和编辑新版云文档，并查询多维表格和机器人可见的会话消息。",
+    "zh-TW": "連接飛書自建應用，讀取和編輯新版雲端文件，並查詢多維表格和機器人可見的會話訊息。",
+    "en": "Connect a Feishu custom app to read and edit new-format documents and inspect bitables and bot-visible chat history."
+  },
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "background": {
+      "light": "#F2F6FF",
+      "dark": "#101A33"
+    }
+  },
+  "files": [
+    "plugin.yaml",
+    "skills/documents/SKILL.md",
+    "skills/collaboration/SKILL.md",
+    "assets/icon.svg"
+  ],
+  "manifest": "./releases/1.0.0/manifest.json",
+  "package": "./releases/1.0.0/feishu.pudding-plugin.json",
+  "package_sha256": "b61b25cc57ea021a467748a695d22a40c40747261d78c766e1d65df435b3dd24",
+  "requires": {
+    "pudding_plugin": "^1.0.0"
+  },
+  "tags": [
+    "productivity",
+    "documents",
+    "bitable",
+    "chat",
+    "feishu"
+  ]
+}

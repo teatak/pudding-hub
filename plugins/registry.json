@@ -1,0 +1,809 @@
+{
+  "kind": "pudding.plugin.registry",
+  "schema_version": 1,
+  "name": "pudding-plugins",
+  "title": {
+    "zh-CN": "Pudding 插件",
+    "zh-TW": "Pudding 外掛",
+    "en": "Pudding Plugins"
+  },
+  "items": [
+    {
+      "id": "teatak/pudding-hub/plugins/cloudflare",
+      "name": "cloudflare",
+      "title": {
+        "zh-CN": "Cloudflare",
+        "zh-TW": "Cloudflare",
+        "en": "Cloudflare"
+      },
+      "description": {
+        "zh-CN": "以只读方式连接 Cloudflare API MCP，用于查看账户、站点、DNS、Workers、存储、安全配置和分析数据。",
+        "zh-TW": "以唯讀方式連接 Cloudflare API MCP，用於查看帳戶、網站、DNS、Workers、儲存、安全設定和分析資料。",
+        "en": "Connect the Cloudflare API MCP in read-only mode to inspect accounts, zones, DNS, Workers, storage, security configuration, and analytics."
+      },
+      "icon": {
+        "svg": "./cloudflare/assets/icon.svg",
+        "color": {
+          "light": "#FFFFFF",
+          "dark": "#FFFFFF"
+        },
+        "background": {
+          "light": "#F38020",
+          "dark": "#C85D12"
+        }
+      },
+      "icon_sha256": "90941752598060f0defa827d07b15de9aed67c393ece9faeece6ca84757421c2",
+      "tags": [
+        "cloud",
+        "infrastructure",
+        "mcp"
+      ],
+      "version": "1.0.1",
+      "manifest": "./cloudflare/releases/1.0.1/manifest.json",
+      "package": "./cloudflare/releases/1.0.1/cloudflare.pudding-plugin.json",
+      "package_sha256": "7c53743bc699241e652aaaa4dda63daebc116e958499b40a831a4b5aff982d70",
+      "requires": {
+        "pudding_plugin": "^1.0.0"
+      },
+      "releases": [
+        {
+          "version": "1.0.1",
+          "manifest": "./cloudflare/releases/1.0.1/manifest.json",
+          "package": "./cloudflare/releases/1.0.1/cloudflare.pudding-plugin.json",
+          "package_sha256": "7c53743bc699241e652aaaa4dda63daebc116e958499b40a831a4b5aff982d70",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "released_at": "2026-10-03"
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/plugins/feishu",
+      "name": "feishu",
+      "title": {
+        "zh-CN": "飞书",
+        "zh-TW": "飛書",
+        "en": "Feishu"
+      },
+      "description": {
+        "zh-CN": "连接飞书自建应用，读取和编辑新版云文档，并查询多维表格和机器人可见的会话消息。",
+        "zh-TW": "連接飛書自建應用，讀取和編輯新版雲端文件，並查詢多維表格和機器人可見的會話訊息。",
+        "en": "Connect a Feishu custom app to read and edit new-format documents and inspect bitables and bot-visible chat history."
+      },
+      "icon": {
+        "svg": "./feishu/assets/icon.svg",
+        "background": {
+          "light": "#F2F6FF",
+          "dark": "#101A33"
+        }
+      },
+      "icon_sha256": "2b7ce926805120c5e6c542ae8780ffa6f02ac495e16896773605b7a9a43d02c2",
+      "tags": [
+        "productivity",
+        "documents",
+        "bitable",
+        "chat",
+        "feishu"
+      ],
+      "version": "1.0.0",
+      "manifest": "./feishu/releases/1.0.0/manifest.json",
+      "package": "./feishu/releases/1.0.0/feishu.pudding-plugin.json",
+      "package_sha256": "b61b25cc57ea021a467748a695d22a40c40747261d78c766e1d65df435b3dd24",
+      "requires": {
+        "pudding_plugin": "^1.0.0"
+      },
+      "releases": [
+        {
+          "version": "1.0.0",
+          "manifest": "./feishu/releases/1.0.0/manifest.json",
+          "package": "./feishu/releases/1.0.0/feishu.pudding-plugin.json",
+          "package_sha256": "b61b25cc57ea021a467748a695d22a40c40747261d78c766e1d65df435b3dd24",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "released_at": "2026-10-03"
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/plugins/github",
+      "name": "github",
+      "title": {
+        "zh-CN": "GitHub",
+        "zh-TW": "GitHub",
+        "en": "GitHub"
+      },
+      "description": {
+        "zh-CN": "通过 GitHub App 或个人访问令牌连接 GitHub REST 与 GraphQL API，用于仓库、Issue、PR 和文件内容查询。",
+        "zh-TW": "透過 GitHub App 或個人存取權杖連接 GitHub REST 與 GraphQL API，用於倉庫、Issue、PR 和檔案內容查詢。",
+        "en": "Connect GitHub REST and GraphQL APIs through a GitHub App or personal access token for repositories, issues, pull requests, and file contents."
+      },
+      "icon": {
+        "svg": "./github/assets/icon.svg",
+        "color": {
+          "light": "#111111",
+          "dark": "#FFFFFF"
+        },
+        "background": {
+          "light": "#FFFFFF",
+          "dark": "#111111"
+        }
+      },
+      "icon_sha256": "a39980997a47289f11a64fece56c4ac271ac2528ee3db7fa3cd49db48b265e8c",
+      "targets": [
+        "desktop",
+        "mobile"
+      ],
+      "tags": [
+        "code",
+        "github"
+      ],
+      "version": "1.0.5",
+      "manifest": "./github/releases/1.0.5/manifest.json",
+      "package": "./github/releases/1.0.5/github.pudding-plugin.json",
+      "package_sha256": "dfceb160754101a3f9cb0ed5e74beb31ab89f80a2b5fd5654e8d06dbb5770a30",
+      "requires": {
+        "pudding_plugin": "^1.0.0"
+      },
+      "releases": [
+        {
+          "version": "1.0.5",
+          "manifest": "./github/releases/1.0.5/manifest.json",
+          "package": "./github/releases/1.0.5/github.pudding-plugin.json",
+          "package_sha256": "dfceb160754101a3f9cb0ed5e74beb31ab89f80a2b5fd5654e8d06dbb5770a30",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "targets": [
+            "desktop",
+            "mobile"
+          ],
+          "released_at": "2026-10-03"
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/plugins/gitlab",
+      "name": "gitlab",
+      "title": {
+        "zh-CN": "GitLab",
+        "zh-TW": "GitLab",
+        "en": "GitLab"
+      },
+      "description": {
+        "zh-CN": "连接 GitLab REST API，用于查询项目、Issue、合并请求、流水线、提交、分支和仓库文件。",
+        "zh-TW": "連接 GitLab REST API，用於查詢專案、Issue、合併請求、流水線、提交、分支和倉庫檔案。",
+        "en": "Connect the GitLab REST API for projects, issues, merge requests, pipelines, commits, branches, and repository files."
+      },
+      "icon": {
+        "svg": "./gitlab/assets/icon.svg",
+        "background": {
+          "light": "#FFF3EC",
+          "dark": "#171321"
+        }
+      },
+      "icon_sha256": "95e8cf1497da038a750e21da2251c963f0e15c02eefb3eefa9f682022209f14c",
+      "targets": [
+        "desktop",
+        "mobile"
+      ],
+      "tags": [
+        "gitlab",
+        "code",
+        "issues"
+      ],
+      "version": "1.0.2",
+      "manifest": "./gitlab/releases/1.0.2/manifest.json",
+      "package": "./gitlab/releases/1.0.2/gitlab.pudding-plugin.json",
+      "package_sha256": "99f3420992548c9383d88225ff86c545e83dcea0ca6f6c6e7c6a6312c33d39b5",
+      "requires": {
+        "pudding_plugin": "^1.0.0"
+      },
+      "releases": [
+        {
+          "version": "1.0.2",
+          "manifest": "./gitlab/releases/1.0.2/manifest.json",
+          "package": "./gitlab/releases/1.0.2/gitlab.pudding-plugin.json",
+          "package_sha256": "99f3420992548c9383d88225ff86c545e83dcea0ca6f6c6e7c6a6312c33d39b5",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "targets": [
+            "desktop",
+            "mobile"
+          ],
+          "released_at": "2026-10-03"
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/plugins/gmail",
+      "name": "gmail",
+      "title": {
+        "zh-CN": "Gmail",
+        "zh-TW": "Gmail",
+        "en": "Gmail"
+      },
+      "description": {
+        "zh-CN": "连接 Gmail API，用于邮件搜索、线程读取、标签查看和收件箱整理。",
+        "zh-TW": "連接 Gmail API，用於郵件搜尋、對話串讀取、標籤查看和收件匣整理。",
+        "en": "Connect Gmail APIs for mail search, thread reading, labels, and inbox triage."
+      },
+      "icon": {
+        "svg": "./gmail/assets/icon.svg",
+        "background": {
+          "light": "#FFFFFF",
+          "dark": "#202124"
+        }
+      },
+      "icon_sha256": "027c027d4daa7207c015e6adeb6edaa18724b903c31759778009d5a78fd997c7",
+      "tags": [
+        "email",
+        "gmail"
+      ],
+      "releases": [
+        {
+          "version": "1.0.0-preview.1",
+          "manifest": "./gmail/releases/1.0.0-preview.1/manifest.json",
+          "package": "./gmail/releases/1.0.0-preview.1/gmail.pudding-plugin.json",
+          "package_sha256": "bdfff87d13b90cb12429b963279d391bcd0a4933dd8b613c9e29caed495e2a2f",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "released_at": "2026-10-03",
+          "channel": "preview",
+          "preview": true
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/plugins/grafana",
+      "name": "grafana",
+      "title": {
+        "zh-CN": "Grafana",
+        "zh-TW": "Grafana",
+        "en": "Grafana"
+      },
+      "description": {
+        "zh-CN": "连接 Grafana HTTP API，用于只读查询 Dashboard、文件夹、数据源、指标、日志和告警规则。",
+        "zh-TW": "連接 Grafana HTTP API，用於唯讀查詢 Dashboard、資料夾、資料來源、指標、日誌和告警規則。",
+        "en": "Connect the Grafana HTTP API for read-only access to dashboards, folders, data sources, metrics, logs, and alert rules."
+      },
+      "icon": {
+        "svg": "./grafana/assets/icon.svg",
+        "color": {
+          "light": "#FFFFFF",
+          "dark": "#FFFFFF"
+        },
+        "background": {
+          "light": "#F46800",
+          "dark": "#C74F00"
+        }
+      },
+      "icon_sha256": "fbd8e2823a1fa774eb4fba8b99efbdef96160d09fde1ed21956f1feb91d8d6e2",
+      "tags": [
+        "observability",
+        "monitoring",
+        "grafana"
+      ],
+      "version": "1.0.4",
+      "manifest": "./grafana/releases/1.0.4/manifest.json",
+      "package": "./grafana/releases/1.0.4/grafana.pudding-plugin.json",
+      "package_sha256": "7ddb98f2c31a43c1311953dcc1d6f61a15d23ef404d3b456f41579b103aec0ba",
+      "requires": {
+        "pudding_plugin": "^1.0.0"
+      },
+      "releases": [
+        {
+          "version": "1.0.4",
+          "manifest": "./grafana/releases/1.0.4/manifest.json",
+          "package": "./grafana/releases/1.0.4/grafana.pudding-plugin.json",
+          "package_sha256": "7ddb98f2c31a43c1311953dcc1d6f61a15d23ef404d3b456f41579b103aec0ba",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "released_at": "2026-10-03"
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/plugins/home-assistant",
+      "name": "home-assistant",
+      "title": {
+        "zh-CN": "Home Assistant",
+        "zh-TW": "Home Assistant",
+        "en": "Home Assistant"
+      },
+      "description": {
+        "zh-CN": "连接 Home Assistant REST API，用于查询实体、状态、历史和服务，并在确认后控制家居设备。",
+        "zh-TW": "連接 Home Assistant REST API，用於查詢實體、狀態、歷史和服務，並在確認後控制家居裝置。",
+        "en": "Connect the Home Assistant REST API to inspect entities, states, history, and services, and control home devices with confirmation."
+      },
+      "icon": {
+        "svg": "./home-assistant/assets/icon.svg",
+        "color": {
+          "light": "#FFFFFF",
+          "dark": "#FFFFFF"
+        },
+        "background": {
+          "light": "#0E8FC0",
+          "dark": "#0B6F96"
+        }
+      },
+      "icon_sha256": "779bb31df353976ffc216619dd1f63e23c8045fc515d4e273fc699c2d3eb2f18",
+      "tags": [
+        "smart-home",
+        "automation",
+        "iot"
+      ],
+      "version": "1.0.4",
+      "manifest": "./home-assistant/releases/1.0.4/manifest.json",
+      "package": "./home-assistant/releases/1.0.4/home-assistant.pudding-plugin.json",
+      "package_sha256": "aaf3e457093996417441886abb24132ce278f0bbac31a6882ba7438530932b40",
+      "requires": {
+        "pudding_plugin": "^1.0.0"
+      },
+      "releases": [
+        {
+          "version": "1.0.4",
+          "manifest": "./home-assistant/releases/1.0.4/manifest.json",
+          "package": "./home-assistant/releases/1.0.4/home-assistant.pudding-plugin.json",
+          "package_sha256": "aaf3e457093996417441886abb24132ce278f0bbac31a6882ba7438530932b40",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "released_at": "2026-10-03"
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/plugins/immich",
+      "name": "immich",
+      "title": {
+        "zh-CN": "Immich",
+        "zh-TW": "Immich",
+        "en": "Immich"
+      },
+      "description": {
+        "zh-CN": "连接自托管 Immich，在照片和视频中进行智能搜索、人物与地点查找、OCR 和元数据筛选，并将缩略图展示到小组件。",
+        "zh-TW": "連接自架 Immich，在照片和影片中進行智慧搜尋、人物與地點查找、OCR 和中繼資料篩選，並將縮圖展示到小工具。",
+        "en": "Connect a self-hosted Immich library for smart photo and video search, people and place lookup, OCR and metadata filtering, with thumbnail results on a widget."
+      },
+      "icon": {
+        "svg": "./immich/assets/icon.svg",
+        "background": {
+          "light": "#F6F7FA",
+          "dark": "#1D1F24"
+        }
+      },
+      "icon_sha256": "550f6fcce5679a8327d3c18e630ba43164e5870368d9341910ec420074e4cb44",
+      "tags": [
+        "photos",
+        "search",
+        "self-hosted",
+        "immich"
+      ],
+      "version": "1.0.0",
+      "manifest": "./immich/releases/1.0.0/manifest.json",
+      "package": "./immich/releases/1.0.0/immich.pudding-plugin.json",
+      "package_sha256": "8427009a8cc1166cd526664b2f536af5c701599e7c1f7588b7539d8fa02d7f05",
+      "requires": {
+        "pudding_plugin": "^1.0.0"
+      },
+      "releases": [
+        {
+          "version": "1.0.0",
+          "manifest": "./immich/releases/1.0.0/manifest.json",
+          "package": "./immich/releases/1.0.0/immich.pudding-plugin.json",
+          "package_sha256": "8427009a8cc1166cd526664b2f536af5c701599e7c1f7588b7539d8fa02d7f05",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "released_at": "2026-10-03"
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/plugins/jira",
+      "name": "jira",
+      "title": {
+        "zh-CN": "Jira",
+        "zh-TW": "Jira",
+        "en": "Jira"
+      },
+      "description": {
+        "zh-CN": "连接 Jira Cloud REST API，用于查询项目、Issue、JQL、评论、状态流转、看板和 Sprint。",
+        "zh-TW": "連接 Jira Cloud REST API，用於查詢專案、Issue、JQL、評論、狀態流轉、看板和 Sprint。",
+        "en": "Connect the Jira Cloud REST API for projects, issues, JQL search, comments, transitions, boards, and sprints."
+      },
+      "icon": {
+        "svg": "./jira/assets/icon.svg",
+        "color": {
+          "light": "#FFFFFF",
+          "dark": "#FFFFFF"
+        },
+        "background": {
+          "light": "#0C66E4",
+          "dark": "#0A52B8"
+        }
+      },
+      "icon_sha256": "77aa48505446625403c5b8a3f393139074e042b61752298f9fc578d4697fc38c",
+      "tags": [
+        "jira",
+        "issues",
+        "projects"
+      ],
+      "version": "1.0.1",
+      "manifest": "./jira/releases/1.0.1/manifest.json",
+      "package": "./jira/releases/1.0.1/jira.pudding-plugin.json",
+      "package_sha256": "639351ce6b1fad1eaa306eaa1833ee87d39d60bcaa7ee2b893096bec0473a6e1",
+      "requires": {
+        "pudding_plugin": "^1.0.0"
+      },
+      "releases": [
+        {
+          "version": "1.0.1",
+          "manifest": "./jira/releases/1.0.1/manifest.json",
+          "package": "./jira/releases/1.0.1/jira.pudding-plugin.json",
+          "package_sha256": "639351ce6b1fad1eaa306eaa1833ee87d39d60bcaa7ee2b893096bec0473a6e1",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "released_at": "2026-10-03"
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/plugins/linear",
+      "name": "linear",
+      "title": {
+        "zh-CN": "Linear",
+        "zh-TW": "Linear",
+        "en": "Linear"
+      },
+      "description": {
+        "zh-CN": "连接 Linear GraphQL API，用于查询 Issue、项目、团队、周期和路线图。",
+        "zh-TW": "連接 Linear GraphQL API，用於查詢 Issue、專案、團隊、週期和路線圖。",
+        "en": "Connect Linear's GraphQL API for issues, projects, teams, cycles, and roadmap data."
+      },
+      "icon": {
+        "svg": "./linear/assets/icon.svg",
+        "color": {
+          "light": "#FFFFFF",
+          "dark": "#FFFFFF"
+        },
+        "background": {
+          "light": "#5E6AD2",
+          "dark": "#4752B8"
+        }
+      },
+      "icon_sha256": "5f8b45964f9daa98bc35253845419627c70d672839db7dd493a4c8cfe23f3e1e",
+      "targets": [
+        "desktop",
+        "mobile"
+      ],
+      "tags": [
+        "linear",
+        "issues",
+        "projects"
+      ],
+      "version": "1.0.2",
+      "manifest": "./linear/releases/1.0.2/manifest.json",
+      "package": "./linear/releases/1.0.2/linear.pudding-plugin.json",
+      "package_sha256": "74e49d907a6a1f86e37bd01b85e3451911adfbb14b208375748f73e6eba21c4b",
+      "requires": {
+        "pudding_plugin": "^1.0.0"
+      },
+      "releases": [
+        {
+          "version": "1.0.2",
+          "manifest": "./linear/releases/1.0.2/manifest.json",
+          "package": "./linear/releases/1.0.2/linear.pudding-plugin.json",
+          "package_sha256": "74e49d907a6a1f86e37bd01b85e3451911adfbb14b208375748f73e6eba21c4b",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "targets": [
+            "desktop",
+            "mobile"
+          ],
+          "released_at": "2026-10-03"
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/plugins/media-studio",
+      "name": "media-studio",
+      "title": {
+        "zh-CN": "本地媒体工坊",
+        "zh-TW": "本機媒體工坊",
+        "en": "Local Media Studio"
+      },
+      "description": {
+        "zh-CN": "使用本机 FFmpeg 检查和处理项目内的视频、音频与图片，支持裁剪、转码、压缩、GIF、抽帧、音频提取、波形图和联系表。",
+        "zh-TW": "使用本機 FFmpeg 檢查和處理專案內的影片、音訊與圖片，支援裁剪、轉碼、壓縮、GIF、擷取影格、音訊擷取、波形圖和聯絡表。",
+        "en": "Use local FFmpeg to inspect and transform video, audio, and images inside a Project, including trimming, transcoding, compression, GIFs, frames, audio extraction, waveforms, and contact sheets."
+      },
+      "icon": {
+        "svg": "./media-studio/assets/icon.svg",
+        "background": {
+          "light": "#F3F0FF",
+          "dark": "#211B36"
+        }
+      },
+      "icon_sha256": "7d932cc29a7f44fced483d678ee696bbe2337c30e8193faee89780d55d661f45",
+      "tags": [
+        "media",
+        "local",
+        "ffmpeg",
+        "video",
+        "audio"
+      ],
+      "version": "1.0.0",
+      "manifest": "./media-studio/releases/1.0.0/manifest.json",
+      "package": "./media-studio/releases/1.0.0/media-studio.pudding-plugin.json",
+      "package_sha256": "b4d18be0a62c312ed17dbfd839cb7a28b02394d689a776721d530786d45a84b0",
+      "requires": {
+        "pudding_plugin": "^1.0.0"
+      },
+      "releases": [
+        {
+          "version": "1.0.0",
+          "manifest": "./media-studio/releases/1.0.0/manifest.json",
+          "package": "./media-studio/releases/1.0.0/media-studio.pudding-plugin.json",
+          "package_sha256": "b4d18be0a62c312ed17dbfd839cb7a28b02394d689a776721d530786d45a84b0",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "released_at": "2026-10-03"
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/plugins/notion",
+      "name": "notion",
+      "title": {
+        "zh-CN": "Notion",
+        "zh-TW": "Notion",
+        "en": "Notion"
+      },
+      "description": {
+        "zh-CN": "连接 Notion REST API，用于页面、块、数据源、数据库、用户、评论和搜索。",
+        "zh-TW": "連接 Notion REST API，用於頁面、區塊、資料來源、資料庫、使用者、留言和搜尋。",
+        "en": "Connect Notion's REST API for pages, blocks, data sources, databases, users, comments, and search."
+      },
+      "icon": {
+        "svg": "./notion/assets/icon.svg",
+        "color": {
+          "light": "#111111",
+          "dark": "#FFFFFF"
+        },
+        "background": {
+          "light": "#FFFFFF",
+          "dark": "#111111"
+        }
+      },
+      "icon_sha256": "5257bd17993f90d9ee9af3af9f8231d8869b677b6d83e4515b04b8a41e7d6b96",
+      "targets": [
+        "desktop",
+        "mobile"
+      ],
+      "tags": [
+        "notion",
+        "docs",
+        "knowledge"
+      ],
+      "version": "1.0.2",
+      "manifest": "./notion/releases/1.0.2/manifest.json",
+      "package": "./notion/releases/1.0.2/notion.pudding-plugin.json",
+      "package_sha256": "4d642888f950f9ea1979dc82f7039b65511e6159b85bf340acca0fe463f9622e",
+      "requires": {
+        "pudding_plugin": "^1.0.0"
+      },
+      "releases": [
+        {
+          "version": "1.0.2",
+          "manifest": "./notion/releases/1.0.2/manifest.json",
+          "package": "./notion/releases/1.0.2/notion.pudding-plugin.json",
+          "package_sha256": "4d642888f950f9ea1979dc82f7039b65511e6159b85bf340acca0fe463f9622e",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "targets": [
+            "desktop",
+            "mobile"
+          ],
+          "released_at": "2026-10-03"
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/plugins/obsidian",
+      "name": "obsidian",
+      "title": {
+        "zh-CN": "Obsidian",
+        "zh-TW": "Obsidian",
+        "en": "Obsidian"
+      },
+      "description": {
+        "zh-CN": "直接处理作为 Pudding Project 打开的本地 Obsidian Vault，用于检索笔记与双链、整理标签、创建和安全编辑 Markdown 笔记。",
+        "zh-TW": "直接處理作為 Pudding Project 開啟的本機 Obsidian Vault，用於搜尋筆記與雙向連結、整理標籤、建立和安全編輯 Markdown 筆記。",
+        "en": "Work directly with a local Obsidian vault opened as a Pudding Project to search notes and backlinks, organize tags, and safely create or edit Markdown notes."
+      },
+      "icon": {
+        "svg": "./obsidian/assets/icon.svg",
+        "background": {
+          "light": "#F3F0FF",
+          "dark": "#20182D"
+        }
+      },
+      "icon_sha256": "355116ed30d4816d2e68694c2829a767ea1ff18314cd106ef61224a333f525af",
+      "tags": [
+        "notes",
+        "knowledge",
+        "markdown",
+        "local",
+        "obsidian"
+      ],
+      "version": "1.0.0",
+      "manifest": "./obsidian/releases/1.0.0/manifest.json",
+      "package": "./obsidian/releases/1.0.0/obsidian.pudding-plugin.json",
+      "package_sha256": "09397266c9c02f04876909584fd84010d77fc826598127488ac7fbf7d79c4c64",
+      "requires": {
+        "pudding_plugin": "^1.0.0"
+      },
+      "releases": [
+        {
+          "version": "1.0.0",
+          "manifest": "./obsidian/releases/1.0.0/manifest.json",
+          "package": "./obsidian/releases/1.0.0/obsidian.pudding-plugin.json",
+          "package_sha256": "09397266c9c02f04876909584fd84010d77fc826598127488ac7fbf7d79c4c64",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "released_at": "2026-10-03"
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/plugins/sequential-thinking",
+      "name": "sequential-thinking",
+      "title": {
+        "zh-CN": "Sequential Thinking",
+        "zh-TW": "Sequential Thinking",
+        "en": "Sequential Thinking"
+      },
+      "description": {
+        "zh-CN": "连接 Sequential Thinking MCP Server，用于分步骤拆解、修订和追踪复杂问题。",
+        "zh-TW": "連接 Sequential Thinking MCP Server，用於分步驟拆解、修訂和追蹤複雜問題。",
+        "en": "Connect the Sequential Thinking MCP server for step-by-step decomposition, revision, and tracking of complex problems."
+      },
+      "icon": {
+        "svg": "./sequential-thinking/assets/icon.svg",
+        "background": {
+          "light": "#F1F5F9",
+          "dark": "#111827"
+        }
+      },
+      "icon_sha256": "5d2b91b37052b68164fbdd0038100934d3b8e81d76de818ca78fc690b50f4ea0",
+      "tags": [],
+      "version": "1.0.0",
+      "manifest": "./sequential-thinking/releases/1.0.0/manifest.json",
+      "package": "./sequential-thinking/releases/1.0.0/sequential-thinking.pudding-plugin.json",
+      "package_sha256": "8fe802603a18d3100f9433ac2d57ed3516cc6dce53b7a8ff438e6f81c0190b98",
+      "requires": {
+        "pudding_plugin": "^1.0.0"
+      },
+      "releases": [
+        {
+          "version": "1.0.0",
+          "manifest": "./sequential-thinking/releases/1.0.0/manifest.json",
+          "package": "./sequential-thinking/releases/1.0.0/sequential-thinking.pudding-plugin.json",
+          "package_sha256": "8fe802603a18d3100f9433ac2d57ed3516cc6dce53b7a8ff438e6f81c0190b98",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "released_at": "2026-10-03"
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/plugins/supabase",
+      "name": "supabase",
+      "title": {
+        "zh-CN": "Supabase",
+        "zh-TW": "Supabase",
+        "en": "Supabase"
+      },
+      "description": {
+        "zh-CN": "以只读方式连接单个 Supabase 项目，用于查看数据库结构与数据、日志、安全建议、Edge Functions、Storage 和官方文档。",
+        "zh-TW": "以唯讀方式連接單個 Supabase 專案，用於查看資料庫結構與資料、日誌、安全建議、Edge Functions、Storage 和官方文件。",
+        "en": "Connect one Supabase project in read-only mode to inspect database schema and data, logs, advisors, Edge Functions, Storage, and official documentation."
+      },
+      "icon": {
+        "svg": "./supabase/assets/icon.svg",
+        "background": {
+          "light": "#ECFDF5",
+          "dark": "#10251D"
+        }
+      },
+      "icon_sha256": "f914d687c5d0e34f96dab8d759b106f6a7a89476a437b8be9aacd5a9fb44f851",
+      "tags": [
+        "database",
+        "mcp",
+        "supabase"
+      ],
+      "version": "1.0.1",
+      "manifest": "./supabase/releases/1.0.1/manifest.json",
+      "package": "./supabase/releases/1.0.1/supabase.pudding-plugin.json",
+      "package_sha256": "88eb7c457f9e7999dac1ea37cda0624e5a0bb54285850485b523ce556b862e8f",
+      "requires": {
+        "pudding_plugin": "^1.0.0"
+      },
+      "releases": [
+        {
+          "version": "1.0.1",
+          "manifest": "./supabase/releases/1.0.1/manifest.json",
+          "package": "./supabase/releases/1.0.1/supabase.pudding-plugin.json",
+          "package_sha256": "88eb7c457f9e7999dac1ea37cda0624e5a0bb54285850485b523ce556b862e8f",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "released_at": "2026-10-03"
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/plugins/todoist",
+      "name": "todoist",
+      "title": {
+        "zh-CN": "Todoist",
+        "zh-TW": "Todoist",
+        "en": "Todoist"
+      },
+      "description": {
+        "zh-CN": "连接 Todoist，查看、创建、修改和完成任务，并按项目、日期、优先级和标签整理计划。",
+        "zh-TW": "連接 Todoist，查看、建立、修改和完成任務，並按專案、日期、優先順序和標籤整理計畫。",
+        "en": "Connect Todoist to review, create, update, and complete tasks, and organize plans by project, date, priority, and label."
+      },
+      "icon": {
+        "svg": "./todoist/assets/icon.svg"
+      },
+      "icon_sha256": "e220c9dc90d0485861b6e2716b8a9724725feb26f8aa726512a751069f9ff139",
+      "targets": [
+        "desktop",
+        "mobile"
+      ],
+      "tags": [
+        "productivity",
+        "tasks",
+        "planning",
+        "todoist"
+      ],
+      "version": "1.0.1",
+      "manifest": "./todoist/releases/1.0.1/manifest.json",
+      "package": "./todoist/releases/1.0.1/todoist.pudding-plugin.json",
+      "package_sha256": "3cc3cad0860f212b6860a64e0699fc20df6c643080050377664f446d0f46a7d6",
+      "requires": {
+        "pudding_plugin": "^1.0.0"
+      },
+      "releases": [
+        {
+          "version": "1.0.1",
+          "manifest": "./todoist/releases/1.0.1/manifest.json",
+          "package": "./todoist/releases/1.0.1/todoist.pudding-plugin.json",
+          "package_sha256": "3cc3cad0860f212b6860a64e0699fc20df6c643080050377664f446d0f46a7d6",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "targets": [
+            "desktop",
+            "mobile"
+          ],
+          "released_at": "2026-10-03"
+        }
+      ]
+    }
+  ]
+}

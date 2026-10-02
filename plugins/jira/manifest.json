@@ -1,0 +1,45 @@
+{
+  "kind": "pudding.plugin.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/plugins/jira",
+  "name": "jira",
+  "title": {
+    "zh-CN": "Jira",
+    "zh-TW": "Jira",
+    "en": "Jira"
+  },
+  "version": "1.0.1",
+  "description": {
+    "zh-CN": "连接 Jira Cloud REST API，用于查询项目、Issue、JQL、评论、状态流转、看板和 Sprint。",
+    "zh-TW": "連接 Jira Cloud REST API，用於查詢專案、Issue、JQL、評論、狀態流轉、看板和 Sprint。",
+    "en": "Connect the Jira Cloud REST API for projects, issues, JQL search, comments, transitions, boards, and sprints."
+  },
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "color": {
+      "light": "#FFFFFF",
+      "dark": "#FFFFFF"
+    },
+    "background": {
+      "light": "#0C66E4",
+      "dark": "#0A52B8"
+    }
+  },
+  "files": [
+    "plugin.yaml",
+    "skills/issues/SKILL.md",
+    "skills/projects/SKILL.md",
+    "assets/icon.svg"
+  ],
+  "manifest": "./releases/1.0.1/manifest.json",
+  "package": "./releases/1.0.1/jira.pudding-plugin.json",
+  "package_sha256": "639351ce6b1fad1eaa306eaa1833ee87d39d60bcaa7ee2b893096bec0473a6e1",
+  "requires": {
+    "pudding_plugin": "^1.0.0"
+  },
+  "tags": [
+    "jira",
+    "issues",
+    "projects"
+  ]
+}

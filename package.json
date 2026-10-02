@@ -4,7 +4,9 @@
     "package-widget": "node scripts/package-widget.mjs",
     "package-widgets": "node scripts/package-widget.mjs --all",
     "package-app": "node scripts/package-app.mjs",
-    "package-apps": "node scripts/package-app.mjs --all"
+    "package-apps": "node scripts/package-app.mjs --all",
+    "package-plugin": "node scripts/package-plugin.mjs",
+    "package-plugins": "node scripts/package-plugin.mjs --all"
   },
   "dependencies": {
     "preact": "^10.22.0"

@@ -1,0 +1,36 @@
+{
+  "kind": "pudding.plugin.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/plugins/sequential-thinking",
+  "name": "sequential-thinking",
+  "title": {
+    "zh-CN": "Sequential Thinking",
+    "zh-TW": "Sequential Thinking",
+    "en": "Sequential Thinking"
+  },
+  "version": "1.0.0",
+  "description": {
+    "zh-CN": "连接 Sequential Thinking MCP Server，用于分步骤拆解、修订和追踪复杂问题。",
+    "zh-TW": "連接 Sequential Thinking MCP Server，用於分步驟拆解、修訂和追蹤複雜問題。",
+    "en": "Connect the Sequential Thinking MCP server for step-by-step decomposition, revision, and tracking of complex problems."
+  },
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "background": {
+      "light": "#F1F5F9",
+      "dark": "#111827"
+    }
+  },
+  "files": [
+    "plugin.yaml",
+    "skills/sequential-thinking/SKILL.md",
+    "assets/icon.svg"
+  ],
+  "manifest": "./releases/1.0.0/manifest.json",
+  "package": "./releases/1.0.0/sequential-thinking.pudding-plugin.json",
+  "package_sha256": "8fe802603a18d3100f9433ac2d57ed3516cc6dce53b7a8ff438e6f81c0190b98",
+  "requires": {
+    "pudding_plugin": "^1.0.0"
+  },
+  "tags": []
+}
