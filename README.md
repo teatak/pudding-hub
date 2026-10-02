@@ -2,11 +2,21 @@
 
 [中文](README.zh-CN.md)
 
-Pudding Hub is the official public resource hub for Pudding. It hosts installable widgets and their editable source files.
+Pudding Hub is the official public resource hub for Pudding. It hosts installable plugins and legacy widgets with their editable source files.
 
 ## Registry URL
 
-Apps registry:
+Plugins registry (Desktop protocol 8):
+
+```text
+https://teatak.github.io/pudding-hub/plugins/registry.json
+```
+
+Plugin sources live in `plugins/<name>/` with `plugin.yaml`; packages use `pudding.plugin.package` and `.pudding-plugin.json`. Rebuild a plugin with `pnpm package-plugin <name>`, or all plugins with `pnpm package-plugins`. The new registry contains the current source release of each plugin, including preview releases.
+
+The `apps/` directory and its released packages remain unchanged for older clients.
+
+Legacy Apps registry:
 
 ```text
 https://teatak.github.io/pudding-hub/apps/registry.json

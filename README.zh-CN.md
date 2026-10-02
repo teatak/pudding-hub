@@ -2,11 +2,21 @@
 
 [English](README.md)
 
-Pudding Hub 是 Pudding 的官方公共资源仓库，用来发布可安装的小组件以及对应源码。
+Pudding Hub 是 Pudding 的官方公共资源仓库，用来发布可安装的插件、旧版小组件及对应源码。
 
 ## 注册表地址
 
-App 注册表：
+插件注册表（Desktop protocol 8）：
+
+```text
+https://teatak.github.io/pudding-hub/plugins/registry.json
+```
+
+插件源码位于 `plugins/<name>/`，定义文件为 `plugin.yaml`，包格式为 `pudding.plugin.package`，扩展名为 `.pudding-plugin.json`。运行 `pnpm package-plugin <name>` 打包一个插件，或运行 `pnpm package-plugins` 打包全部插件。新注册表包含各插件当前源码版本，包括预览版本。
+
+`apps/` 目录与已发布包保持不变，继续供旧客户端使用。
+
+旧版 App 注册表：
 
 ```text
 https://teatak.github.io/pudding-hub/apps/registry.json
