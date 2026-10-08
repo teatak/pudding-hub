@@ -1,6 +1,6 @@
 {
   "id": "teatak/pudding-hub/widgets/shared-todo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "title": {
     "zh-CN": "共享待办",
     "zh-TW": "共享待辦",
@@ -14,5 +14,6 @@
   "requires": {
     "protocolVersion": 18,
     "sdkVersion": "1"
-  }
+  },
+  "icon": "./assets/icon.svg"
 }

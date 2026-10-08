@@ -82,7 +82,7 @@ pudding-hub/
 ## 小组件源码包
 
 Widget 使用 React / TypeScript 源码包（格式 2），需要支持协议 18、SDK 1 的 Desktop。
-Hub 当前提供共享待办、五子棋 2.0.0 和猜拳 2.0.0。旧 HTML release 保留历史文件，不再进入安装候选列表；无旧 SDK 兼容运行时。
+Hub 当前提供共享待办、五子棋 2.0.1 和猜拳 2.0.1。旧 HTML release 保留历史文件，不再进入安装候选列表；无旧 SDK 兼容运行时。
 
 ```sh
 pnpm install

@@ -5,7 +5,7 @@ import path from "node:path";
 import os from "node:os";
 import { initial, place } from "../widgets/gomoku/source/src/rules.ts";
 import { winner } from "../widgets/rps-decider/source/src/rules.ts";
-import { packageWidget, sourceFiles } from "../scripts/package-widget.mjs";
+import { packageWidget, sourceFiles, widgetIcon } from "../scripts/package-widget.mjs";
 test("Gomoku enforces turns, occupancy, edges and horizontal/vertical/diagonal wins", () => {
   const old = initial(),
     next = place(old, 1, 1, "Black");
@@ -60,6 +60,9 @@ test("packages use Core validation and releases cannot be overwritten", async ()
     const one = await packageWidget("shared-todo", { root });
     const two = await packageWidget("shared-todo", { root });
     assert.equal(one.packageHash, two.packageHash);
+    const svg = await fs.readFile(path.join(root, "widgets/shared-todo/assets/icon.svg"));
+    assert.equal(one.pkg.icon, "data:image/svg+xml;base64," + svg.toString("base64"));
+    await assert.rejects(widgetIcon(path.join(root, "widgets/shared-todo"), "../icon.svg"), /Widget icon/);
     await fs.appendFile(
       path.join(root, "widgets/shared-todo/source/src/App.tsx"),
       "\n// local edit\n",
@@ -74,6 +77,7 @@ test("packages use Core validation and releases cannot be overwritten", async ()
       await fs.readFile(path.join(root, "widgets/registry.json")),
     );
     assert.equal(registry.items[0].releases[0].packageHash, one.packageHash);
+    assert.equal(registry.items[0].icon, one.pkg.icon);
     await fs.symlink(
       "/tmp",
       path.join(root, "widgets/shared-todo/source/link"),

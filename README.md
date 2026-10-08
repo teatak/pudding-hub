@@ -81,7 +81,7 @@ Key files:
 
 ## Widget source packages
 
-Widgets ship as React / TypeScript source packages (format 2), requiring Desktop protocol 18 and SDK 1. Current examples are Shared Todo, Gomoku 2.0.0, and RPS 2.0.0. Historical HTML releases remain immutable on disk and are excluded from install candidates.
+Widgets ship as React / TypeScript source packages (format 2), requiring Desktop protocol 18 and SDK 1. Current examples are Shared Todo, Gomoku 2.0.1, and RPS 2.0.1. Historical HTML releases remain immutable on disk and are excluded from install candidates.
 
 ```sh
 pnpm install

@@ -16,3 +16,7 @@ Package identity and requirements belong in `widgets/<name>/manifest.json`; edit
 Set `PUDDING_CORE_DIR` to the compatible Core checkout and run `pnpm package-widget <name> --dev`, then `pnpm test`. The packager invokes Core's installation validator. Bump the version before formal packaging; published bytes are immutable. The development output never changes the registry.
 
 Installation creates a normal Studio item with source provenance. Reinstall opens it; an explicit copy gets independent storage. Upgrades refuse local edits and stage a new head without changing active rules or storage. Preview/activate through version history. Restore archived installations before reinstalling.
+
+### Widget artwork
+
+The optional `icon` in `manifest.json` points to `./assets/<name>.svg`. The packager embeds the same SVG as a base64 image in the registry and source package; Core limits it to 16 KiB and stores it with the installed item. Catalog cards, tabs and the Studio sidebar share this icon, including offline. Existing release bytes remain immutable: bump the version when adding or changing artwork. SVGs are displayed only as images, never injected into the host DOM.

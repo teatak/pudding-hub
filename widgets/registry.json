@@ -19,7 +19,17 @@
         "zh-CN": "人类与会话参与者共用同一棋盘。",
         "zh-TW": "使用者與對話參與者共用同一棋盤。"
       },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjIwIiBmaWxsPSIjMTZBMzRBIi8+CiAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CiAgICA8cmVjdCB4PSIyOCIgeT0iMjgiIHdpZHRoPSI3MiIgaGVpZ2h0PSI3MiIgcng9IjgiLz4KICAgIDxwYXRoIGQ9Ik00NiAyOHY3Mk02NCAyOHY3Mk04MiAyOHY3Mk0yOCA0Nmg3Mk0yOCA2NGg3Mk0yOCA4Mmg3MiIvPgogIDwvZz4KICA8Y2lyY2xlIGN4PSI0NiIgY3k9IjQ2IiByPSI4IiBmaWxsPSIjZmZmZmZmIi8+CiAgPGNpcmNsZSBjeD0iODIiIGN5PSI2NCIgcj0iOCIgZmlsbD0iI2ZmZmZmZiIvPgogIDxjaXJjbGUgY3g9IjY0IiBjeT0iODIiIHI9IjgiIGZpbGw9IiMxMTE4MjciLz4KICA8Y2lyY2xlIGN4PSI2NCIgY3k9IjgyIiByPSI2IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIvPgo8L3N2Zz4K",
       "releases": [
+        {
+          "version": "2.0.1",
+          "package": "./gomoku/releases/2.0.1/gomoku.pudding-widget.json",
+          "packageHash": "45f756d961875631398094fb67eefb90f354e8fee22562f16225868858a6f5d0",
+          "requires": {
+            "protocolVersion": 18,
+            "sdkVersion": "1"
+          }
+        },
         {
           "version": "2.0.0",
           "package": "./gomoku/releases/2.0.0/gomoku.pudding-widget.json",
@@ -43,7 +53,17 @@
         "zh-CN": "独立出拳，双方提交后共同揭晓。",
         "zh-TW": "獨立出拳，雙方提交後共同揭曉。"
       },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0Ij4KICA8dGl0bGU+SGFuZCBGaXN0PC90aXRsZT4KICA8ZGVzYz5IYW5kIEZpc3QgaWNvbiBmcm9tIEx1Y2lkZSwgSVNDIExpY2Vuc2UuPC9kZXNjPgogIDxyZWN0IHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiByeD0iMjAiIGZpbGw9IiNGNTlFMEIiLz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyMCAxOCkgc2NhbGUoMy43KSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjIuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj4KICAgIDxwYXRoIGQ9Ik0xMi4wMzUgMTcuMDEyYTMgMyAwIDAgMC0zLTNsLS4zMTEtLjAwMmEuNzIuNzIgMCAwIDEtLjUwNS0xLjIyOWwxLjE5NS0xLjE5NUEyIDIgMCAwIDEgMTAuODI4IDExSDEyYTIgMiAwIDAgMCAwLTRIOS4yNDNhMyAzIDAgMCAwLTIuMTIyLjg3OWwtMi43MDcgMi43MDdBNC44MyA0LjgzIDAgMCAwIDMgMTRhOCA4IDAgMCAwIDggOGgyYTggOCAwIDAgMCA4LThWN2EyIDIgMCAxIDAtNCAwdjJhMiAyIDAgMSAwIDQgMCIvPgogICAgPHBhdGggZD0iTTEzLjg4OCA5LjY2MkEyIDIgMCAwIDAgMTcgOFY1QTIgMiAwIDEgMCAxMyA1Ii8+CiAgICA8cGF0aCBkPSJNOSA1QTIgMiAwIDEgMCA1IDVWMTAiLz4KICAgIDxwYXRoIGQ9Ik05IDdWNEEyIDIgMCAxIDEgMTMgNFY3LjI2OCIvPgogIDwvZz4KPC9zdmc+Cg==",
       "releases": [
+        {
+          "version": "2.0.1",
+          "package": "./rps-decider/releases/2.0.1/rps-decider.pudding-widget.json",
+          "packageHash": "7d264f190a5f56ac41e2d63840361bdb8832e7113ab4c6ba01d0c9f142157315",
+          "requires": {
+            "protocolVersion": 18,
+            "sdkVersion": "1"
+          }
+        },
         {
           "version": "2.0.0",
           "package": "./rps-decider/releases/2.0.0/rps-decider.pudding-widget.json",
@@ -67,7 +87,17 @@
         "zh-CN": "同一组件在不同位置共享一份长期待办。",
         "zh-TW": "同一組件在不同位置共用一份長期待辦。"
       },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjIwIiBmaWxsPSIjMjU2M0VCIi8+CiAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CiAgICA8cGF0aCBkPSJtMjggMzcgNyA3IDEyLTE0bS0xOSAzNiA3IDcgMTItMTRNNjIgMzdoMzZNNjIgNjZoMzZNNjIgOTVoMzYiLz4KICAgIDxjaXJjbGUgY3g9IjM2IiBjeT0iOTUiIHI9IjMiLz4KICA8L2c+Cjwvc3ZnPgo=",
       "releases": [
+        {
+          "version": "1.0.1",
+          "package": "./shared-todo/releases/1.0.1/shared-todo.pudding-widget.json",
+          "packageHash": "5cb172f0786bf08f637daf77b065c30d3f1caff3234428307e2618fcf74a4fc4",
+          "requires": {
+            "protocolVersion": 18,
+            "sdkVersion": "1"
+          }
+        },
         {
           "version": "1.0.0",
           "package": "./shared-todo/releases/1.0.0/shared-todo.pudding-widget.json",

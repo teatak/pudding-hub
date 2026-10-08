@@ -34,6 +34,17 @@ export async function sourceFiles(root) {
   );
 }
 
+// Keep the original artwork self-contained in both catalog and installed item.
+export async function widgetIcon(dir, icon) {
+  if (icon === undefined) return undefined;
+  if (typeof icon !== "string" || !/^\.\/assets\/[a-zA-Z0-9_-]+\.svg$/.test(icon))
+    throw new Error("Widget icon must be ./assets/<name>.svg");
+  const file = path.join(await fs.realpath(dir), icon);
+  if (!(await fs.lstat(file)).isFile() || await fs.realpath(file) !== file)
+    throw new Error("Widget icon must be a local file without symlinks");
+  return "data:image/svg+xml;base64," + (await fs.readFile(file)).toString("base64");
+}
+
 export async function packageWidget(
   name,
   { root = ROOT, core = process.env.PUDDING_CORE_DIR, dev = false } = {},
@@ -58,6 +69,7 @@ export async function packageWidget(
     version: manifest.version,
     title: manifest.title,
     description: manifest.description,
+    icon: await widgetIcon(dir, manifest.icon),
     requires: manifest.requires,
     source: { files },
     fileHashes: Object.fromEntries(
@@ -119,6 +131,7 @@ export async function packageWidget(
     id: manifest.id,
     title: manifest.title,
     description: manifest.description,
+    icon: pkg.icon,
     releases,
   };
   registry.items = [
