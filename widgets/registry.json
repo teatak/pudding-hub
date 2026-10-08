@@ -9,86 +9,76 @@
   "items": [
     {
       "id": "teatak/pudding-hub/widgets/gomoku",
-      "name": "gomoku",
       "title": {
         "zh-CN": "五子棋",
         "zh-TW": "五子棋",
         "en": "Gomoku"
       },
-      "version": "1.0.6",
       "description": {
-        "zh-CN": "支持用户和多个 AI 会话对弈的五子棋小组件。",
-        "zh-TW": "支援使用者和多個 AI 會話對弈的五子棋小組件。",
-        "en": "A Gomoku widget for human and multi-session AI matches."
+        "en": "Human and session participants share one board.",
+        "zh-CN": "人类与会话参与者共用同一棋盘。",
+        "zh-TW": "使用者與對話參與者共用同一棋盤。"
       },
-      "icon": "./gomoku/releases/1.0.6/assets/icon.svg",
-      "manifest": "./gomoku/releases/1.0.6/manifest.json",
-      "package": "./gomoku/releases/1.0.6/gomoku.pudding-widget.json",
-      "package_sha256": "7d2ba3d7cea84c6abd89459d41c7c2f44f7f2584f7e509d00ee9d5aaeb8fd2e9",
-      "requires": {
-        "widget_api": "^1.0.0"
-      },
-      "screenshots": [],
-      "tags": [
-        "game",
-        "board",
-        "multi-session"
-      ],
-      "orientation": "landscape",
       "releases": [
         {
-          "version": "1.0.6",
-          "manifest": "./gomoku/releases/1.0.6/manifest.json",
-          "package": "./gomoku/releases/1.0.6/gomoku.pudding-widget.json",
-          "package_sha256": "7d2ba3d7cea84c6abd89459d41c7c2f44f7f2584f7e509d00ee9d5aaeb8fd2e9",
+          "version": "2.0.0",
+          "package": "./gomoku/releases/2.0.0/gomoku.pudding-widget.json",
+          "packageHash": "dc50fee2b7235c897a9e339158e461dfcf9d6ea12600bda2372dd8a773960c04",
           "requires": {
-            "widget_api": "^1.0.0"
-          },
-          "released_at": "2026-05-30"
+            "protocolVersion": 18,
+            "sdkVersion": "1"
+          }
         }
       ]
     },
     {
       "id": "teatak/pudding-hub/widgets/rps-decider",
-      "name": "rps-decider",
       "title": {
-        "zh-CN": "分歧终端机",
-        "zh-TW": "分歧終端機",
-        "en": "RPS Decider"
+        "zh-CN": "猜拳",
+        "zh-TW": "猜拳",
+        "en": "Rock Paper Scissors"
       },
-      "version": "1.0.0",
       "description": {
-        "zh-CN": "用石头剪刀布快速裁决分歧。",
-        "zh-TW": "用猜拳快速裁決分歧。",
-        "en": "Resolve small disagreements with rock-paper-scissors."
+        "en": "Independent choices, revealed together.",
+        "zh-CN": "独立出拳，双方提交后共同揭晓。",
+        "zh-TW": "獨立出拳，雙方提交後共同揭曉。"
       },
-      "icon": "./rps-decider/releases/1.0.0/assets/icon.svg",
-      "manifest": "./rps-decider/releases/1.0.0/manifest.json",
-      "package": "./rps-decider/releases/1.0.0/rps-decider.pudding-widget.json",
-      "package_sha256": "dbbe9d4ddd6184dae328cdd5c89edfa4878bcc3854992ef3d7ebff052dcadbed",
-      "requires": {
-        "widget_api": "^1.0.0"
+      "releases": [
+        {
+          "version": "2.0.0",
+          "package": "./rps-decider/releases/2.0.0/rps-decider.pudding-widget.json",
+          "packageHash": "c538250531b0b14ea9cff0e07b12cdee923c95e80c0828fb193d4dfbe9bbe4eb",
+          "requires": {
+            "protocolVersion": 18,
+            "sdkVersion": "1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/widgets/shared-todo",
+      "title": {
+        "zh-CN": "共享待办",
+        "zh-TW": "共享待辦",
+        "en": "Shared Todo"
       },
-      "screenshots": [],
-      "tags": [
-        "game",
-        "decision",
-        "multi-session"
-      ],
-      "orientation": "portrait",
+      "description": {
+        "en": "One persistent list across all openings.",
+        "zh-CN": "同一组件在不同位置共享一份长期待办。",
+        "zh-TW": "同一組件在不同位置共用一份長期待辦。"
+      },
       "releases": [
         {
           "version": "1.0.0",
-          "manifest": "./rps-decider/releases/1.0.0/manifest.json",
-          "package": "./rps-decider/releases/1.0.0/rps-decider.pudding-widget.json",
-          "package_sha256": "dbbe9d4ddd6184dae328cdd5c89edfa4878bcc3854992ef3d7ebff052dcadbed",
+          "package": "./shared-todo/releases/1.0.0/shared-todo.pudding-widget.json",
+          "packageHash": "492667511c3c9aa35c94215f39c42b3b2f1cee7712d7867e8cd3658919c2a260",
           "requires": {
-            "widget_api": "^1.0.0"
-          },
-          "released_at": "2026-06-09"
+            "protocolVersion": 18,
+            "sdkVersion": "1"
+          }
         }
       ]
     }
   ],
-  "schema_version": 1
+  "schemaVersion": 2
 }

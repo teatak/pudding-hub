@@ -1,0 +1,155 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #faf9f6;
+  color: #222;
+  font-family: system-ui, sans-serif;
+}
+main {
+  max-width: 880px;
+  margin: auto;
+  padding: 28px;
+}
+h1 {
+  font-size: 26px;
+  margin: 0 0 8px;
+}
+.hint {
+  color: #666;
+  font-size: 14px;
+}
+button,
+input,
+select {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 9px;
+  background: white;
+  padding: 8px 12px;
+}
+button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+.primary {
+  background: #38324c;
+  color: white;
+  border-color: #38324c;
+}
+.toolbar,
+form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+input {
+  min-width: 0;
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 9px;
+  padding: 10px;
+}
+ul {
+  list-style: none;
+  padding: 0;
+}
+li {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #ddd;
+}
+li span {
+  flex: 1;
+}
+.error {
+  color: #b42318;
+  white-space: pre-wrap;
+}
+.board {
+  display: grid;
+  grid-template-columns: repeat(15, minmax(0, 1fr));
+  max-width: 680px;
+  border: 1px solid #ba9658;
+  background: #ecd09c;
+}
+.board button {
+  position: relative;
+  aspect-ratio: 1;
+  padding: 0;
+  border-radius: 0;
+  border: 1px solid #d1ad6e;
+  background: transparent;
+}
+.stone {
+  display: block;
+  width: 75%;
+  height: 75%;
+  border-radius: 50%;
+  margin: auto;
+  box-shadow: 0 1px 3px #666;
+}
+.black {
+  background: #252525;
+}
+.white {
+  background: #fff;
+}
+.last {
+  outline: 2px solid #ba483b;
+  outline-offset: -2px;
+}
+.choices {
+  display: flex;
+  gap: 12px;
+  margin: 24px 0;
+}
+.choices button {
+  font-size: 20px;
+}
+.players {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.player {
+  padding: 16px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  flex: 1;
+  min-width: 180px;
+}
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #18181b;
+    color: #fafafa;
+  }
+  .hint {
+    color: #aaa;
+  }
+  button,
+  input,
+  select,
+  .player {
+    background: #27272a;
+    color: #fafafa;
+    border-color: #555;
+  }
+  .primary {
+    background: #75659c;
+  }
+  .error {
+    color: #ffa594;
+  }
+}
+
+.board button:disabled { opacity: 1; }

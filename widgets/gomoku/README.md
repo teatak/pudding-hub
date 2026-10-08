@@ -1,7 +1,5 @@
 # Gomoku
 
-A Gomoku widget for human and multi-session AI matches.
+15 × 15 Gomoku. Bind Black and White to people or sessions in the host confirmation. Interface and CDP moves share the same rules. The next player receives a directed action request; the result is broadcast. Closing/reloading resets the match.
 
-- ID: `teatak/pudding-hub/widgets/gomoku`
-- Version: `1.0.6`
-- Package: `./releases/1.0.6/gomoku.pudding-widget.json`
+Requires source-package format 2, protocol 18 and SDK 1. See [development guide](../../docs/widget-development.md). Historical HTML releases are preserved and no longer used by the current source.

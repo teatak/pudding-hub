@@ -1,34 +1,18 @@
 {
-  "kind": "pudding.widget.manifest",
-  "schema_version": 1,
   "id": "teatak/pudding-hub/widgets/gomoku",
-  "name": "gomoku",
+  "version": "2.0.0",
   "title": {
     "zh-CN": "五子棋",
     "zh-TW": "五子棋",
     "en": "Gomoku"
   },
-  "version": "1.0.6",
   "description": {
-    "zh-CN": "支持用户和多个 AI 会话对弈的五子棋小组件。",
-    "zh-TW": "支援使用者和多個 AI 會話對弈的五子棋小組件。",
-    "en": "A Gomoku widget for human and multi-session AI matches."
+    "en": "Human and session participants share one board.",
+    "zh-CN": "人类与会话参与者共用同一棋盘。",
+    "zh-TW": "使用者與對話參與者共用同一棋盤。"
   },
-  "icon": "./assets/icon.svg",
-  "screenshots": [],
-  "tags": [
-    "game",
-    "board",
-    "multi-session"
-  ],
-  "size": "lg",
-  "orientation": "landscape",
-  "author": {
-    "name": "Pudding"
-  },
-  "package": "./releases/1.0.6/gomoku.pudding-widget.json",
-  "package_sha256": "7d2ba3d7cea84c6abd89459d41c7c2f44f7f2584f7e509d00ee9d5aaeb8fd2e9",
   "requires": {
-    "widget_api": "^1.0.0"
+    "protocolVersion": 18,
+    "sdkVersion": "1"
   }
 }

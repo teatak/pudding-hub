@@ -1,0 +1,18 @@
+{
+  "id": "teatak/pudding-hub/widgets/shared-todo",
+  "version": "1.0.0",
+  "title": {
+    "zh-CN": "共享待办",
+    "zh-TW": "共享待辦",
+    "en": "Shared Todo"
+  },
+  "description": {
+    "en": "One persistent list across all openings.",
+    "zh-CN": "同一组件在不同位置共享一份长期待办。",
+    "zh-TW": "同一組件在不同位置共用一份長期待辦。"
+  },
+  "requires": {
+    "protocolVersion": 18,
+    "sdkVersion": "1"
+  }
+}

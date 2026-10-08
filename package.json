@@ -6,15 +6,11 @@
     "package-app": "node scripts/package-app.mjs",
     "package-apps": "node scripts/package-app.mjs --all",
     "package-plugin": "node scripts/package-plugin.mjs",
-    "package-plugins": "node scripts/package-plugin.mjs --all"
-  },
-  "dependencies": {
-    "preact": "^10.22.0"
+    "package-plugins": "node scripts/package-plugin.mjs --all",
+    "test": "node --experimental-strip-types --test test/*.test.mjs"
   },
   "devDependencies": {
-    "@preact/preset-vite": "^2.8.2",
-    "vite": "^5.2.11",
-    "vite-plugin-singlefile": "^2.0.1",
     "yaml": "^2.9.0"
-  }
+  },
+  "type": "module"
 }

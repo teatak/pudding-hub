@@ -1,34 +1,18 @@
 {
-  "kind": "pudding.widget.manifest",
-  "schema_version": 1,
   "id": "teatak/pudding-hub/widgets/rps-decider",
-  "name": "rps-decider",
+  "version": "2.0.0",
   "title": {
-    "zh-CN": "分歧终端机",
-    "zh-TW": "分歧終端機",
-    "en": "RPS Decider"
+    "zh-CN": "猜拳",
+    "zh-TW": "猜拳",
+    "en": "Rock Paper Scissors"
   },
-  "version": "1.0.0",
   "description": {
-    "zh-CN": "用石头剪刀布快速裁决分歧。",
-    "zh-TW": "用猜拳快速裁決分歧。",
-    "en": "Resolve small disagreements with rock-paper-scissors."
+    "en": "Independent choices, revealed together.",
+    "zh-CN": "独立出拳，双方提交后共同揭晓。",
+    "zh-TW": "獨立出拳，雙方提交後共同揭曉。"
   },
-  "icon": "./assets/icon.svg",
-  "screenshots": [],
-  "tags": [
-    "game",
-    "decision",
-    "multi-session"
-  ],
-  "size": "lg",
-  "orientation": "portrait",
-  "author": {
-    "name": "Pudding"
-  },
-  "package": "./releases/1.0.0/rps-decider.pudding-widget.json",
-  "package_sha256": "dbbe9d4ddd6184dae328cdd5c89edfa4878bcc3854992ef3d7ebff052dcadbed",
   "requires": {
-    "widget_api": "^1.0.0"
+    "protocolVersion": 18,
+    "sdkVersion": "1"
   }
 }
