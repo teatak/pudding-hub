@@ -78,17 +78,26 @@
     {
       "id": "teatak/pudding-hub/widgets/shared-todo",
       "title": {
-        "zh-CN": "共享待办",
-        "zh-TW": "共享待辦",
-        "en": "Shared Todo"
+        "zh-CN": "待办",
+        "zh-TW": "待辦",
+        "en": "Todo"
       },
       "description": {
-        "en": "One persistent list across all openings.",
-        "zh-CN": "同一组件在不同位置共享一份长期待办。",
-        "zh-TW": "同一組件在不同位置共用一份長期待辦。"
+        "en": "Keep track of tasks and organize your day.",
+        "zh-CN": "记录任务，安排日常事项。",
+        "zh-TW": "記錄任務，安排日常事項。"
       },
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjIwIiBmaWxsPSIjMjU2M0VCIi8+CiAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CiAgICA8cGF0aCBkPSJtMjggMzcgNyA3IDEyLTE0bS0xOSAzNiA3IDcgMTItMTRNNjIgMzdoMzZNNjIgNjZoMzZNNjIgOTVoMzYiLz4KICAgIDxjaXJjbGUgY3g9IjM2IiBjeT0iOTUiIHI9IjMiLz4KICA8L2c+Cjwvc3ZnPgo=",
       "releases": [
+        {
+          "version": "1.0.2",
+          "package": "./shared-todo/releases/1.0.2/shared-todo.pudding-widget.json",
+          "packageHash": "1129e3d9e79adcddc2bcb21155be60ae2af55f8d34ee6dab7ac991eee841ebde",
+          "requires": {
+            "protocolVersion": 18,
+            "sdkVersion": "1"
+          }
+        },
         {
           "version": "1.0.1",
           "package": "./shared-todo/releases/1.0.1/shared-todo.pudding-widget.json",

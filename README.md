@@ -81,7 +81,7 @@ Key files:
 
 ## Widget source packages
 
-Widgets ship as React / TypeScript source packages (format 2), requiring Desktop protocol 18 and SDK 1. Current examples are Shared Todo, Gomoku 2.0.1, and RPS 2.0.1. Historical HTML releases remain immutable on disk and are excluded from install candidates.
+Widgets ship as React / TypeScript source packages (format 2), requiring Desktop protocol 18 and SDK 1. Current examples are Todo, Gomoku 2.0.1, and RPS 2.0.1. Historical HTML releases remain immutable on disk and are excluded from install candidates.
 
 ```sh
 pnpm install
@@ -95,6 +95,6 @@ Use a Core checkout containing `cmd/widget-package`. The packager reads Core pol
 
 `manifest.json` declares identity, version, localized metadata and host requirements. `source/widget.json` and `source/src/` are editable runtime files. Releases include the complete source and per-file SHA-256 inventory; registry format 2 pins the complete package SHA-256. Existing release bytes cannot change. `--dev` writes only the ignored `dev/` directory.
 
-Install from Studio → Start creating → Widget library. Reinstall opens the existing item; copies have independent storage. Updates stage a source version for preview/activation, preserving the current running rules and all item data. Local source edits are never overwritten.
+Install from Studio → Start creating → Widget library. Reinstall opens the existing item. Only the LLM editing workflow forks downloaded originals, copying current persistent data into an independent item. Updates stage a source version for preview/activation, preserving the current running rules and all item data. Local source edits are never overwritten.
 
 See [Widget development](docs/widget-development.md).

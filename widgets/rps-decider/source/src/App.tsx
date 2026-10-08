@@ -24,39 +24,38 @@ async function publish() {
     throw new Error("Start or resume the round");
   const state = snapshot().data,
     submitted = (state.submitted || []) as string[];
+  const noticeID = submitted.length === 2 ? "result" : `choose-${submitted.length}`;
+  await pudding.interaction.setRequests(
+    run.receipts.flatMap((n) =>
+      n.id === noticeID
+        ? n.deliveries.filter((d) => d.active).map((d) => ({
+            notificationID: n.id, participantID: d.participantID,
+          }))
+        : [],
+    ),
+  );
   if (submitted.length === 2) {
-    await pudding.interaction.setRequests([]);
+    const winnerName = run.participants.find(p => p.roles.includes(String(state.result)))?.name || state.result;
     await pudding.interaction.notify({
-      id: "result",
+      id: noticeID,
       audience: { kind: "all" },
-      delivery: "inform",
+      delivery: "request-action",
       topic: "result",
-      message: `Round finished: ${state.result}`,
+      summary: state.result === "draw" ? text("Round drawn", "本轮平局") : `${text("Round finished", "本轮结束")}，${winnerName} ${text("wins", "获胜")}`,
+      message: `The round has finished: ${state.result}. Briefly acknowledge the revealed result in this conversation. Do not submit another gesture.`,
       data: { result: state.result, choices: state.choices },
     });
     return;
   }
-  const noticeID = `choose-${submitted.length}`;
   const pending = run.participants
     .filter((p) => p.roles.some((role) => !submitted.includes(role)))
     .map((p) => p.id);
-  await pudding.interaction.setRequests(
-    run.receipts.flatMap((n) =>
-      n.id === noticeID
-        ? n.deliveries
-            .filter((d) => d.active)
-            .map((d) => ({
-              notificationID: n.id,
-              participantID: d.participantID,
-            }))
-        : [],
-    ),
-  );
   await pudding.interaction.notify({
     id: noticeID,
     audience: { kind: "selected", participantIDs: pending },
     delivery: "request-action",
     topic: "choose",
+    summary: text("Waiting for your choice", "等待出拳"),
     message:
       "Choose rock, paper or scissors for each of your unsubmitted roles (A or B). Call chooseGesture, or select your role then click a gesture. Choices are revealed together.",
   });

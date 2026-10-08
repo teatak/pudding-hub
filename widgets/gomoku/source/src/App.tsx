@@ -37,9 +37,10 @@ async function publish() {
     await pudding.interaction.notify({
       id: `result-${p.move}`,
       audience: { kind: "all" },
-      delivery: "inform",
+      delivery: "request-action",
       topic: "result",
-      message: p.winner === "draw" ? "Match drawn" : `${p.winner} wins`,
+      summary: p.winner === "draw" ? text("Match drawn", "本局平局") : `${text("Match finished", "本局结束")}，${run.participants.find(player => player.roles.includes(p.winner!))?.name || p.winner} ${text("wins", "获胜")}`,
+      message: `The match has finished: ${p.winner}. Briefly acknowledge the result in this conversation. Do not place any more stones.`,
       data: { winner: p.winner },
     });
     return;
@@ -53,6 +54,7 @@ async function publish() {
     audience: { kind: "selected", participantIDs: [player.id] },
     delivery: "request-action",
     topic: "move",
+    summary: text(`${p.turn} to move`, `等待${p.turn === "Black" ? "黑方" : "白方"}落子`),
     message: `${p.turn} to move. Observe the current board, then click an empty cell or call placeStone with 1-based row and column.`,
     data: { move: p.move, color: p.turn },
   });

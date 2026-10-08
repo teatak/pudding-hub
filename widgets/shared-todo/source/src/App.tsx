@@ -88,11 +88,11 @@ export default function App() {
   }
   return (
     <main>
-      <h1>{text("Shared Todo", "共享待办")}</h1>
+      <h1>{text("Todo", "待办")}</h1>
       <p className="hint">
         {text(
-          "Saved for this widget. All openings use the same list; copies have their own data.",
-          "此组件的所有打开位置共享待办。副本使用独立数据。",
+          "Keep track of tasks and organize your day.",
+          "记录任务，安排日常事项。",
         )}
       </p>
       <form>

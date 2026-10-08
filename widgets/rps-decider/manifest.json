@@ -1,6 +1,6 @@
 {
   "id": "teatak/pudding-hub/widgets/rps-decider",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "title": {
     "zh-CN": "猜拳",
     "zh-TW": "猜拳",
@@ -12,7 +12,7 @@
     "zh-TW": "獨立出拳，雙方提交後共同揭曉。"
   },
   "requires": {
-    "protocolVersion": 18,
+    "protocolVersion": 19,
     "sdkVersion": "1"
   },
   "icon": "./assets/icon.svg"

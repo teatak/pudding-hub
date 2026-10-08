@@ -82,7 +82,7 @@ pudding-hub/
 ## 小组件源码包
 
 Widget 使用 React / TypeScript 源码包（格式 2），需要支持协议 18、SDK 1 的 Desktop。
-Hub 当前提供共享待办、五子棋 2.0.1 和猜拳 2.0.1。旧 HTML release 保留历史文件，不再进入安装候选列表；无旧 SDK 兼容运行时。
+Hub 当前提供待办、五子棋 2.0.1 和猜拳 2.0.1。旧 HTML release 保留历史文件，不再进入安装候选列表；无旧 SDK 兼容运行时。
 
 ```sh
 pnpm install
@@ -100,6 +100,6 @@ pnpm package-widgets
 - `widgets/registry.json`：格式 2，只列新源码 release，提供完整包 SHA-256。
 - `--dev` 仅输出到忽略的 `dev/`，不修改 registry 或正式 release。
 
-Desktop 从 Studio → 开始创作 → 小组件库安装。重复安装打开原项；创建副本使用独立长期存储。更新保存为待启用版本，经过预览和启用后生效；有本地源码修改时拒绝覆盖。
+Desktop 从 Studio → 开始创作 → 小组件库安装。重复安装打开原项；只有 LLM 首次编辑下载原版时创建独立副本，复制当时的长期数据，之后各自独立。更新保存为待启用版本，经过预览和启用后生效；有本地源码修改时拒绝覆盖。
 
 制作规范与数据/通知示例见 [小组件开发](docs/widget-development.zh-CN.md)。

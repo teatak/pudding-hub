@@ -1,4 +1,4 @@
-# Shared Todo
+# Todo
 
 Persistent tasks shared by all openings of one item. UI and optional add/complete/delete interfaces use the same version-checked storage writes.
 

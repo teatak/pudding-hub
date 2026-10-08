@@ -15,7 +15,7 @@ Package identity and requirements belong in `widgets/<name>/manifest.json`; edit
 
 Set `PUDDING_CORE_DIR` to the compatible Core checkout and run `pnpm package-widget <name> --dev`, then `pnpm test`. The packager invokes Core's installation validator. Bump the version before formal packaging; published bytes are immutable. The development output never changes the registry.
 
-Installation creates a normal Studio item with source provenance. Reinstall opens it; an explicit copy gets independent storage. Upgrades refuse local edits and stage a new head without changing active rules or storage. Preview/activate through version history. Restore archived installations before reinstalling.
+Installation creates a normal Studio item with source provenance. Reinstall opens it. Only the LLM editing workflow forks downloaded originals, snapshotting current persistent data into an independent item. Upgrades refuse local edits and stage a new head without changing active rules or storage. Preview/activate through version history. Restore archived installations before reinstalling.
 
 ### Widget artwork
 
