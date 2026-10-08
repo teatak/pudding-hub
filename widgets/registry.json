@@ -22,6 +22,24 @@
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjIwIiBmaWxsPSIjMTZBMzRBIi8+CiAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CiAgICA8cmVjdCB4PSIyOCIgeT0iMjgiIHdpZHRoPSI3MiIgaGVpZ2h0PSI3MiIgcng9IjgiLz4KICAgIDxwYXRoIGQ9Ik00NiAyOHY3Mk02NCAyOHY3Mk04MiAyOHY3Mk0yOCA0Nmg3Mk0yOCA2NGg3Mk0yOCA4Mmg3MiIvPgogIDwvZz4KICA8Y2lyY2xlIGN4PSI0NiIgY3k9IjQ2IiByPSI4IiBmaWxsPSIjZmZmZmZmIi8+CiAgPGNpcmNsZSBjeD0iODIiIGN5PSI2NCIgcj0iOCIgZmlsbD0iI2ZmZmZmZiIvPgogIDxjaXJjbGUgY3g9IjY0IiBjeT0iODIiIHI9IjgiIGZpbGw9IiMxMTE4MjciLz4KICA8Y2lyY2xlIGN4PSI2NCIgY3k9IjgyIiByPSI2IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIvPgo8L3N2Zz4K",
       "releases": [
         {
+          "version": "2.1.0",
+          "package": "./gomoku/releases/2.1.0/gomoku.pudding-widget.json",
+          "packageHash": "fbd328ff83f19051969a24dd2b9cd171d337fb7f1c5bb26f8ac0596d96f313bd",
+          "requires": {
+            "protocolVersion": 20,
+            "sdkVersion": "1"
+          }
+        },
+        {
+          "version": "2.0.2",
+          "package": "./gomoku/releases/2.0.2/gomoku.pudding-widget.json",
+          "packageHash": "e5eb792984e87a60ff4b1fa0699aa337cbb19234d8ef40be4564e93105a87a53",
+          "requires": {
+            "protocolVersion": 19,
+            "sdkVersion": "1"
+          }
+        },
+        {
           "version": "2.0.1",
           "package": "./gomoku/releases/2.0.1/gomoku.pudding-widget.json",
           "packageHash": "45f756d961875631398094fb67eefb90f354e8fee22562f16225868858a6f5d0",
@@ -55,6 +73,24 @@
       },
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0Ij4KICA8dGl0bGU+SGFuZCBGaXN0PC90aXRsZT4KICA8ZGVzYz5IYW5kIEZpc3QgaWNvbiBmcm9tIEx1Y2lkZSwgSVNDIExpY2Vuc2UuPC9kZXNjPgogIDxyZWN0IHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiByeD0iMjAiIGZpbGw9IiNGNTlFMEIiLz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyMCAxOCkgc2NhbGUoMy43KSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjIuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj4KICAgIDxwYXRoIGQ9Ik0xMi4wMzUgMTcuMDEyYTMgMyAwIDAgMC0zLTNsLS4zMTEtLjAwMmEuNzIuNzIgMCAwIDEtLjUwNS0xLjIyOWwxLjE5NS0xLjE5NUEyIDIgMCAwIDEgMTAuODI4IDExSDEyYTIgMiAwIDAgMCAwLTRIOS4yNDNhMyAzIDAgMCAwLTIuMTIyLjg3OWwtMi43MDcgMi43MDdBNC44MyA0LjgzIDAgMCAwIDMgMTRhOCA4IDAgMCAwIDggOGgyYTggOCAwIDAgMCA4LThWN2EyIDIgMCAxIDAtNCAwdjJhMiAyIDAgMSAwIDQgMCIvPgogICAgPHBhdGggZD0iTTEzLjg4OCA5LjY2MkEyIDIgMCAwIDAgMTcgOFY1QTIgMiAwIDEgMCAxMyA1Ii8+CiAgICA8cGF0aCBkPSJNOSA1QTIgMiAwIDEgMCA1IDVWMTAiLz4KICAgIDxwYXRoIGQ9Ik05IDdWNEEyIDIgMCAxIDEgMTMgNFY3LjI2OCIvPgogIDwvZz4KPC9zdmc+Cg==",
       "releases": [
+        {
+          "version": "2.1.0",
+          "package": "./rps-decider/releases/2.1.0/rps-decider.pudding-widget.json",
+          "packageHash": "98d577335aef82ca2772a23453bed41f6715aa3f256c03ac3bfaa353a65b1b83",
+          "requires": {
+            "protocolVersion": 20,
+            "sdkVersion": "1"
+          }
+        },
+        {
+          "version": "2.0.2",
+          "package": "./rps-decider/releases/2.0.2/rps-decider.pudding-widget.json",
+          "packageHash": "91cff90cb7144aecbd3217f9464bde7180ab93491374d2847778de109a053be3",
+          "requires": {
+            "protocolVersion": 19,
+            "sdkVersion": "1"
+          }
+        },
         {
           "version": "2.0.1",
           "package": "./rps-decider/releases/2.0.1/rps-decider.pudding-widget.json",

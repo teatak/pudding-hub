@@ -34,12 +34,21 @@ async function publish() {
     ),
   );
   if (p.winner) {
+    const winnerName =
+      run.participants.find((player) => player.roles.includes(p.winner!))
+        ?.name || p.winner;
     await pudding.interaction.notify({
       id: `result-${p.move}`,
       audience: { kind: "all" },
       delivery: "request-action",
       topic: "result",
-      summary: p.winner === "draw" ? text("Match drawn", "本局平局") : `${text("Match finished", "本局结束")}，${run.participants.find(player => player.roles.includes(p.winner!))?.name || p.winner} ${text("wins", "获胜")}`,
+      summary:
+        p.winner === "draw"
+          ? text("Match drawn", "本局平局")
+          : text(
+              `Match finished: ${winnerName} wins`,
+              `本局结束，${winnerName}获胜`,
+            ),
       message: `The match has finished: ${p.winner}. Briefly acknowledge the result in this conversation. Do not place any more stones.`,
       data: { winner: p.winner },
     });
@@ -54,7 +63,10 @@ async function publish() {
     audience: { kind: "selected", participantIDs: [player.id] },
     delivery: "request-action",
     topic: "move",
-    summary: text(`${p.turn} to move`, `等待${p.turn === "Black" ? "黑方" : "白方"}落子`),
+    summary: text(
+      `${p.turn} to move`,
+      `等待${p.turn === "Black" ? "黑方" : "白方"}落子`,
+    ),
     message: `${p.turn} to move. Observe the current board, then click an empty cell or call placeStone with 1-based row and column.`,
     data: { move: p.move, color: p.turn },
   });
@@ -72,16 +84,15 @@ async function move(
     if (
       !run ||
       run.status !== "running" ||
-      context.actor?.runID !== run.id ||
-      old.data.runID !== run.id
+      context.actor?.runID !== run.id
     )
       throw new Error("No active match for this participant");
     if (!context.actor.roles.includes(p.turn)) throw new Error("Not your turn");
     if (context.signal.aborted) throw new Error("Cancelled");
     const next = place(p, input.row, input.column, p.turn);
-    pudding.state.write({
+    await pudding.state.write({
       expectedVersion: old.version,
-      data: { runID: run.id, position: { ...next } },
+      data: { position: { ...next } },
     });
     await publish();
     return next;
@@ -107,6 +118,7 @@ pudding.defineInterface({
   input: z.object({}).strict(),
   run: () => position(),
 });
+pudding.interaction.onResume(async () => { if (!position().winner) await publish(); });
 export default function App() {
   useWidgetState();
   const run = useWidgetInteraction(),
@@ -125,11 +137,11 @@ export default function App() {
     }
   }
   async function start() {
-    const next = await pudding.interaction.start({ roles: ["Black", "White"] });
+    await pudding.interaction.start({ roles: ["Black", "White"] });
     const old = pudding.state.read();
-    pudding.state.write({
+    await pudding.state.write({
       expectedVersion: old.version,
-      data: { runID: next.id, position: { ...initial() } },
+      data: { position: { ...initial() } },
     });
     await publish();
   }

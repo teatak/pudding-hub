@@ -4,12 +4,13 @@ Widgets use React source packages and the fixed `@pudding/widget` SDK. The platf
 
 See the [complete Chinese contract and examples](widget-development.zh-CN.md). The runtime sources are [Shared Todo](../widgets/shared-todo/source/src/App.tsx), [Gomoku](../widgets/gomoku/source/src/App.tsx) and [Rock Paper Scissors](../widgets/rps-decider/source/src/App.tsx).
 
-- `state` is public per-guest state and resets on close/reload. `storage` is persistent per-item JSON shared by all openings; copies are independent. Both use version checks. Never silently retry a conflicting write.
+- `state` is a durable per-page snapshot, hydrated before author module code. Refresh/crash/restart preserve it; explicit tab close clears it. `state.read()` is synchronous, but always await `state.write(...)` before publishing or returning. Source revisions have separate snapshots. `storage` is persistent per-item JSON shared by all openings; copies are independent. Both use version checks. Never silently retry a conflicting write.
 - Native form submission is disabled by the sandbox. Use `type="button"` and an Enter handler that prevents the default and invokes the same save function.
 - The author may define interfaces with Zod input schemas. UI handlers and interfaces call the same business logic. DOM handlers use `interaction.handle` to retain the trusted actor across asynchronous work. Validate roles from `context.actor`, never trust identity in business arguments.
 - `interaction.start({roles})` asks the user to bind explicit participants. Visible sessions are not implicit members.
+- Optional notification `summary` is a short localized user-facing description; `message` contains full instructions shown in collapsed details and retained in model context.
 - Notifications independently choose all/selected participants and inform/request-action delivery. IDs are immutable and deduplicated. `setRequests` retains only still-valid requests; cleared requests cannot be revived by resending an old notification. Turn completion is not business completion.
-- Keep unrevealed choices out of public state, DOM, logs, notifications and interface results. A widget author/debugger is not an adversarial isolation boundary.
+- Store recoverable unrevealed choices in page state, which is not automatically exposed by inspection tools. Keep them out of DOM, logs, notifications and interface results. A widget author/debugger is not an adversarial isolation boundary.
 
 Package identity and requirements belong in `widgets/<name>/manifest.json`; editable files live under `source/`, including `widget.json`. Runtime dependencies are fixed; no package manager, build scripts, external modules or HTML runtime bundle. Format 2 wraps the source plus a SHA-256 inventory. The registry pins complete package bytes.
 
@@ -20,3 +21,7 @@ Installation creates a normal Studio item with source provenance. Reinstall open
 ### Widget artwork
 
 The optional `icon` in `manifest.json` points to `./assets/<name>.svg`. The packager embeds the same SVG as a base64 image in the registry and source package; Core limits it to 16 KiB and stores it with the installed item. Catalog cards, tabs and the Studio sidebar share this icon, including offline. Existing release bytes remain immutable: bump the version when adding or changing artwork. SVGs are displayed only as images, never injected into the host DOM.
+
+Gomoku and Rock Paper Scissors send their final result with `audience: {kind: "all"}` and `delivery: "request-action"`, so each conversation participant processes the result once. The card says “Notified everyone”; ordinary `inform` broadcasts remain passive.
+
+Restored interactions create a new paused run and revoke old targets. Register `pudding.interaction.onResume(async () => { ... })` to derive only currently valid requests from saved state after the user continues. Never replay old receipts or completed results; do not bind persisted business data to an ephemeral run ID. Stop ends interaction without clearing the page.

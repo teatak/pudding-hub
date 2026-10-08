@@ -10,11 +10,9 @@ import { z } from "zod";
 import { gestures, winner, type Gesture } from "./rules";
 import { text } from "./text";
 import "./style.css";
-// Private choices are never stored in public SDK state, DOM, logs, or interface results.
-// Both participants use the same guest. This is not a security boundary against the author/debugger.
-let privateRun = "",
-  choices: Partial<Record<"A" | "B", Gesture>> = {},
-  changing = false;
+// Page state is durable but is not exposed by inspection tools. Only project the
+// submitted flags until both choices are present; do not render/return secrets.
+let changing = false;
 function snapshot() {
   return pudding.state.read();
 }
@@ -24,24 +22,36 @@ async function publish() {
     throw new Error("Start or resume the round");
   const state = snapshot().data,
     submitted = (state.submitted || []) as string[];
-  const noticeID = submitted.length === 2 ? "result" : `choose-${submitted.length}`;
+  const noticeID =
+    submitted.length === 2 ? "result" : `choose-${submitted.length}`;
   await pudding.interaction.setRequests(
     run.receipts.flatMap((n) =>
       n.id === noticeID
-        ? n.deliveries.filter((d) => d.active).map((d) => ({
-            notificationID: n.id, participantID: d.participantID,
-          }))
+        ? n.deliveries
+            .filter((d) => d.active)
+            .map((d) => ({
+              notificationID: n.id,
+              participantID: d.participantID,
+            }))
         : [],
     ),
   );
   if (submitted.length === 2) {
-    const winnerName = run.participants.find(p => p.roles.includes(String(state.result)))?.name || state.result;
+    const winnerName =
+      run.participants.find((p) => p.roles.includes(String(state.result)))
+        ?.name || state.result;
     await pudding.interaction.notify({
       id: noticeID,
       audience: { kind: "all" },
       delivery: "request-action",
       topic: "result",
-      summary: state.result === "draw" ? text("Round drawn", "本轮平局") : `${text("Round finished", "本轮结束")}，${winnerName} ${text("wins", "获胜")}`,
+      summary:
+        state.result === "draw"
+          ? text("Round drawn", "本轮平局")
+          : text(
+              `Round finished: ${winnerName} wins`,
+              `本轮结束，${winnerName}获胜`,
+            ),
       message: `The round has finished: ${state.result}. Briefly acknowledge the revealed result in this conversation. Do not submit another gesture.`,
       data: { result: state.result, choices: state.choices },
     });
@@ -72,13 +82,12 @@ async function choose(
     if (
       !run ||
       run.status !== "running" ||
-      context.actor?.runID !== run.id ||
-      old.data.runID !== run.id ||
-      privateRun !== run.id
+      context.actor?.runID !== run.id
     )
       throw new Error("No active round for this participant");
     if (!context.actor.roles.includes(input.role))
       throw new Error("This role belongs to another participant");
+    const choices=(old.data.choices || {}) as Partial<Record<"A" | "B", Gesture>>;
     if (choices[input.role]) throw new Error("This role has already submitted");
     if (context.signal.aborted) throw new Error("Cancelled");
     const next = { ...choices, [input.role]: input.gesture },
@@ -86,14 +95,12 @@ async function choose(
       finished = next.A && next.B;
     const data: Record<string, JSONValue> = finished
       ? {
-          runID: run.id,
           submitted,
           result: winner(next.A!, next.B!),
           choices: { A: next.A!, B: next.B! },
         }
-      : { runID: run.id, submitted };
-    pudding.state.write({ expectedVersion: old.version, data });
-    choices = next;
+      : { submitted, choices: next };
+    await pudding.state.write({ expectedVersion: old.version, data });
     await publish();
     return {
       accepted: true,
@@ -113,6 +120,7 @@ pudding.defineInterface({
     .strict(),
   run: choose,
 });
+pudding.interaction.onResume(async () => { if (!snapshot().data.result) await publish(); });
 export default function App() {
   const state = useWidgetState(),
     run = useWidgetInteraction(),
@@ -132,13 +140,11 @@ export default function App() {
     }
   }
   async function start() {
-    const next = await pudding.interaction.start({ roles: ["A", "B"] });
-    privateRun = next.id;
-    choices = {};
+    await pudding.interaction.start({ roles: ["A", "B"] });
     const old = snapshot();
-    pudding.state.write({
+    await pudding.state.write({
       expectedVersion: old.version,
-      data: { runID: next.id, submitted: [] },
+      data: { submitted: [], choices: {} },
     });
     await publish();
   }
