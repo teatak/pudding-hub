@@ -22,6 +22,15 @@
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjIwIiBmaWxsPSIjMTZBMzRBIi8+CiAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CiAgICA8cmVjdCB4PSIyOCIgeT0iMjgiIHdpZHRoPSI3MiIgaGVpZ2h0PSI3MiIgcng9IjgiLz4KICAgIDxwYXRoIGQ9Ik00NiAyOHY3Mk02NCAyOHY3Mk04MiAyOHY3Mk0yOCA0Nmg3Mk0yOCA2NGg3Mk0yOCA4Mmg3MiIvPgogIDwvZz4KICA8Y2lyY2xlIGN4PSI0NiIgY3k9IjQ2IiByPSI4IiBmaWxsPSIjZmZmZmZmIi8+CiAgPGNpcmNsZSBjeD0iODIiIGN5PSI2NCIgcj0iOCIgZmlsbD0iI2ZmZmZmZiIvPgogIDxjaXJjbGUgY3g9IjY0IiBjeT0iODIiIHI9IjgiIGZpbGw9IiMxMTE4MjciLz4KICA8Y2lyY2xlIGN4PSI2NCIgY3k9IjgyIiByPSI2IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIvPgo8L3N2Zz4K",
       "releases": [
         {
+          "version": "2.2.2",
+          "package": "./gomoku/releases/2.2.2/gomoku.pudding-widget.json",
+          "packageHash": "8658ac7b562831885b8be60d2bfd51eee19212f3fe83b16db21ffdc7d05ea66f",
+          "requires": {
+            "protocolVersion": 22,
+            "sdkVersion": "1"
+          }
+        },
+        {
           "version": "2.2.1",
           "package": "./gomoku/releases/2.2.1/gomoku.pudding-widget.json",
           "packageHash": "c4596df0a2fe99c45f306bec369f9d741aeed9c528111c2817d5066d308f6d5b",

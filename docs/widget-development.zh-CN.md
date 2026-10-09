@@ -48,6 +48,7 @@
 - `audience:{kind:"all"}` 全体；`{kind:"selected",participantIDs:[...]}` 定向。
 - `delivery:"inform"` 只记录，不调用模型；`"request-action"` 请求行动，忙碌会话等待已有工作完成。
 - `summary` 使用用户语言提供简短可见摘要；`message` 放完整操作说明，通知卡片将其折叠，模型仍收到完整内容。
+- 通知由宿主附带 `targetID`、参与者身份和 `stateVersion`。`data` 可提供同一已提交状态的公开业务快照，减少重复读取；不得泄露未揭晓的数据。说明要描述业务目标，不要求每次先调用 `widget_observe`。模型已知接口且上下文足够时直接行动，需要补充信息时任选页面观察或作者读取接口；版本冲突仍需重新读取和判断，不能盲目重试。
 - notification ID 和内容不可变；重复发送去重。业务完成后用 `setRequests` 保留仍有效的请求键。清除后不能靠重复旧通知重新唤醒。
 - 作者可调用 `interaction.pause()/resume()/disconnect()`；宿主只负责执行控制，不显示业务互动栏或角色选择器。暂停仅影响模型自动执行，人工仍可操作。disconnect 清理连接但不清空页面数据；游戏结束、离座和重开由组件定义。模型 turn 完成不等于业务完成。
 

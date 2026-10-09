@@ -140,8 +140,8 @@ async function publish() {
       `${p.turn} to move`,
       `等待${p.turn === "Black" ? "黑方" : "白方"}落子`,
     ),
-    message: `${p.turn} to move. Observe the board, then click an empty cell or call placeStone with 1-based row and column.`,
-    data: { move: p.move, color: p.turn },
+    message: `${p.turn} to move. The notification includes the current board and stateVersion. Choose an empty cell and call the known placeStone interface with 1-based row and column, or use page controls. Read more state only if needed; a separate widget_observe call is not required.`,
+    data: { ...describePosition(p), round: l.round, color: p.turn },
   });
 }
 async function changeSeat(
