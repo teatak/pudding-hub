@@ -1,6 +1,6 @@
 {
   "id": "teatak/pudding-hub/widgets/gomoku",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "title": {
     "zh-CN": "五子棋",
     "zh-TW": "五子棋",
@@ -12,7 +12,7 @@
     "zh-TW": "使用者與對話參與者共用同一棋盤。"
   },
   "requires": {
-    "protocolVersion": 20,
+    "protocolVersion": 22,
     "sdkVersion": "1"
   },
   "icon": "./assets/icon.svg"

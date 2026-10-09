@@ -39,7 +39,9 @@
 
 ## 参与者与主动通知
 
-`interaction.start({roles:[...]})` 打开宿主确认，由用户把角色分配给自己或明确会话。多个角色可属于同一参与者。不能自动把可见会话算作成员。
+`await interaction.candidates()` 返回真实会话列表、`preferredSessionIDs`、`connectedSessionIDs` 与 `maxSessions`。组件自己的选择界面仅初始化一次：`connectedSessionIDs ?? preferredSessionIDs`。Studio 默认不选；会话默认自己；分屏默认两侧，与焦点无关。已有连接不因位置变化或重启重新套用默认。
+
+`interaction.connect({sessionIDs})` 创建或更新明确的连接，最多 15 个会话加一个人类。保留成员的 participantID 不变，移除成员撤销访问和该页待执行请求，不删除历史或页面状态。连接不自动分配角色或唤醒模型。组件把座位、准备与阶段存入自己的 state，发出邀请后由模型通过接口或 CDP 自主加入、选边和准备。
 
 `interaction.notify({id,audience,delivery,topic,summary?,message,data?})`：
 
@@ -47,17 +49,19 @@
 - `delivery:"inform"` 只记录，不调用模型；`"request-action"` 请求行动，忙碌会话等待已有工作完成。
 - `summary` 使用用户语言提供简短可见摘要；`message` 放完整操作说明，通知卡片将其折叠，模型仍收到完整内容。
 - notification ID 和内容不可变；重复发送去重。业务完成后用 `setRequests` 保留仍有效的请求键。清除后不能靠重复旧通知重新唤醒。
-- 暂停、结束、关闭由宿主管理。模型 turn 完成不等于业务完成，组件用自身规则判定。
+- 作者可调用 `interaction.pause()/resume()/disconnect()`；宿主只负责执行控制，不显示业务互动栏或角色选择器。暂停仅影响模型自动执行，人工仍可操作。disconnect 清理连接但不清空页面数据；游戏结束、离座和重开由组件定义。模型 turn 完成不等于业务完成。
 
 [五子棋](../widgets/gomoku/source/src/App.tsx) 验证轮流行动：下一方定向行动请求，结束使用 `all + request-action` 通知全体，让各会话参与者自动处理结果。界面只写“通知全体”，不强调请求回复。
 [猜拳](../widgets/rps-decider/source/src/App.tsx) 验证独立提交：同时请求尚未提交的参与者，双方提交后公开结果，并使用 `all + request-action` 通知全体。未揭晓选择随页面 state 保存，恢复后仍不得出现在接口返回、DOM、通知或错误中。作者和调试权限不构成对抗性保密边界。
 
 ## 安装与升级
 
-来源记录包含 registry URL、包 ID、版本、包哈希和原始源码哈希。重复安装打开原 item；仅 LLM 首次编辑下载原版时创建副本，复制当前长期数据后各自独立，组件库无手动复制入口。升级只在当前源码仍等于安装源码且没有未提交编辑时允许，保存为新的 head，不自动启用；当前 active 和 storage 保留。用户通过现有版本历史预览/启用新源码。已归档的原项需要先恢复；不会静默另建同源安装。
+来源记录包含 registry URL、包 ID、版本、包哈希和原始源码哈希。重复安装打开原 item；仅 LLM 首次编辑下载原版时创建副本，复制当前长期数据后各自独立，组件库无手动复制入口。升级只在当前源码仍等于安装源码且没有未提交编辑时允许，构建成功后设为默认版本。旧页面继续固定旧版，新页面使用新版；旧页面显示可重载提示并说明可能丢失页面状态。长期 storage 保留。已归档的原项需要先恢复；不会静默另建同源安装。
 
 ## 验证
 
 `PUDDING_CORE_DIR=... pnpm test` 验证包的不可改写性和样例规则。Desktop 的 `widget-hub` smoke 使用 `PUDDING_HUB_DIR` 读取当前源码，在隔离 home/端口中测试真实 guest 和 Core/MCP，不依赖线上 registry。外部模型的观察、决策效果及 Windows 需单独验收。
 
 恢复互动会创建新的暂停运行，旧 target 与在途调用失效。作者注册 `pudding.interaction.onResume(async () => { ... })`，在用户继续且宿主核验参与者后，根据保存的状态生成当前有效请求；不重播旧回执或已结束的结果，不将持久业务数据绑定到临时 runID。结束互动保留页面，明确关闭标签页才清理。
+
+五子棋和猜拳 2.2.0 需要协议 22，已移除旧 `start({roles})` API。使用旧宿主角色的作者源码需迁移；旧发布包保持不可变。

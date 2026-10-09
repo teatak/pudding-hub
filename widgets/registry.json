@@ -22,6 +22,15 @@
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjIwIiBmaWxsPSIjMTZBMzRBIi8+CiAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CiAgICA8cmVjdCB4PSIyOCIgeT0iMjgiIHdpZHRoPSI3MiIgaGVpZ2h0PSI3MiIgcng9IjgiLz4KICAgIDxwYXRoIGQ9Ik00NiAyOHY3Mk02NCAyOHY3Mk04MiAyOHY3Mk0yOCA0Nmg3Mk0yOCA2NGg3Mk0yOCA4Mmg3MiIvPgogIDwvZz4KICA8Y2lyY2xlIGN4PSI0NiIgY3k9IjQ2IiByPSI4IiBmaWxsPSIjZmZmZmZmIi8+CiAgPGNpcmNsZSBjeD0iODIiIGN5PSI2NCIgcj0iOCIgZmlsbD0iI2ZmZmZmZiIvPgogIDxjaXJjbGUgY3g9IjY0IiBjeT0iODIiIHI9IjgiIGZpbGw9IiMxMTE4MjciLz4KICA8Y2lyY2xlIGN4PSI2NCIgY3k9IjgyIiByPSI2IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIvPgo8L3N2Zz4K",
       "releases": [
         {
+          "version": "2.2.0",
+          "package": "./gomoku/releases/2.2.0/gomoku.pudding-widget.json",
+          "packageHash": "f45de8f83378a9d5a6e419f3b52b0a299007676c3b108ea1e69de7c0e7808b84",
+          "requires": {
+            "protocolVersion": 22,
+            "sdkVersion": "1"
+          }
+        },
+        {
           "version": "2.1.0",
           "package": "./gomoku/releases/2.1.0/gomoku.pudding-widget.json",
           "packageHash": "fbd328ff83f19051969a24dd2b9cd171d337fb7f1c5bb26f8ac0596d96f313bd",
@@ -73,6 +82,15 @@
       },
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0Ij4KICA8dGl0bGU+SGFuZCBGaXN0PC90aXRsZT4KICA8ZGVzYz5IYW5kIEZpc3QgaWNvbiBmcm9tIEx1Y2lkZSwgSVNDIExpY2Vuc2UuPC9kZXNjPgogIDxyZWN0IHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiByeD0iMjAiIGZpbGw9IiNGNTlFMEIiLz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyMCAxOCkgc2NhbGUoMy43KSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjIuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj4KICAgIDxwYXRoIGQ9Ik0xMi4wMzUgMTcuMDEyYTMgMyAwIDAgMC0zLTNsLS4zMTEtLjAwMmEuNzIuNzIgMCAwIDEtLjUwNS0xLjIyOWwxLjE5NS0xLjE5NUEyIDIgMCAwIDEgMTAuODI4IDExSDEyYTIgMiAwIDAgMCAwLTRIOS4yNDNhMyAzIDAgMCAwLTIuMTIyLjg3OWwtMi43MDcgMi43MDdBNC44MyA0LjgzIDAgMCAwIDMgMTRhOCA4IDAgMCAwIDggOGgyYTggOCAwIDAgMCA4LThWN2EyIDIgMCAxIDAtNCAwdjJhMiAyIDAgMSAwIDQgMCIvPgogICAgPHBhdGggZD0iTTEzLjg4OCA5LjY2MkEyIDIgMCAwIDAgMTcgOFY1QTIgMiAwIDEgMCAxMyA1Ii8+CiAgICA8cGF0aCBkPSJNOSA1QTIgMiAwIDEgMCA1IDVWMTAiLz4KICAgIDxwYXRoIGQ9Ik05IDdWNEEyIDIgMCAxIDEgMTMgNFY3LjI2OCIvPgogIDwvZz4KPC9zdmc+Cg==",
       "releases": [
+        {
+          "version": "2.2.0",
+          "package": "./rps-decider/releases/2.2.0/rps-decider.pudding-widget.json",
+          "packageHash": "58c336384d0d2df9c77816c70dea35b3657b4d6cf2659f55ec3c6c0615f352f4",
+          "requires": {
+            "protocolVersion": 22,
+            "sdkVersion": "1"
+          }
+        },
         {
           "version": "2.1.0",
           "package": "./rps-decider/releases/2.1.0/rps-decider.pudding-widget.json",

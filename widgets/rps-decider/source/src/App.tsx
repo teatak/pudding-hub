@@ -8,27 +8,49 @@ import {
 } from "@pudding/widget";
 import { z } from "zod";
 import { gestures, winner, type Gesture } from "./rules";
+import { newLobby, joinSeat, setReady, leaveSeat, type Lobby } from "./lobby";
+import { LobbyControls } from "./Connections";
 import { text } from "./text";
 import "./style.css";
-// Page state is durable but is not exposed by inspection tools. Only project the
-// submitted flags until both choices are present; do not render/return secrets.
+const roles = ["A", "B"] as const;
 let changing = false;
-function snapshot() {
-  return pudding.state.read();
+function lobby(): Lobby {
+  return (pudding.state.read().data.lobby as unknown as Lobby) || newLobby(0);
+}
+function actor(context: InteractionContext) {
+  const run = pudding.interaction.read(),
+    who = run?.participants.find((p) => p.id === context.actor?.participantID);
+  if (!run || context.actor?.runID !== run.id || !who)
+    throw new Error("Connect to this round first");
+  if (context.signal.aborted) throw new Error("Cancelled");
+  return who;
+}
+// Hidden choices stay in page state; interfaces/DOM expose only submission flags
+// until both gestures are committed.
+function view() {
+  const data = pudding.state.read().data;
+  return {
+    lobby: lobby(),
+    submitted: data.submitted || [],
+    ...(data.result ? { result: data.result, choices: data.choices } : {}),
+  };
 }
 async function publish() {
   const run = pudding.interaction.read();
-  if (!run || run.status !== "running")
-    throw new Error("Start or resume the round");
-  const state = snapshot().data,
-    submitted = (state.submitted || []) as string[];
-  const noticeID =
-    submitted.length === 2 ? "result" : `choose-${submitted.length}`;
+  if (!run) throw new Error("Connect to the round first");
+  const data = pudding.state.read().data,
+    l = lobby(),
+    submitted = (data.submitted || []) as string[];
+  const id = `round-${l.round}-${l.phase === "lobby" ? "invite" : data.result ? "result" : "choose-" + submitted.length}`;
   await pudding.interaction.setRequests(
     run.receipts.flatMap((n) =>
-      n.id === noticeID
+      n.id === id
         ? n.deliveries
-            .filter((d) => d.active)
+            .filter(
+              (d) =>
+                d.active &&
+                (l.phase !== "lobby" || !l.ready.includes(d.participantID)),
+            )
             .map((d) => ({
               notificationID: n.id,
               participantID: d.participantID,
@@ -36,39 +58,82 @@ async function publish() {
         : [],
     ),
   );
-  if (submitted.length === 2) {
-    const winnerName =
-      run.participants.find((p) => p.roles.includes(String(state.result)))
-        ?.name || state.result;
+  if (l.phase === "lobby") {
     await pudding.interaction.notify({
-      id: noticeID,
+      id,
+      audience: { kind: "all" },
+      delivery: "request-action",
+      topic: "invitation",
+      summary: text(
+        "Round invitation: choose a seat and get ready",
+        "猜拳邀请：请选边并准备",
+      ),
+      message:
+        "You are invited to Rock Paper Scissors, not assigned a seat. Read readRound or observe the page, choose an available A or B seat via joinSeat (or its Join button), then call ready. If both seats are taken, observe. The round starts only when both players are ready. Never choose a seat for someone else.",
+    });
+    return;
+  }
+  if (data.result) {
+    const name =
+      run.participants.find((p) => p.id === l.seats[String(data.result)])
+        ?.name || data.result;
+    await pudding.interaction.notify({
+      id,
       audience: { kind: "all" },
       delivery: "request-action",
       topic: "result",
       summary:
-        state.result === "draw"
+        data.result === "draw"
           ? text("Round drawn", "本轮平局")
-          : text(
-              `Round finished: ${winnerName} wins`,
-              `本轮结束，${winnerName}获胜`,
-            ),
-      message: `The round has finished: ${state.result}. Briefly acknowledge the revealed result in this conversation. Do not submit another gesture.`,
-      data: { result: state.result, choices: state.choices },
+          : text(`Round finished: ${name} wins`, `本轮结束，${name}获胜`),
+      message: `The round has finished: ${data.result}. Briefly acknowledge the revealed result. Do not submit another gesture.`,
+      data: { result: data.result, choices: data.choices },
     });
     return;
   }
-  const pending = run.participants
-    .filter((p) => p.roles.some((role) => !submitted.includes(role)))
-    .map((p) => p.id);
   await pudding.interaction.notify({
-    id: noticeID,
-    audience: { kind: "selected", participantIDs: pending },
+    id,
+    audience: {
+      kind: "selected",
+      participantIDs: [
+        ...new Set(
+          roles.filter((r) => !submitted.includes(r)).map((r) => l.seats[r]),
+        ),
+      ],
+    },
     delivery: "request-action",
     topic: "choose",
     summary: text("Waiting for your choice", "等待出拳"),
     message:
-      "Choose rock, paper or scissors for each of your unsubmitted roles (A or B). Call chooseGesture, or select your role then click a gesture. Choices are revealed together.",
+      "Choose rock, paper or scissors for your seated role (A or B). Call chooseGesture, or select your role and click a gesture. Choices are revealed only after both submit.",
   });
+}
+async function changeSeat(
+  action: "join" | "ready" | "leave",
+  role: string | undefined,
+  context: InteractionContext,
+) {
+  if (changing) throw new Error("An operation is in progress");
+  changing = true;
+  try {
+    const who = actor(context),
+      old = pudding.state.read(),
+      l = lobby();
+    const next =
+      action === "join"
+        ? joinSeat(l, roles, role!, who.id, who.kind === "human")
+        : action === "ready"
+          ? setReady(l, roles, who.id)
+          : leaveSeat(l, who.id);
+    await pudding.state.write({
+      expectedVersion: old.version,
+      data: { ...old.data, lobby: next as unknown as JSONValue },
+    });
+    if (next.phase === "playing") await publish();
+    return next;
+  } finally {
+    changing = false;
+  }
 }
 async function choose(
   input: { role: "A" | "B"; gesture: Gesture },
@@ -77,54 +142,75 @@ async function choose(
   if (changing) throw new Error("An operation is in progress");
   changing = true;
   try {
-    const run = pudding.interaction.read(),
-      old = snapshot();
-    if (
-      !run ||
-      run.status !== "running" ||
-      context.actor?.runID !== run.id
-    )
-      throw new Error("No active round for this participant");
-    if (!context.actor.roles.includes(input.role))
-      throw new Error("This role belongs to another participant");
-    const choices=(old.data.choices || {}) as Partial<Record<"A" | "B", Gesture>>;
-    if (choices[input.role]) throw new Error("This role has already submitted");
-    if (context.signal.aborted) throw new Error("Cancelled");
+    const who = actor(context),
+      old = pudding.state.read(),
+      l = lobby();
+    if (l.phase !== "playing")
+      throw new Error("Both players must choose seats and get ready");
+    if (l.seats[input.role] !== who.id)
+      throw new Error("This seat belongs to another participant");
+    const choices = (old.data.choices || {}) as Partial<
+      Record<"A" | "B", Gesture>
+    >;
+    if (choices[input.role]) throw new Error("This seat has already submitted");
     const next = { ...choices, [input.role]: input.gesture },
-      submitted = Object.keys(next),
-      finished = next.A && next.B;
-    const data: Record<string, JSONValue> = finished
-      ? {
-          submitted,
-          result: winner(next.A!, next.B!),
-          choices: { A: next.A!, B: next.B! },
-        }
-      : { submitted, choices: next };
+      submitted = Object.keys(next);
+    const data = {
+      ...old.data,
+      submitted,
+      choices: next,
+      ...(next.A && next.B ? { result: winner(next.A, next.B) } : {}),
+    };
     await pudding.state.write({ expectedVersion: old.version, data });
     await publish();
-    return {
-      accepted: true,
-      submitted,
-      ...(finished ? { result: data.result, choices: data.choices } : {}),
-    };
+    return view();
   } finally {
     changing = false;
   }
 }
 pudding.defineInterface({
+  name: "joinSeat",
+  description:
+    "Choose your own available A or B seat. Connection does not assign a seat.",
+  input: z.object({ role: z.enum(roles) }).strict(),
+  run: (input, context) => changeSeat("join", input.role, context),
+});
+pudding.defineInterface({
+  name: "ready",
+  description:
+    "Mark your own seat ready. Both players must be ready before submitting gestures.",
+  input: z.object({}).strict(),
+  run: (_, context) => changeSeat("ready", undefined, context),
+});
+pudding.defineInterface({
+  name: "leaveSeat",
+  description:
+    "Leave your seat before play; your conversation stays connected.",
+  input: z.object({}).strict(),
+  run: (_, context) => changeSeat("leave", undefined, context),
+});
+pudding.defineInterface({
+  name: "readRound",
+  description:
+    "Read seats, readiness and submitted flags. Choices are returned only after both submit.",
+  input: z.object({}).strict(),
+  run: view,
+});
+pudding.defineInterface({
   name: "chooseGesture",
   description:
-    "Submit an unrevealed gesture for one of your assigned roles. Each role submits once; the result is revealed after both submit.",
-  input: z
-    .object({ role: z.enum(["A", "B"]), gesture: z.enum(gestures) })
-    .strict(),
+    "Submit a private gesture for your own seat once both players are ready.",
+  input: z.object({ role: z.enum(roles), gesture: z.enum(gestures) }).strict(),
   run: choose,
 });
-pudding.interaction.onResume(async () => { if (!snapshot().data.result) await publish(); });
+pudding.interaction.onResume(async () => {
+  if (!pudding.state.read().data.result) await publish();
+});
 export default function App() {
   const state = useWidgetState(),
     run = useWidgetInteraction(),
-    [role, setRole] = useState<"A" | "B">("A"),
+    l = lobby();
+  const [role, setRole] = useState<"A" | "B">("A"),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
   const submitted = (state.data.submitted || []) as string[];
@@ -139,42 +225,45 @@ export default function App() {
       setBusy(false);
     }
   }
-  async function start() {
-    await pudding.interaction.start({ roles: ["A", "B"] });
-    const old = snapshot();
+  async function start(sessionIDs: string[]) {
+    await pudding.interaction.connect({ sessionIDs });
+    const old = pudding.state.read();
     await pudding.state.write({
       expectedVersion: old.version,
-      data: { submitted: [], choices: {} },
+      data: {
+        lobby: newLobby(lobby().round + 1) as unknown as JSONValue,
+        submitted: [],
+        choices: {},
+      },
     });
-    await publish();
+    if (pudding.interaction.read()?.status === "paused")
+      await pudding.interaction.resume();
+    else await publish();
   }
   return (
     <main>
       <h1>{text("Rock Paper Scissors", "猜拳")}</h1>
       <p className="hint">
         {text(
-          "Submit independently. Choices are only revealed after both players submit. Closing the page resets the round.",
-          "独立出拳，双方提交后揭晓。关闭页面后本局重置。",
+          "Choose seats and get ready, then submit independently. Both choices are revealed together.",
+          "选边并准备后独立出拳，双方提交后共同揭晓。",
         )}
       </p>
-      {!run ? (
-        <button
-          id="start"
-          className="primary"
-          disabled={busy}
-          onClick={() => void perform(start)}
-        >
-          {text("Start round", "发起一局")}
-        </button>
-      ) : (
+      <LobbyControls
+        run={run}
+        lobby={l}
+        roles={roles}
+        busy={busy}
+        perform={perform}
+        start={start}
+        act={(a, r) => pudding.interaction.handle((c) => changeSeat(a, r, c))}
+      />
+      {l.phase === "playing" && (
         <>
           <div className="players">
-            {["A", "B"].map((r) => (
-              <div className="player" key={r}>
-                <h2>
-                  {r} ·{" "}
-                  {run.participants.find((p) => p.roles.includes(r))?.name}
-                </h2>
+            {roles.map((r) => (
+              <div className="player" data-submitted={r} key={r}>
+                <h2>{r}</h2>
                 <p>
                   {submitted.includes(r)
                     ? text("Submitted", "已提交")
@@ -191,9 +280,7 @@ export default function App() {
                   : `${state.data.result} ${text("wins", "获胜")}`}
               </h2>
               <p>
-                {Object.entries(
-                  (state.data.choices || {}) as Record<string, string>,
-                )
+                {Object.entries(state.data.choices as Record<string, string>)
                   .map(([r, c]) => `${r}: ${c}`)
                   .join(" · ")}
               </p>
@@ -201,7 +288,7 @@ export default function App() {
           ) : (
             <>
               <div className="toolbar" role="group" aria-label="Role">
-                {(["A", "B"] as const).map((r) => (
+                {roles.map((r) => (
                   <button
                     key={r}
                     aria-label={`Select role ${r}`}
@@ -217,11 +304,7 @@ export default function App() {
                   <button
                     key={g}
                     aria-label={`Choose ${g}`}
-                    disabled={
-                      busy ||
-                      run.status !== "running" ||
-                      submitted.includes(role)
-                    }
+                    disabled={busy || !run || submitted.includes(role)}
                     onClick={() =>
                       void perform(() =>
                         pudding.interaction.handle((c) =>
@@ -238,16 +321,14 @@ export default function App() {
           )}
         </>
       )}
-      {error ? (
+      {error && (
         <p role="alert" className="error">
           {error}{" "}
-          {run?.status === "running" ? (
-            <button onClick={() => void perform(publish)}>
-              {text("Retry notification", "重试通知")}
-            </button>
-          ) : null}
+          <button onClick={() => void perform(publish)}>
+            {text("Retry notification", "重试通知")}
+          </button>
         </p>
-      ) : null}
+      )}
     </main>
   );
 }

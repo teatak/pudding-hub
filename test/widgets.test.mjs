@@ -90,3 +90,28 @@ test("packages use Core validation and releases cannot be overwritten", async ()
     await fs.rm(root, { recursive: true, force: true });
   }
 });
+
+for (const widget of ["gomoku", "rps-decider"]) {
+  const { newLobby, joinSeat, setReady, leaveSeat } = await import(`../widgets/${widget}/source/src/lobby.ts`);
+  test(`${widget}: invitation has no assigned seats, participants choose and ready themselves`, () => {
+    const roles = widget === "gomoku" ? ["Black", "White"] : ["A", "B"];
+    let lobby = newLobby(1);
+    assert.deepEqual(lobby.seats, {});
+    assert.throws(() => setReady(lobby, roles, "first"), /Choose a seat/);
+    lobby = joinSeat(lobby, roles, roles[0], "first", false);
+    assert.throws(() => joinSeat(lobby, roles, roles[0], "second", false), /occupied/);
+    assert.throws(() => joinSeat(lobby, roles, roles[1], "first", false), /Leave/);
+    lobby = setReady(lobby, roles, "first");
+    assert.equal(lobby.phase, "lobby");
+    lobby = leaveSeat(lobby, "first");
+    assert.deepEqual(lobby.ready, []);
+    lobby = joinSeat(lobby, roles, roles[0], "first", false);
+    lobby = joinSeat(lobby, roles, roles[1], "second", false);
+    lobby = setReady(lobby, roles, "second");
+    assert.equal(lobby.phase, "lobby");
+    lobby = setReady(lobby, roles, "first");
+    assert.equal(lobby.phase, "playing");
+    assert.throws(() => leaveSeat(lobby, "first"), /new round/);
+    assert.deepEqual(JSON.parse(JSON.stringify(lobby)), lobby, "author state survives serialization");
+  });
+}
