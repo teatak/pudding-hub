@@ -16,6 +16,42 @@ export function initial(): Position {
     last: null,
   };
 }
+
+// A derived tool view; the persisted numeric board remains the rules' source of truth.
+export function describePosition(position: Position) {
+  const coordinates = (index: number) => ({
+    row: Math.floor(index / size) + 1,
+    column: (index % size) + 1,
+  });
+  const symbols = [".", "B", "W"];
+  const stones = { Black: [] as { row: number; column: number }[], White: [] as { row: number; column: number }[] };
+  position.board.forEach((stone, index) => {
+    if (stone === 1) stones.Black.push(coordinates(index));
+    if (stone === 2) stones.White.push(coordinates(index));
+  });
+  return {
+    board: {
+      coordinates: "1-based (row, column). Rows increase top to bottom; columns increase left to right.",
+      legend: ". = empty, B = Black, W = White",
+      rows: [
+        "    " + Array.from({ length: size }, (_, column) => String(column + 1).padStart(2)).join(" "),
+        ...Array.from({ length: size }, (_, row) =>
+          String(row + 1).padStart(2) + "  " +
+          position.board.slice(row * size, (row + 1) * size).map(stone => symbols[stone].padStart(2)).join(" "),
+        ),
+      ],
+    },
+    stones,
+    move: position.move,
+    turn: position.turn,
+    winner: position.winner,
+    lastMove: position.last === null ? null : {
+      ...coordinates(position.last),
+      color: position.board[position.last] === 1 ? "Black" : "White",
+    },
+  };
+}
+
 export function place(
   old: Position,
   row: number,

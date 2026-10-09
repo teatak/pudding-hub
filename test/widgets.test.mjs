@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
-import { initial, place } from "../widgets/gomoku/source/src/rules.ts";
+import { initial, place, describePosition } from "../widgets/gomoku/source/src/rules.ts";
 import { winner } from "../widgets/rps-decider/source/src/rules.ts";
 import { packageWidget, sourceFiles, widgetIcon } from "../scripts/package-widget.mjs";
 test("Gomoku enforces turns, occupancy, edges and horizontal/vertical/diagonal wins", () => {
@@ -37,6 +37,35 @@ test("RPS resolves all nine pairs without turn ordering", () => {
       else assert.equal(winner(b, a), result === "A" ? "B" : "A");
     }
   assert.equal(winner("rock", "scissors"), "A");
+});
+test("Gomoku tool view preserves row/column orientation, stones and last move without exposing flat indices", () => {
+  const empty = describePosition(initial());
+  assert.equal(empty.board.rows.length, 16);
+  assert.match(empty.board.rows[0], /1\s+2\s+3.*15$/);
+  assert.deepEqual(empty.stones, { Black: [], White: [] });
+  assert.equal(empty.lastMove, null);
+  let state = initial();
+  for (const [row, column] of [[8, 8], [9, 9], [9, 8], [10, 8], [8, 9]])
+    state = place(state, row, column, state.turn);
+  const saved = JSON.stringify(state);
+  const view = describePosition(state);
+  assert.deepEqual(view.stones, {
+    Black: [{ row: 8, column: 8 }, { row: 8, column: 9 }, { row: 9, column: 8 }],
+    White: [{ row: 9, column: 9 }, { row: 10, column: 8 }],
+  });
+  assert.deepEqual(view.lastMove, { row: 8, column: 9, color: "Black" });
+  assert.equal(view.turn, "White");
+  assert.equal(view.move, 5);
+  assert.equal(view.last, undefined);
+  assert.equal(Array.isArray(view.board), false);
+  assert.deepEqual(view.board.rows[8].trim().split(/\s+/).slice(8, 10), ["B", "B"]);
+  assert.equal(view.board.rows[9].trim().split(/\s+/)[8], "B");
+  assert.equal(view.board.rows[9].trim().split(/\s+/)[9], "W");
+  assert.equal(view.board.rows[10].trim().split(/\s+/)[8], "W");
+  const edges = describePosition(place(place(initial(), 1, 15, "Black"), 15, 1, "White"));
+  assert.equal(edges.board.rows[1].trim().split(/\s+/)[15], "B");
+  assert.equal(edges.board.rows[15].trim().split(/\s+/)[1], "W");
+  assert.equal(JSON.stringify(state), saved, "formatting never changes persisted game state");
 });
 test("packages use Core validation and releases cannot be overwritten", async () => {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), "pudding-hub-package-"));

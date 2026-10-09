@@ -7,7 +7,7 @@ import {
   type JSONValue,
 } from "@pudding/widget";
 import { z } from "zod";
-import { initial, place, size, type Position } from "./rules";
+import { initial, place, size, describePosition, type Position } from "./rules";
 import { newLobby, joinSeat, setReady, leaveSeat, type Lobby } from "./lobby";
 import { LobbyControls } from "./Connections";
 import { text } from "./text";
@@ -31,6 +31,40 @@ function actor(context: InteractionContext) {
     throw new Error("Connect to this game first");
   if (context.signal.aborted) throw new Error("Cancelled");
   return participant;
+}
+function describeLobby(context: InteractionContext) {
+  const l = lobby(), run = pudding.interaction.read();
+  const self = run?.id === context.actor?.runID
+    ? run?.participants.find(p => p.id === context.actor?.participantID)
+    : undefined;
+  return {
+    round: l.round,
+    phase: l.phase,
+    self: self ? {
+      participantID: self.id,
+      name: self.name,
+      seats: roles.filter(role => l.seats[role] === self.id),
+      ready: l.ready.includes(self.id),
+    } : null,
+    seats: Object.fromEntries(roles.map(role => {
+      const id = l.seats[role];
+      return [role, id ? {
+        participantID: id,
+        name: run?.participants.find(p => p.id === id)?.name ?? null,
+        ready: l.ready.includes(id),
+      } : null];
+    })),
+  };
+}
+function readBoard(context: InteractionContext) {
+  const l = describeLobby(context), p = position();
+  const turn = l.phase === "playing" && !p.winner ? p.turn : null;
+  return {
+    ...l,
+    ...describePosition(p),
+    turn,
+    yourTurn: turn !== null && Boolean(l.self?.seats.includes(turn)),
+  };
 }
 async function save(l: Lobby, p: Position) {
   const old = pudding.state.read();
@@ -128,7 +162,7 @@ async function changeSeat(
           : leaveSeat(old, who.id);
     await save(next, position());
     if (next.phase === "playing") await publish();
-    return next;
+    return describeLobby(context);
   } finally {
     changing = false;
   }
@@ -149,7 +183,7 @@ async function move(
     const next = place(p, input.row, input.column, p.turn);
     await save(l, next);
     await publish();
-    return next;
+    return readBoard(context);
   } finally {
     changing = false;
   }
@@ -190,9 +224,9 @@ pudding.defineInterface({
 pudding.defineInterface({
   name: "readBoard",
   description:
-    "Read seats, readiness and the complete board: 0 empty, 1 black, 2 white.",
+    "Read a coordinate-labelled 15×15 board (. empty, B Black, W White), stone coordinates, last move, named seats and your own identity/turn. All row/column coordinates are 1-based.",
   input: z.object({}).strict(),
-  run: () => ({ ...position(), lobby: lobby() }),
+  run: (_, context) => readBoard(context),
 });
 pudding.interaction.onResume(async () => {
   if (!position().winner) await publish();
