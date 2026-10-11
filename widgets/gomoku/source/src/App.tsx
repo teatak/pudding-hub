@@ -1,334 +1,766 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   pudding,
   useWidgetInteraction,
   useWidgetState,
-  type InteractionContext,
-  type JSONValue,
+  type SessionCandidate,
 } from "@pudding/widget";
-import { z } from "zod";
-import { initial, place, size, describePosition, type Position } from "./rules";
-import { newLobby, joinSeat, setReady, leaveSeat, type Lobby } from "./lobby";
-import { LobbyControls } from "./Connections";
+import {
+  Check,
+  MessageSquareOff,
+  MessagesSquare,
+  Play,
+  Swords,
+  UserRound,
+} from "lucide-react";
+import { roles } from "./lobby";
+import { size, winningLine, type Color } from "./rules";
+import {
+  changeSeat,
+  finishCountdown,
+  lobby,
+  move,
+  NotificationError,
+  position,
+  publish,
+  resign,
+  start,
+} from "./game";
 import { text } from "./text";
 import "./style.css";
-const roles = ["Black", "White"] as const;
-let changing = false;
-function position(): Position {
+
+type Candidates = Awaited<ReturnType<typeof pudding.interaction.candidates>>;
+type Player = {
+  id: string;
+  name: string;
+  human: boolean;
+  model?: SessionCandidate["model"];
+};
+const me = "@me",
+  letters = "ABCDEFGHIJKLMNO";
+const sideName = (role: Color) =>
+  role === "Black"
+    ? text("Black · first", "黑棋 · 先手")
+    : text("White · second", "白棋 · 后手");
+function Avatar({ player }: { player?: Player }) {
   return (
-    (pudding.state.read().data.position as unknown as Position) || initial()
+    <span className="gd-avatar">
+      {player?.human ? (
+        <UserRound size={22} />
+      ) : player?.model ? (
+        <img src={player.model.icon} alt="" />
+      ) : (
+        <Swords size={20} />
+      )}
+    </span>
   );
 }
-function lobby(): Lobby {
-  return (pudding.state.read().data.lobby as unknown as Lobby) || newLobby(0);
-}
-function actor(context: InteractionContext) {
-  const run = pudding.interaction.read();
-  const participant = run?.participants.find(
-    (p) => p.id === context.actor?.participantID,
-  );
-  if (!run || context.actor?.runID !== run.id || !participant)
-    throw new Error("Connect to this game first");
-  if (context.signal.aborted) throw new Error("Cancelled");
-  return participant;
-}
-function describeLobby(context: InteractionContext) {
-  const l = lobby(), run = pudding.interaction.read();
-  const self = run?.id === context.actor?.runID
-    ? run?.participants.find(p => p.id === context.actor?.participantID)
-    : undefined;
-  return {
-    round: l.round,
-    phase: l.phase,
-    self: self ? {
-      participantID: self.id,
-      name: self.name,
-      seats: roles.filter(role => l.seats[role] === self.id),
-      ready: l.ready.includes(self.id),
-    } : null,
-    seats: Object.fromEntries(roles.map(role => {
-      const id = l.seats[role];
-      return [role, id ? {
-        participantID: id,
-        name: run?.participants.find(p => p.id === id)?.name ?? null,
-        ready: l.ready.includes(id),
-      } : null];
-    })),
-  };
-}
-function readBoard(context: InteractionContext) {
-  const l = describeLobby(context), p = position();
-  const turn = l.phase === "playing" && !p.winner ? p.turn : null;
-  return {
-    ...l,
-    ...describePosition(p),
-    turn,
-    yourTurn: turn !== null && Boolean(l.self?.seats.includes(turn)),
-  };
-}
-async function save(l: Lobby, p: Position) {
-  const old = pudding.state.read();
-  await pudding.state.write({
-    expectedVersion: old.version,
-    data: {
-      lobby: l as unknown as JSONValue,
-      position: p as unknown as JSONValue,
-    },
-  });
-}
-async function publish() {
-  const run = pudding.interaction.read();
-  if (!run) throw new Error("Connect to the game first");
-  const l = lobby(),
-    p = position();
-  const id = `round-${l.round}-${l.phase === "lobby" ? "invite" : p.winner ? "result" : "move-" + p.move}`;
-  await pudding.interaction.setRequests(
-    run.receipts.flatMap((n) =>
-      n.id === id
-        ? n.deliveries
-            .filter(
-              (d) =>
-                d.active &&
-                (l.phase !== "lobby" || !l.ready.includes(d.participantID)),
-            )
-            .map((d) => ({
-              notificationID: n.id,
-              participantID: d.participantID,
-            }))
-        : [],
-    ),
-  );
-  if (l.phase === "lobby") {
-    await pudding.interaction.notify({
-      id,
-      audience: { kind: "all" },
-      delivery: "request-action",
-      topic: "invitation",
-      summary: text(
-        "Game invitation: choose a side and get ready",
-        "棋局邀请：请选边并准备",
-      ),
-      message:
-        "You are invited to Gomoku, not assigned a side. Read readBoard or observe the page, choose an available Black or White seat via joinSeat (or click its Join button), then call ready. If both seats are taken, observe. The game starts only when both players are ready. Never choose a seat for another participant.",
-    });
-    return;
-  }
-  if (p.winner) {
-    const name =
-      run.participants.find((player) => player.id === l.seats[p.winner!])
-        ?.name || p.winner;
-    await pudding.interaction.notify({
-      id,
-      audience: { kind: "all" },
-      delivery: "request-action",
-      topic: "result",
-      summary:
-        p.winner === "draw"
-          ? text("Match drawn", "本局平局")
-          : text(`Match finished: ${name} wins`, `本局结束，${name}获胜`),
-      message: `The match has finished: ${p.winner}. Briefly acknowledge the result. Do not place more stones.`,
-      data: { winner: p.winner },
-    });
-    return;
-  }
-  await pudding.interaction.notify({
-    id,
-    audience: { kind: "selected", participantIDs: [l.seats[p.turn]] },
-    delivery: "request-action",
-    topic: "move",
-    summary: text(
-      `${p.turn} to move`,
-      `等待${p.turn === "Black" ? "黑方" : "白方"}落子`,
-    ),
-    message: `${p.turn} to move. The notification includes the current board and stateVersion. Choose an empty cell and call the known placeStone interface with 1-based row and column, or use page controls. Read more state only if needed; a separate widget_observe call is not required.`,
-    data: { ...describePosition(p), round: l.round, color: p.turn },
-  });
-}
-async function changeSeat(
-  action: "join" | "ready" | "leave",
-  role: string | undefined,
-  context: InteractionContext,
-) {
-  if (changing) throw new Error("An operation is in progress");
-  changing = true;
-  try {
-    const who = actor(context),
-      old = lobby();
-    const next =
-      action === "join"
-        ? joinSeat(old, roles, role!, who.id, who.kind === "human")
-        : action === "ready"
-          ? setReady(old, roles, who.id)
-          : leaveSeat(old, who.id);
-    await save(next, position());
-    if (next.phase === "playing") await publish();
-    return describeLobby(context);
-  } finally {
-    changing = false;
-  }
-}
-async function move(
-  input: { row: number; column: number },
-  context: InteractionContext,
-) {
-  if (changing) throw new Error("An operation is in progress");
-  changing = true;
-  try {
-    const who = actor(context),
-      l = lobby(),
-      p = position();
-    if (l.phase !== "playing")
-      throw new Error("Both players must choose seats and get ready");
-    if (l.seats[p.turn] !== who.id) throw new Error("Not your turn");
-    const next = place(p, input.row, input.column, p.turn);
-    await save(l, next);
-    await publish();
-    return readBoard(context);
-  } finally {
-    changing = false;
-  }
-}
-pudding.defineInterface({
-  name: "joinSeat",
-  description:
-    "Choose your own available Black or White seat. Connection does not assign a seat.",
-  input: z.object({ role: z.enum(roles) }).strict(),
-  run: (input, context) => changeSeat("join", input.role, context),
-});
-pudding.defineInterface({
-  name: "ready",
-  description:
-    "Mark your own seat ready. Both sides must be ready before playing.",
-  input: z.object({}).strict(),
-  run: (_, context) => changeSeat("ready", undefined, context),
-});
-pudding.defineInterface({
-  name: "leaveSeat",
-  description:
-    "Leave your seat before the game starts; your conversation stays connected.",
-  input: z.object({}).strict(),
-  run: (_, context) => changeSeat("leave", undefined, context),
-});
-pudding.defineInterface({
-  name: "placeStone",
-  description:
-    "Place a stone at 1-based coordinates. The widget checks your seat and turn.",
-  input: z
-    .object({
-      row: z.number().int().min(1).max(15),
-      column: z.number().int().min(1).max(15),
-    })
-    .strict(),
-  run: move,
-});
-pudding.defineInterface({
-  name: "readBoard",
-  description:
-    "Read a coordinate-labelled 15×15 board (. empty, B Black, W White), stone coordinates, last move, named seats and your own identity/turn. All row/column coordinates are 1-based.",
-  input: z.object({}).strict(),
-  run: (_, context) => readBoard(context),
-});
-pudding.interaction.onResume(async () => {
-  if (!position().winner) await publish();
-});
 export default function App() {
   useWidgetState();
   const run = useWidgetInteraction(),
     p = position(),
     l = lobby();
-  const [error, setError] = useState(""),
-    [busy, setBusy] = useState(false);
+  const [candidates, setCandidates] = useState<Candidates | null>(null);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [picker, setPicker] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<{
+    message: string;
+    retry?: "candidates" | "notification";
+  } | null>(null);
+  const [danmaku, setDanmaku] = useState(true),
+    [draft, setDraft] = useState("");
+  const [now, setNow] = useState(Date.now());
+  const members = run?.participants.map((p) => p.id).join(",") || "";
+  const human = run?.participants.find((p) => p.kind === "human");
+  const humanRole = roles.find((role) => l.seats[role] === human?.id);
+  const myTurn =
+    !!humanRole && l.phase === "playing" && !p.winner && p.turn === humanRole;
   async function perform(fn: () => Promise<unknown>) {
     setBusy(true);
-    setError("");
+    setError(null);
     try {
       await fn();
     } catch (e) {
-      setError(String(e));
+      setError({
+        message: e instanceof Error ? e.message : String(e),
+        retry: e instanceof NotificationError ? "notification" : undefined,
+      });
     } finally {
       setBusy(false);
     }
   }
-  async function start(sessionIDs: string[]) {
-    await pudding.interaction.connect({ sessionIDs });
-    await save(newLobby(lobby().round + 1), initial());
-    if (pudding.interaction.read()?.status === "paused")
-      await pudding.interaction.resume();
-    else await publish();
+  async function loadCandidates(isLive = () => true) {
+    try {
+      const value = await pudding.interaction.candidates();
+      if (!isLive()) return;
+      setCandidates(value);
+      if (!lobby().round)
+        setSelected(
+          (value.connectedSessionIDs ?? value.preferredSessionIDs).slice(0, 2),
+        );
+    } catch (e) {
+      if (isLive()) setError({ message: String(e), retry: "candidates" });
+    }
   }
-  const human = run?.participants.find((p) => p.kind === "human");
+  useEffect(() => {
+    let live = true;
+    void loadCandidates(() => live);
+    return () => {
+      live = false;
+    };
+  }, [members, l.round]);
+  useEffect(() => {
+    if (
+      l.phase !== "countdown" ||
+      l.startsAt === null ||
+      run?.status !== "running"
+    )
+      return;
+    setNow(Date.now());
+    const clock = setInterval(() => setNow(Date.now()), 100);
+    const startTimer = setTimeout(
+      () => void perform(finishCountdown),
+      Math.max(0, l.startsAt - Date.now()),
+    );
+    return () => {
+      clearInterval(clock);
+      clearTimeout(startTimer);
+    };
+  }, [l.phase, l.startsAt, run?.status]);
+  const chosenPlayer = (id: string): Player | undefined => {
+    if (id === me)
+      return {
+        id,
+        name: text("Play on the board", "在棋盘上落子"),
+        human: true,
+      };
+    const candidate = candidates?.sessions.find((s) => s.id === id);
+    return candidate
+      ? { id, name: candidate.name, human: false, model: candidate.model }
+      : undefined;
+  };
+  const players = l.round
+    ? l.players.map((id) => {
+        const participant = run?.participants.find((p) => p.id === id);
+        return participant
+          ? {
+              id,
+              name:
+                participant.kind === "human"
+                  ? text("Play on the board", "在棋盘上落子")
+                  : participant.name,
+              human: participant.kind === "human",
+              model: candidates?.sessions.find((s) => s.participantID === id)
+                ?.model,
+            }
+          : undefined;
+      })
+    : selected.map(chosenPlayer);
+  const act = (action: "join" | "ready" | "unready" | "leave", role?: string) =>
+    perform(() =>
+      pudding.interaction.handle((c) => changeSeat(action, role, c)),
+    );
+  function openRound() {
+    const choice = l.round
+      ? l.players.flatMap((id) =>
+          id === human?.id
+            ? [me]
+            : candidates!.sessions
+                .filter((s) => s.participantID === id)
+                .map((s) => s.id),
+        )
+      : selected;
+    if (choice.length !== 2) {
+      setSelected(choice);
+      setPicker(true);
+      return;
+    }
+    void perform(() =>
+      start(
+        choice.filter((id) => id !== me),
+        choice.includes(me),
+      ),
+    );
+  }
+  const title = !l.round
+    ? text("Ready for a game", "等待开局")
+    : p.winner
+      ? p.winner === "draw"
+        ? text("Draw", "本局平局")
+        : text(
+            p.winner + " wins",
+            (p.winner === "Black" ? "黑方" : "白方") + "获胜",
+          )
+      : l.phase === "countdown"
+        ? text("Starting soon", "即将开始")
+        : l.phase === "lobby"
+          ? text("Waiting for players", "等待就绪")
+          : text(
+              p.turn + " to move",
+              p.turn === "Black" ? "黑方回合" : "白方回合",
+            );
+  const line = winningLine(p);
   return (
-    <main>
-      <h1>{text("Gomoku", "五子棋")}</h1>
-      <p className="hint">
-        {text(
-          "Choose sides, get ready, then connect five stones to win. Closing the tab ends this board.",
-          "选边并准备后开局，连成五子获胜。关闭标签页后本局重置。",
+    <main className="gd-product">
+      <div className="gd-content">
+        <header className="gd-gamebar">
+          <div className="gd-game-title">
+            <strong aria-live="polite">{title}</strong>
+            <small>
+              {text("Round", "第")} {l.round || 1} {text("·", "局 ·")}{" "}
+              {p.move
+                ? text(p.move + " moves", p.move + " 手")
+                : text("15 × 15 · freestyle", "15 路 · 自由规则")}
+            </small>
+          </div>
+          <div className="gd-game-actions">
+            <button
+              className="gd-button gd-danmaku-toggle"
+              aria-label={text("Toggle player comments", "开关卡片弹幕")}
+              aria-pressed={danmaku}
+              onClick={() => setDanmaku((v) => !v)}
+            >
+              {danmaku ? (
+                <MessagesSquare size={16} />
+              ) : (
+                <MessageSquareOff size={16} />
+              )}
+            </button>
+            {run?.status === "paused" ? (
+              <button
+                className="gd-button is-primary gd-main-action"
+                disabled={busy}
+                id="resume"
+                onClick={() => void perform(() => pudding.interaction.resume())}
+              >
+                {text("Continue", "继续对局")}
+              </button>
+            ) : (
+              <button
+                className="gd-button gd-main-action is-primary"
+                id="start"
+                disabled={busy || !candidates || (!!l.round && !p.winner)}
+                onClick={openRound}
+              >
+                {!l.round ? (
+                  <>
+                    <Play size={14} />
+                    {text("Play", "开一局")}
+                  </>
+                ) : p.winner ? (
+                  text("Rematch", "再来一局")
+                ) : l.phase === "playing" ? (
+                  text("Playing", "对弈中")
+                ) : (
+                  text("Waiting", "等待就绪")
+                )}
+              </button>
+            )}
+          </div>
+        </header>
+        {error && (
+          <div className="gd-alert" role="alert">
+            <span>{error.message}</span>
+            {error.retry && (
+              <button
+                className="gd-button"
+                disabled={busy}
+                onClick={() =>
+                  void perform(
+                    error.retry === "candidates"
+                      ? () => loadCandidates()
+                      : publish,
+                  )
+                }
+              >
+                {text("Retry", "重试")}
+              </button>
+            )}
+            <button
+              className="gd-button is-text"
+              onClick={() => setError(null)}
+            >
+              {text("Dismiss", "关闭")}
+            </button>
+          </div>
         )}
-      </p>
-      <LobbyControls
-        run={run}
-        lobby={l}
-        roles={roles}
-        busy={busy}
-        perform={perform}
-        start={start}
-        act={(a, r) => pudding.interaction.handle((c) => changeSeat(a, r, c))}
-      />
-      {l.phase === "playing" && (
-        <p>
-          {p.winner
-            ? `${p.winner} ${text("wins", "获胜")}`
-            : `${p.turn} · ${text("Move", "步数")} ${p.move + 1}`}
-        </p>
-      )}
-      {error && (
-        <p role="alert" className="error">
-          {error}{" "}
-          <button onClick={() => void perform(publish)}>
-            {text("Retry notification", "重试通知")}
-          </button>
-        </p>
-      )}
-      <div className="board" role="group" aria-label="Gomoku board">
-        {p.board.map((stone, index) => (
-          <button
-            key={index}
-            data-row={Math.floor(index / size) + 1}
-            data-column={(index % size) + 1}
-            aria-label={`Row ${Math.floor(index / size) + 1} Column ${(index % size) + 1}: ${stone === 1 ? "Black" : stone === 2 ? "White" : "empty"}`}
-            className={p.last === index ? "last" : ""}
-            disabled={
-              busy || !run || l.phase !== "playing" || !!p.winner || !!stone
-            }
-            onClick={() =>
-              void perform(() =>
-                pudding.interaction.handle((c) =>
-                  move(
-                    {
-                      row: Math.floor(index / size) + 1,
-                      column: (index % size) + 1,
-                    },
-                    c,
-                  ),
-                ),
-              )
-            }
+        <div className="gd-arena">
+          <section
+            className="gd-players"
+            aria-label={text("Players", "两位棋手")}
           >
-            {stone ? (
-              <span className={`stone ${stone === 1 ? "black" : "white"}`} />
-            ) : null}
-          </button>
-        ))}
-      </div>
-      {run &&
-        l.phase === "playing" &&
-        human?.id !== l.seats[p.turn] &&
-        !p.winner && (
-          <p className="hint">
-            {text("Waiting for the other participant.", "等待对方落子。")}
-          </p>
+            {[0, 1].map((index) => {
+              const player = players[index],
+                role = roles.find((r) => l.seats[r] === player?.id),
+                ready = !!player && l.ready.includes(player.id);
+              const turn =
+                l.phase === "playing" && !p.winner && role === p.turn;
+              const quote = role && danmaku ? p.comments[role] : undefined;
+              const status = !l.round
+                ? text("Not invited", "待邀请")
+                : p.winner
+                  ? p.winner === role
+                    ? text("Winner", "本局获胜")
+                    : text("Finished", "本局结束")
+                  : turn
+                    ? text("Thinking", "思考中")
+                    : l.phase === "playing"
+                      ? text("Waiting", "等待对手")
+                      : ready
+                        ? text("Ready", "已准备")
+                        : role
+                          ? text("Not ready", "等待准备")
+                          : text("Choosing", "等待选边");
+              return (
+                <article
+                  className={"gd-player" + (turn ? " is-turn" : "")}
+                  key={index}
+                  data-player-id={player?.id || ""}
+                >
+                  <div className="gd-player-top">
+                    <span className="gd-side-badge">
+                      {role && (
+                        <span
+                          className={"gd-color-dot gd-" + role.toLowerCase()}
+                        />
+                      )}
+                      {role ? sideName(role) : text("Unassigned", "未选边")}
+                    </span>
+                    <span
+                      className={
+                        "gd-player-status" + (ready ? " is-ready" : "")
+                      }
+                    >
+                      {player ? status : text("Open", "空位")}
+                    </span>
+                  </div>
+                  <div className="gd-player-head">
+                    <Avatar player={player} />
+                    <div className="gd-player-identity">
+                      <strong
+                        className="gd-player-name"
+                        title={player?.model?.name}
+                      >
+                        {player?.human
+                          ? text("You", "我")
+                          : player?.model?.name ||
+                            text(
+                              player ? "Loading model" : "Choose a player",
+                              player ? "读取模型信息" : "待补齐棋手",
+                            )}
+                      </strong>
+                      <small title={player?.name}>
+                        {player?.name ||
+                          text("Conversation or you", "可选会话，也可选自己")}
+                      </small>
+                    </div>
+                  </div>
+                  <div className="gd-card-body">
+                    {player?.human && l.round && l.phase !== "playing" ? (
+                      <div className="gd-card-wait">
+                        <small>
+                          {text(
+                            "Choose a side, then get ready",
+                            "选边后准备，双方读秒开局",
+                          )}
+                        </small>
+                        <div className="gd-player-actions">
+                          {!role ? (
+                            roles.map((r) => (
+                              <button
+                                className="gd-button"
+                                key={r}
+                                data-seat={r}
+                                disabled={busy || !!l.seats[r]}
+                                onClick={() => void act("join", r)}
+                              >
+                                {r === "Black"
+                                  ? text("Black", "执黑")
+                                  : text("White", "执白")}
+                              </button>
+                            ))
+                          ) : (
+                            <>
+                              <button
+                                className={
+                                  "gd-button" + (!ready ? " is-primary" : "")
+                                }
+                                id="ready"
+                                disabled={busy}
+                                onClick={() =>
+                                  void act(ready ? "unready" : "ready")
+                                }
+                              >
+                                {ready
+                                  ? text("Cancel ready", "取消准备")
+                                  : text("Ready", "准备")}
+                              </button>
+                              <button
+                                className="gd-button is-text"
+                                disabled={busy}
+                                id="leave"
+                                onClick={() => void act("leave")}
+                              >
+                                {text("Leave", "离座")}
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    ) : player?.human && l.phase === "playing" && !p.winner ? (
+                      <div className="gd-human-body">
+                        <p
+                          className="gd-human-last"
+                          title={quote?.text}
+                          data-speech-move={
+                            quote?.text ? quote.move : undefined
+                          }
+                        >
+                          {quote?.text ||
+                            text(
+                              "Add a comment with your move",
+                              "落子时，也可以说一句",
+                            )}
+                        </p>
+                        <label className="gd-comment-compose">
+                          <span>
+                            {text("Comment on your next move", "随下一手发言")}
+                          </span>
+                          <input
+                            data-comment
+                            maxLength={40}
+                            value={draft}
+                            disabled={busy || !myTurn}
+                            onChange={(e) => setDraft(e.target.value)}
+                            placeholder={text(
+                              "Say something…",
+                              "这手想说什么？",
+                            )}
+                          />
+                        </label>
+                      </div>
+                    ) : quote?.text ? (
+                      <div
+                        className="gd-speech is-new"
+                        key={quote.move}
+                        data-speech-move={quote.move}
+                      >
+                        <span className="gd-speech-text" title={quote.text}>
+                          {quote.text}
+                        </span>
+                        <small>
+                          {text("Move ", "第 ") + quote.move + text("", " 手")}
+                        </small>
+                      </div>
+                    ) : (
+                      <div className="gd-card-wait">
+                        {ready && l.phase !== "playing" ? (
+                          <Check size={18} />
+                        ) : (
+                          <Swords size={18} />
+                        )}
+                        <span>
+                          {!player
+                            ? text(
+                                "Choose a conversation or yourself",
+                                "补选会话或“我”",
+                              )
+                            : !l.round
+                              ? text(
+                                  "Invite this conversation on start",
+                                  "开局后，邀请当前会话",
+                                )
+                              : l.phase === "countdown"
+                                ? text("Ready to start", "已就绪，即将开局")
+                                : l.phase === "lobby"
+                                  ? text(
+                                      "Waiting for this player",
+                                      "等待棋手自行选边、准备",
+                                    )
+                                  : !danmaku
+                                    ? text("Comments off", "弹幕已关闭")
+                                    : p.winner
+                                      ? text("Match complete", "对局已结束")
+                                      : text(
+                                          "One comment with each move",
+                                          "落子时可以留一句话",
+                                        )}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </section>
+          <section className="gd-board-area" aria-label={text("Board", "棋盘")}>
+            <div className="gd-board-wrap">
+              <div
+                className="gd-wood"
+                role="group"
+                aria-label={text(
+                  "Gomoku, row 1 at bottom",
+                  "五子棋棋盘，最下面为第 1 行",
+                )}
+              >
+                <svg
+                  className="gd-grid"
+                  viewBox="0 0 1000 1000"
+                  aria-hidden="true"
+                >
+                  {Array.from({ length: size }, (_, i) => (
+                    <g key={i}>
+                      <line
+                        x1="80"
+                        x2="920"
+                        y1={80 + i * 60}
+                        y2={80 + i * 60}
+                      />
+                      <line
+                        y1="80"
+                        y2="920"
+                        x1={80 + i * 60}
+                        x2={80 + i * 60}
+                      />
+                    </g>
+                  ))}
+                  {[
+                    [3, 3],
+                    [3, 11],
+                    [7, 7],
+                    [11, 3],
+                    [11, 11],
+                  ].map(([r, c]) => (
+                    <circle
+                      key={r + "-" + c}
+                      cx={80 + c * 60}
+                      cy={80 + r * 60}
+                      r="5"
+                    />
+                  ))}
+                </svg>
+                <div className="gd-letters" aria-hidden="true">
+                  {[...letters].map((c) => (
+                    <span key={c}>{c}</span>
+                  ))}
+                </div>
+                <div className="gd-numbers" aria-hidden="true">
+                  {Array.from({ length: size }, (_, i) => (
+                    <span key={i}>{size - i}</span>
+                  ))}
+                </div>
+                {p.board.map((stone, index) => {
+                  const row = Math.floor(index / size) + 1,
+                    column = (index % size) + 1;
+                  return (
+                    <button
+                      key={index}
+                      className="gd-spot"
+                      data-row={row}
+                      data-column={column}
+                      style={{
+                        left: 8 + (column - 1) * 6 + "%",
+                        bottom: 8 + (row - 1) * 6 + "%",
+                      }}
+                      aria-label={
+                        letters[column - 1] +
+                        row +
+                        " · " +
+                        text(
+                          "row " + row + ", column " + column,
+                          "第 " + row + " 行，第 " + column + " 列",
+                        ) +
+                        " · " +
+                        (stone === 1
+                          ? text("Black", "黑棋")
+                          : stone === 2
+                            ? text("White", "白棋")
+                            : text("Empty", "空位"))
+                      }
+                      disabled={busy || !myTurn || !!stone}
+                      onClick={() =>
+                        void perform(async () => {
+                          const previous = position().move;
+                          try {
+                            await pudding.interaction.handle((c) =>
+                              move({ row, column, comment: draft }, c),
+                            );
+                          } finally {
+                            if (position().move > previous) setDraft("");
+                          }
+                        })
+                      }
+                    >
+                      {!!stone && (
+                        <span
+                          className={
+                            "gd-stone gd-" +
+                            (stone === 1 ? "black" : "white") +
+                            (p.last === index ? " is-last" : "") +
+                            (line.includes(index) ? " is-win" : "")
+                          }
+                        />
+                      )}
+                    </button>
+                  );
+                })}
+                {l.phase === "countdown" && (
+                  <div className="gd-overlay" aria-live="polite">
+                    <span>{text("Both players ready", "双方就绪")}</span>
+                    <strong>
+                      {Math.max(
+                        1,
+                        Math.ceil(((l.startsAt || now) - now) / 1000),
+                      )}
+                    </strong>
+                    <span>{text("Black plays first", "黑棋先行")}</span>
+                    {humanRole && (
+                      <button
+                        className="gd-button"
+                        disabled={busy}
+                        onClick={() => void act("unready")}
+                      >
+                        {text("Cancel ready", "取消准备")}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+            <footer className="gd-board-footer">
+              <p>
+                {!l.round
+                  ? selected.length === 2
+                    ? text(
+                        "Current conversations · invite on start",
+                        "当前两个会话 · 开局后直接邀请",
+                      )
+                    : text(
+                        "Choose the missing player on start",
+                        "开局时补齐两位棋手",
+                      )
+                  : p.winner
+                    ? text(
+                        "Match complete · board retained",
+                        "本局结束 · 棋盘保留供查看",
+                      )
+                    : myTurn
+                      ? text(
+                          "Your turn · click an intersection",
+                          "轮到你了，点击交叉点落子",
+                        )
+                      : text(
+                          "Watching · players act in their conversations",
+                          "观战中 · 棋手在各自会话中行动",
+                        )}
+              </p>
+              {humanRole && l.phase === "playing" && !p.winner && (
+                <button
+                  className="gd-button is-text"
+                  disabled={busy}
+                  onClick={() =>
+                    void perform(() => pudding.interaction.handle(resign))
+                  }
+                >
+                  {text("Resign", "认输")}
+                </button>
+              )}
+            </footer>
+          </section>
+        </div>
+        {picker && (
+          <CandidatePicker
+            candidates={candidates?.sessions || []}
+            selected={selected}
+            setSelected={setSelected}
+            close={() => setPicker(false)}
+            start={() => {
+              setPicker(false);
+              void perform(() =>
+                start(
+                  selected.filter((id) => id !== me),
+                  selected.includes(me),
+                ),
+              );
+            }}
+            chosenPlayer={chosenPlayer}
+          />
         )}
+      </div>
     </main>
+  );
+}
+function CandidatePicker({
+  candidates,
+  selected,
+  setSelected,
+  close,
+  start,
+  chosenPlayer,
+}: {
+  candidates: SessionCandidate[];
+  selected: string[];
+  setSelected: (ids: string[]) => void;
+  close: () => void;
+  start: () => void;
+  chosenPlayer: (id: string) => Player | undefined;
+}) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    dialog.current?.showModal();
+  }, []);
+  return (
+    <dialog
+      ref={dialog}
+      className="gd-picker-card"
+      aria-labelledby="picker-title"
+      onCancel={close}
+    >
+      <h3 id="picker-title">{text("Choose two players", "补齐两位棋手")}</h3>
+      <p>
+        {text("Selected", "已选")} {selected.length} / 2 ·{" "}
+        {text("You can join too", "也可以自己上场")}
+      </p>
+      <div className="gd-picker-options">
+        {[me, ...candidates.map((s) => s.id)].map((id) => {
+          const player = chosenPlayer(id)!;
+          return (
+            <label className="gd-picker-row" key={id}>
+              <input
+                type="checkbox"
+                data-session={id}
+                checked={selected.includes(id)}
+                disabled={!selected.includes(id) && selected.length >= 2}
+                onChange={(e) =>
+                  setSelected(
+                    e.target.checked
+                      ? [...selected, id]
+                      : selected.filter((p) => p !== id),
+                  )
+                }
+              />
+              <Avatar player={player} />
+              <span>
+                {player.human ? text("You", "我") : player.model?.name}
+                <small>{player.name}</small>
+              </span>
+            </label>
+          );
+        })}
+      </div>
+      <div className="gd-picker-actions">
+        <button
+          className="gd-button is-primary"
+          disabled={selected.length !== 2}
+          onClick={start}
+        >
+          {text("Invite and play", "邀请并开局")}
+        </button>
+        <button className="gd-button" onClick={close}>
+          {text("Back", "返回")}
+        </button>
+      </div>
+    </dialog>
   );
 }

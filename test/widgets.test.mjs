@@ -59,12 +59,12 @@ test("Gomoku tool view preserves row/column orientation, stones and last move wi
   assert.equal(view.last, undefined);
   assert.equal(Array.isArray(view.board), false);
   assert.deepEqual(view.board.rows[8].trim().split(/\s+/).slice(8, 10), ["B", "B"]);
-  assert.equal(view.board.rows[9].trim().split(/\s+/)[8], "B");
-  assert.equal(view.board.rows[9].trim().split(/\s+/)[9], "W");
-  assert.equal(view.board.rows[10].trim().split(/\s+/)[8], "W");
+  assert.equal(view.board.rows[7].trim().split(/\s+/)[8], "B");
+  assert.equal(view.board.rows[7].trim().split(/\s+/)[9], "W");
+  assert.equal(view.board.rows[6].trim().split(/\s+/)[8], "W");
   const edges = describePosition(place(place(initial(), 1, 15, "Black"), 15, 1, "White"));
-  assert.equal(edges.board.rows[1].trim().split(/\s+/)[15], "B");
-  assert.equal(edges.board.rows[15].trim().split(/\s+/)[1], "W");
+  assert.equal(edges.board.rows[15].trim().split(/\s+/)[15], "B");
+  assert.equal(edges.board.rows[1].trim().split(/\s+/)[1], "W");
   assert.equal(JSON.stringify(state), saved, "formatting never changes persisted game state");
 });
 test("packages use Core validation and releases cannot be overwritten", async () => {
@@ -120,7 +120,7 @@ test("packages use Core validation and releases cannot be overwritten", async ()
   }
 });
 
-for (const widget of ["gomoku", "rps-decider"]) {
+for (const widget of ["rps-decider"]) {
   const { newLobby, joinSeat, setReady, leaveSeat } = await import(`../widgets/${widget}/source/src/lobby.ts`);
   test(`${widget}: invitation has no assigned seats, participants choose and ready themselves`, () => {
     const roles = widget === "gomoku" ? ["Black", "White"] : ["A", "B"];

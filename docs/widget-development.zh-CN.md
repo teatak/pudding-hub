@@ -41,6 +41,8 @@
 
 `await interaction.candidates()` 返回真实会话列表、`preferredSessionIDs`、`connectedSessionIDs` 与 `maxSessions`。组件自己的选择界面仅初始化一次：`connectedSessionIDs ?? preferredSessionIDs`。Studio 默认不选；会话默认自己；分屏默认两侧，与焦点无关。已有连接不因位置变化或重启重新套用默认。
 
+Protocol 23 起，每个候选包含 `model: {id, name, icon}`，分别为真实模型 ID、显示名称和自包含的 `data:` 品牌图片；已连接时还有 `participantID`，可与公开 run 的参与者匹配来显示棋手卡片。使用这些字段的包须声明要求 protocol 23。隐藏／预加载时也可读取候选，隐藏写入仍受限制。
+
 `interaction.connect({sessionIDs})` 创建或更新明确的连接，最多 15 个会话加一个人类。保留成员的 participantID 不变，移除成员撤销访问和该页待执行请求，不删除历史或页面状态。连接不自动分配角色或唤醒模型。组件把座位、准备与阶段存入自己的 state，发出邀请后由模型通过接口或 CDP 自主加入、选边和准备。
 
 `interaction.notify({id,audience,delivery,topic,summary?,message,data?})`：
