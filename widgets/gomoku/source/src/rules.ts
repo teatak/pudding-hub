@@ -1,146 +1,47 @@
 export const size = 15;
+export const letters = "ABCDEFGHIJKLMNO";
 export type Color = "Black" | "White";
-export type Position = {
+export type Move = {
+  column: string;
+  row: number;
+  stone: "B" | "W";
+  comment?: string;
+};
+// The ordered score is the only source of board, turn, count and comments.
+export type PositionState = {
+  history: Move[];
+  resigned: Color | null;
+  turnStartedAt: number | null;
+  turnElapsedMS: number;
+};
+export type Position = PositionState & {
   board: number[];
   turn: Color;
-  move: number;
+  moveCount: number;
   winner: Color | "draw" | null;
   last: number | null;
-  comments: Partial<Record<Color, { text: string; move: number }>>;
+  comments: Partial<Record<Color, { text: string; moveNumber: number }>>;
 };
+export function record(p: PositionState): PositionState {
+  return {
+    history: p.history,
+    resigned: p.resigned,
+    turnStartedAt: p.turnStartedAt,
+    turnElapsedMS: p.turnElapsedMS,
+  };
+}
 export function initial(): Position {
-  return {
-    board: Array(size * size).fill(0),
-    turn: "Black",
-    move: 0,
-    winner: null,
-    last: null,
-    comments: {},
-  };
-}
-
-// A derived tool view; the persisted numeric board remains the rules' source of truth.
-export function describePosition(position: Position) {
-  const coordinates = (index: number) => ({
-    row: Math.floor(index / size) + 1,
-    column: (index % size) + 1,
+  return derive({
+    history: [],
+    resigned: null,
+    turnStartedAt: null,
+    turnElapsedMS: 0,
   });
-  const symbols = [".", "B", "W"];
-  const stones = {
-    Black: [] as { row: number; column: number }[],
-    White: [] as { row: number; column: number }[],
-  };
-  position.board.forEach((stone, index) => {
-    if (stone === 1) stones.Black.push(coordinates(index));
-    if (stone === 2) stones.White.push(coordinates(index));
-  });
-  return {
-    board: {
-      coordinates:
-        "1-based (row, column). Row 1 is the BOTTOM, row 15 is the TOP. Columns 1–15 (A–O) increase left to right. Displayed rows run 15 down to 1.",
-      legend: ". = empty, B = Black, W = White",
-      rows: [
-        "    " +
-          Array.from({ length: size }, (_, column) =>
-            String(column + 1).padStart(2),
-          ).join(" "),
-        ...Array.from({ length: size }, (_, visualRow) => {
-          const row = size - 1 - visualRow;
-          return (
-            String(row + 1).padStart(2) +
-            "  " +
-            position.board
-              .slice(row * size, (row + 1) * size)
-              .map((stone) => symbols[stone].padStart(2))
-              .join(" ")
-          );
-        }),
-      ],
-    },
-    stones,
-    move: position.move,
-    turn: position.turn,
-    winner: position.winner,
-    comments: position.comments,
-    lastMove:
-      position.last === null
-        ? null
-        : {
-            ...coordinates(position.last),
-            color: position.board[position.last] === 1 ? "Black" : "White",
-          },
-  };
 }
-
-export function place(
-  old: Position,
-  row: number,
-  column: number,
-  color: Color,
-  comment = "",
-): Position {
-  if (old.winner) throw new Error("Match is finished");
-  if (color !== old.turn) throw new Error("Not your turn");
-  if (
-    !Number.isInteger(row) ||
-    !Number.isInteger(column) ||
-    row < 1 ||
-    row > size ||
-    column < 1 ||
-    column > size
-  )
-    throw new Error("Coordinates must be 1–15");
-  const r = row - 1,
-    c = column - 1,
-    index = r * size + c,
-    stone = color === "Black" ? 1 : 2;
-  if (old.board[index]) throw new Error("Cell is occupied");
-  if (comment.trim().length > 40)
-    throw new Error("Keep your comment within 40 characters");
-  const board = [...old.board];
-  board[index] = stone;
-  const count = (dr: number, dc: number) => {
-    let n = 0,
-      y = r + dr,
-      x = c + dc;
-    while (
-      y >= 0 &&
-      y < size &&
-      x >= 0 &&
-      x < size &&
-      board[y * size + x] === stone
-    ) {
-      n++;
-      y += dr;
-      x += dc;
-    }
-    return n;
-  };
-  const won = [
-    [1, 0],
-    [0, 1],
-    [1, 1],
-    [1, -1],
-  ].some(([dr, dc]) => 1 + count(dr, dc) + count(-dr, -dc) >= 5);
-  return {
-    board,
-    move: old.move + 1,
-    turn: color === "Black" ? "White" : "Black",
-    winner: won ? color : old.move + 1 === size * size ? "draw" : null,
-    last: index,
-    comments: {
-      ...old.comments,
-      [color]: { text: comment.trim(), move: old.move + 1 },
-    },
-  };
-}
-
-export function winningLine(position: Position): number[] {
-  if (!position.winner || position.winner === "draw" || position.last === null)
-    return [];
-  const index = position.last,
-    stone = position.winner === "Black" ? 1 : 2;
-  if (position.board[index] !== stone) return [];
+const indexOf = (m: Move) => (m.row - 1) * size + letters.indexOf(m.column);
+function lineThrough(board: number[], index: number): number[] {
+  const stone = board[index];
+  if (!stone) return [];
   for (const [dr, dc] of [
     [1, 0],
     [0, 1],
@@ -156,7 +57,7 @@ export function winningLine(position: Position): number[] {
         r < size &&
         c >= 0 &&
         c < size &&
-        position.board[r * size + c] === stone
+        board[r * size + c] === stone
       ) {
         line.push(r * size + c);
         r += dr * sign;
@@ -167,3 +68,122 @@ export function winningLine(position: Position): number[] {
   }
   return [];
 }
+export function derive(state: PositionState): Position {
+  const board = Array<number>(size * size).fill(0);
+  const comments: Position["comments"] = {};
+  state.history.forEach((m, i) => {
+    board[indexOf(m)] = m.stone === "B" ? 1 : 2;
+    comments[m.stone === "B" ? "Black" : "White"] = {
+      text: m.comment || "",
+      moveNumber: i + 1,
+    };
+  });
+  const lastMove = state.history.at(-1),
+    last = lastMove ? indexOf(lastMove) : null;
+  const winner = state.resigned
+    ? state.resigned === "Black"
+      ? "White"
+      : "Black"
+    : last !== null && lineThrough(board, last).length
+      ? lastMove!.stone === "B"
+        ? "Black"
+        : "White"
+      : state.history.length === size * size
+        ? "draw"
+        : null;
+  return {
+    ...state,
+    board,
+    comments,
+    last,
+    winner,
+    moveCount: state.history.length,
+    turn: state.history.length % 2 ? "White" : "Black",
+  };
+}
+export function describePosition(p: Position, includeHistoryComments = true) {
+  const symbols = [".", "B", "W"];
+  return {
+    board: {
+      coordinates:
+        "Columns A–O run left to right. Row 1 is the BOTTOM; row 15 is the TOP. Use column letters and numeric rows directly, e.g. column H, row 8.",
+      legend: ". = empty, B = Black, W = White",
+      text: [
+        "   " + [...letters].join(" "),
+        ...Array.from({ length: size }, (_, visualRow) => {
+          const row = size - visualRow;
+          return (
+            String(row).padStart(2) +
+            " " +
+            p.board
+              .slice((row - 1) * size, row * size)
+              .map((s) => symbols[s])
+              .join(" ")
+          );
+        }),
+      ].join("\n"),
+    },
+    history: includeHistoryComments
+      ? p.history
+      : p.history.map(({ column, row, stone }) => ({ column, row, stone })),
+    moveCount: p.moveCount,
+    turn: p.turn,
+    winner: p.winner,
+    lastMove: p.history.at(-1) || null,
+  };
+}
+export function place(
+  old: Position,
+  row: number,
+  column: string,
+  color: Color,
+  comment = "",
+  now = Date.now(),
+): Position {
+  if (old.winner) throw new Error("Match is finished");
+  if (color !== old.turn) throw new Error("Not your turn");
+  if (
+    !Number.isInteger(row) ||
+    row < 1 ||
+    row > size ||
+    typeof column !== "string" ||
+    !/^[A-O]$/.test(column)
+  )
+    throw new Error("Use columns A–O and rows 1–15");
+  if (old.board[(row - 1) * size + letters.indexOf(column)])
+    throw new Error("Cell is occupied");
+  if (comment.trim().length > 40)
+    throw new Error("Keep your comment within 40 characters");
+  const p = derive({
+    ...record(old),
+    history: [
+      ...old.history,
+      {
+        column,
+        row,
+        stone: color === "Black" ? "B" : "W",
+        ...(comment.trim() ? { comment: comment.trim() } : {}),
+      },
+    ],
+    turnStartedAt: now,
+    turnElapsedMS: 0,
+  });
+  if (p.winner) p.turnStartedAt = null;
+  return p;
+}
+export const thinkingMS = (p: PositionState, now: number) =>
+  p.turnElapsedMS +
+  (p.turnStartedAt === null ? 0 : Math.max(0, now - p.turnStartedAt));
+export const pauseClock = (p: Position, now = Date.now()): Position => ({
+  ...p,
+  turnElapsedMS: thinkingMS(p, now),
+  turnStartedAt: null,
+});
+export const resumeClock = (p: Position, now = Date.now()): Position => ({
+  ...p,
+  turnStartedAt: p.winner ? null : now,
+});
+export const winningLine = (p: Position) =>
+  !p.resigned && p.winner && p.last !== null
+    ? lineThrough(p.board, p.last)
+    : [];

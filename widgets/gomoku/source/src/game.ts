@@ -4,7 +4,17 @@ import {
   type JSONValue,
 } from "@pudding/widget";
 import { z } from "zod";
-import { initial, place, describePosition, type Position } from "./rules";
+import {
+  initial,
+  derive,
+  record,
+  pauseClock,
+  resumeClock,
+  place,
+  describePosition,
+  type Position,
+  type PositionState,
+} from "./rules";
 import {
   newLobby,
   joinSeat,
@@ -14,21 +24,30 @@ import {
   roles,
   type Lobby,
 } from "./lobby";
-import { text } from "./text";
+import { text, errorText } from "./text";
 
-export const position = () =>
-  (pudding.state.read().data.position as unknown as Position) || initial();
+export const position = () => {
+  const saved = pudding.state.read().data.position as unknown as
+    PositionState | undefined;
+  return saved ? derive(saved) : initial();
+};
 export const lobby = () =>
   (pudding.state.read().data.lobby as unknown as Lobby) || newLobby(0);
 let changing = false;
+let mutation: Promise<unknown> | null = null;
 async function change<T>(fn: () => Promise<T>) {
   if (changing)
     throw new Error(text("An operation is in progress", "当前操作尚未完成"));
   changing = true;
   try {
-    return await fn();
+    mutation = fn();
+    return (await mutation) as T;
+  } catch (error) {
+    if (error instanceof NotificationError) throw error;
+    throw new Error(errorText(error));
   } finally {
     changing = false;
+    mutation = null;
   }
 }
 function actor(context: InteractionContext) {
@@ -38,6 +57,7 @@ function actor(context: InteractionContext) {
   );
   if (!run || context.actor?.runID !== run.id || !participant)
     throw new Error("Connect to this game first");
+  if (run.status !== "running") throw new Error("Game is paused");
   if (context.signal.aborted) throw new Error("Cancelled");
   if (!lobby().players.includes(participant.id))
     throw new Error("You are observing this round");
@@ -48,7 +68,7 @@ async function save(l: Lobby, p: Position) {
     expectedVersion: pudding.state.read().version,
     data: {
       lobby: l as unknown as JSONValue,
-      position: p as unknown as JSONValue,
+      position: record(p) as unknown as JSONValue,
     },
   });
 }
@@ -65,6 +85,7 @@ export function readBoard(context: InteractionContext) {
     ...describePosition(p),
     round: l.round,
     phase: p.winner ? "finished" : l.phase,
+    paused: run?.status === "paused",
     startsAt: l.startsAt,
     self: self
       ? {
@@ -90,90 +111,133 @@ export function readBoard(context: InteractionContext) {
       }),
     ),
     turn,
-    yourTurn: turn !== null && !!self && l.seats[turn] === self.id,
+    yourTurn:
+      run?.status === "running" &&
+      turn !== null &&
+      !!self &&
+      l.seats[turn] === self.id,
   };
 }
 export class NotificationError extends Error {}
-export async function publish() {
+export async function publish(retry = false) {
   const run = pudding.interaction.read();
-  if (!run) throw new Error("Connect to the game first");
+  if (!run) throw new Error(errorText("Connect to this game first"));
   const l = lobby(),
     p = position();
-  const waiting = l.phase !== "playing";
-  const id =
-    "round-" +
-    l.round +
-    "-" +
-    (waiting ? "invite" : p.winner ? "result" : "move-" + p.move);
+  const topic = p.winner
+    ? "result"
+    : l.phase === "playing"
+      ? "move"
+      : "invitation";
+  const base = `round-${l.round}-${topic}-${p.moveCount}`;
+  const recipients =
+    l.phase === "countdown"
+      ? []
+      : p.winner
+        ? run.participants.map((player) => player.id)
+        : l.phase === "lobby"
+          ? l.players.filter((id) => !l.ready.includes(id))
+          : [l.seats[p.turn]];
+  const previous = run.receipts.filter(
+    (n) => n.id === base || n.id.startsWith(base + "-retry-"),
+  );
+  const latest = (id: string) =>
+    previous
+      .flatMap((n) =>
+        n.deliveries
+          .filter((d) => d.participantID === id)
+          .map((d) => ({ n, d })),
+      )
+      .at(-1);
+  const needed = recipients.filter((id) => {
+    const old = latest(id);
+    return (
+      !old ||
+      (retry &&
+        (!old.d.active ||
+          !["pending", "queued", "running"].includes(old.d.status)))
+    );
+  });
   try {
     await pudding.interaction.setRequests(
-      run.receipts.flatMap((n) =>
-        n.id === id
-          ? n.deliveries
-              .filter((d) => d.active)
-              .map((d) => ({
-                notificationID: n.id,
-                participantID: d.participantID,
-              }))
-          : [],
-      ),
+      recipients.flatMap((id) => {
+        const old = latest(id);
+        return old?.d.active && !needed.includes(id)
+          ? [{ notificationID: old.n.id, participantID: id }]
+          : [];
+      }),
     );
-    if (l.phase === "countdown") return;
-    if (l.phase === "lobby") {
-      await pudding.interaction.notify({
-        id,
-        audience: { kind: "selected", participantIDs: l.players },
-        delivery: "request-action",
-        topic: "invitation",
-        summary: text(
-          "Game invitation: choose a side and get ready",
-          "棋局邀请：请选边并准备",
-        ),
-        message:
-          "You are invited to Gomoku, not assigned a side. Read readBoard, choose an available Black or White seat via joinSeat, then call ready. Never choose for another participant. Once both are ready there is a 3-second countdown. Wait for your move notification; do not place a stone during the countdown.",
-      });
-    } else if (p.winner) {
-      const name =
-        run.participants.find((player) => player.id === l.seats[p.winner!])
-          ?.name || p.winner;
-      await pudding.interaction.notify({
-        id,
-        audience: { kind: "all" },
-        delivery: "request-action",
-        topic: "result",
-        summary:
-          p.winner === "draw"
-            ? text("Match drawn", "本局平局")
+    if (!needed.length) return;
+    // A receipt is immutable, including its localized text. Reuse pending work;
+    // only an explicit continuation creates a fresh wake-up for ended attempts.
+    const id = previous.length ? base + "-retry-" + previous.length : base;
+    const color =
+      p.turn === "Black"
+        ? text("Black", "黑方", "黑方")
+        : text("White", "白方", "白方");
+    const name =
+      run.participants.find((player) => player.id === l.seats[p.winner!])
+        ?.name || p.winner;
+    const summary =
+      topic === "invitation"
+        ? text(
+            "Game invitation: choose a side and get ready",
+            "棋局邀请：请选边并准备",
+            "棋局邀請：請選邊並準備",
+          )
+        : topic === "result"
+          ? p.winner === "draw"
+            ? text("Match drawn", "本局平局", "本局和局")
             : text(
-                "Match finished: " + name + " wins",
-                "本局结束，" + name + "获胜",
-              ),
-        message:
-          "The match has finished: " +
-          p.winner +
-          ". Briefly acknowledge the result. Do not place more stones.",
-        data: { winner: p.winner },
-      });
-    } else {
-      await pudding.interaction.notify({
-        id,
-        audience: { kind: "selected", participantIDs: [l.seats[p.turn]] },
-        delivery: "request-action",
-        topic: "move",
-        summary: text(
-          p.turn + " to move",
-          "等待" + (p.turn === "Black" ? "黑方" : "白方") + "落子",
-        ),
-        message:
-          p.turn +
-          " to move. Use placeStone with 1-based row/column: row 1 is BOTTOM, row 15 is TOP, columns 1–15 (A–O) go left to right. Include an optional short comment (max 40 characters) in the SAME call to display one line of banter on your player card. The notification already contains the current board and stateVersion; read more only if needed. Never play for the other side.",
-        data: { ...describePosition(p), round: l.round, color: p.turn },
-      });
-    }
+                `Match finished: ${name} wins`,
+                `本局结束，${name}获胜`,
+                `本局結束，${name}獲勝`,
+              )
+          : text(`${color} to move`, `等待${color}落子`, `等待${color}落子`);
+    const message =
+      topic === "invitation"
+        ? text(
+            "You are invited to Gomoku. Read readBoard, choose your own available Black or White seat with joinSeat, then call ready. Never act for the other player. Both ready starts a 3-second countdown; wait for your move notification before placing a stone.",
+            "邀请你参加五子棋。通过 readBoard 查看局面，用 joinSeat 选择自己的空闲 Black 或 White 席位，然后调用 ready。不要替对手操作。双方准备后读秒 3 秒，收到落子通知再下棋。",
+            "邀請你參加五子棋。透過 readBoard 查看局面，用 joinSeat 選擇自己的空閒 Black 或 White 席位，然後呼叫 ready。不要替對手操作。雙方準備後倒數 3 秒，收到落子通知再下棋。",
+          )
+        : topic === "result"
+          ? text(
+              `The match finished: ${p.winner}. Briefly acknowledge the result. Do not place more stones.`,
+              `本局结束：${p.winner}。简短回应结果，不要再落子。`,
+              `本局結束：${p.winner}。簡短回應結果，不要再落子。`,
+            )
+          : text(
+              `${color} to move. Call placeStone with column A–O (letter) and row 1–15 (number). Row 1 is bottom. Example: {"column":"H","row":8,"comment":"Center opening"}. Add an optional comment of at most 40 characters in the same call. The current board and stateVersion are attached. Only play your own side.`,
+              `轮到${color}。调用 placeStone，column 为 A–O 字母，row 为 1–15 数字，第 1 行在底部。例如 {"column":"H","row":8,"comment":"天元开局"}。同一次调用可以附带最多 40 字的弹幕。通知已附当前棋盘和 stateVersion，只能替自己落子。`,
+              `輪到${color}。呼叫 placeStone，column 為 A–O 字母，row 為 1–15 數字，第 1 行在底部。例如 {"column":"H","row":8,"comment":"天元開局"}。同一次呼叫可以附帶最多 40 字的彈幕。通知已附目前棋盤和 stateVersion，只能替自己落子。`,
+            );
+    await pudding.interaction.notify({
+      id,
+      audience: p.winner
+        ? { kind: "all" }
+        : { kind: "selected", participantIDs: needed },
+      delivery: "request-action",
+      topic,
+      summary,
+      message,
+      // Past banter remains in readBoard history; keep even a 225-move
+      // notification within the host's 32 KiB limit.
+      data: { ...describePosition(p, false), round: l.round, color: p.turn },
+    });
   } catch (error) {
-    throw new NotificationError(String(error));
+    throw new NotificationError(errorText(error));
   }
 }
+export const pause = async () => {
+  if (!lobby().round || position().winner)
+    throw new Error(errorText("No ongoing match"));
+  // Pausing must not be rejected just because the last stone is publishing its
+  // notification. Stop model work first, then freeze the committed position.
+  await pudding.interaction.pause();
+  await mutation?.catch(() => {});
+  await change(() => save(lobby(), pauseClock(position())));
+};
 export const start = (sessionIDs: string[], includeMe: boolean) =>
   change(async () => {
     if (
@@ -186,6 +250,7 @@ export const start = (sessionIDs: string[], includeMe: boolean) =>
     const players = run.participants
       .filter((p) => p.kind === "session" || includeMe)
       .map((p) => p.id);
+    await pudding.interaction.setRequests([]);
     await save(newLobby(round, players), initial());
     if (run.status === "paused") await pudding.interaction.resume();
     await publish();
@@ -210,11 +275,12 @@ export const changeSeat = (
 export const finishCountdown = () =>
   change(async () => {
     if (pudding.interaction.read()?.status !== "running") return;
-    await save(beginPlay(lobby()), position());
+    const now = Date.now();
+    await save(beginPlay(lobby(), now), { ...position(), turnStartedAt: now });
     await publish();
   });
 export const move = (
-  input: { row: number; column: number; comment?: string },
+  input: { row: number; column: string; comment?: string },
   context: InteractionContext,
 ) =>
   change(async () => {
@@ -240,67 +306,107 @@ export const resign = (context: InteractionContext) =>
     if (!role) throw new Error("You have no seat");
     await save(l, {
       ...p,
-      winner: role === "Black" ? "White" : "Black",
-      last: null,
+      resigned: role,
+      turnStartedAt: null,
     });
     await publish();
   });
-pudding.defineInterface({
-  name: "joinSeat",
-  description: "Choose your own available Black or White seat.",
-  input: z.object({ role: z.enum(roles) }).strict(),
-  run: (i, c) => changeSeat("join", i.role, c),
-});
-pudding.defineInterface({
-  name: "ready",
-  description:
-    "Mark your own seat ready, or cancel with ready:false before play. Both players ready starts a 3-second countdown.",
-  input: z.object({ ready: z.boolean().optional() }).strict(),
-  run: (i, c) =>
-    changeSeat(i.ready === false ? "unready" : "ready", undefined, c),
-});
-pudding.defineInterface({
-  name: "leaveSeat",
-  description:
-    "Leave your own seat before play. This also cancels the countdown.",
-  input: z.object({}).strict(),
-  run: (_, c) => changeSeat("leave", undefined, c),
-});
-pudding.defineInterface({
-  name: "placeStone",
-  description:
-    "Play your own turn at row/column 1–15. Row 1 is bottom; row 15 is top. Columns increase left to right. Optionally include one short comment for your card.",
-  input: z
-    .object({
-      row: z.number().int().min(1).max(15),
-      column: z.number().int().min(1).max(15),
-      comment: z.string().trim().max(40).optional(),
-    })
-    .strict(),
-  run: move,
-});
-pudding.defineInterface({
-  name: "readBoard",
-  description:
-    "Read the board (rows 15 down to 1), stones, turn, seats, readiness, countdown deadline and your identity. Row 1 is bottom; columns 1–15 (A–O) increase left to right.",
-  input: z.object({}).strict(),
-  run: (_, c) => readBoard(c),
-});
-pudding.defineInterface({
-  name: "resign",
-  description: "Resign your own seat in the current game.",
-  input: z.object({}).strict(),
-  run: (_, c) => resign(c),
+function registerInterfaces() {
+  return [
+    pudding.defineInterface({
+      name: "joinSeat",
+      description: text(
+        "Choose your own available Black or White seat.",
+        "选择自己空闲的 Black 或 White 席位。",
+        "選擇自己空閒的 Black 或 White 席位。",
+      ),
+      input: z.object({ role: z.enum(roles) }).strict(),
+      run: (i, c) => changeSeat("join", i.role, c),
+    }),
+    pudding.defineInterface({
+      name: "ready",
+      description: text(
+        "Ready your own seat; ready:false cancels readiness before play. Both ready starts a 3-second countdown.",
+        "准备自己的席位；开局前 ready:false 取消准备。双方准备后读秒 3 秒。",
+        "準備自己的席位；開局前 ready:false 取消準備。雙方準備後倒數 3 秒。",
+      ),
+      input: z.object({ ready: z.boolean().optional() }).strict(),
+      run: (i, c) =>
+        changeSeat(i.ready === false ? "unready" : "ready", undefined, c),
+    }),
+    pudding.defineInterface({
+      name: "leaveSeat",
+      description: text(
+        "Leave your own seat before play, cancelling the countdown.",
+        "开局前离开自己的席位，同时取消倒计时。",
+        "開局前離開自己的席位，同時取消倒數。",
+      ),
+      input: z.object({}).strict(),
+      run: (_, c) => changeSeat("leave", undefined, c),
+    }),
+    pudding.defineInterface({
+      name: "placeStone",
+      description: text(
+        "Place your stone at a real board coordinate: column A–O (letter), row 1–15 (number, bottom to top), e.g. {column:'H',row:8}. Include an optional comment (max 40 characters).",
+        "按棋盘真实坐标落子：column 为 A–O 字母列，row 为 1–15 数字行（由下向上），例如 {column:'H',row:8}。可附最多 40 字弹幕。",
+        "按棋盤實際座標落子：column 為 A–O 字母欄，row 為 1–15 數字列（由下向上），例如 {column:'H',row:8}。可附最多 40 字彈幕。",
+      ),
+      input: z
+        .object({
+          row: z
+            .number({ error: errorText("Use columns A–O and rows 1–15") })
+            .int()
+            .min(1)
+            .max(15),
+          column: z
+            .string({ error: errorText("Use columns A–O and rows 1–15") })
+            .regex(/^[A-O]$/, errorText("Use columns A–O and rows 1–15")),
+          comment: z
+            .string()
+            .trim()
+            .max(40, errorText("Keep your comment within 40 characters"))
+            .optional(),
+        })
+        .strict(),
+      run: move,
+    }),
+    pudding.defineInterface({
+      name: "readBoard",
+      description: text(
+        "Read board.text, ordered history, moveCount, turn, seats, readiness, countdown and your identity. Columns A–O; rows 1–15 bottom to top.",
+        "读取棋盘多行文本、history 棋谱、moveCount 手数、回合、席位、准备状态、倒计时和你的身份。字母列 A–O，数字行 1–15 由下向上。",
+        "讀取棋盤多行文字、history 棋譜、moveCount 手數、回合、席位、準備狀態、倒數和你的身分。字母欄 A–O，數字列 1–15 由下向上。",
+      ),
+      input: z.object({}).strict(),
+      run: (_, c) => readBoard(c),
+    }),
+    pudding.defineInterface({
+      name: "resign",
+      description: text(
+        "Resign your own seat in the current game.",
+        "以自己的席位认输。",
+        "以自己的席位認輸。",
+      ),
+      input: z.object({}).strict(),
+      run: (_, c) => resign(c),
+    }),
+  ];
+}
+let interfaces = registerInterfaces();
+pudding.locale.subscribe(() => {
+  interfaces.forEach((remove) => remove());
+  interfaces = registerInterfaces();
 });
 pudding.interaction.onResume(async () => {
-  // The mounted countdown effect owns its single deadline transition, including
-  // restoration. A new-round transaction publishes after resume acknowledges.
-  if (
-    changing ||
-    !lobby().round ||
-    position().winner ||
-    lobby().phase === "countdown"
-  )
-    return;
-  await change(publish);
+  if (changing || !lobby().round || position().winner) return;
+  await change(async () => {
+    const l = lobby();
+    // Restored countdowns start from three again; an in-game clock keeps only
+    // active thinking time that was committed before the explicit pause.
+    await save(
+      l.phase === "countdown" ? { ...l, startsAt: Date.now() + 3000 } : l,
+      l.phase === "playing" ? resumeClock(position()) : position(),
+    );
+    await publish(true);
+  });
 });

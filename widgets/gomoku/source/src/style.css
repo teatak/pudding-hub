@@ -1,14 +1,13 @@
 .gd-product {
-  --gd-bg: light-dark(#f2f0e9, #181c1b);
-  --gd-panel: light-dark(#fffefa, #222827);
-  --gd-raised: light-dark(#f4f3ed, #2b3430);
-  --gd-text: light-dark(#242d28, #eeeede);
-  --gd-muted: light-dark(#617167, #a4b3a8);
-  --gd-edge: light-dark(#d8ded3, #38443c);
-  --gd-accent: light-dark(#356847, #b4d5a5);
-  --gd-on-accent: light-dark(#ffffff, #19291c);
-  --gd-soft: light-dark(#e6efdf, #2e402f);
-  --gd-gold: light-dark(#866226, #d6ba7b);
+  --gd-bg: light-dark(#ffffff, oklch(0.19 0 0));
+  --gd-panel: light-dark(#fafafa, oklch(0.26 0 0));
+  --gd-raised: light-dark(#f0f0f0, oklch(0.3 0 0));
+  --gd-text: light-dark(#242424, oklch(0.95 0 0));
+  --gd-muted: light-dark(#737373, oklch(0.69 0 0));
+  --gd-edge: light-dark(#dddddd, #ffffff1a);
+  --gd-accent: light-dark(#333333, #e5e5e5);
+  --gd-on-accent: light-dark(#ffffff, #262626);
+  --gd-soft: light-dark(#e8e8e8, #363636);
   --gd-wood: light-dark(#e9c98e, #d9b67c);
   --gd-grain: light-dark(#b2864209, #93642d0c);
   --gd-grid: light-dark(#815d36aa, #76512da6);
@@ -94,7 +93,8 @@
   filter: brightness(0.94);
 }
 .gd-main-action {
-  width: 88px;
+  min-width: 88px;
+  white-space: nowrap;
 }
 .gd-danmaku-toggle {
   width: 36px;
@@ -120,9 +120,9 @@
   min-width: 0;
 }
 .gd-player {
-  height: 216px;
-  min-height: 216px;
-  max-height: 216px;
+  height: 192px;
+  min-height: 192px;
+  max-height: 192px;
   min-width: 0;
   padding: 14px;
   display: grid;
@@ -157,6 +157,11 @@
   box-shadow: 0 1px 2px #00000025;
   flex-shrink: 0;
 }
+.gd-undecided {
+  background: transparent;
+  border: 1px dashed var(--gd-muted);
+  box-shadow: none;
+}
 .gd-player-status {
   display: flex;
   align-items: center;
@@ -164,6 +169,11 @@
   color: var(--gd-muted);
   font-size: 11px;
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.gd-think-time {
+  min-width: 32px;
 }
 .gd-player-status.is-ready,
 .is-turn .gd-player-status {
@@ -213,6 +223,9 @@
   height: 100%;
   min-height: 0;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .gd-card-wait {
   height: 100%;
@@ -238,24 +251,21 @@
   gap: 8px;
 }
 .gd-speech {
-  height: 100%;
+  height: 58px;
   padding: 10px;
   border-radius: 8px;
   background: var(--gd-raised);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 4px;
   font-size: 12px;
+  line-height: 19px;
 }
 .gd-speech-text {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   overflow: hidden;
   overflow-wrap: anywhere;
 }
-.gd-speech small {
+.gd-speech-prefix {
   color: var(--gd-muted);
   font-size: 11px;
 }
@@ -271,8 +281,11 @@
   font-size: 11px;
   color: var(--gd-muted);
   overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-height: 18px;
+  overflow-wrap: anywhere;
 }
 .gd-comment-compose {
   display: flex;
@@ -282,7 +295,7 @@
   color: var(--gd-muted);
 }
 .gd-comment-compose input {
-  height: 36px;
+  height: 32px;
   padding: 6px 8px;
   background: var(--gd-raised);
   color: var(--gd-text);
@@ -298,7 +311,7 @@
 .gd-board-area {
   grid-area: board;
   width: 100%;
-  max-width: min(600px, max(240px, calc(100dvh - 384px)));
+  max-width: min(600px, max(240px, calc(100dvh - 360px)));
   min-width: 0;
   margin: 0 auto;
 }
@@ -404,14 +417,14 @@
 .gd-black {
   background: radial-gradient(
     circle at 30% 24%,
-    #646967,
-    #262b29 43%,
-    #0b100e 88%
+    #666666,
+    #292929 43%,
+    #101010 88%
   );
 }
 .gd-white {
-  background: radial-gradient(circle at 30% 24%, #ffffff, #f1f1e8 55%, #c5ccc4);
-  border: 1px solid #aeb5a890;
+  background: radial-gradient(circle at 30% 24%, #ffffff, #f1f1f1 55%, #c8c8c8);
+  border: 1px solid #b0b0b090;
 }
 .gd-stone.is-last::after {
   content: "";
@@ -442,9 +455,9 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: #1d271aa8;
+  background: #202020a8;
   border-radius: 6px;
-  color: #fffbe7;
+  color: #ffffff;
   pointer-events: none;
 }
 .gd-overlay strong {
@@ -520,7 +533,7 @@
     grid-template-columns: minmax(0, 1fr);
   }
   .gd-board-area {
-    max-width: min(600px, max(240px, calc(100dvh - 612px)));
+    max-width: min(600px, max(240px, calc(100dvh - 564px)));
   }
   .gd-game-actions {
     gap: 6px;
@@ -558,7 +571,7 @@
 body {
   margin: 0;
   color-scheme: light dark;
-  background: light-dark(#f2f0e9, #181c1b);
+  background: light-dark(#ffffff, oklch(0.19 0 0));
 }
 button {
   cursor: pointer;
@@ -608,7 +621,7 @@ button {
     sans-serif;
 }
 .gd-picker-card::backdrop {
-  background: #0b130ba8;
+  background: #141414a8;
 }
 .gd-picker-options {
   max-height: 360px;

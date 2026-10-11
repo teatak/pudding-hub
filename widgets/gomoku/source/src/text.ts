@@ -1,2 +1,131 @@
-export const zh = navigator.language.startsWith("zh");
-export const text = (en: string, cn: string) => (zh ? cn : en);
+import { pudding } from "@pudding/widget";
+const traditional: Record<string, string> = {
+  "黑棋 · 先手": "黑棋 · 先手",
+  "白棋 · 后手": "白棋 · 後手",
+  在棋盘上落子: "在棋盤上落子",
+  等待开局: "等待開局",
+  本局平局: "本局和局",
+  即将开始: "即將開始",
+  等待就绪: "等待就緒",
+  黑方回合: "黑方回合",
+  白方回合: "白方回合",
+  第: "第",
+  "局 ·": "局 ·",
+  "15 路 · 自由规则": "15 路 · 自由規則",
+  开关卡片弹幕: "開關卡片彈幕",
+  继续对局: "繼續對局",
+  暂停对局: "暫停對局",
+  对局已暂停: "對局已暫停",
+  开一局: "開一局",
+  重新开局: "重新開局",
+  再来一局: "再來一局",
+  重试: "重試",
+  关闭: "關閉",
+  两位棋手: "兩位棋手",
+  待邀请: "待邀請",
+  本局获胜: "本局獲勝",
+  本局结束: "本局結束",
+  已暂停: "已暫停",
+  思考中: "思考中",
+  等待对手: "等待對手",
+  已准备: "已準備",
+  等待准备: "等待準備",
+  等待选边: "等待選邊",
+  待定: "待定",
+  空位: "空位",
+  思考用时: "思考用時",
+  我: "我",
+  读取模型信息: "讀取模型資訊",
+  等待棋手: "等待棋手",
+  "可选会话，也可选自己": "可選對話，也可選自己",
+  "选边后准备，双方读秒开局": "選邊後準備，雙方倒數開局",
+  执黑: "執黑",
+  执白: "執白",
+  取消准备: "取消準備",
+  准备: "準備",
+  离座: "離座",
+  "落子时，也可以说一句": "落子時，也可以說一句",
+  随下一手发言: "隨下一手發言",
+  "这手想说什么？": "這手想說什麼？",
+  "补选会话或“我”": "補選對話或「我」",
+  "开局后，邀请当前会话": "開局後，邀請目前對話",
+  "已就绪，即将开局": "已就緒，即將開局",
+  "等待棋手自行选边、准备": "等待棋手自行選邊、準備",
+  弹幕已关闭: "彈幕已關閉",
+  对局已结束: "對局已結束",
+  落子时可以留一句话: "落子時可以留一句話",
+  棋盘: "棋盤",
+  "五子棋棋盘，最下面为第 1 行": "五子棋棋盤，最下面為第 1 列",
+  黑棋: "黑棋",
+  白棋: "白棋",
+  双方就绪: "雙方就緒",
+  黑棋先行: "黑棋先行",
+  "本局结束 · 棋盘保留供查看": "本局結束 · 保留棋盤供查看",
+  "轮到你了，点击交叉点落子": "輪到你了，點擊交叉點落子",
+  "观战中 · 棋手在各自会话中行动": "觀戰中 · 棋手在各自對話中行動",
+  "当前两个会话 · 开局后直接邀请": "目前兩個對話 · 開局後直接邀請",
+  开局时补齐两位棋手: "開局時補齊兩位棋手",
+  认输: "認輸",
+  补齐两位棋手: "補齊兩位棋手",
+  也可以自己上场: "也可以自己上場",
+  已选: "已選",
+  返回: "返回",
+  邀请并开局: "邀請並開局",
+  当前操作尚未完成: "目前操作尚未完成",
+};
+export const text = (en: string, cn: string, tw?: string) => {
+  const locale = pudding.locale.read();
+  return locale === "en"
+    ? en
+    : locale === "zh-TW"
+      ? (tw ?? traditional[cn] ?? cn)
+      : cn;
+};
+const errors: Record<string, [string, string]> = {
+  "Connect to this game first": ["请先连接棋局", "請先連接棋局"],
+  Cancelled: ["操作已取消", "操作已取消"],
+  "Game is paused": ["对局已暂停，请先继续对局", "對局已暫停，請先繼續對局"],
+  "You are observing this round": ["你是本局观战者", "你是本局觀戰者"],
+  "Choose exactly two players": ["请选择两位棋手", "請選擇兩位棋手"],
+  "Wait until both players are ready and the countdown finishes": [
+    "请等待双方准备并完成倒计时",
+    "請等待雙方準備並完成倒數",
+  ],
+  "Not your turn": ["还没轮到你", "還沒輪到你"],
+  "No ongoing match": ["当前没有进行中的对局", "目前沒有進行中的對局"],
+  "You have no seat": ["你还没有入座", "你還沒有入座"],
+  "Match is finished": ["本局已结束", "本局已結束"],
+  "Use columns A–O and rows 1–15": [
+    "列请使用 A–O 字母，行请使用 1–15 数字",
+    "欄請使用 A–O 字母，列請使用 1–15 數字",
+  ],
+  "Cell is occupied": ["此处已经有棋子", "此處已經有棋子"],
+  "Keep your comment within 40 characters": [
+    "弹幕不能超过 40 字",
+    "彈幕不能超過 40 字",
+  ],
+  "The game has already started": ["对局已经开始", "對局已經開始"],
+  "Unknown seat": ["未知席位", "未知席位"],
+  "Seat occupied; choose the other seat": [
+    "席位已被占用，请选择另一边",
+    "席位已被佔用，請選擇另一邊",
+  ],
+  "Leave your current seat before switching": [
+    "请先离座再换边",
+    "請先離座再換邊",
+  ],
+  "Choose a seat before getting ready": [
+    "请先选边，再准备",
+    "請先選邊，再準備",
+  ],
+  "Start a new round before changing seats": [
+    "请重新开局后再换边",
+    "請重新開局後再換邊",
+  ],
+  "Wait for the countdown": ["请等待倒计时结束", "請等待倒數結束"],
+};
+export function errorText(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  const pair = errors[message];
+  return pair ? text(message, ...pair) : message;
+}

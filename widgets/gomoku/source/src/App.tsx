@@ -3,6 +3,7 @@ import {
   pudding,
   useWidgetInteraction,
   useWidgetState,
+  useWidgetLocale,
   type SessionCandidate,
 } from "@pudding/widget";
 import {
@@ -10,11 +11,12 @@ import {
   MessageSquareOff,
   MessagesSquare,
   Play,
+  Pause,
   Swords,
   UserRound,
 } from "lucide-react";
 import { roles } from "./lobby";
-import { size, winningLine, type Color } from "./rules";
+import { size, letters, thinkingMS, winningLine, type Color } from "./rules";
 import {
   changeSeat,
   finishCountdown,
@@ -22,11 +24,12 @@ import {
   move,
   NotificationError,
   position,
+  pause,
   publish,
   resign,
   start,
 } from "./game";
-import { text } from "./text";
+import { text, errorText } from "./text";
 import "./style.css";
 
 type Candidates = Awaited<ReturnType<typeof pudding.interaction.candidates>>;
@@ -36,12 +39,40 @@ type Player = {
   human: boolean;
   model?: SessionCandidate["model"];
 };
-const me = "@me",
-  letters = "ABCDEFGHIJKLMNO";
+const me = "@me";
 const sideName = (role: Color) =>
   role === "Black"
     ? text("Black · first", "黑棋 · 先手")
     : text("White · second", "白棋 · 后手");
+const elapsedTime = (ms: number) => {
+  const seconds = Math.max(0, Math.floor(ms / 1000));
+  return (
+    String(Math.floor(seconds / 60)).padStart(2, "0") +
+    ":" +
+    String(seconds % 60).padStart(2, "0")
+  );
+};
+function Comment({
+  text: comment,
+  moveNumber,
+}: {
+  text: string;
+  moveNumber: number;
+}) {
+  return (
+    <>
+      <span className="gd-speech-prefix">
+        {text(
+          "Move " + moveNumber,
+          "第 " + moveNumber + " 手",
+          "第 " + moveNumber + " 手",
+        )}{" "}
+        ·{" "}
+      </span>
+      {comment}
+    </>
+  );
+}
 function Avatar({ player }: { player?: Player }) {
   return (
     <span className="gd-avatar">
@@ -57,6 +88,7 @@ function Avatar({ player }: { player?: Player }) {
 }
 export default function App() {
   useWidgetState();
+  useWidgetLocale();
   const run = useWidgetInteraction(),
     p = position(),
     l = lobby();
@@ -73,9 +105,13 @@ export default function App() {
   const [now, setNow] = useState(Date.now());
   const members = run?.participants.map((p) => p.id).join(",") || "";
   const human = run?.participants.find((p) => p.kind === "human");
-  const humanRole = roles.find((role) => l.seats[role] === human?.id);
+  const humanRole = human && roles.find((role) => l.seats[role] === human.id);
   const myTurn =
-    !!humanRole && l.phase === "playing" && !p.winner && p.turn === humanRole;
+    run?.status === "running" &&
+    !!humanRole &&
+    l.phase === "playing" &&
+    !p.winner &&
+    p.turn === humanRole;
   async function perform(fn: () => Promise<unknown>) {
     setBusy(true);
     setError(null);
@@ -83,7 +119,7 @@ export default function App() {
       await fn();
     } catch (e) {
       setError({
-        message: e instanceof Error ? e.message : String(e),
+        message: errorText(e),
         retry: e instanceof NotificationError ? "notification" : undefined,
       });
     } finally {
@@ -128,6 +164,12 @@ export default function App() {
       clearTimeout(startTimer);
     };
   }, [l.phase, l.startsAt, run?.status]);
+  useEffect(() => {
+    if (l.phase !== "playing" || p.winner || run?.status !== "running") return;
+    setNow(Date.now());
+    const clock = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(clock);
+  }, [l.phase, p.turnStartedAt, p.winner, run?.status]);
   const chosenPlayer = (id: string): Player | undefined => {
     if (id === me)
       return {
@@ -183,23 +225,27 @@ export default function App() {
       ),
     );
   }
-  const title = !l.round
-    ? text("Ready for a game", "等待开局")
-    : p.winner
-      ? p.winner === "draw"
-        ? text("Draw", "本局平局")
-        : text(
-            p.winner + " wins",
-            (p.winner === "Black" ? "黑方" : "白方") + "获胜",
-          )
-      : l.phase === "countdown"
-        ? text("Starting soon", "即将开始")
-        : l.phase === "lobby"
-          ? text("Waiting for players", "等待就绪")
-          : text(
-              p.turn + " to move",
-              p.turn === "Black" ? "黑方回合" : "白方回合",
-            );
+  const title =
+    run?.status === "paused"
+      ? text("Game paused", "对局已暂停")
+      : !l.round
+        ? text("Ready for a game", "等待开局")
+        : p.winner
+          ? p.winner === "draw"
+            ? text("Draw", "本局平局")
+            : text(
+                p.winner + " wins",
+                (p.winner === "Black" ? "黑方" : "白方") + "获胜",
+                (p.winner === "Black" ? "黑方" : "白方") + "獲勝",
+              )
+          : l.phase === "countdown"
+            ? text("Starting soon", "即将开始")
+            : l.phase === "lobby"
+              ? text("Waiting for players", "等待就绪")
+              : text(
+                  p.turn + " to move",
+                  p.turn === "Black" ? "黑方回合" : "白方回合",
+                );
   const line = winningLine(p);
   return (
     <main className="gd-product">
@@ -209,8 +255,12 @@ export default function App() {
             <strong aria-live="polite">{title}</strong>
             <small>
               {text("Round", "第")} {l.round || 1} {text("·", "局 ·")}{" "}
-              {p.move
-                ? text(p.move + " moves", p.move + " 手")
+              {p.moveCount
+                ? text(
+                    p.moveCount + " moves",
+                    p.moveCount + " 手",
+                    p.moveCount + " 手",
+                  )
                 : text("15 × 15 · freestyle", "15 路 · 自由规则")}
             </small>
           </div>
@@ -227,34 +277,41 @@ export default function App() {
                 <MessageSquareOff size={16} />
               )}
             </button>
-            {run?.status === "paused" ? (
+            {run?.status === "paused" && (
               <button
                 className="gd-button is-primary gd-main-action"
                 disabled={busy}
                 id="resume"
                 onClick={() => void perform(() => pudding.interaction.resume())}
               >
+                <Play size={14} />
                 {text("Continue", "继续对局")}
               </button>
-            ) : (
+            )}
+            {run?.status === "running" && !!l.round && !p.winner && (
               <button
-                className="gd-button gd-main-action is-primary"
+                className="gd-button gd-main-action"
+                disabled={busy}
+                id="pause"
+                onClick={() => void perform(pause)}
+              >
+                <Pause size={14} />
+                {text("Pause", "暂停对局")}
+              </button>
+            )}
+            {(!l.round || p.winner || run?.status === "paused") && (
+              <button
+                className="gd-button gd-main-action"
                 id="start"
-                disabled={busy || !candidates || (!!l.round && !p.winner)}
+                disabled={busy || !candidates}
                 onClick={openRound}
               >
-                {!l.round ? (
-                  <>
-                    <Play size={14} />
-                    {text("Play", "开一局")}
-                  </>
-                ) : p.winner ? (
-                  text("Rematch", "再来一局")
-                ) : l.phase === "playing" ? (
-                  text("Playing", "对弈中")
-                ) : (
-                  text("Waiting", "等待就绪")
-                )}
+                <Play size={14} />
+                {!l.round
+                  ? text("Play", "开一局")
+                  : run?.status === "paused"
+                    ? text("New game", "重新开局")
+                    : text("Rematch", "再来一局")}
               </button>
             )}
           </div>
@@ -292,7 +349,7 @@ export default function App() {
           >
             {[0, 1].map((index) => {
               const player = players[index],
-                role = roles.find((r) => l.seats[r] === player?.id),
+                role = player && roles.find((r) => l.seats[r] === player.id),
                 ready = !!player && l.ready.includes(player.id);
               const turn =
                 l.phase === "playing" && !p.winner && role === p.turn;
@@ -303,29 +360,35 @@ export default function App() {
                   ? p.winner === role
                     ? text("Winner", "本局获胜")
                     : text("Finished", "本局结束")
-                  : turn
-                    ? text("Thinking", "思考中")
-                    : l.phase === "playing"
-                      ? text("Waiting", "等待对手")
-                      : ready
-                        ? text("Ready", "已准备")
-                        : role
-                          ? text("Not ready", "等待准备")
-                          : text("Choosing", "等待选边");
+                  : run?.status === "paused"
+                    ? text("Paused", "已暂停")
+                    : turn
+                      ? text("Thinking", "思考中")
+                      : l.phase === "playing"
+                        ? text("Waiting", "等待对手")
+                        : ready
+                          ? text("Ready", "已准备")
+                          : role
+                            ? text("Not ready", "等待准备")
+                            : text("Choosing", "等待选边");
               return (
                 <article
-                  className={"gd-player" + (turn ? " is-turn" : "")}
+                  className={
+                    "gd-player" +
+                    (turn && run?.status === "running" ? " is-turn" : "")
+                  }
                   key={index}
                   data-player-id={player?.id || ""}
                 >
                   <div className="gd-player-top">
                     <span className="gd-side-badge">
-                      {role && (
-                        <span
-                          className={"gd-color-dot gd-" + role.toLowerCase()}
-                        />
-                      )}
-                      {role ? sideName(role) : text("Unassigned", "未选边")}
+                      <span
+                        className={
+                          "gd-color-dot " +
+                          (role ? "gd-" + role.toLowerCase() : "gd-undecided")
+                        }
+                      />
+                      {role ? sideName(role) : text("Undecided", "待定")}
                     </span>
                     <span
                       className={
@@ -333,6 +396,15 @@ export default function App() {
                       }
                     >
                       {player ? status : text("Open", "空位")}
+                      {turn &&
+                        (p.turnStartedAt !== null || p.turnElapsedMS > 0) && (
+                          <time
+                            className="gd-think-time"
+                            aria-label={text("Thinking time", "思考用时")}
+                          >
+                            {elapsedTime(thinkingMS(p, now))}
+                          </time>
+                        )}
                     </span>
                   </div>
                   <div className="gd-player-head">
@@ -347,7 +419,7 @@ export default function App() {
                           : player?.model?.name ||
                             text(
                               player ? "Loading model" : "Choose a player",
-                              player ? "读取模型信息" : "待补齐棋手",
+                              player ? "读取模型信息" : "等待棋手",
                             )}
                       </strong>
                       <small title={player?.name}>
@@ -372,7 +444,11 @@ export default function App() {
                                 className="gd-button"
                                 key={r}
                                 data-seat={r}
-                                disabled={busy || !!l.seats[r]}
+                                disabled={
+                                  busy ||
+                                  run?.status !== "running" ||
+                                  !!l.seats[r]
+                                }
                                 onClick={() => void act("join", r)}
                               >
                                 {r === "Black"
@@ -387,7 +463,7 @@ export default function App() {
                                   "gd-button" + (!ready ? " is-primary" : "")
                                 }
                                 id="ready"
-                                disabled={busy}
+                                disabled={busy || run?.status !== "running"}
                                 onClick={() =>
                                   void act(ready ? "unready" : "ready")
                                 }
@@ -398,7 +474,7 @@ export default function App() {
                               </button>
                               <button
                                 className="gd-button is-text"
-                                disabled={busy}
+                                disabled={busy || run?.status !== "running"}
                                 id="leave"
                                 onClick={() => void act("leave")}
                               >
@@ -414,21 +490,25 @@ export default function App() {
                           className="gd-human-last"
                           title={quote?.text}
                           data-speech-move={
-                            quote?.text ? quote.move : undefined
+                            quote?.text ? quote.moveNumber : undefined
                           }
                         >
-                          {quote?.text ||
+                          {quote?.text ? (
+                            <Comment {...quote} />
+                          ) : (
                             text(
                               "Add a comment with your move",
                               "落子时，也可以说一句",
-                            )}
+                            )
+                          )}
                         </p>
                         <label className="gd-comment-compose">
-                          <span>
-                            {text("Comment on your next move", "随下一手发言")}
-                          </span>
                           <input
                             data-comment
+                            aria-label={text(
+                              "Comment on your next move",
+                              "随下一手发言",
+                            )}
                             maxLength={40}
                             value={draft}
                             disabled={busy || !myTurn}
@@ -443,15 +523,12 @@ export default function App() {
                     ) : quote?.text ? (
                       <div
                         className="gd-speech is-new"
-                        key={quote.move}
-                        data-speech-move={quote.move}
+                        key={quote.moveNumber}
+                        data-speech-move={quote.moveNumber}
                       >
                         <span className="gd-speech-text" title={quote.text}>
-                          {quote.text}
+                          <Comment {...quote} />
                         </span>
-                        <small>
-                          {text("Move ", "第 ") + quote.move + text("", " 手")}
-                        </small>
                       </div>
                     ) : (
                       <div className="gd-card-wait">
@@ -558,7 +635,7 @@ export default function App() {
                       key={index}
                       className="gd-spot"
                       data-row={row}
-                      data-column={column}
+                      data-column={letters[column - 1]}
                       style={{
                         left: 8 + (column - 1) * 6 + "%",
                         bottom: 8 + (row - 1) * 6 + "%",
@@ -566,11 +643,6 @@ export default function App() {
                       aria-label={
                         letters[column - 1] +
                         row +
-                        " · " +
-                        text(
-                          "row " + row + ", column " + column,
-                          "第 " + row + " 行，第 " + column + " 列",
-                        ) +
                         " · " +
                         (stone === 1
                           ? text("Black", "黑棋")
@@ -581,13 +653,20 @@ export default function App() {
                       disabled={busy || !myTurn || !!stone}
                       onClick={() =>
                         void perform(async () => {
-                          const previous = position().move;
+                          const previous = position().moveCount;
                           try {
                             await pudding.interaction.handle((c) =>
-                              move({ row, column, comment: draft }, c),
+                              move(
+                                {
+                                  row,
+                                  column: letters[column - 1],
+                                  comment: draft,
+                                },
+                                c,
+                              ),
                             );
                           } finally {
-                            if (position().move > previous) setDraft("");
+                            if (position().moveCount > previous) setDraft("");
                           }
                         })
                       }
@@ -605,7 +684,7 @@ export default function App() {
                     </button>
                   );
                 })}
-                {l.phase === "countdown" && (
+                {l.phase === "countdown" && run?.status === "running" && (
                   <div className="gd-overlay" aria-live="polite">
                     <span>{text("Both players ready", "双方就绪")}</span>
                     <strong>
@@ -658,7 +737,7 @@ export default function App() {
               {humanRole && l.phase === "playing" && !p.winner && (
                 <button
                   className="gd-button is-text"
-                  disabled={busy}
+                  disabled={busy || run?.status !== "running"}
                   onClick={() =>
                     void perform(() => pudding.interaction.handle(resign))
                   }

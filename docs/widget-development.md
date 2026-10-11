@@ -29,3 +29,12 @@ Gomoku and Rock Paper Scissors send their final result with `audience: {kind: "a
 Restored interactions create a new paused run and revoke old targets. Register `pudding.interaction.onResume(async () => { ... })` to derive only currently valid requests from saved state after the user continues. Never replay old receipts or completed results; do not bind persisted business data to an ephemeral run ID. Authors may call `interaction.pause()/resume()/disconnect()` and render their own controls. Pause affects model execution only. Disconnect retains page state. The host does not render game controls.
 
 Gomoku/RPS 2.2.0 require protocol 22 and replace the removed `start({roles})` API. Update author source that used host roles; published old packages remain immutable.
+
+## Follow the application language
+
+Packages requiring protocol 24 can read `pudding.locale.read()` and subscribe with
+`pudding.locale.subscribe(listener)`, or call `useWidgetLocale()` in React. The
+host supplies `zh-CN`, `zh-TW` or `en` before module initialization and updates it
+without remounting the page. Use this instead of `navigator.language`; keep
+interface names, JSON fields and coordinate values language-independent. Installed
+item names need not change when the user changes language.

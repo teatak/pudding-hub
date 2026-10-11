@@ -3,17 +3,26 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
-import { initial, place, describePosition } from "../widgets/gomoku/source/src/rules.ts";
+import {
+  initial,
+  place,
+  describePosition,
+  letters,
+} from "../widgets/gomoku/source/src/rules.ts";
 import { winner } from "../widgets/rps-decider/source/src/rules.ts";
-import { packageWidget, sourceFiles, widgetIcon } from "../scripts/package-widget.mjs";
+import {
+  packageWidget,
+  sourceFiles,
+  widgetIcon,
+} from "../scripts/package-widget.mjs";
 test("Gomoku enforces turns, occupancy, edges and horizontal/vertical/diagonal wins", () => {
   const old = initial(),
-    next = place(old, 1, 1, "Black");
+    next = place(old, 1, "A", "Black");
   assert.equal(old.board[0], 0);
   assert.equal(next.board[0], 1);
-  assert.throws(() => place(next, 2, 1, "Black"), /turn/);
-  assert.throws(() => place(next, 1, 1, "White"), /occupied/);
-  assert.throws(() => place(old, 0, 1, "Black"), /Coordinates/);
+  assert.throws(() => place(next, 2, "A", "Black"), /turn/);
+  assert.throws(() => place(next, 1, "A", "White"), /occupied/);
+  assert.throws(() => place(old, 0, "A", "Black"), /A–O/);
   for (const [dy, dx] of [
     [0, 1],
     [1, 0],
@@ -22,11 +31,11 @@ test("Gomoku enforces turns, occupancy, edges and horizontal/vertical/diagonal w
   ]) {
     let state = initial();
     for (let i = 0; i < 5; i++) {
-      state = place(state, 1 + i * dy, 5 + i * dx, "Black");
-      if (i < 4) state = place(state, 15, 1 + i * 2, "White");
+      state = place(state, 1 + i * dy, letters[4 + i * dx], "Black");
+      if (i < 4) state = place(state, 15, letters[i * 2], "White");
     }
     assert.equal(state.winner, "Black");
-    assert.throws(() => place(state, 14, 14, "White"), /finished/);
+    assert.throws(() => place(state, 14, "N", "White"), /finished/);
   }
 });
 test("RPS resolves all nine pairs without turn ordering", () => {
@@ -38,34 +47,52 @@ test("RPS resolves all nine pairs without turn ordering", () => {
     }
   assert.equal(winner("rock", "scissors"), "A");
 });
-test("Gomoku tool view preserves row/column orientation, stones and last move without exposing flat indices", () => {
+test("Gomoku tool view preserves row/column orientation, history and last move without exposing flat indices", () => {
   const empty = describePosition(initial());
-  assert.equal(empty.board.rows.length, 16);
-  assert.match(empty.board.rows[0], /1\s+2\s+3.*15$/);
-  assert.deepEqual(empty.stones, { Black: [], White: [] });
+  assert.equal(empty.board.text.split("\n").length, 16);
+  assert.match(empty.board.text.split("\n")[0], /A B C.*O$/);
+  assert.deepEqual(empty.history, []);
   assert.equal(empty.lastMove, null);
   let state = initial();
-  for (const [row, column] of [[8, 8], [9, 9], [9, 8], [10, 8], [8, 9]])
-    state = place(state, row, column, state.turn);
+  for (const [row, column] of [
+    [8, 8],
+    [9, 9],
+    [9, 8],
+    [10, 8],
+    [8, 9],
+  ])
+    state = place(state, row, letters[column - 1], state.turn);
   const saved = JSON.stringify(state);
   const view = describePosition(state);
-  assert.deepEqual(view.stones, {
-    Black: [{ row: 8, column: 8 }, { row: 8, column: 9 }, { row: 9, column: 8 }],
-    White: [{ row: 9, column: 9 }, { row: 10, column: 8 }],
-  });
-  assert.deepEqual(view.lastMove, { row: 8, column: 9, color: "Black" });
+  assert.deepEqual(view.history, [
+    { row: 8, column: "H", stone: "B" },
+    { row: 9, column: "I", stone: "W" },
+    { row: 9, column: "H", stone: "B" },
+    { row: 10, column: "H", stone: "W" },
+    { row: 8, column: "I", stone: "B" },
+  ]);
+  assert.deepEqual(view.lastMove, { row: 8, column: "I", stone: "B" });
   assert.equal(view.turn, "White");
-  assert.equal(view.move, 5);
+  assert.equal(view.moveCount, 5);
   assert.equal(view.last, undefined);
   assert.equal(Array.isArray(view.board), false);
-  assert.deepEqual(view.board.rows[8].trim().split(/\s+/).slice(8, 10), ["B", "B"]);
-  assert.equal(view.board.rows[7].trim().split(/\s+/)[8], "B");
-  assert.equal(view.board.rows[7].trim().split(/\s+/)[9], "W");
-  assert.equal(view.board.rows[6].trim().split(/\s+/)[8], "W");
-  const edges = describePosition(place(place(initial(), 1, 15, "Black"), 15, 1, "White"));
-  assert.equal(edges.board.rows[15].trim().split(/\s+/)[15], "B");
-  assert.equal(edges.board.rows[1].trim().split(/\s+/)[1], "W");
-  assert.equal(JSON.stringify(state), saved, "formatting never changes persisted game state");
+  assert.deepEqual(
+    view.board.text.split("\n")[8].trim().split(/\s+/).slice(8, 10),
+    ["B", "B"],
+  );
+  assert.equal(view.board.text.split("\n")[7].trim().split(/\s+/)[8], "B");
+  assert.equal(view.board.text.split("\n")[7].trim().split(/\s+/)[9], "W");
+  assert.equal(view.board.text.split("\n")[6].trim().split(/\s+/)[8], "W");
+  const edges = describePosition(
+    place(place(initial(), 1, "O", "Black"), 15, "A", "White"),
+  );
+  assert.equal(edges.board.text.split("\n")[15].trim().split(/\s+/)[15], "B");
+  assert.equal(edges.board.text.split("\n")[1].trim().split(/\s+/)[1], "W");
+  assert.equal(
+    JSON.stringify(state),
+    saved,
+    "formatting never changes persisted game state",
+  );
 });
 test("packages use Core validation and releases cannot be overwritten", async () => {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), "pudding-hub-package-"));
@@ -89,9 +116,17 @@ test("packages use Core validation and releases cannot be overwritten", async ()
     const one = await packageWidget("shared-todo", { root });
     const two = await packageWidget("shared-todo", { root });
     assert.equal(one.packageHash, two.packageHash);
-    const svg = await fs.readFile(path.join(root, "widgets/shared-todo/assets/icon.svg"));
-    assert.equal(one.pkg.icon, "data:image/svg+xml;base64," + svg.toString("base64"));
-    await assert.rejects(widgetIcon(path.join(root, "widgets/shared-todo"), "../icon.svg"), /Widget icon/);
+    const svg = await fs.readFile(
+      path.join(root, "widgets/shared-todo/assets/icon.svg"),
+    );
+    assert.equal(
+      one.pkg.icon,
+      "data:image/svg+xml;base64," + svg.toString("base64"),
+    );
+    await assert.rejects(
+      widgetIcon(path.join(root, "widgets/shared-todo"), "../icon.svg"),
+      /Widget icon/,
+    );
     await fs.appendFile(
       path.join(root, "widgets/shared-todo/source/src/App.tsx"),
       "\n// local edit\n",
@@ -121,15 +156,23 @@ test("packages use Core validation and releases cannot be overwritten", async ()
 });
 
 for (const widget of ["rps-decider"]) {
-  const { newLobby, joinSeat, setReady, leaveSeat } = await import(`../widgets/${widget}/source/src/lobby.ts`);
+  const { newLobby, joinSeat, setReady, leaveSeat } = await import(
+    `../widgets/${widget}/source/src/lobby.ts`
+  );
   test(`${widget}: invitation has no assigned seats, participants choose and ready themselves`, () => {
     const roles = widget === "gomoku" ? ["Black", "White"] : ["A", "B"];
     let lobby = newLobby(1);
     assert.deepEqual(lobby.seats, {});
     assert.throws(() => setReady(lobby, roles, "first"), /Choose a seat/);
     lobby = joinSeat(lobby, roles, roles[0], "first", false);
-    assert.throws(() => joinSeat(lobby, roles, roles[0], "second", false), /occupied/);
-    assert.throws(() => joinSeat(lobby, roles, roles[1], "first", false), /Leave/);
+    assert.throws(
+      () => joinSeat(lobby, roles, roles[0], "second", false),
+      /occupied/,
+    );
+    assert.throws(
+      () => joinSeat(lobby, roles, roles[1], "first", false),
+      /Leave/,
+    );
     lobby = setReady(lobby, roles, "first");
     assert.equal(lobby.phase, "lobby");
     lobby = leaveSeat(lobby, "first");
@@ -141,6 +184,10 @@ for (const widget of ["rps-decider"]) {
     lobby = setReady(lobby, roles, "first");
     assert.equal(lobby.phase, "playing");
     assert.throws(() => leaveSeat(lobby, "first"), /new round/);
-    assert.deepEqual(JSON.parse(JSON.stringify(lobby)), lobby, "author state survives serialization");
+    assert.deepEqual(
+      JSON.parse(JSON.stringify(lobby)),
+      lobby,
+      "author state survives serialization",
+    );
   });
 }
