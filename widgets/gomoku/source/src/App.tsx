@@ -29,7 +29,7 @@ import {
   resign,
   start,
 } from "./game";
-import { text, errorText } from "./text";
+import { t, errorText } from "./text";
 import "./style.css";
 
 type Candidates = Awaited<ReturnType<typeof pudding.interaction.candidates>>;
@@ -41,9 +41,7 @@ type Player = {
 };
 const me = "@me";
 const sideName = (role: Color) =>
-  role === "Black"
-    ? text("Black · first", "黑棋 · 先手")
-    : text("White · second", "白棋 · 后手");
+  role === "Black" ? t("sideBlackFirst") : t("sideWhiteSecond");
 const elapsedTime = (ms: number) => {
   const seconds = Math.max(0, Math.floor(ms / 1000));
   return (
@@ -62,12 +60,7 @@ function Comment({
   return (
     <>
       <span className="gd-speech-prefix">
-        {text(
-          "Move " + moveNumber,
-          "第 " + moveNumber + " 手",
-          "第 " + moveNumber + " 手",
-        )}{" "}
-        ·{" "}
+        {t("commentPrefix", { number: moveNumber })}
       </span>
       {comment}
     </>
@@ -174,7 +167,7 @@ export default function App() {
     if (id === me)
       return {
         id,
-        name: text("Play on the board", "在棋盘上落子"),
+        name: t("playOnBoard"),
         human: true,
       };
     const candidate = candidates?.sessions.find((s) => s.id === id);
@@ -190,7 +183,7 @@ export default function App() {
               id,
               name:
                 participant.kind === "human"
-                  ? text("Play on the board", "在棋盘上落子")
+                  ? t("playOnBoard")
                   : participant.name,
               human: participant.kind === "human",
               model: candidates?.sessions.find((s) => s.participantID === id)
@@ -227,25 +220,24 @@ export default function App() {
   }
   const title =
     run?.status === "paused"
-      ? text("Game paused", "对局已暂停")
+      ? t("gamePaused")
       : !l.round
-        ? text("Ready for a game", "等待开局")
+        ? t("waitingToStart")
         : p.winner
           ? p.winner === "draw"
-            ? text("Draw", "本局平局")
-            : text(
-                p.winner + " wins",
-                (p.winner === "Black" ? "黑方" : "白方") + "获胜",
-                (p.winner === "Black" ? "黑方" : "白方") + "獲勝",
-              )
+            ? t("draw")
+            : t("winnerNotice", {
+                winner:
+                  p.winner === "Black" ? t("colorBlack") : t("colorWhite"),
+              })
           : l.phase === "countdown"
-            ? text("Starting soon", "即将开始")
+            ? t("startingSoon")
             : l.phase === "lobby"
-              ? text("Waiting for players", "等待就绪")
-              : text(
-                  p.turn + " to move",
-                  p.turn === "Black" ? "黑方回合" : "白方回合",
-                );
+              ? t("waitingForPlayers")
+              : t("turnToMove", {
+                  color:
+                    p.turn === "Black" ? t("colorBlack") : t("colorWhite"),
+                });
   const line = winningLine(p);
   return (
     <main className="gd-product">
@@ -254,20 +246,18 @@ export default function App() {
           <div className="gd-game-title">
             <strong aria-live="polite">{title}</strong>
             <small>
-              {text("Round", "第")} {l.round || 1} {text("·", "局 ·")}{" "}
-              {p.moveCount
-                ? text(
-                    p.moveCount + " moves",
-                    p.moveCount + " 手",
-                    p.moveCount + " 手",
-                  )
-                : text("15 × 15 · freestyle", "15 × 15 · 自由规则")}
+              {t("roundDetail", {
+                round: l.round || 1,
+                detail: p.moveCount
+                  ? t("movesCount", { count: p.moveCount })
+                  : t("freestyleRule"),
+              })}
             </small>
           </div>
           <div className="gd-game-actions">
             <button
               className="gd-button gd-danmaku-toggle"
-              aria-label={text("Toggle player comments", "开关卡片弹幕")}
+              aria-label={t("toggleComments")}
               aria-pressed={danmaku}
               onClick={() => setDanmaku((v) => !v)}
             >
@@ -285,7 +275,7 @@ export default function App() {
                 onClick={() => void perform(() => pudding.interaction.resume())}
               >
                 <Play size={14} />
-                {text("Continue", "继续对局")}
+                {t("continueGame")}
               </button>
             )}
             {run?.status === "running" && !!l.round && !p.winner && (
@@ -296,7 +286,7 @@ export default function App() {
                 onClick={() => void perform(pause)}
               >
                 <Pause size={14} />
-                {text("Pause", "暂停对局")}
+                {t("pauseGame")}
               </button>
             )}
             {(!l.round || p.winner || run?.status === "paused") && (
@@ -308,10 +298,10 @@ export default function App() {
               >
                 <Play size={14} />
                 {!l.round
-                  ? text("Play", "开一局")
+                  ? t("play")
                   : run?.status === "paused"
-                    ? text("New game", "重新开局")
-                    : text("Rematch", "再来一局")}
+                    ? t("newGame")
+                    : t("rematch")}
               </button>
             )}
           </div>
@@ -331,21 +321,21 @@ export default function App() {
                   )
                 }
               >
-                {text("Retry", "重试")}
+                {t("retry")}
               </button>
             )}
             <button
               className="gd-button is-text"
               onClick={() => setError(null)}
             >
-              {text("Dismiss", "关闭")}
+              {t("dismiss")}
             </button>
           </div>
         )}
         <div className="gd-arena">
           <section
             className="gd-players"
-            aria-label={text("Players", "两位棋手")}
+            aria-label={t("playersSection")}
           >
             {[0, 1].map((index) => {
               const player = players[index],
@@ -355,51 +345,31 @@ export default function App() {
                 l.phase === "playing" && !p.winner && role === p.turn;
               const quote = role && danmaku ? p.comments[role] : undefined;
               const status = !l.round
-                ? text("Not invited", "待邀请")
+                ? t("notInvited")
                 : p.winner
                   ? p.winner === role
-                    ? text("Winner", "本局获胜")
-                    : text("Finished", "本局结束")
+                    ? t("statusWinner")
+                    : t("statusFinished")
                   : run?.status === "paused"
-                    ? text("Paused", "已暂停")
+                    ? t("statusPaused")
                     : turn
-                      ? text("Thinking", "思考中")
+                      ? t("statusThinking")
                       : l.phase === "playing"
-                        ? text("Waiting", "等待对手")
+                        ? t("statusWaiting")
                         : ready
-                          ? text("Ready", "已准备")
+                          ? t("statusReady")
                           : role
-                            ? text("Not ready", "等待准备")
-                            : text("Choosing", "等待选边");
+                            ? t("statusNotReady")
+                            : t("statusChoosing");
               const openingHint = run?.status === "paused"
-                ? text(
-                    "Game paused; continue to act",
-                    "对局已暂停，继续后可操作",
-                    "對局已暫停，繼續後可操作",
-                  )
+                ? t("hintPaused")
                 : l.phase === "countdown"
-                  ? text(
-                      "Both players ready; starting soon",
-                      "双方已准备，即将开局",
-                      "雙方已準備，即將開局",
-                    )
+                  ? t("hintBothReady")
                   : ready
-                    ? text(
-                        "This player is ready; waiting for the opponent",
-                        "本方已准备，等待对手就绪",
-                        "本方已準備，等待對手就緒",
-                      )
+                    ? t("hintWaitingOpponent")
                     : role
-                      ? text(
-                          "This player has a side; waiting for readiness",
-                          "本方已选边，等待准备",
-                          "本方已選邊，等待準備",
-                        )
-                      : text(
-                          "Waiting for this player to choose a side",
-                          "等待本方选择黑棋或白棋",
-                          "等待本方選擇黑棋或白棋",
-                        );
+                      ? t("hintWaitingReadiness")
+                      : t("hintWaitingSide");
               return (
                 <article
                   className={
@@ -417,16 +387,12 @@ export default function App() {
                         title={player?.model?.name}
                       >
                         {player?.human
-                          ? text("You", "我")
+                          ? t("you")
                           : player?.model?.name ||
-                            text(
-                              player ? "Loading model" : "Choose a player",
-                              player ? "读取模型信息" : "等待棋手",
-                            )}
+                            (player ? t("loadingModel") : t("choosePlayer"))}
                       </strong>
                       <small title={player?.name}>
-                        {player?.name ||
-                          text("Conversation or you", "可选会话，也可选自己")}
+                        {player?.name || t("conversationOrYou")}
                       </small>
                     </div>
                   </div>
@@ -438,19 +404,19 @@ export default function App() {
                           (role ? "gd-" + role.toLowerCase() : "gd-undecided")
                         }
                       />
-                      {role ? sideName(role) : text("Undecided", "待定")}
+                      {role ? sideName(role) : t("statusUndecided")}
                     </span>
                     <span
                       className={
                         "gd-player-status" + (ready ? " is-ready" : "")
                       }
                     >
-                      {player ? status : text("Open", "空位")}
+                      {player ? status : t("statusOpen")}
                       {turn &&
                         (p.turnStartedAt !== null || p.turnElapsedMS > 0) && (
                           <time
                             className="gd-think-time"
-                            aria-label={text("Thinking time", "思考用时")}
+                            aria-label={t("thinkingTime")}
                           >
                             {elapsedTime(thinkingMS(p, now))}
                           </time>
@@ -475,9 +441,7 @@ export default function App() {
                                 }
                                 onClick={() => void act("join", r)}
                               >
-                                {r === "Black"
-                                  ? text("Black", "执黑")
-                                  : text("White", "执白")}
+                                {r === "Black" ? t("chooseBlack") : t("chooseWhite")}
                               </button>
                             ))
                           ) : (
@@ -492,9 +456,7 @@ export default function App() {
                                   void act(ready ? "unready" : "ready")
                                 }
                               >
-                                {ready
-                                  ? text("Cancel ready", "取消准备")
-                                  : text("Ready", "准备")}
+                                {ready ? t("actionCancelReady") : t("actionReady")}
                               </button>
                               <button
                                 className="gd-button is-text"
@@ -502,7 +464,7 @@ export default function App() {
                                 id="leave"
                                 onClick={() => void act("leave")}
                               >
-                                {text("Leave", "离座")}
+                                {t("actionLeave")}
                               </button>
                             </>
                           )}
@@ -520,27 +482,18 @@ export default function App() {
                           {quote?.text ? (
                             <Comment {...quote} />
                           ) : (
-                            text(
-                              "Add a comment with your move",
-                              "落子时，也可以说一句",
-                            )
+                            t("commentHint")
                           )}
                         </p>
                         <label className="gd-comment-compose">
                           <input
                             data-comment
-                            aria-label={text(
-                              "Comment on your next move",
-                              "随下一手发言",
-                            )}
+                            aria-label={t("commentAria")}
                             maxLength={40}
                             value={draft}
                             disabled={busy || !myTurn}
                             onChange={(e) => setDraft(e.target.value)}
-                            placeholder={text(
-                              "Say something…",
-                              "这手想说什么？",
-                            )}
+                            placeholder={t("commentPlaceholder")}
                           />
                         </label>
                       </div>
@@ -563,25 +516,16 @@ export default function App() {
                         )}
                         <span>
                           {!player
-                            ? text(
-                                "Choose a conversation or yourself",
-                                "补选会话或“我”",
-                              )
+                            ? t("cardChooseFallback")
                             : !l.round
-                              ? text(
-                                  "Invite this conversation on start",
-                                  "开局后，邀请当前会话",
-                                )
+                              ? t("cardInviteOnStart")
                               : l.phase !== "playing"
                                 ? openingHint
                                 : !danmaku
-                                  ? text("Comments off", "弹幕已关闭")
+                                  ? t("cardCommentsOff")
                                   : p.winner
-                                    ? text("Match complete", "对局已结束")
-                                    : text(
-                                        "One comment with each move",
-                                        "落子时可以留一句话",
-                                      )}
+                                    ? t("cardMatchComplete")
+                                    : t("cardLeaveComment")}
                         </span>
                       </div>
                     )}
@@ -590,15 +534,12 @@ export default function App() {
               );
             })}
           </section>
-          <section className="gd-board-area" aria-label={text("Board", "棋盘")}>
+          <section className="gd-board-area" aria-label={t("boardSectionAria")}>
             <div className="gd-board-wrap">
               <div
                 className="gd-wood"
                 role="group"
-                aria-label={text(
-                  "Gomoku, row 1 at bottom",
-                  "五子棋棋盘，最下面为第 1 行",
-                )}
+                aria-label={t("boardAria")}
               >
                 <svg
                   className="gd-grid"
@@ -664,10 +605,10 @@ export default function App() {
                         row +
                         " · " +
                         (stone === 1
-                          ? text("Black", "黑棋")
+                          ? t("stoneBlack")
                           : stone === 2
-                            ? text("White", "白棋")
-                            : text("Empty", "空位"))
+                            ? t("stoneWhite")
+                            : t("stoneEmpty"))
                       }
                       disabled={busy || !myTurn || !!stone}
                       onClick={() =>
@@ -705,21 +646,21 @@ export default function App() {
                 })}
                 {l.phase === "countdown" && run?.status === "running" && (
                   <div className="gd-overlay" aria-live="polite">
-                    <span>{text("Both players ready", "双方就绪")}</span>
+                    <span>{t("overlayBothReady")}</span>
                     <strong>
                       {Math.max(
                         1,
                         Math.ceil(((l.startsAt || now) - now) / 1000),
                       )}
                     </strong>
-                    <span>{text("Black plays first", "黑棋先行")}</span>
+                    <span>{t("overlayBlackFirst")}</span>
                     {humanRole && (
                       <button
                         className="gd-button"
                         disabled={busy}
                         onClick={() => void act("unready")}
                       >
-                        {text("Cancel ready", "取消准备")}
+                        {t("actionCancelReady")}
                       </button>
                     )}
                   </div>
@@ -730,28 +671,13 @@ export default function App() {
               <p>
                 {!l.round
                   ? selected.length === 2
-                    ? text(
-                        "Current conversations · invite on start",
-                        "当前两个会话 · 开局后直接邀请",
-                      )
-                    : text(
-                        "Choose the missing player on start",
-                        "开局时补齐两位棋手",
-                      )
+                    ? t("footerInviteDirect")
+                    : t("footerChooseMissing")
                   : p.winner
-                    ? text(
-                        "Match complete · board retained",
-                        "本局结束 · 棋盘保留供查看",
-                      )
+                    ? t("footerMatchRetained")
                     : myTurn
-                      ? text(
-                          "Your turn · click an intersection",
-                          "轮到你了，点击交叉点落子",
-                        )
-                      : text(
-                          "Watching · players act in their conversations",
-                          "观战中 · 棋手在各自会话中行动",
-                        )}
+                      ? t("footerYourTurn")
+                      : t("footerWatching")}
               </p>
               {humanRole && l.phase === "playing" && !p.winner && (
                 <button
@@ -761,7 +687,7 @@ export default function App() {
                     void perform(() => pudding.interaction.handle(resign))
                   }
                 >
-                  {text("Resign", "认输")}
+                  {t("actionResign")}
                 </button>
               )}
             </footer>
@@ -815,11 +741,8 @@ function CandidatePicker({
       aria-labelledby="picker-title"
       onCancel={close}
     >
-      <h3 id="picker-title">{text("Choose two players", "补齐两位棋手")}</h3>
-      <p>
-        {text("Selected", "已选")} {selected.length} / 2 ·{" "}
-        {text("You can join too", "也可以自己上场")}
-      </p>
+      <h3 id="picker-title">{t("pickerTitle")}</h3>
+      <p>{t("pickerSubtitle", { count: selected.length })}</p>
       <div className="gd-picker-options">
         {[me, ...candidates.map((s) => s.id)].map((id) => {
           const player = chosenPlayer(id)!;
@@ -840,7 +763,7 @@ function CandidatePicker({
               />
               <Avatar player={player} />
               <span>
-                {player.human ? text("You", "我") : player.model?.name}
+                {player.human ? t("you") : player.model?.name}
                 <small>{player.name}</small>
               </span>
             </label>
@@ -853,10 +776,10 @@ function CandidatePicker({
           disabled={selected.length !== 2}
           onClick={start}
         >
-          {text("Invite and play", "邀请并开局")}
+          {t("pickerInviteAndPlay")}
         </button>
         <button className="gd-button" onClick={close}>
-          {text("Back", "返回")}
+          {t("pickerBack")}
         </button>
       </div>
     </dialog>

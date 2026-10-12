@@ -25,7 +25,7 @@ import {
   roles,
   type Lobby,
 } from "./lobby";
-import { text, errorText } from "./text";
+import { t, errorText } from "./text";
 
 export const position = () => {
   const saved = pudding.state.read().data.position as unknown as
@@ -38,7 +38,7 @@ let changing = false;
 let mutation: Promise<unknown> | null = null;
 async function change<T>(fn: () => Promise<T>) {
   if (changing)
-    throw new Error(text("An operation is in progress", "当前操作尚未完成"));
+    throw new Error(errorText("An operation is in progress"));
   changing = true;
   try {
     mutation = fn();
@@ -182,47 +182,24 @@ export async function publish(retry = false) {
     // A receipt is immutable, including its localized text. Reuse pending work;
     // only an explicit continuation creates a fresh wake-up for ended attempts.
     const id = previous.length ? base + "-retry-" + previous.length : base;
-    const color =
-      p.turn === "Black"
-        ? text("Black", "黑方", "黑方")
-        : text("White", "白方", "白方");
+    const color = p.turn === "Black" ? t("colorBlack") : t("colorWhite");
     const name =
       run.participants.find((player) => player.id === l.seats[p.winner!])
         ?.name || p.winner;
     const summary =
       topic === "invitation"
-        ? text(
-            "Game invitation: choose a side and get ready",
-            "棋局邀请：请选边并准备",
-            "棋局邀請：請選邊並準備",
-          )
+        ? t("notifyInviteSummary")
         : topic === "result"
           ? p.winner === "draw"
-            ? text("Match drawn", "本局平局", "本局和局")
-            : text(
-                `Match finished: ${name} wins`,
-                `本局结束，${name}获胜`,
-                `本局結束，${name}獲勝`,
-              )
-          : text(`${color} to move`, `等待${color}落子`, `等待${color}落子`);
+            ? t("notifyMatchDrawn")
+            : t("notifyMatchFinished", { name: name || "" })
+          : t("notifyWaitingMoveSummary", { color });
     const message =
       topic === "invitation"
-        ? text(
-            'You are invited to Gomoku. Interfaces are called through widget_invoke, not separate tools: widget_invoke({targetID,expectedStateVersion,name:"readBoard",input:{}}). Use this notification\'s targetID and latest stateVersion; it is a concurrency version, not moveCount. Read the board, joinSeat with {role:"Black"} or {role:"White"}, then ready with {}. Choose only your own available seat. Both ready starts a 3-second countdown; wait for your move notification. During play, resign with {} concedes your own side. readBoard omits history unless input is {includeHistory:true}.',
-            '邀请你参加五子棋。接口统一通过 widget_invoke 调用，不是独立工具：widget_invoke({targetID,expectedStateVersion,name:"readBoard",input:{}})。使用通知中的 targetID 和最新 stateVersion；版本用于并发校验，手数看 moveCount。查看局面后，joinSeat 传 {role:"Black"} 或 {role:"White"} 选择自己的空位，再 ready 传 {}。双方准备后读秒 3 秒，收到落子通知再下棋。对局中可用 resign 传 {} 为自己认输。readBoard 默认不返回历史，需要时传 {includeHistory:true}。',
-            '邀請你參加五子棋。介面統一透過 widget_invoke 呼叫，不是獨立工具：widget_invoke({targetID,expectedStateVersion,name:"readBoard",input:{}})。使用通知中的 targetID 和最新 stateVersion；版本用於並行校驗，手數看 moveCount。查看局面後，joinSeat 傳 {role:"Black"} 或 {role:"White"} 選擇自己的空位，再 ready 傳 {}。雙方準備後倒數 3 秒，收到落子通知再下棋。對局中可用 resign 傳 {} 為自己認輸。readBoard 預設不回傳歷史，需要時傳 {includeHistory:true}。',
-          )
+        ? t("notifyInviteMessage")
         : topic === "result"
-          ? text(
-              `The match finished: ${p.winner}. Briefly acknowledge the result. Do not place more stones.`,
-              `本局结束：${p.winner}。简短回应结果，不要再落子。`,
-              `本局結束：${p.winner}。簡短回應結果，不要再落子。`,
-            )
-          : text(
-              `${color} to move. The current board and stateVersion are attached. Call widget_invoke with this targetID, expectedStateVersion, name:"placeStone", input:{column:"H",row:8,comment:"Center opening"} (example). Columns A–O, rows 1–15 bottom to top; comment is optional, max 40 characters. Play only your side, then wait for the next notification. To concede, use name:"resign", input:{}. Read history only when needed via name:"readBoard", input:{includeHistory:true}.`,
-              `轮到${color}。通知已附当前棋盘和 stateVersion。调用 widget_invoke，传本局 targetID、expectedStateVersion、name:"placeStone"、input:{column:"H",row:8,comment:"天元开局"}（示例）。字母列 A–O，数字行 1–15 由下向上；弹幕可选，最多 40 字。只替自己落子，然后等待下次通知。认输用 name:"resign"、input:{}；需要历史时用 name:"readBoard"、input:{includeHistory:true}。`,
-              `輪到${color}。通知已附目前棋盤和 stateVersion。呼叫 widget_invoke，傳本局 targetID、expectedStateVersion、name:"placeStone"、input:{column:"H",row:8,comment:"天元開局"}（範例）。字母欄 A–O，數字列 1–15 由下向上；彈幕可選，最多 40 字。只替自己落子，然後等待下次通知。認輸用 name:"resign"、input:{}；需要歷史時用 name:"readBoard"、input:{includeHistory:true}。`,
-            );
+          ? t("notifyResultSummary", { winner: p.winner || "" })
+          : t("notifyMoveMessage", { color });
     await pudding.interaction.notify({
       id,
       audience: p.winner
@@ -332,42 +309,26 @@ function registerInterfaces() {
   return [
     pudding.defineInterface({
       name: "joinSeat",
-      description: text(
-        "Choose your own available Black or White seat.",
-        "选择自己空闲的 Black 或 White 席位。",
-        "選擇自己空閒的 Black 或 White 席位。",
-      ),
+      description: t("descJoinSeat"),
       input: z.object({ role: z.enum(roles) }).strict(),
       run: (i, c) => changeSeat("join", i.role, c),
     }),
     pudding.defineInterface({
       name: "ready",
-      description: text(
-        "Ready your own seat; ready:false cancels readiness before play. Both ready starts a 3-second countdown.",
-        "准备自己的席位；开局前 ready:false 取消准备。双方准备后读秒 3 秒。",
-        "準備自己的席位；開局前 ready:false 取消準備。雙方準備後倒數 3 秒。",
-      ),
+      description: t("descReady"),
       input: z.object({ ready: z.boolean().optional() }).strict(),
       run: (i, c) =>
         changeSeat(i.ready === false ? "unready" : "ready", undefined, c),
     }),
     pudding.defineInterface({
       name: "leaveSeat",
-      description: text(
-        "Leave your own seat before play, cancelling the countdown.",
-        "开局前离开自己的席位，同时取消倒计时。",
-        "開局前離開自己的席位，同時取消倒數。",
-      ),
+      description: t("descLeaveSeat"),
       input: z.object({}).strict(),
       run: (_, c) => changeSeat("leave", undefined, c),
     }),
     pudding.defineInterface({
       name: "placeStone",
-      description: text(
-        "Place your stone at a real board coordinate: column A–O (letter), row 1–15 (number, bottom to top), e.g. {column:'H',row:8}. Include an optional comment (max 40 characters). Returns a compact receipt without board or history; wait for your next move notification.",
-        "按棋盘真实坐标落子：column 为 A–O 字母列，row 为 1–15 数字行（由下向上），例如 {column:'H',row:8}。可附最多 40 字弹幕。返回简短结果，无棋盘及历史；等待下次落子通知。",
-        "按棋盤實際座標落子：column 為 A–O 字母欄，row 為 1–15 數字列（由下向上），例如 {column:'H',row:8}。可附最多 40 字彈幕。回傳簡短結果，無棋盤及歷史；等待下次落子通知。",
-      ),
+      description: t("descPlaceStone"),
       input: z
         .object({
           row: z
@@ -389,21 +350,13 @@ function registerInterfaces() {
     }),
     pudding.defineInterface({
       name: "readBoard",
-      description: text(
-        "Read board.text, moveCount, turn, seats, readiness, countdown and your identity. History is omitted by default; includeHistory:true returns the complete ordered history with comments. Columns A–O; rows 1–15 bottom to top.",
-        "读取棋盘多行文本、moveCount 手数、回合、席位、准备状态、倒计时和你的身份。默认无历史；includeHistory:true 返回完整 history 棋谱及弹幕。字母列 A–O，数字行 1–15 由下向上。",
-        "讀取棋盤多行文字、moveCount 手數、回合、席位、準備狀態、倒數和你的身分。預設無歷史；includeHistory:true 回傳完整 history 棋譜及彈幕。字母欄 A–O，數字列 1–15 由下向上。",
-      ),
+      description: t("descReadBoard"),
       input: z.object({ includeHistory: z.boolean().optional() }).strict(),
       run: (i, c) => readBoard(c, i.includeHistory),
     }),
     pudding.defineInterface({
       name: "resign",
-      description: text(
-        'Concede your own side during play, even on the opponent\'s turn. Call widget_invoke with name:"resign", input:{}. Ends the game and notifies both players.',
-        '对局中为自己认输，对手回合也可调用。通过 widget_invoke 传 name:"resign"、input:{}，结束本局并通知双方。',
-        '對局中為自己認輸，對手回合也可呼叫。透過 widget_invoke 傳 name:"resign"、input:{}，結束本局並通知雙方。',
-      ),
+      description: t("descResign"),
       input: z.object({}).strict(),
       run: (_, c) => resign(c),
     }),
