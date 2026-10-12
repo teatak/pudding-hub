@@ -8,6 +8,10 @@ import {
 } from "@pudding/widget";
 import {
   Check,
+  ChevronLeft,
+  ChevronRight,
+  History,
+  ListOrdered,
   MessageSquareOff,
   MessagesSquare,
   Play,
@@ -16,7 +20,14 @@ import {
   UserRound,
 } from "lucide-react";
 import { roles } from "./lobby";
-import { size, letters, thinkingMS, winningLine, type Color } from "./rules";
+import {
+  size,
+  letters,
+  replayPosition,
+  thinkingMS,
+  winningLine,
+  type Color,
+} from "./rules";
 import {
   changeSeat,
   finishCountdown,
@@ -95,6 +106,19 @@ export default function App() {
   } | null>(null);
   const [danmaku, setDanmaku] = useState(true),
     [draft, setDraft] = useState("");
+  const [showNumbers, setShowNumbers] = useState(false);
+  const [replay, setReplay] = useState<{
+    round: number;
+    moveCount: number;
+  } | null>(null);
+  const replaying = !!p.winner && replay?.round === l.round;
+  const view = replaying ? replayPosition(p, replay!.moveCount) : p;
+  const moveNumbers = new Map(
+    view.history.map((m, i) => [
+      (m.row - 1) * size + letters.indexOf(m.column),
+      i + 1,
+    ]),
+  );
   const [now, setNow] = useState(Date.now());
   const members = run?.participants.map((p) => p.id).join(",") || "";
   const human = run?.participants.find((p) => p.kind === "human");
@@ -235,28 +259,44 @@ export default function App() {
             : l.phase === "lobby"
               ? t("waitingForPlayers")
               : t("turnToMove", {
-                  color:
-                    p.turn === "Black" ? t("colorBlack") : t("colorWhite"),
+                  color: p.turn === "Black" ? t("colorBlack") : t("colorWhite"),
                 });
-  const line = winningLine(p);
+  const line = winningLine(view);
   return (
     <main className="gd-product">
       <div className="gd-content">
         <header className="gd-gamebar">
           <div className="gd-game-title">
-            <strong aria-live="polite">{title}</strong>
+            <strong aria-live="polite">
+              {replaying ? t("replay") : title}
+            </strong>
             <small>
               {t("roundDetail", {
                 round: l.round || 1,
-                detail: p.moveCount
-                  ? t("movesCount", { count: p.moveCount })
-                  : t("freestyleRule"),
+                detail: replaying
+                  ? t("replayProgress", {
+                      current: view.moveCount,
+                      total: p.moveCount,
+                    })
+                  : p.moveCount
+                    ? t("movesCount", { count: p.moveCount })
+                    : t("freestyleRule"),
               })}
             </small>
           </div>
           <div className="gd-game-actions">
             <button
-              className="gd-button gd-danmaku-toggle"
+              className="gd-button gd-icon-toggle"
+              id="move-numbers"
+              title={t("showMoveNumbers")}
+              aria-label={t("showMoveNumbers")}
+              aria-pressed={showNumbers}
+              onClick={() => setShowNumbers((v) => !v)}
+            >
+              <ListOrdered size={16} />
+            </button>
+            <button
+              className="gd-button gd-icon-toggle gd-danmaku-toggle"
               aria-label={t("toggleComments")}
               aria-pressed={danmaku}
               onClick={() => setDanmaku((v) => !v)}
@@ -333,43 +373,46 @@ export default function App() {
           </div>
         )}
         <div className="gd-arena">
-          <section
-            className="gd-players"
-            aria-label={t("playersSection")}
-          >
+          <section className="gd-players" aria-label={t("playersSection")}>
             {[0, 1].map((index) => {
               const player = players[index],
                 role = player && roles.find((r) => l.seats[r] === player.id),
                 ready = !!player && l.ready.includes(player.id);
               const turn =
-                l.phase === "playing" && !p.winner && role === p.turn;
-              const quote = role && danmaku ? p.comments[role] : undefined;
-              const status = !l.round
-                ? t("notInvited")
-                : p.winner
-                  ? p.winner === role
-                    ? t("statusWinner")
-                    : t("statusFinished")
-                  : run?.status === "paused"
-                    ? t("statusPaused")
-                    : turn
-                      ? t("statusThinking")
-                      : l.phase === "playing"
-                        ? t("statusWaiting")
-                        : ready
-                          ? t("statusReady")
-                          : role
-                            ? t("statusNotReady")
-                            : t("statusChoosing");
-              const openingHint = run?.status === "paused"
-                ? t("hintPaused")
-                : l.phase === "countdown"
-                  ? t("hintBothReady")
-                  : ready
-                    ? t("hintWaitingOpponent")
-                    : role
-                      ? t("hintWaitingReadiness")
-                      : t("hintWaitingSide");
+                !replaying &&
+                l.phase === "playing" &&
+                !p.winner &&
+                role === p.turn;
+              const quote = role && danmaku ? view.comments[role] : undefined;
+              const status = replaying
+                ? t("replay")
+                : !l.round
+                  ? t("notInvited")
+                  : p.winner
+                    ? p.winner === role
+                      ? t("statusWinner")
+                      : t("statusFinished")
+                    : run?.status === "paused"
+                      ? t("statusPaused")
+                      : turn
+                        ? t("statusThinking")
+                        : l.phase === "playing"
+                          ? t("statusWaiting")
+                          : ready
+                            ? t("statusReady")
+                            : role
+                              ? t("statusNotReady")
+                              : t("statusChoosing");
+              const openingHint =
+                run?.status === "paused"
+                  ? t("hintPaused")
+                  : l.phase === "countdown"
+                    ? t("hintBothReady")
+                    : ready
+                      ? t("hintWaitingOpponent")
+                      : role
+                        ? t("hintWaitingReadiness")
+                        : t("hintWaitingSide");
               return (
                 <article
                   className={
@@ -441,7 +484,9 @@ export default function App() {
                                 }
                                 onClick={() => void act("join", r)}
                               >
-                                {r === "Black" ? t("chooseBlack") : t("chooseWhite")}
+                                {r === "Black"
+                                  ? t("chooseBlack")
+                                  : t("chooseWhite")}
                               </button>
                             ))
                           ) : (
@@ -456,7 +501,9 @@ export default function App() {
                                   void act(ready ? "unready" : "ready")
                                 }
                               >
-                                {ready ? t("actionCancelReady") : t("actionReady")}
+                                {ready
+                                  ? t("actionCancelReady")
+                                  : t("actionReady")}
                               </button>
                               <button
                                 className="gd-button is-text"
@@ -519,13 +566,19 @@ export default function App() {
                             ? t("cardChooseFallback")
                             : !l.round
                               ? t("cardInviteOnStart")
-                              : l.phase !== "playing"
-                                ? openingHint
-                                : !danmaku
-                                  ? t("cardCommentsOff")
-                                  : p.winner
-                                    ? t("cardMatchComplete")
-                                    : t("cardLeaveComment")}
+                              : replaying
+                                ? t(
+                                    danmaku
+                                      ? "replayNoComment"
+                                      : "cardCommentsOff",
+                                  )
+                                : l.phase !== "playing"
+                                  ? openingHint
+                                  : !danmaku
+                                    ? t("cardCommentsOff")
+                                    : p.winner
+                                      ? t("cardMatchComplete")
+                                      : t("cardLeaveComment")}
                         </span>
                       </div>
                     )}
@@ -538,6 +591,7 @@ export default function App() {
             <div className="gd-board-wrap">
               <div
                 className="gd-wood"
+                data-replaying={replaying}
                 role="group"
                 aria-label={t("boardAria")}
               >
@@ -587,7 +641,7 @@ export default function App() {
                     <span key={i}>{size - i}</span>
                   ))}
                 </div>
-                {p.board.map((stone, index) => {
+                {view.board.map((stone, index) => {
                   const row = Math.floor(index / size) + 1,
                     column = (index % size) + 1;
                   return (
@@ -608,9 +662,15 @@ export default function App() {
                           ? t("stoneBlack")
                           : stone === 2
                             ? t("stoneWhite")
-                            : t("stoneEmpty"))
+                            : t("stoneEmpty")) +
+                        (stone && showNumbers
+                          ? " · " +
+                            t("stoneMoveNumber", {
+                              number: moveNumbers.get(index)!,
+                            })
+                          : "")
                       }
-                      disabled={busy || !myTurn || !!stone}
+                      disabled={replaying || busy || !myTurn || !!stone}
                       onClick={() =>
                         void perform(async () => {
                           const previous = position().moveCount;
@@ -636,10 +696,21 @@ export default function App() {
                           className={
                             "gd-stone gd-" +
                             (stone === 1 ? "black" : "white") +
-                            (p.last === index ? " is-last" : "") +
+                            (view.last === index ? " is-last" : "") +
+                            (showNumbers ? " has-number" : "") +
                             (line.includes(index) ? " is-win" : "")
                           }
-                        />
+                        >
+                          {showNumbers && (
+                            <span
+                              className="gd-stone-number"
+                              data-move-number={moveNumbers.get(index)}
+                              aria-hidden="true"
+                            >
+                              {moveNumbers.get(index)}
+                            </span>
+                          )}
+                        </span>
                       )}
                     </button>
                   );
@@ -668,27 +739,116 @@ export default function App() {
               </div>
             </div>
             <footer className="gd-board-footer">
-              <p>
-                {!l.round
-                  ? selected.length === 2
-                    ? t("footerInviteDirect")
-                    : t("footerChooseMissing")
-                  : p.winner
-                    ? t("footerMatchRetained")
-                    : myTurn
-                      ? t("footerYourTurn")
-                      : t("footerWatching")}
-              </p>
-              {humanRole && l.phase === "playing" && !p.winner && (
-                <button
-                  className="gd-button is-text"
-                  disabled={busy || run?.status !== "running"}
-                  onClick={() =>
-                    void perform(() => pudding.interaction.handle(resign))
-                  }
+              {replaying ? (
+                <div
+                  className="gd-replay"
+                  role="group"
+                  aria-label={t("replay")}
                 >
-                  {t("actionResign")}
-                </button>
+                  <div className="gd-replay-heading">
+                    <span>
+                      {t("replayProgress", {
+                        current: view.moveCount,
+                        total: p.moveCount,
+                      })}
+                    </span>
+                    <button
+                      className="gd-button is-text"
+                      id="replay-exit"
+                      onClick={() => setReplay(null)}
+                    >
+                      {t("returnToResult")}
+                    </button>
+                  </div>
+                  <div className="gd-replay-controls">
+                    <button
+                      className="gd-button gd-icon-toggle"
+                      id="replay-previous"
+                      title={t("previousMove")}
+                      aria-label={t("previousMove")}
+                      disabled={view.moveCount === 0}
+                      onClick={() =>
+                        setReplay({
+                          round: l.round,
+                          moveCount: view.moveCount - 1,
+                        })
+                      }
+                    >
+                      <ChevronLeft size={16} />
+                    </button>
+                    <input
+                      id="replay-progress"
+                      type="range"
+                      min={0}
+                      max={p.moveCount}
+                      step={1}
+                      value={view.moveCount}
+                      aria-label={t("replay")}
+                      aria-valuetext={t("replayProgress", {
+                        current: view.moveCount,
+                        total: p.moveCount,
+                      })}
+                      onChange={(e) =>
+                        setReplay({
+                          round: l.round,
+                          moveCount: Number(e.target.value),
+                        })
+                      }
+                    />
+                    <button
+                      className="gd-button gd-icon-toggle"
+                      id="replay-next"
+                      title={t("nextMove")}
+                      aria-label={t("nextMove")}
+                      disabled={view.moveCount === p.moveCount}
+                      onClick={() =>
+                        setReplay({
+                          round: l.round,
+                          moveCount: view.moveCount + 1,
+                        })
+                      }
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <p>
+                    {!l.round
+                      ? selected.length === 2
+                        ? t("footerInviteDirect")
+                        : t("footerChooseMissing")
+                      : p.winner
+                        ? t("footerMatchRetained")
+                        : myTurn
+                          ? t("footerYourTurn")
+                          : t("footerWatching")}
+                  </p>
+                  {!!p.winner && p.moveCount > 0 && (
+                    <button
+                      className="gd-button"
+                      id="replay-start"
+                      onClick={() =>
+                        setReplay({ round: l.round, moveCount: 0 })
+                      }
+                    >
+                      <History size={14} />
+                      {t("replay")}
+                    </button>
+                  )}
+                  {humanRole && l.phase === "playing" && !p.winner && (
+                    <button
+                      className="gd-button is-text"
+                      disabled={busy || run?.status !== "running"}
+                      onClick={() =>
+                        void perform(() => pudding.interaction.handle(resign))
+                      }
+                    >
+                      {t("actionResign")}
+                    </button>
+                  )}
+                </>
               )}
             </footer>
           </section>

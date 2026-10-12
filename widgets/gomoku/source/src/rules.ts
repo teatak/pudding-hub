@@ -109,6 +109,15 @@ export function summarizePosition(p: Position) {
     lastMove: p.history.at(-1) || null,
   };
 }
+// A local replay view never changes the saved score or runs a game action.
+export function replayPosition(p: Position, moveCount: number): Position {
+  return derive({
+    history: p.history.slice(0, moveCount),
+    resigned: moveCount === p.moveCount ? p.resigned : null,
+    turnStartedAt: null,
+    turnElapsedMS: 0,
+  });
+}
 export function describePosition(p: Position) {
   const symbols = [".", "B", "W"];
   return {

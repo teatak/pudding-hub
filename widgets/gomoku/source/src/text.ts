@@ -16,6 +16,14 @@ export const messages = {
     movesCount: "Moves: {count}",
     freestyleRule: "15 × 15 · freestyle",
     toggleComments: "Toggle player comments",
+    showMoveNumbers: "Show move numbers",
+    stoneMoveNumber: "Move {number}",
+    replay: "Replay",
+    replayProgress: "Move {current} / {total}",
+    returnToResult: "Back to result",
+    previousMove: "Previous move",
+    nextMove: "Next move",
+    replayNoComment: "No comment at this point",
     continueGame: "Continue",
     pauseGame: "Pause",
     play: "Play",
@@ -94,8 +102,7 @@ export const messages = {
     descJoinSeat: "Choose your own available Black or White seat.",
     descReady:
       "Ready your own seat; ready:false cancels readiness before play. Both ready starts a 3-second countdown.",
-    descLeaveSeat:
-      "Leave your own seat before play, cancelling the countdown.",
+    descLeaveSeat: "Leave your own seat before play, cancelling the countdown.",
     descPlaceStone:
       "Place your stone at a real board coordinate: column A–O (letter), row 1–15 (number, bottom to top), e.g. {column:'H',row:8}. Include an optional comment (max 40 characters). Returns a compact receipt without board or history; wait for your next move notification.",
     descReadBoard:
@@ -130,6 +137,14 @@ export const messages = {
     movesCount: "{count} 手",
     freestyleRule: "15 × 15 · 自由规则",
     toggleComments: "开关卡片弹幕",
+    showMoveNumbers: "显示手数",
+    stoneMoveNumber: "第 {number} 手",
+    replay: "复盘",
+    replayProgress: "第 {current} / {total} 手",
+    returnToResult: "返回终局",
+    previousMove: "上一步",
+    nextMove: "下一步",
+    replayNoComment: "该棋手此时没有弹幕",
     continueGame: "继续对局",
     pauseGame: "暂停对局",
     play: "开一局",
@@ -242,6 +257,14 @@ export const messages = {
     movesCount: "{count} 手",
     freestyleRule: "15 × 15 · 自由規則",
     toggleComments: "開關卡片彈幕",
+    showMoveNumbers: "顯示手數",
+    stoneMoveNumber: "第 {number} 手",
+    replay: "復盤",
+    replayProgress: "第 {current} / {total} 手",
+    returnToResult: "返回終局",
+    previousMove: "上一步",
+    nextMove: "下一步",
+    replayNoComment: "該棋手此時沒有彈幕",
     continueGame: "繼續對局",
     pauseGame: "暫停對局",
     play: "開一局",
@@ -341,15 +364,14 @@ export const messages = {
   },
 } as const;
 
-export type MessageKey = keyof typeof messages["zh-CN"];
+export type MessageKey = keyof (typeof messages)["zh-CN"];
 
 export function t<K extends MessageKey>(
   key: K,
   params?: Record<string, string | number>,
 ): string {
   const locale = pudding.locale.read();
-  const lang =
-    locale === "en" ? "en" : locale === "zh-TW" ? "zh-TW" : "zh-CN";
+  const lang = locale === "en" ? "en" : locale === "zh-TW" ? "zh-TW" : "zh-CN";
   return messages[lang][key].replace(/\{(\w+)\}/g, (token, name) =>
     params && Object.hasOwn(params, name) ? String(params[name]) : token,
   );

@@ -15,11 +15,80 @@ import {
   winningLine,
   letters,
   derive,
+  replayPosition,
   record,
   pauseClock,
   resumeClock,
   thinkingMS,
 } from "../widgets/gomoku/source/src/rules.ts";
+test("replay seeks derive only visible stones, comments and winning lines without changing the game", () => {
+  let p = initial();
+  for (let c = 0; c < 5; c++) {
+    p = place(p, 1, letters[c], "Black", c === 0 ? "Opening" : "");
+    if (c < 4) p = place(p, 15, letters[c * 2], "White", "Reply " + c);
+  }
+  const saved = JSON.stringify(p);
+  for (const count of [9, 3, 0, 2, 8, 1, 9]) {
+    const view = replayPosition(p, count);
+    assert.equal(view.moveCount, count);
+    assert.equal(view.board.filter(Boolean).length, count);
+    assert.deepEqual(view.history, p.history.slice(0, count));
+    assert.equal(view.winner, count === 9 ? "Black" : null);
+    assert.equal(winningLine(view).length, count === 9 ? 5 : 0);
+    assert.equal(view.turnStartedAt, null);
+    assert.equal(thinkingMS(view, Date.now()), 0);
+  }
+  assert.deepEqual(replayPosition(p, 0).comments, {});
+  assert.deepEqual(replayPosition(p, 1).comments, {
+    Black: { text: "Opening", moveNumber: 1 },
+  });
+  assert.deepEqual(replayPosition(p, 2).comments.White, {
+    text: "Reply 0",
+    moveNumber: 2,
+  });
+  assert.equal(
+    replayPosition(p, 3).comments.Black.text,
+    "",
+    "silent moves do not retain an older comment",
+  );
+  assert.equal(replayPosition(p, 1).last, 0, "A1 stays at the bottom left");
+  assert.equal(replayPosition(p, 2).last, 210, "A15 stays at the top left");
+  assert.equal(JSON.stringify(p), saved);
+});
+
+test("replay exposes resignation only at the final position, without a winning line", () => {
+  const p = derive({
+    ...record(place(place(initial(), 8, "H", "Black"), 9, "H", "White")),
+    resigned: "Black",
+  });
+  const saved = JSON.stringify(p);
+  assert.equal(replayPosition(p, 0).winner, null);
+  assert.equal(replayPosition(p, 1).winner, null);
+  assert.equal(replayPosition(p, 2).winner, "White");
+  assert.deepEqual(winningLine(replayPosition(p, 2)), []);
+  assert.equal(JSON.stringify(p), saved);
+});
+
+test("full-board draw replays through 225 moves and back to the empty opening", () => {
+  // Alternating rows of BBWW prevent five in every direction.
+  const cells = { B: [], W: [] };
+  for (let row = 1; row <= 15; row++)
+    for (let column = 0; column < 15; column++) {
+      const stone = (row - 1 + Math.floor(column / 2)) % 2 ? "W" : "B";
+      cells[stone].push({ row, column: letters[column], stone });
+    }
+  let p = initial();
+  for (let i = 0; i < 225; i++) {
+    const cell = cells[i % 2 ? "W" : "B"].shift();
+    p = place(p, cell.row, cell.column, p.turn);
+  }
+  assert.equal(p.winner, "draw");
+  assert.equal(replayPosition(p, 224).winner, null);
+  assert.equal(replayPosition(p, 225).winner, "draw");
+  assert.equal(replayPosition(p, 0).moveCount, 0);
+  assert.equal(p.moveCount, 225);
+});
+
 test("only selected players can seat; every player owns at most one side", () => {
   let l = newLobby(1, ["a", "b"]);
   assert.throws(() => joinSeat(l, "Black", "observer"), /observing/);
@@ -169,7 +238,8 @@ test("board snapshots and action receipts stay bounded while canonical history k
     turnStartedAt: null,
     turnElapsedMS: 0,
   });
-  const notice = describePosition(full), receipt = summarizePosition(full);
+  const notice = describePosition(full),
+    receipt = summarizePosition(full);
   assert.ok(Buffer.byteLength(JSON.stringify(record(full))) > 32768);
   assert.ok(Buffer.byteLength(JSON.stringify(notice)) < 1200);
   assert.ok(Buffer.byteLength(JSON.stringify(receipt)) < 350);

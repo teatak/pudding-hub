@@ -96,11 +96,11 @@
   min-width: 88px;
   white-space: nowrap;
 }
-.gd-danmaku-toggle {
+.gd-icon-toggle {
   width: 36px;
   padding: 0;
 }
-.gd-danmaku-toggle[aria-pressed="true"] {
+.gd-icon-toggle[aria-pressed="true"] {
   color: var(--gd-accent);
   background: var(--gd-soft);
 }
@@ -313,7 +313,7 @@
 .gd-board-area {
   grid-area: board;
   width: 100%;
-  max-width: min(600px, max(240px, calc(100dvh - 360px)));
+  max-width: min(600px, max(240px, calc(100dvh - 400px)));
   min-width: 0;
   margin: 0 auto;
 }
@@ -322,6 +322,7 @@
   margin: 0 auto;
 }
 .gd-wood {
+  container-type: inline-size;
   width: 100%;
   aspect-ratio: 1;
   position: relative;
@@ -410,7 +411,8 @@
   background: #674b2820;
 }
 .gd-stone {
-  display: block;
+  display: grid;
+  place-items: center;
   position: absolute;
   inset: 7%;
   border-radius: 50%;
@@ -442,12 +444,51 @@
   outline: 2px solid #e0b76a;
   outline-offset: 1px;
 }
+.gd-stone-number {
+  color: #fff;
+  font-size: clamp(6px, 2.1cqi, 12px);
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.gd-white .gd-stone-number {
+  color: #222;
+}
+.gd-stone.has-number.is-last::after {
+  inset: 3%;
+  width: auto;
+  height: auto;
+  background: transparent;
+  border: 1px solid #c86849;
+}
 .gd-board-footer {
-  height: 50px;
+  height: 90px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+.gd-replay {
+  width: 100%;
+  font-size: 11px;
+  color: var(--gd-muted);
+  font-variant-numeric: tabular-nums;
+}
+.gd-replay-heading,
+.gd-replay-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.gd-replay-controls input {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--gd-accent);
+}
+.gd-replay-controls button,
+#replay-start {
+  flex-shrink: 0;
 }
 .gd-overlay {
   position: absolute;
@@ -525,7 +566,7 @@
     grid-template-columns: minmax(0, 1fr);
   }
   .gd-board-area {
-    max-width: min(600px, max(240px, calc(100dvh - 136px)));
+    max-width: min(600px, max(240px, calc(100dvh - 176px)));
   }
 }
 @container gomoku (max-width:419px) {
@@ -536,7 +577,7 @@
     grid-template-columns: minmax(0, 1fr);
   }
   .gd-board-area {
-    max-width: min(600px, max(240px, calc(100dvh - 564px)));
+    max-width: min(600px, max(240px, calc(100dvh - 604px)));
   }
   .gd-game-actions {
     gap: 6px;
@@ -546,7 +587,7 @@
   .gd-button {
     min-height: 44px;
   }
-  .gd-danmaku-toggle {
+  .gd-icon-toggle {
     width: 44px;
   }
   .gd-comment-compose input {
