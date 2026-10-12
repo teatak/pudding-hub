@@ -7,26 +7,35 @@ export type Lobby = {
   ready: string[];
   startsAt: number | null;
 };
-export const newLobby = (round: number, players: string[] = []): Lobby => ({
-  round,
-  players,
+export const emptyLobby = (): Lobby => ({
+  round: 0,
+  players: [],
   phase: "lobby",
   seats: {},
   ready: [],
   startsAt: null,
 });
-export function joinSeat(lobby: Lobby, role: string, actor: string): Lobby {
-  if (lobby.phase !== "lobby") throw new Error("The game has already started");
-  if (!lobby.players.includes(actor))
-    throw new Error("You are observing this round");
-  if (!roles.includes(role as (typeof roles)[number]))
-    throw new Error("Unknown seat");
-  if (lobby.seats[role] === actor) return lobby;
-  if (lobby.seats[role])
-    throw new Error("Seat occupied; choose the other seat");
-  if (Object.values(lobby.seats).includes(actor))
-    throw new Error("Leave your current seat before switching");
-  return { ...lobby, seats: { ...lobby.seats, [role]: actor } };
+export function newLobby(
+  previous: Lobby,
+  players: string[],
+  random = Math.random,
+): Lobby {
+  if (players.length !== 2 || new Set(players).size !== 2)
+    throw new Error("Choose exactly two players");
+  const samePair =
+    previous.players.length === 2 &&
+    players.every((id) => previous.players.includes(id));
+  const black = samePair
+    ? previous.seats.White
+    : players[random() < 0.5 ? 0 : 1];
+  return {
+    round: previous.round + 1,
+    players: [...players],
+    phase: "lobby",
+    seats: { Black: black, White: players.find((id) => id !== black)! },
+    ready: [],
+    startsAt: null,
+  };
 }
 export function setReady(
   lobby: Lobby,
@@ -37,7 +46,7 @@ export function setReady(
   if (lobby.phase === "playing")
     throw new Error("The game has already started");
   if (!Object.values(lobby.seats).includes(actor))
-    throw new Error("Choose a seat before getting ready");
+    throw new Error("You are observing this round");
   if (lobby.ready.includes(actor) === ready) return lobby;
   const next = ready
     ? [...lobby.ready, actor]
@@ -50,19 +59,6 @@ export function setReady(
     ready: next,
     phase: complete ? "countdown" : "lobby",
     startsAt: complete ? now + 3000 : null,
-  };
-}
-export function leaveSeat(lobby: Lobby, actor: string): Lobby {
-  if (lobby.phase === "playing")
-    throw new Error("Start a new round before changing seats");
-  return {
-    ...lobby,
-    phase: "lobby",
-    startsAt: null,
-    seats: Object.fromEntries(
-      Object.entries(lobby.seats).filter(([, id]) => id !== actor),
-    ),
-    ready: lobby.ready.filter((id) => id !== actor),
   };
 }
 export function beginPlay(lobby: Lobby, now = Date.now()): Lobby {

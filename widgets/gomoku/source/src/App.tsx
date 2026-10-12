@@ -18,6 +18,7 @@ import {
   Pause,
   Swords,
   UserRound,
+  UsersRound,
 } from "lucide-react";
 import { roles } from "./lobby";
 import {
@@ -29,7 +30,7 @@ import {
   type Color,
 } from "./rules";
 import {
-  changeSeat,
+  changeReadiness,
   finishCountdown,
   lobby,
   move,
@@ -216,11 +217,9 @@ export default function App() {
           : undefined;
       })
     : selected.map(chosenPlayer);
-  const act = (action: "join" | "ready" | "unready" | "leave", role?: string) =>
-    perform(() =>
-      pudding.interaction.handle((c) => changeSeat(action, role, c)),
-    );
-  function openRound() {
+  const act = (ready: boolean) =>
+    perform(() => pudding.interaction.handle((c) => changeReadiness(ready, c)));
+  function openRound(choosePlayers = false) {
     const choice = l.round
       ? l.players.flatMap((id) =>
           id === human?.id
@@ -230,7 +229,7 @@ export default function App() {
                 .map((s) => s.id),
         )
       : selected;
-    if (choice.length !== 2) {
+    if (choosePlayers || choice.length !== 2) {
       setSelected(choice);
       setPicker(true);
       return;
@@ -329,12 +328,24 @@ export default function App() {
                 {t("pauseGame")}
               </button>
             )}
+            {!!l.round && (p.winner || run?.status === "paused") && (
+              <button
+                className="gd-button gd-icon-toggle"
+                id="change-players"
+                title={t("changePlayers")}
+                aria-label={t("changePlayers")}
+                disabled={busy || !candidates}
+                onClick={() => openRound(true)}
+              >
+                <UsersRound size={16} />
+              </button>
+            )}
             {(!l.round || p.winner || run?.status === "paused") && (
               <button
                 className="gd-button gd-main-action"
                 id="start"
                 disabled={busy || !candidates}
-                onClick={openRound}
+                onClick={() => openRound()}
               >
                 <Play size={14} />
                 {!l.round
@@ -400,9 +411,7 @@ export default function App() {
                           ? t("statusWaiting")
                           : ready
                             ? t("statusReady")
-                            : role
-                              ? t("statusNotReady")
-                              : t("statusChoosing");
+                            : t("statusNotReady");
               const openingHint =
                 run?.status === "paused"
                   ? t("hintPaused")
@@ -410,9 +419,7 @@ export default function App() {
                     ? t("hintBothReady")
                     : ready
                       ? t("hintWaitingOpponent")
-                      : role
-                        ? t("hintWaitingReadiness")
-                        : t("hintWaitingSide");
+                      : t("hintWaitingReadiness");
               return (
                 <article
                   className={
@@ -471,50 +478,16 @@ export default function App() {
                       <div className="gd-card-wait">
                         <small>{openingHint}</small>
                         <div className="gd-player-actions">
-                          {!role ? (
-                            roles.map((r) => (
-                              <button
-                                className="gd-button"
-                                key={r}
-                                data-seat={r}
-                                disabled={
-                                  busy ||
-                                  run?.status !== "running" ||
-                                  !!l.seats[r]
-                                }
-                                onClick={() => void act("join", r)}
-                              >
-                                {r === "Black"
-                                  ? t("chooseBlack")
-                                  : t("chooseWhite")}
-                              </button>
-                            ))
-                          ) : (
-                            <>
-                              <button
-                                className={
-                                  "gd-button" + (!ready ? " is-primary" : "")
-                                }
-                                id="ready"
-                                disabled={busy || run?.status !== "running"}
-                                onClick={() =>
-                                  void act(ready ? "unready" : "ready")
-                                }
-                              >
-                                {ready
-                                  ? t("actionCancelReady")
-                                  : t("actionReady")}
-                              </button>
-                              <button
-                                className="gd-button is-text"
-                                disabled={busy || run?.status !== "running"}
-                                id="leave"
-                                onClick={() => void act("leave")}
-                              >
-                                {t("actionLeave")}
-                              </button>
-                            </>
-                          )}
+                          <button
+                            className={
+                              "gd-button" + (!ready ? " is-primary" : "")
+                            }
+                            id="ready"
+                            disabled={busy || run?.status !== "running"}
+                            onClick={() => void act(!ready)}
+                          >
+                            {ready ? t("actionCancelReady") : t("actionReady")}
+                          </button>
                         </div>
                       </div>
                     ) : player?.human && l.phase === "playing" && !p.winner ? (
@@ -729,7 +702,7 @@ export default function App() {
                       <button
                         className="gd-button"
                         disabled={busy}
-                        onClick={() => void act("unready")}
+                        onClick={() => void act(false)}
                       >
                         {t("actionCancelReady")}
                       </button>

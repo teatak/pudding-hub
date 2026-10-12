@@ -77,3 +77,19 @@ test("retained errors translate from the original error on each locale change", 
   }
   assert.equal(errorText(new Error("Network unavailable")), "Network unavailable");
 });
+
+
+test("assigned-color invitations give only the ready action in all locales", () => {
+  for (const locale of ["en", "zh-CN", "zh-TW"]) {
+    setLocale(locale);
+    for (const key of ["stoneBlack", "stoneWhite"]) {
+      const color=t(key);
+      assert.ok(t("notifyInviteSummary", {color}).includes(color));
+      const message=t("notifyInviteMessage", {color});
+      assert.ok(message.includes(color));
+      assert.match(message, /widget_invoke\(.*name:"ready"/);
+      assert.match(message, /3/);
+      assert.doesNotMatch(message, /joinSeat|leaveSeat/);
+    }
+  }
+});

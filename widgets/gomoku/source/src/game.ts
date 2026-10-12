@@ -18,9 +18,8 @@ import {
 } from "./rules";
 import {
   newLobby,
-  joinSeat,
+  emptyLobby,
   setReady,
-  leaveSeat,
   beginPlay,
   roles,
   type Lobby,
@@ -33,12 +32,11 @@ export const position = () => {
   return saved ? derive(saved) : initial();
 };
 export const lobby = () =>
-  (pudding.state.read().data.lobby as unknown as Lobby) || newLobby(0);
+  (pudding.state.read().data.lobby as unknown as Lobby) || emptyLobby();
 let changing = false;
 let mutation: Promise<unknown> | null = null;
 async function change<T>(fn: () => Promise<T>) {
-  if (changing)
-    throw new Error("An operation is in progress");
+  if (changing) throw new Error("An operation is in progress");
   changing = true;
   try {
     mutation = fn();
@@ -147,7 +145,7 @@ export async function publish(retry = false) {
           ? l.players.filter((id) => !l.ready.includes(id))
           : [l.seats[p.turn]];
   const previous = run.receipts.filter(
-    (n) => n.id === base || n.id.startsWith(base + "-retry-"),
+    (n) => n.id === base || n.id.startsWith(base + "-"),
   );
   const latest = (id: string) =>
     previous
@@ -178,50 +176,73 @@ export async function publish(retry = false) {
     if (!needed.length) return;
     // A receipt is immutable, including its localized text. Reuse pending work;
     // only an explicit continuation creates a fresh wake-up for ended attempts.
-    const id = previous.length ? base + "-retry-" + previous.length : base;
-    const color = p.turn === "Black" ? t("colorBlack") : t("colorWhite");
-    const name =
-      run.participants.find((player) => player.id === l.seats[p.winner!])
-        ?.name || (p.winner === "Black" ? t("colorBlack") : t("colorWhite"));
-    const summary =
-      topic === "invitation"
-        ? t("notifyInviteSummary")
-        : topic === "result"
-          ? p.winner === "draw"
-            ? t("notifyMatchDrawn")
-            : t("notifyMatchFinished", { name: name || "" })
-          : t("notifyWaitingMoveSummary", { color });
-    const message =
-      topic === "invitation"
-        ? t("notifyInviteMessage")
-        : topic === "result"
-          ? t("notifyResultSummary", { result: summary })
-          : t("notifyMoveMessage", { color });
-    await pudding.interaction.notify({
-      id,
-      audience: p.winner
-        ? { kind: "all" }
-        : { kind: "selected", participantIDs: needed },
-      delivery: "request-action",
-      topic,
-      summary,
-      message,
-      // A self-contained board survives context compaction; history is opt-in
-      // through readBoard instead of growing every notification.
-      data: {
-        ...describePosition(p),
-        round: l.round,
-        phase: p.winner ? "finished" : l.phase,
-        turn: l.phase === "playing" && !p.winner ? p.turn : null,
-      },
-    });
+    // Invitations are private to each assigned side; moves and results keep
+    // their existing delivery scope. All colors come from the saved seats.
+    const groups = topic === "invitation" ? needed.map((id) => [id]) : [needed];
+    for (const participantIDs of groups) {
+      const assignedColor =
+        topic === "invitation"
+          ? roles.find((role) => l.seats[role] === participantIDs[0])!
+          : undefined;
+      const groupBase = assignedColor ? base + "-" + assignedColor : base;
+      const attempts = previous.filter(
+        (n) => n.id === groupBase || n.id.startsWith(groupBase + "-retry-"),
+      );
+      const id = attempts.length
+        ? groupBase + "-retry-" + attempts.length
+        : groupBase;
+      const color = p.turn === "Black" ? t("colorBlack") : t("colorWhite");
+      const name =
+        run.participants.find((player) => player.id === l.seats[p.winner!])
+          ?.name || (p.winner === "Black" ? t("colorBlack") : t("colorWhite"));
+      const summary =
+        topic === "invitation"
+          ? t("notifyInviteSummary", {
+              color:
+                assignedColor === "Black" ? t("stoneBlack") : t("stoneWhite"),
+            })
+          : topic === "result"
+            ? p.winner === "draw"
+              ? t("notifyMatchDrawn")
+              : t("notifyMatchFinished", { name: name || "" })
+            : t("notifyWaitingMoveSummary", { color });
+      const message =
+        topic === "invitation"
+          ? t("notifyInviteMessage", {
+              color:
+                assignedColor === "Black" ? t("stoneBlack") : t("stoneWhite"),
+            })
+          : topic === "result"
+            ? t("notifyResultSummary", { result: summary })
+            : t("notifyMoveMessage", { color });
+      await pudding.interaction.notify({
+        id,
+        audience: p.winner
+          ? { kind: "all" }
+          : { kind: "selected", participantIDs },
+        delivery: "request-action",
+        topic,
+        summary,
+        message,
+        // A self-contained board survives context compaction; history is opt-in
+        // through readBoard instead of growing every notification.
+        data: {
+          ...describePosition(p),
+          ...(assignedColor ? { assignedColor } : {}),
+          round: l.round,
+          phase: p.winner ? "finished" : l.phase,
+          turn: l.phase === "playing" && !p.winner ? p.turn : null,
+        },
+      });
+    }
   } catch (error) {
-    throw new NotificationError(error instanceof Error ? error.message : String(error));
+    throw new NotificationError(
+      error instanceof Error ? error.message : String(error),
+    );
   }
 }
 export const pause = async () => {
-  if (!lobby().round || position().winner)
-    throw new Error("No ongoing match");
+  if (!lobby().round || position().winner) throw new Error("No ongoing match");
   // Pausing must not be rejected just because the last stone is publishing its
   // notification. Stop model work first, then freeze the committed position.
   await pudding.interaction.pause();
@@ -235,30 +256,21 @@ export const start = (sessionIDs: string[], includeMe: boolean) =>
       new Set(sessionIDs).size !== sessionIDs.length
     )
       throw new Error("Choose exactly two players");
-    const round = lobby().round + 1;
+    const previous = lobby();
     const run = await pudding.interaction.connect({ sessionIDs });
     const players = run.participants
       .filter((p) => p.kind === "session" || includeMe)
       .map((p) => p.id);
     await pudding.interaction.setRequests([]);
-    await save(newLobby(round, players), initial());
+    await save(newLobby(previous, players), initial());
     if (run.status === "paused") await pudding.interaction.resume();
     await publish();
   });
-export const changeSeat = (
-  action: "join" | "ready" | "unready" | "leave",
-  role: string | undefined,
-  context: InteractionContext,
-) =>
+export const changeReadiness = (ready: boolean, context: InteractionContext) =>
   change(async () => {
     const who = actor(context),
       old = lobby();
-    const next =
-      action === "join"
-        ? joinSeat(old, role!, who.id)
-        : action === "leave"
-          ? leaveSeat(old, who.id)
-          : setReady(old, who.id, action === "ready");
+    const next = setReady(old, who.id, ready);
     if (next !== old) await save(next, position());
     return readBoard(context);
   });
@@ -304,7 +316,9 @@ export const resign = (context: InteractionContext) =>
   });
 // Human handlers retain the original error for live locale changes. Localize
 // only the interface response that is returned to the calling model.
-function defineGameInterface<T>(definition: Parameters<typeof pudding.defineInterface<T>>[0]) {
+function defineGameInterface<T>(
+  definition: Parameters<typeof pudding.defineInterface<T>>[0],
+) {
   return pudding.defineInterface({
     ...definition,
     async run(input, context) {
@@ -320,23 +334,10 @@ function registerInterfaces() {
   const coordinates = { error: errorText("Use columns A–O and rows 1–15") };
   return [
     defineGameInterface({
-      name: "joinSeat",
-      description: t("descJoinSeat"),
-      input: z.object({ role: z.enum(roles) }).strict(),
-      run: (i, c) => changeSeat("join", i.role, c),
-    }),
-    defineGameInterface({
       name: "ready",
       description: t("descReady"),
       input: z.object({ ready: z.boolean().optional() }).strict(),
-      run: (i, c) =>
-        changeSeat(i.ready === false ? "unready" : "ready", undefined, c),
-    }),
-    defineGameInterface({
-      name: "leaveSeat",
-      description: t("descLeaveSeat"),
-      input: z.object({}).strict(),
-      run: (_, c) => changeSeat("leave", undefined, c),
+      run: (i, c) => changeReadiness(i.ready !== false, c),
     }),
     defineGameInterface({
       name: "placeStone",
@@ -348,9 +349,7 @@ function registerInterfaces() {
             .int(coordinates)
             .min(1, coordinates)
             .max(15, coordinates),
-          column: z
-            .string(coordinates)
-            .regex(/^[A-O]$/, coordinates),
+          column: z.string(coordinates).regex(/^[A-O]$/, coordinates),
           comment: z
             .string()
             .trim()

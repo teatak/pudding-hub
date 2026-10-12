@@ -2,9 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   newLobby,
-  joinSeat,
+  emptyLobby,
   setReady,
-  leaveSeat,
   beginPlay,
 } from "../widgets/gomoku/source/src/lobby.ts";
 import {
@@ -89,43 +88,79 @@ test("full-board draw replays through 225 moves and back to the empty opening", 
   assert.equal(p.moveCount, 225);
 });
 
-test("only selected players can seat; every player owns at most one side", () => {
-  let l = newLobby(1, ["a", "b"]);
-  assert.throws(() => joinSeat(l, "Black", "observer"), /observing/);
-  assert.throws(() => setReady(l, "a"), /Choose/);
-  l = joinSeat(l, "Black", "a");
-  assert.throws(() => joinSeat(l, "White", "a"), /Leave/);
-  assert.throws(() => joinSeat(l, "Black", "b"), /occupied/);
-  assert.equal(joinSeat(l, "Black", "a"), l);
+test("first game assigns either color once; the same pair swaps independent of ordering", () => {
+  const empty = emptyLobby();
+  for (const [random, black] of [
+    [0, "a"],
+    [0.499, "a"],
+    [0.5, "b"],
+    [0.999, "b"],
+  ]) {
+    const first = newLobby(empty, ["a", "b"], () => random);
+    assert.equal(first.seats.Black, black);
+    assert.notEqual(first.seats.White, black);
+    assert.deepEqual(first.ready, []);
+    assert.equal(first.phase, "lobby");
+    assert.equal(first.startsAt, null);
+    const noDraw = () => {
+      throw new Error("Rematches must not draw again");
+    };
+    const second = newLobby(first, ["b", "a"], noDraw);
+    assert.deepEqual(second.seats, {
+      Black: first.seats.White,
+      White: first.seats.Black,
+    });
+    assert.deepEqual(newLobby(second, ["a", "b"], noDraw).seats, first.seats);
+    assert.deepEqual(first.players, ["a", "b"]);
+  }
+  assert.deepEqual(empty.seats, {});
+  for (const players of [[], ["a"], ["a", "a"], ["a", "b", "c"]])
+    assert.throws(() => newLobby(empty, players), /exactly two/);
 });
-test("readiness persists a three-second deadline, supports cancellation and survives restoration", () => {
-  let l = joinSeat(
-    joinSeat(newLobby(1, ["a", "b"]), "Black", "a"),
-    "White",
-    "b",
-  );
+test("changing either player, including the human, starts a new draw", () => {
+  const first = newLobby(emptyLobby(), ["a", "b"], () => 0);
+  for (const players of [
+    ["a", "c"],
+    ["c", "b"],
+    ["a", "human"],
+    ["c", "d"],
+  ]) {
+    let draws = 0;
+    const next = newLobby(first, players, () => {
+      draws++;
+      return 0.9;
+    });
+    assert.equal(draws, 1);
+    assert.deepEqual(next.seats, { Black: players[1], White: players[0] });
+    assert.deepEqual(next.ready, []);
+  }
+});
+test("assigned players prepare independently; cancellation and restoration retain colors and the three-second deadline", () => {
+  let l = newLobby(emptyLobby(), ["a", "b"], () => 0);
+  const seats = { ...l.seats };
+  assert.throws(() => setReady(l, "observer"), /observing/);
   l = setReady(l, "a", true, 1000);
   assert.equal(l.phase, "lobby");
   l = setReady(l, "b", true, 1100);
   assert.equal(l.phase, "countdown");
   assert.equal(l.startsAt, 4100);
-  assert.equal(
-    setReady(l, "a", true, 2000),
-    l,
-    "duplicate ready cannot restart countdown",
-  );
+  assert.equal(setReady(l, "a", true, 2000), l);
   assert.throws(() => beginPlay(l, 4099), /countdown/);
-  assert.equal(beginPlay(JSON.parse(JSON.stringify(l)), 4100).phase, "playing");
+  const playing = beginPlay(JSON.parse(JSON.stringify(l)), 4100);
+  assert.equal(playing.phase, "playing");
+  assert.deepEqual(playing.seats, seats);
+  assert.throws(() => setReady(playing, "a", false), /already started/);
   const cancelled = setReady(l, "a", false, 4000);
   assert.equal(cancelled.phase, "lobby");
   assert.equal(cancelled.startsAt, null);
   assert.deepEqual(cancelled.ready, ["b"]);
+  assert.deepEqual(cancelled.seats, seats);
   assert.throws(() => beginPlay(cancelled, 9999), /countdown/);
   assert.equal(setReady(cancelled, "a", true, 5000).startsAt, 8000);
-  const left = leaveSeat(l, "b");
-  assert.equal(left.phase, "lobby");
-  assert.equal(left.seats.White, undefined);
-  assert.throws(() => leaveSeat(beginPlay(l, 4100), "b"), /new round/);
+  const rematch = newLobby(playing, ["a", "b"]);
+  assert.deepEqual(rematch.seats, { Black: seats.White, White: seats.Black });
+  assert.deepEqual(rematch.ready, []);
+  assert.equal(rematch.startsAt, null);
 });
 test("coordinates match bottom-up display and each valid move commits exactly one comment", () => {
   const before = initial(),

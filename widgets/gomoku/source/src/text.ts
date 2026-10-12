@@ -29,6 +29,7 @@ export const messages = {
     play: "Play",
     newGame: "New game",
     rematch: "Rematch",
+    changePlayers: "Change players",
     retry: "Retry",
     dismiss: "Dismiss",
 
@@ -42,7 +43,6 @@ export const messages = {
     statusWaiting: "Waiting",
     statusReady: "Ready",
     statusNotReady: "Not ready",
-    statusChoosing: "Choosing",
     statusUndecided: "Undecided",
     statusOpen: "Open",
     thinkingTime: "Thinking time",
@@ -53,11 +53,8 @@ export const messages = {
     playOnBoard: "Play on the board",
     sideBlackFirst: "Black · first",
     sideWhiteSecond: "White · second",
-    chooseBlack: "Black",
-    chooseWhite: "White",
     actionReady: "Ready",
     actionCancelReady: "Cancel ready",
-    actionLeave: "Leave",
     actionResign: "Resign",
 
     // 弹幕与评论
@@ -70,8 +67,7 @@ export const messages = {
     hintPaused: "Game paused; continue to act",
     hintBothReady: "Both players ready; starting soon",
     hintWaitingOpponent: "This player is ready; waiting for the opponent",
-    hintWaitingReadiness: "This player has a side; waiting for readiness",
-    hintWaitingSide: "Waiting for this player to choose a side",
+    hintWaitingReadiness: "Waiting for this player to confirm readiness",
     cardInviteOnStart: "Invite this conversation on start",
     cardCommentsOff: "Comments off",
     cardMatchComplete: "Match complete",
@@ -99,10 +95,8 @@ export const messages = {
     pickerBack: "Back",
 
     // 接口描述
-    descJoinSeat: "Choose your own available Black or White seat.",
     descReady:
-      "Ready your own seat; ready:false cancels readiness before play. Both ready starts a 3-second countdown.",
-    descLeaveSeat: "Leave your own seat before play, cancelling the countdown.",
+      "Confirm readiness for your assigned color; ready:false cancels readiness before play without changing colors. Both ready starts a 3-second countdown.",
     descPlaceStone:
       "Place your stone at a real board coordinate: column A–O (letter), row 1–15 (number, bottom to top), e.g. {column:'H',row:8}. Include an optional comment (max 40 characters). Returns a compact receipt without board or history; wait for your next move notification.",
     descReadBoard:
@@ -111,9 +105,9 @@ export const messages = {
       'Concede your own side during play, even on the opponent\'s turn. Call widget_invoke with name:"resign", input:{}. Ends the game and notifies both players.',
 
     // 模型通知
-    notifyInviteSummary: "Game invitation: choose a side and get ready",
+    notifyInviteSummary: "Game invitation: you are {color}; get ready",
     notifyInviteMessage:
-      'You are invited to Gomoku. Interfaces are called through widget_invoke, not separate tools: widget_invoke({targetID,expectedStateVersion,name:"readBoard",input:{}}). Use this notification\'s targetID and latest stateVersion; it is a concurrency version, not moveCount. Read the board, joinSeat with {role:"Black"} or {role:"White"}, then ready with {}. Choose only your own available seat. Both ready starts a 3-second countdown; wait for your move notification. During play, resign with {} concedes your own side. readBoard omits history unless input is {includeHistory:true}.',
+      'You have been assigned {color} for this round; Black plays first. Confirm your own readiness through widget_invoke({targetID,expectedStateVersion,name:"ready",input:{}}). Interfaces are called through widget_invoke, not separate tools. Use this notification\'s targetID and latest stateVersion; it is a concurrency version, not moveCount. Colors are fixed for the round. Both ready starts a 3-second countdown; wait for your move notification. For current state use name:"readBoard",input:{}; on a version conflict, read the current state before trying again. During play, name:"resign",input:{} concedes your own side. History is returned only when readBoard input is {includeHistory:true}.',
     notifyMatchDrawn: "Match drawn",
     notifyMatchFinished: "Match finished: {name} wins",
     notifyResultSummary:
@@ -150,6 +144,7 @@ export const messages = {
     play: "开一局",
     newGame: "重新开局",
     rematch: "再来一局",
+    changePlayers: "更换棋手",
     retry: "重试",
     dismiss: "关闭",
 
@@ -163,7 +158,6 @@ export const messages = {
     statusWaiting: "等待对手",
     statusReady: "已准备",
     statusNotReady: "等待准备",
-    statusChoosing: "等待选边",
     statusUndecided: "待定",
     statusOpen: "空位",
     thinkingTime: "思考用时",
@@ -174,11 +168,8 @@ export const messages = {
     playOnBoard: "在棋盘上落子",
     sideBlackFirst: "黑棋 · 先手",
     sideWhiteSecond: "白棋 · 后手",
-    chooseBlack: "执黑",
-    chooseWhite: "执白",
     actionReady: "准备",
     actionCancelReady: "取消准备",
-    actionLeave: "离座",
     actionResign: "认输",
 
     // 弹幕与评论
@@ -191,8 +182,7 @@ export const messages = {
     hintPaused: "对局已暂停，继续后可操作",
     hintBothReady: "双方已准备，即将开局",
     hintWaitingOpponent: "本方已准备，等待对手就绪",
-    hintWaitingReadiness: "本方已选边，等待准备",
-    hintWaitingSide: "等待本方选择黑棋或白棋",
+    hintWaitingReadiness: "等待本方确认准备",
     cardInviteOnStart: "开局后，邀请当前会话",
     cardCommentsOff: "弹幕已关闭",
     cardMatchComplete: "对局已结束",
@@ -214,16 +204,14 @@ export const messages = {
     footerWatching: "观战中 · 棋手在各自会话中行动",
 
     // 棋手选择弹窗
-    pickerTitle: "补齐两位棋手",
+    pickerTitle: "选择两位棋手",
     pickerSubtitle: "已选 {count} / 2 · 也可以自己上场",
     pickerInviteAndPlay: "邀请并开局",
     pickerBack: "返回",
 
     // 接口描述
-    descJoinSeat: "选择自己空闲的 Black 或 White 席位。",
     descReady:
-      "准备自己的席位；开局前 ready:false 取消准备。双方准备后读秒 3 秒。",
-    descLeaveSeat: "开局前离开自己的席位，同时取消倒计时。",
+      "确认已分配颜色的准备状态；开局前 ready:false 取消准备，黑白保持不变。双方准备后倒计时 3 秒。",
     descPlaceStone:
       '按棋盘真实坐标落子：column 为 A–O 字母列，row 为 1–15 数字行（由下向上），例如 {column:"H",row:8}。可附最多 40 字弹幕。返回简短结果，无棋盘及历史；等待下次落子通知。',
     descReadBoard:
@@ -232,9 +220,9 @@ export const messages = {
       '对局中为自己认输，对手回合也可调用。通过 widget_invoke 传 name:"resign"、input:{}，结束本局并通知双方。',
 
     // 模型通知
-    notifyInviteSummary: "棋局邀请：请选边并准备",
+    notifyInviteSummary: "棋局邀请：你执{color}，请准备",
     notifyInviteMessage:
-      '邀请你参加五子棋。接口统一通过 widget_invoke 调用，不是独立工具：widget_invoke({targetID,expectedStateVersion,name:"readBoard",input:{}})。使用通知中的 targetID 和最新 stateVersion；版本用于并发校验，手数看 moveCount。查看局面后，joinSeat 传 {role:"Black"} 或 {role:"White"} 选择自己的空位，再 ready 传 {}。双方准备后读秒 3 秒，收到落子通知再下棋。对局中可用 resign 传 {} 为自己认输。readBoard 默认不返回历史，需要时传 {includeHistory:true}。',
+      '本局已分配你执{color}，黑棋先行。请确认自己的准备状态：widget_invoke({targetID,expectedStateVersion,name:"ready",input:{}})。接口统一通过 widget_invoke 调用，不是独立工具。使用通知中的 targetID 和最新 stateVersion；版本用于并发校验，手数看 moveCount。本局黑白固定。双方准备后读秒 3 秒，收到落子通知再下棋。查询当前状态用 name:"readBoard",input:{}；版本冲突时先读取当前状态再操作。对局中 name:"resign",input:{} 为自己认输。仅在需要棋谱时调用 readBoard，传 {includeHistory:true}。',
     notifyMatchDrawn: "本局平局",
     notifyMatchFinished: "本局结束，{name}获胜",
     notifyResultSummary: "{result}。简短回应结果，不要再落子。",
@@ -270,6 +258,7 @@ export const messages = {
     play: "開一局",
     newGame: "重新開局",
     rematch: "再來一局",
+    changePlayers: "更換棋手",
     retry: "重試",
     dismiss: "關閉",
 
@@ -283,7 +272,6 @@ export const messages = {
     statusWaiting: "等待對手",
     statusReady: "已準備",
     statusNotReady: "等待準備",
-    statusChoosing: "等待選邊",
     statusUndecided: "待定",
     statusOpen: "空位",
     thinkingTime: "思考用時",
@@ -294,11 +282,8 @@ export const messages = {
     playOnBoard: "在棋盤上落子",
     sideBlackFirst: "黑棋 · 先手",
     sideWhiteSecond: "白棋 · 後手",
-    chooseBlack: "執黑",
-    chooseWhite: "執白",
     actionReady: "準備",
     actionCancelReady: "取消準備",
-    actionLeave: "離座",
     actionResign: "認輸",
 
     // 弹幕与评论
@@ -311,8 +296,7 @@ export const messages = {
     hintPaused: "對局已暫停，繼續後可操作",
     hintBothReady: "雙方已準備，即將開局",
     hintWaitingOpponent: "本方已準備，等待對手就緒",
-    hintWaitingReadiness: "本方已選邊，等待準備",
-    hintWaitingSide: "等待本方選擇黑棋或白棋",
+    hintWaitingReadiness: "等待本方確認準備",
     cardInviteOnStart: "開局後，邀請目前對話",
     cardCommentsOff: "彈幕已關閉",
     cardMatchComplete: "對局已結束",
@@ -334,16 +318,14 @@ export const messages = {
     footerWatching: "觀戰中 · 棋手在各自對話中行動",
 
     // 棋手选择弹窗
-    pickerTitle: "補齊兩位棋手",
+    pickerTitle: "選擇兩位棋手",
     pickerSubtitle: "已選 {count} / 2 · 也可以自己上場",
     pickerInviteAndPlay: "邀請並開局",
     pickerBack: "返回",
 
     // 接口描述
-    descJoinSeat: "選擇自己空閒的 Black 或 White 席位。",
     descReady:
-      "準備自己的席位；開局前 ready:false 取消準備。雙方準備後倒數 3 秒。",
-    descLeaveSeat: "開局前離開自己的席位，同時取消倒數。",
+      "確認已分配顏色的準備狀態；開局前 ready:false 取消準備，黑白保持不變。雙方準備後倒數 3 秒。",
     descPlaceStone:
       '按棋盤實際座標落子：column 為 A–O 字母欄，row 為 1–15 數字列（由下向上），例如 {column:"H",row:8}。可附最多 40 字彈幕。回傳簡短結果，無棋盤及歷史；等待下次落子通知。',
     descReadBoard:
@@ -352,9 +334,9 @@ export const messages = {
       '對局中為自己認輸，對手回合也可呼叫。透過 widget_invoke 傳 name:"resign"、input:{}，結束本局並通知雙方。',
 
     // 模型通知
-    notifyInviteSummary: "棋局邀請：請選邊並準備",
+    notifyInviteSummary: "棋局邀請：你執{color}，請準備",
     notifyInviteMessage:
-      '邀請你參加五子棋。介面統一透過 widget_invoke 呼叫，不是獨立工具：widget_invoke({targetID,expectedStateVersion,name:"readBoard",input:{}})。使用通知中的 targetID 和最新 stateVersion；版本用於並行校驗，手數看 moveCount。查看局面後，joinSeat 傳 {role:"Black"} 或 {role:"White"} 選擇自己的空位，再 ready 傳 {}。雙方準備後倒數 3 秒，收到落子通知再下棋。對局中可用 resign 傳 {} 為自己認輸。readBoard 預設不回傳歷史，需要時傳 {includeHistory:true}。',
+      '本局已分配你執{color}，黑棋先行。請確認自己的準備狀態：widget_invoke({targetID,expectedStateVersion,name:"ready",input:{}})。介面統一透過 widget_invoke 呼叫，不是獨立工具。使用通知中的 targetID 和最新 stateVersion；版本用於並行校驗，手數看 moveCount。本局黑白固定。雙方準備後倒數 3 秒，收到落子通知再下棋。查詢目前狀態用 name:"readBoard",input:{}；版本衝突時先讀取目前狀態再操作。對局中 name:"resign",input:{} 為自己認輸。僅在需要棋譜時呼叫 readBoard，傳 {includeHistory:true}。',
     notifyMatchDrawn: "本局和局",
     notifyMatchFinished: "本局結束，{name}獲勝",
     notifyResultSummary: "{result}。簡短回應結果，不要再落子。",
@@ -401,23 +383,6 @@ const errors: Record<string, [string, string]> = {
     "彈幕不能超過 40 字",
   ],
   "The game has already started": ["对局已经开始", "對局已經開始"],
-  "Unknown seat": ["未知席位", "未知席位"],
-  "Seat occupied; choose the other seat": [
-    "席位已被占用，请选择另一边",
-    "席位已被佔用，請選擇另一邊",
-  ],
-  "Leave your current seat before switching": [
-    "请先离座再换边",
-    "請先離座再換邊",
-  ],
-  "Choose a seat before getting ready": [
-    "请先选边，再准备",
-    "請先選邊，再準備",
-  ],
-  "Start a new round before changing seats": [
-    "请重新开局后再换边",
-    "請重新開局後再換邊",
-  ],
   "Wait for the countdown": ["请等待倒计时结束", "請等待倒數結束"],
   "An operation is in progress": ["当前操作尚未完成", "目前操作尚未完成"],
 };
