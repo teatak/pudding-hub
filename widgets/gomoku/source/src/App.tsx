@@ -90,7 +90,7 @@ export default function App() {
   const [picker, setPicker] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<{
-    message: string;
+    cause: unknown;
     retry?: "candidates" | "notification";
   } | null>(null);
   const [danmaku, setDanmaku] = useState(true),
@@ -112,7 +112,7 @@ export default function App() {
       await fn();
     } catch (e) {
       setError({
-        message: errorText(e),
+        cause: e,
         retry: e instanceof NotificationError ? "notification" : undefined,
       });
     } finally {
@@ -129,7 +129,7 @@ export default function App() {
           (value.connectedSessionIDs ?? value.preferredSessionIDs).slice(0, 2),
         );
     } catch (e) {
-      if (isLive()) setError({ message: String(e), retry: "candidates" });
+      if (isLive()) setError({ cause: e, retry: "candidates" });
     }
   }
   useEffect(() => {
@@ -308,7 +308,7 @@ export default function App() {
         </header>
         {error && (
           <div className="gd-alert" role="alert">
-            <span>{error.message}</span>
+            <span>{errorText(error.cause)}</span>
             {error.retry && (
               <button
                 className="gd-button"

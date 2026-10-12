@@ -13,7 +13,7 @@ export const messages = {
     colorBlack: "Black",
     colorWhite: "White",
     roundDetail: "Round {round} · {detail}",
-    movesCount: "{count} moves",
+    movesCount: "Moves: {count}",
     freestyleRule: "15 × 15 · freestyle",
     toggleComments: "Toggle player comments",
     continueGame: "Continue",
@@ -110,7 +110,7 @@ export const messages = {
     notifyMatchDrawn: "Match drawn",
     notifyMatchFinished: "Match finished: {name} wins",
     notifyResultSummary:
-      "The match finished: {winner}. Briefly acknowledge the result. Do not place more stones.",
+      "{result}. Briefly acknowledge the result. Do not place more stones.",
     notifyWaitingMoveSummary: "{color} to move",
     notifyMoveMessage:
       '{color} to move. The current board and stateVersion are attached. Call widget_invoke with this targetID, expectedStateVersion, name:"placeStone", input:{column:"H",row:8,comment:"Center opening"} (example). Columns A–O, rows 1–15 bottom to top; comment is optional, max 40 characters. Play only your side, then wait for the next notification. To concede, use name:"resign", input:{}; read history only when needed via name:"readBoard", input:{includeHistory:true}.',
@@ -222,7 +222,7 @@ export const messages = {
       '邀请你参加五子棋。接口统一通过 widget_invoke 调用，不是独立工具：widget_invoke({targetID,expectedStateVersion,name:"readBoard",input:{}})。使用通知中的 targetID 和最新 stateVersion；版本用于并发校验，手数看 moveCount。查看局面后，joinSeat 传 {role:"Black"} 或 {role:"White"} 选择自己的空位，再 ready 传 {}。双方准备后读秒 3 秒，收到落子通知再下棋。对局中可用 resign 传 {} 为自己认输。readBoard 默认不返回历史，需要时传 {includeHistory:true}。',
     notifyMatchDrawn: "本局平局",
     notifyMatchFinished: "本局结束，{name}获胜",
-    notifyResultSummary: "本局结束：{winner}。简短回应结果，不要再落子。",
+    notifyResultSummary: "{result}。简短回应结果，不要再落子。",
     notifyWaitingMoveSummary: "等待{color}落子",
     notifyMoveMessage:
       '轮到{color}。通知已附当前棋盘和 stateVersion。调用 widget_invoke，传本局 targetID、expectedStateVersion、name:"placeStone"、input:{column:"H",row:8,comment:"天元开局"}（示例）。字母列 A–O，数字行 1–15 由下向上；弹幕可选，最多 40 字。只替自己落子，然后等待下次通知。认输用 name:"resign"、input:{}；需要历史时用 name:"readBoard"、input:{includeHistory:true}。',
@@ -334,7 +334,7 @@ export const messages = {
       '邀請你參加五子棋。介面統一透過 widget_invoke 呼叫，不是獨立工具：widget_invoke({targetID,expectedStateVersion,name:"readBoard",input:{}})。使用通知中的 targetID 和最新 stateVersion；版本用於並行校驗，手數看 moveCount。查看局面後，joinSeat 傳 {role:"Black"} 或 {role:"White"} 選擇自己的空位，再 ready 傳 {}。雙方準備後倒數 3 秒，收到落子通知再下棋。對局中可用 resign 傳 {} 為自己認輸。readBoard 預設不回傳歷史，需要時傳 {includeHistory:true}。',
     notifyMatchDrawn: "本局和局",
     notifyMatchFinished: "本局結束，{name}獲勝",
-    notifyResultSummary: "本局結束：{winner}。簡短回應結果，不要再落子。",
+    notifyResultSummary: "{result}。簡短回應結果，不要再落子。",
     notifyWaitingMoveSummary: "等待{color}落子",
     notifyMoveMessage:
       '輪到{color}。通知已附目前棋盤和 stateVersion。呼叫 widget_invoke，傳本局 targetID、expectedStateVersion、name:"placeStone"、input:{column:"H",row:8,comment:"天元開局"}（範例）。字母欄 A–O，數字列 1–15 由下向上；彈幕可選，最多 40 字。只替自己落子，然後等待下次通知。認輸用 name:"resign"、input:{}；需要歷史時用 name:"readBoard"、input:{includeHistory:true}。',
@@ -350,13 +350,9 @@ export function t<K extends MessageKey>(
   const locale = pudding.locale.read();
   const lang =
     locale === "en" ? "en" : locale === "zh-TW" ? "zh-TW" : "zh-CN";
-  let str: string = messages[lang]?.[key] ?? messages["zh-CN"][key] ?? key;
-  if (params) {
-    for (const [k, v] of Object.entries(params)) {
-      str = str.replace(`{${k}}`, String(v));
-    }
-  }
-  return str;
+  return messages[lang][key].replace(/\{(\w+)\}/g, (token, name) =>
+    params && Object.hasOwn(params, name) ? String(params[name]) : token,
+  );
 }
 
 const errors: Record<string, [string, string]> = {
@@ -411,9 +407,3 @@ export function errorText(error: unknown) {
   const locale = pudding.locale.read();
   return locale === "en" ? message : locale === "zh-TW" ? pair[1] : pair[0];
 }
-
-// 保留向后兼容性
-export const text = (en: string, cn: string, tw?: string) => {
-  const locale = pudding.locale.read();
-  return locale === "en" ? en : locale === "zh-TW" ? (tw ?? cn) : cn;
-};

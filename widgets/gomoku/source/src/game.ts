@@ -38,14 +38,11 @@ let changing = false;
 let mutation: Promise<unknown> | null = null;
 async function change<T>(fn: () => Promise<T>) {
   if (changing)
-    throw new Error(errorText("An operation is in progress"));
+    throw new Error("An operation is in progress");
   changing = true;
   try {
     mutation = fn();
     return (await mutation) as T;
-  } catch (error) {
-    if (error instanceof NotificationError) throw error;
-    throw new Error(errorText(error));
   } finally {
     changing = false;
     mutation = null;
@@ -132,7 +129,7 @@ function actionResult() {
 export class NotificationError extends Error {}
 export async function publish(retry = false) {
   const run = pudding.interaction.read();
-  if (!run) throw new Error(errorText("Connect to this game first"));
+  if (!run) throw new Error("Connect to this game first");
   const l = lobby(),
     p = position();
   const topic = p.winner
@@ -185,7 +182,7 @@ export async function publish(retry = false) {
     const color = p.turn === "Black" ? t("colorBlack") : t("colorWhite");
     const name =
       run.participants.find((player) => player.id === l.seats[p.winner!])
-        ?.name || p.winner;
+        ?.name || (p.winner === "Black" ? t("colorBlack") : t("colorWhite"));
     const summary =
       topic === "invitation"
         ? t("notifyInviteSummary")
@@ -198,7 +195,7 @@ export async function publish(retry = false) {
       topic === "invitation"
         ? t("notifyInviteMessage")
         : topic === "result"
-          ? t("notifyResultSummary", { winner: p.winner || "" })
+          ? t("notifyResultSummary", { result: summary })
           : t("notifyMoveMessage", { color });
     await pudding.interaction.notify({
       id,
@@ -219,12 +216,12 @@ export async function publish(retry = false) {
       },
     });
   } catch (error) {
-    throw new NotificationError(errorText(error));
+    throw new NotificationError(error instanceof Error ? error.message : String(error));
   }
 }
 export const pause = async () => {
   if (!lobby().round || position().winner)
-    throw new Error(errorText("No ongoing match"));
+    throw new Error("No ongoing match");
   // Pausing must not be rejected just because the last stone is publishing its
   // notification. Stop model work first, then freeze the committed position.
   await pudding.interaction.pause();
@@ -305,40 +302,55 @@ export const resign = (context: InteractionContext) =>
     await publish();
     return actionResult();
   });
+// Human handlers retain the original error for live locale changes. Localize
+// only the interface response that is returned to the calling model.
+function defineGameInterface<T>(definition: Parameters<typeof pudding.defineInterface<T>>[0]) {
+  return pudding.defineInterface({
+    ...definition,
+    async run(input, context) {
+      try {
+        return await definition.run(input, context);
+      } catch (error) {
+        throw new Error(errorText(error));
+      }
+    },
+  });
+}
 function registerInterfaces() {
+  const coordinates = { error: errorText("Use columns A–O and rows 1–15") };
   return [
-    pudding.defineInterface({
+    defineGameInterface({
       name: "joinSeat",
       description: t("descJoinSeat"),
       input: z.object({ role: z.enum(roles) }).strict(),
       run: (i, c) => changeSeat("join", i.role, c),
     }),
-    pudding.defineInterface({
+    defineGameInterface({
       name: "ready",
       description: t("descReady"),
       input: z.object({ ready: z.boolean().optional() }).strict(),
       run: (i, c) =>
         changeSeat(i.ready === false ? "unready" : "ready", undefined, c),
     }),
-    pudding.defineInterface({
+    defineGameInterface({
       name: "leaveSeat",
       description: t("descLeaveSeat"),
       input: z.object({}).strict(),
       run: (_, c) => changeSeat("leave", undefined, c),
     }),
-    pudding.defineInterface({
+    defineGameInterface({
       name: "placeStone",
       description: t("descPlaceStone"),
       input: z
         .object({
           row: z
-            .number({ error: errorText("Use columns A–O and rows 1–15") })
-            .int()
-            .min(1)
-            .max(15),
+            .number(coordinates)
+            .int(coordinates)
+            .min(1, coordinates)
+            .max(15, coordinates),
           column: z
-            .string({ error: errorText("Use columns A–O and rows 1–15") })
-            .regex(/^[A-O]$/, errorText("Use columns A–O and rows 1–15")),
+            .string(coordinates)
+            .regex(/^[A-O]$/, coordinates),
           comment: z
             .string()
             .trim()
@@ -348,13 +360,13 @@ function registerInterfaces() {
         .strict(),
       run: move,
     }),
-    pudding.defineInterface({
+    defineGameInterface({
       name: "readBoard",
       description: t("descReadBoard"),
       input: z.object({ includeHistory: z.boolean().optional() }).strict(),
       run: (i, c) => readBoard(c, i.includeHistory),
     }),
-    pudding.defineInterface({
+    defineGameInterface({
       name: "resign",
       description: t("descResign"),
       input: z.object({}).strict(),
