@@ -469,6 +469,7 @@
   pointer-events: auto;
 }
 .gd-picker-card {
+  margin: auto;
   background: var(--gd-panel);
   color: var(--gd-text);
   padding: 18px;

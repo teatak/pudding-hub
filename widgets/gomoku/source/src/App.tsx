@@ -261,7 +261,7 @@ export default function App() {
                     p.moveCount + " 手",
                     p.moveCount + " 手",
                   )
-                : text("15 × 15 · freestyle", "15 路 · 自由规则")}
+                : text("15 × 15 · freestyle", "15 × 15 · 自由规则")}
             </small>
           </div>
           <div className="gd-game-actions">
