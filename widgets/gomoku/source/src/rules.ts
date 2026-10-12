@@ -101,7 +101,15 @@ export function derive(state: PositionState): Position {
     turn: state.history.length % 2 ? "White" : "Black",
   };
 }
-export function describePosition(p: Position, includeHistoryComments = true) {
+export function summarizePosition(p: Position) {
+  return {
+    moveCount: p.moveCount,
+    turn: p.winner ? null : p.turn,
+    winner: p.winner,
+    lastMove: p.history.at(-1) || null,
+  };
+}
+export function describePosition(p: Position) {
   const symbols = [".", "B", "W"];
   return {
     board: {
@@ -123,13 +131,7 @@ export function describePosition(p: Position, includeHistoryComments = true) {
         }),
       ].join("\n"),
     },
-    history: includeHistoryComments
-      ? p.history
-      : p.history.map(({ column, row, stone }) => ({ column, row, stone })),
-    moveCount: p.moveCount,
-    turn: p.turn,
-    winner: p.winner,
-    lastMove: p.history.at(-1) || null,
+    ...summarizePosition(p),
   };
 }
 export function place(

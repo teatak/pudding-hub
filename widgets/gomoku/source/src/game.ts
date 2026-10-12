@@ -12,6 +12,7 @@ import {
   resumeClock,
   place,
   describePosition,
+  summarizePosition,
   type Position,
   type PositionState,
 } from "./rules";
@@ -72,7 +73,7 @@ async function save(l: Lobby, p: Position) {
     },
   });
 }
-export function readBoard(context: InteractionContext) {
+export function readBoard(context: InteractionContext, includeHistory = false) {
   const l = lobby(),
     p = position(),
     run = pudding.interaction.read();
@@ -83,6 +84,7 @@ export function readBoard(context: InteractionContext) {
   const turn = l.phase === "playing" && !p.winner ? p.turn : null;
   return {
     ...describePosition(p),
+    ...(includeHistory ? { history: p.history } : {}),
     round: l.round,
     phase: p.winner ? "finished" : l.phase,
     paused: run?.status === "paused",
@@ -116,6 +118,15 @@ export function readBoard(context: InteractionContext) {
       turn !== null &&
       !!self &&
       l.seats[turn] === self.id,
+  };
+}
+function actionResult() {
+  const l = lobby(),
+    p = position();
+  return {
+    ...summarizePosition(p),
+    round: l.round,
+    phase: p.winner ? "finished" : l.phase,
   };
 }
 export class NotificationError extends Error {}
@@ -197,9 +208,9 @@ export async function publish(retry = false) {
     const message =
       topic === "invitation"
         ? text(
-            "You are invited to Gomoku. Read readBoard, choose your own available Black or White seat with joinSeat, then call ready. Never act for the other player. Both ready starts a 3-second countdown; wait for your move notification before placing a stone.",
-            "邀请你参加五子棋。通过 readBoard 查看局面，用 joinSeat 选择自己的空闲 Black 或 White 席位，然后调用 ready。不要替对手操作。双方准备后读秒 3 秒，收到落子通知再下棋。",
-            "邀請你參加五子棋。透過 readBoard 查看局面，用 joinSeat 選擇自己的空閒 Black 或 White 席位，然後呼叫 ready。不要替對手操作。雙方準備後倒數 3 秒，收到落子通知再下棋。",
+            'You are invited to Gomoku. Interfaces are called through widget_invoke, not separate tools: widget_invoke({targetID,expectedStateVersion,name:"readBoard",input:{}}). Use this notification\'s targetID and latest stateVersion; it is a concurrency version, not moveCount. Read the board, joinSeat with {role:"Black"} or {role:"White"}, then ready with {}. Choose only your own available seat. Both ready starts a 3-second countdown; wait for your move notification. During play, resign with {} concedes your own side. readBoard omits history unless input is {includeHistory:true}.',
+            '邀请你参加五子棋。接口统一通过 widget_invoke 调用，不是独立工具：widget_invoke({targetID,expectedStateVersion,name:"readBoard",input:{}})。使用通知中的 targetID 和最新 stateVersion；版本用于并发校验，手数看 moveCount。查看局面后，joinSeat 传 {role:"Black"} 或 {role:"White"} 选择自己的空位，再 ready 传 {}。双方准备后读秒 3 秒，收到落子通知再下棋。对局中可用 resign 传 {} 为自己认输。readBoard 默认不返回历史，需要时传 {includeHistory:true}。',
+            '邀請你參加五子棋。介面統一透過 widget_invoke 呼叫，不是獨立工具：widget_invoke({targetID,expectedStateVersion,name:"readBoard",input:{}})。使用通知中的 targetID 和最新 stateVersion；版本用於並行校驗，手數看 moveCount。查看局面後，joinSeat 傳 {role:"Black"} 或 {role:"White"} 選擇自己的空位，再 ready 傳 {}。雙方準備後倒數 3 秒，收到落子通知再下棋。對局中可用 resign 傳 {} 為自己認輸。readBoard 預設不回傳歷史，需要時傳 {includeHistory:true}。',
           )
         : topic === "result"
           ? text(
@@ -208,9 +219,9 @@ export async function publish(retry = false) {
               `本局結束：${p.winner}。簡短回應結果，不要再落子。`,
             )
           : text(
-              `${color} to move. Call placeStone with column A–O (letter) and row 1–15 (number). Row 1 is bottom. Example: {"column":"H","row":8,"comment":"Center opening"}. Add an optional comment of at most 40 characters in the same call. The current board and stateVersion are attached. Only play your own side.`,
-              `轮到${color}。调用 placeStone，column 为 A–O 字母，row 为 1–15 数字，第 1 行在底部。例如 {"column":"H","row":8,"comment":"天元开局"}。同一次调用可以附带最多 40 字的弹幕。通知已附当前棋盘和 stateVersion，只能替自己落子。`,
-              `輪到${color}。呼叫 placeStone，column 為 A–O 字母，row 為 1–15 數字，第 1 行在底部。例如 {"column":"H","row":8,"comment":"天元開局"}。同一次呼叫可以附帶最多 40 字的彈幕。通知已附目前棋盤和 stateVersion，只能替自己落子。`,
+              `${color} to move. The current board and stateVersion are attached. Call widget_invoke with this targetID, expectedStateVersion, name:"placeStone", input:{column:"H",row:8,comment:"Center opening"} (example). Columns A–O, rows 1–15 bottom to top; comment is optional, max 40 characters. Play only your side, then wait for the next notification. To concede, use name:"resign", input:{}. Read history only when needed via name:"readBoard", input:{includeHistory:true}.`,
+              `轮到${color}。通知已附当前棋盘和 stateVersion。调用 widget_invoke，传本局 targetID、expectedStateVersion、name:"placeStone"、input:{column:"H",row:8,comment:"天元开局"}（示例）。字母列 A–O，数字行 1–15 由下向上；弹幕可选，最多 40 字。只替自己落子，然后等待下次通知。认输用 name:"resign"、input:{}；需要历史时用 name:"readBoard"、input:{includeHistory:true}。`,
+              `輪到${color}。通知已附目前棋盤和 stateVersion。呼叫 widget_invoke，傳本局 targetID、expectedStateVersion、name:"placeStone"、input:{column:"H",row:8,comment:"天元開局"}（範例）。字母欄 A–O，數字列 1–15 由下向上；彈幕可選，最多 40 字。只替自己落子，然後等待下次通知。認輸用 name:"resign"、input:{}；需要歷史時用 name:"readBoard"、input:{includeHistory:true}。`,
             );
     await pudding.interaction.notify({
       id,
@@ -221,9 +232,14 @@ export async function publish(retry = false) {
       topic,
       summary,
       message,
-      // Past banter remains in readBoard history; keep even a 225-move
-      // notification within the host's 32 KiB limit.
-      data: { ...describePosition(p, false), round: l.round, color: p.turn },
+      // A self-contained board survives context compaction; history is opt-in
+      // through readBoard instead of growing every notification.
+      data: {
+        ...describePosition(p),
+        round: l.round,
+        phase: p.winner ? "finished" : l.phase,
+        turn: l.phase === "playing" && !p.winner ? p.turn : null,
+      },
     });
   } catch (error) {
     throw new NotificationError(errorText(error));
@@ -294,7 +310,7 @@ export const move = (
     if (l.seats[p.turn] !== who.id) throw new Error("Not your turn");
     await save(l, place(p, input.row, input.column, p.turn, input.comment));
     await publish();
-    return readBoard(context);
+    return actionResult();
   });
 export const resign = (context: InteractionContext) =>
   change(async () => {
@@ -310,6 +326,7 @@ export const resign = (context: InteractionContext) =>
       turnStartedAt: null,
     });
     await publish();
+    return actionResult();
   });
 function registerInterfaces() {
   return [
@@ -347,9 +364,9 @@ function registerInterfaces() {
     pudding.defineInterface({
       name: "placeStone",
       description: text(
-        "Place your stone at a real board coordinate: column A–O (letter), row 1–15 (number, bottom to top), e.g. {column:'H',row:8}. Include an optional comment (max 40 characters).",
-        "按棋盘真实坐标落子：column 为 A–O 字母列，row 为 1–15 数字行（由下向上），例如 {column:'H',row:8}。可附最多 40 字弹幕。",
-        "按棋盤實際座標落子：column 為 A–O 字母欄，row 為 1–15 數字列（由下向上），例如 {column:'H',row:8}。可附最多 40 字彈幕。",
+        "Place your stone at a real board coordinate: column A–O (letter), row 1–15 (number, bottom to top), e.g. {column:'H',row:8}. Include an optional comment (max 40 characters). Returns a compact receipt without board or history; wait for your next move notification.",
+        "按棋盘真实坐标落子：column 为 A–O 字母列，row 为 1–15 数字行（由下向上），例如 {column:'H',row:8}。可附最多 40 字弹幕。返回简短结果，无棋盘及历史；等待下次落子通知。",
+        "按棋盤實際座標落子：column 為 A–O 字母欄，row 為 1–15 數字列（由下向上），例如 {column:'H',row:8}。可附最多 40 字彈幕。回傳簡短結果，無棋盤及歷史；等待下次落子通知。",
       ),
       input: z
         .object({
@@ -373,19 +390,19 @@ function registerInterfaces() {
     pudding.defineInterface({
       name: "readBoard",
       description: text(
-        "Read board.text, ordered history, moveCount, turn, seats, readiness, countdown and your identity. Columns A–O; rows 1–15 bottom to top.",
-        "读取棋盘多行文本、history 棋谱、moveCount 手数、回合、席位、准备状态、倒计时和你的身份。字母列 A–O，数字行 1–15 由下向上。",
-        "讀取棋盤多行文字、history 棋譜、moveCount 手數、回合、席位、準備狀態、倒數和你的身分。字母欄 A–O，數字列 1–15 由下向上。",
+        "Read board.text, moveCount, turn, seats, readiness, countdown and your identity. History is omitted by default; includeHistory:true returns the complete ordered history with comments. Columns A–O; rows 1–15 bottom to top.",
+        "读取棋盘多行文本、moveCount 手数、回合、席位、准备状态、倒计时和你的身份。默认无历史；includeHistory:true 返回完整 history 棋谱及弹幕。字母列 A–O，数字行 1–15 由下向上。",
+        "讀取棋盤多行文字、moveCount 手數、回合、席位、準備狀態、倒數和你的身分。預設無歷史；includeHistory:true 回傳完整 history 棋譜及彈幕。字母欄 A–O，數字列 1–15 由下向上。",
       ),
-      input: z.object({}).strict(),
-      run: (_, c) => readBoard(c),
+      input: z.object({ includeHistory: z.boolean().optional() }).strict(),
+      run: (i, c) => readBoard(c, i.includeHistory),
     }),
     pudding.defineInterface({
       name: "resign",
       description: text(
-        "Resign your own seat in the current game.",
-        "以自己的席位认输。",
-        "以自己的席位認輸。",
+        'Concede your own side during play, even on the opponent\'s turn. Call widget_invoke with name:"resign", input:{}. Ends the game and notifies both players.',
+        '对局中为自己认输，对手回合也可调用。通过 widget_invoke 传 name:"resign"、input:{}，结束本局并通知双方。',
+        '對局中為自己認輸，對手回合也可呼叫。透過 widget_invoke 傳 name:"resign"、input:{}，結束本局並通知雙方。',
       ),
       input: z.object({}).strict(),
       run: (_, c) => resign(c),

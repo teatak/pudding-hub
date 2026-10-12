@@ -136,6 +136,7 @@
   border-color: var(--gd-accent);
 }
 .gd-player-top {
+  grid-row: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -180,6 +181,7 @@
   color: var(--gd-accent);
 }
 .gd-player-head {
+  grid-row: 2;
   display: flex;
   align-items: center;
   gap: 10px;

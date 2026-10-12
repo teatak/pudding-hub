@@ -371,6 +371,35 @@ export default function App() {
                           : role
                             ? text("Not ready", "等待准备")
                             : text("Choosing", "等待选边");
+              const openingHint = run?.status === "paused"
+                ? text(
+                    "Game paused; continue to act",
+                    "对局已暂停，继续后可操作",
+                    "對局已暫停，繼續後可操作",
+                  )
+                : l.phase === "countdown"
+                  ? text(
+                      "Both players ready; starting soon",
+                      "双方已准备，即将开局",
+                      "雙方已準備，即將開局",
+                    )
+                  : ready
+                    ? text(
+                        "This player is ready; waiting for the opponent",
+                        "本方已准备，等待对手就绪",
+                        "本方已準備，等待對手就緒",
+                      )
+                    : role
+                      ? text(
+                          "This player has a side; waiting for readiness",
+                          "本方已选边，等待准备",
+                          "本方已選邊，等待準備",
+                        )
+                      : text(
+                          "Waiting for this player to choose a side",
+                          "等待本方选择黑棋或白棋",
+                          "等待本方選擇黑棋或白棋",
+                        );
               return (
                 <article
                   className={
@@ -380,6 +409,27 @@ export default function App() {
                   key={index}
                   data-player-id={player?.id || ""}
                 >
+                  <div className="gd-player-head">
+                    <Avatar player={player} />
+                    <div className="gd-player-identity">
+                      <strong
+                        className="gd-player-name"
+                        title={player?.model?.name}
+                      >
+                        {player?.human
+                          ? text("You", "我")
+                          : player?.model?.name ||
+                            text(
+                              player ? "Loading model" : "Choose a player",
+                              player ? "读取模型信息" : "等待棋手",
+                            )}
+                      </strong>
+                      <small title={player?.name}>
+                        {player?.name ||
+                          text("Conversation or you", "可选会话，也可选自己")}
+                      </small>
+                    </div>
+                  </div>
                   <div className="gd-player-top">
                     <span className="gd-side-badge">
                       <span
@@ -407,36 +457,10 @@ export default function App() {
                         )}
                     </span>
                   </div>
-                  <div className="gd-player-head">
-                    <Avatar player={player} />
-                    <div className="gd-player-identity">
-                      <strong
-                        className="gd-player-name"
-                        title={player?.model?.name}
-                      >
-                        {player?.human
-                          ? text("You", "我")
-                          : player?.model?.name ||
-                            text(
-                              player ? "Loading model" : "Choose a player",
-                              player ? "读取模型信息" : "等待棋手",
-                            )}
-                      </strong>
-                      <small title={player?.name}>
-                        {player?.name ||
-                          text("Conversation or you", "可选会话，也可选自己")}
-                      </small>
-                    </div>
-                  </div>
                   <div className="gd-card-body">
                     {player?.human && l.round && l.phase !== "playing" ? (
                       <div className="gd-card-wait">
-                        <small>
-                          {text(
-                            "Choose a side, then get ready",
-                            "选边后准备，双方读秒开局",
-                          )}
-                        </small>
+                        <small>{openingHint}</small>
                         <div className="gd-player-actions">
                           {!role ? (
                             roles.map((r) => (
@@ -548,21 +572,16 @@ export default function App() {
                                   "Invite this conversation on start",
                                   "开局后，邀请当前会话",
                                 )
-                              : l.phase === "countdown"
-                                ? text("Ready to start", "已就绪，即将开局")
-                                : l.phase === "lobby"
-                                  ? text(
-                                      "Waiting for this player",
-                                      "等待棋手自行选边、准备",
-                                    )
-                                  : !danmaku
-                                    ? text("Comments off", "弹幕已关闭")
-                                    : p.winner
-                                      ? text("Match complete", "对局已结束")
-                                      : text(
-                                          "One comment with each move",
-                                          "落子时可以留一句话",
-                                        )}
+                              : l.phase !== "playing"
+                                ? openingHint
+                                : !danmaku
+                                  ? text("Comments off", "弹幕已关闭")
+                                  : p.winner
+                                    ? text("Match complete", "对局已结束")
+                                    : text(
+                                        "One comment with each move",
+                                        "落子时可以留一句话",
+                                      )}
                         </span>
                       </div>
                     )}

@@ -51,7 +51,7 @@ test("Gomoku tool view preserves row/column orientation, history and last move w
   const empty = describePosition(initial());
   assert.equal(empty.board.text.split("\n").length, 16);
   assert.match(empty.board.text.split("\n")[0], /A B C.*O$/);
-  assert.deepEqual(empty.history, []);
+  assert.equal("history" in empty, false);
   assert.equal(empty.lastMove, null);
   let state = initial();
   for (const [row, column] of [
@@ -64,7 +64,7 @@ test("Gomoku tool view preserves row/column orientation, history and last move w
     state = place(state, row, letters[column - 1], state.turn);
   const saved = JSON.stringify(state);
   const view = describePosition(state);
-  assert.deepEqual(view.history, [
+  assert.deepEqual(state.history, [
     { row: 8, column: "H", stone: "B" },
     { row: 9, column: "I", stone: "W" },
     { row: 9, column: "H", stone: "B" },

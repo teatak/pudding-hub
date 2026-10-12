@@ -11,6 +11,7 @@ import {
   initial,
   place,
   describePosition,
+  summarizePosition,
   winningLine,
   letters,
   derive,
@@ -130,7 +131,8 @@ test("letter columns and chronological history are canonical, numeric columns ar
   assert.deepEqual(derive(JSON.parse(JSON.stringify(saved))), next);
   const view = describePosition(next);
   assert.equal(view.moveCount, 2);
-  assert.deepEqual(view.history, [
+  assert.equal("history" in view, false);
+  assert.deepEqual(saved.history, [
     { column: "H", row: 8, stone: "B", comment: "center" },
     { column: "H", row: 9, stone: "W", comment: "reply" },
   ]);
@@ -155,7 +157,7 @@ test("pause freezes accumulated thinking time and continuation excludes the paus
   assert.equal(thinkingMS(moved, 13000), 1000);
 });
 
-test("a full board with 40-character comments fits notification limits without losing its score", () => {
+test("board snapshots and action receipts stay bounded while canonical history keeps all comments", () => {
   const full = derive({
     history: Array.from({ length: 225 }, (_, i) => ({
       column: letters[i % 15],
@@ -167,11 +169,16 @@ test("a full board with 40-character comments fits notification limits without l
     turnStartedAt: null,
     turnElapsedMS: 0,
   });
-  const complete = describePosition(full),
-    notice = describePosition(full, false);
-  assert.ok(Buffer.byteLength(JSON.stringify(complete)) > 32768);
-  assert.ok(Buffer.byteLength(JSON.stringify(notice)) < 16000);
-  assert.equal(notice.history.length, 225);
-  assert.equal(complete.history[0].comment, "好".repeat(40));
-  assert.deepEqual(notice.history[0], { column: "A", row: 1, stone: "B" });
+  const notice = describePosition(full), receipt = summarizePosition(full);
+  assert.ok(Buffer.byteLength(JSON.stringify(record(full))) > 32768);
+  assert.ok(Buffer.byteLength(JSON.stringify(notice)) < 1200);
+  assert.ok(Buffer.byteLength(JSON.stringify(receipt)) < 350);
+  assert.equal("history" in notice, false);
+  assert.equal("history" in receipt, false);
+  assert.equal("board" in receipt, false);
+  assert.equal(receipt.moveCount, 225);
+  assert.equal(receipt.turn, null);
+  assert.equal(record(full).history.length, 225);
+  assert.equal(record(full).history[0].comment, "好".repeat(40));
+  assert.deepEqual(notice.lastMove, full.history.at(-1));
 });
