@@ -68,7 +68,6 @@ pudding-hub/
         src/style.css
       releases/1.0.0/shared-todo.pudding-widget.json
     gomoku/
-    rps-decider/
 ```
 
 Key files:
@@ -81,7 +80,7 @@ Key files:
 
 ## Widget source packages
 
-Widgets ship as React / TypeScript source packages (format 2), requiring Desktop protocol 18 and SDK 1. Current examples are Todo, Gomoku 2.0.1, and RPS 2.0.1. Historical HTML releases remain immutable on disk and are excluded from install candidates.
+Widgets ship as React / TypeScript source packages (format 2), requiring Desktop protocol 24 and SDK 1. The initial public catalog contains Todo and Gomoku, both at 1.0.0. Unreleased widget history has been removed; installed development items and their persistent data are not touched.
 
 ```sh
 pnpm install

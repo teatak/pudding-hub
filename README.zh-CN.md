@@ -68,7 +68,6 @@ pudding-hub/
         src/style.css
       releases/1.0.0/shared-todo.pudding-widget.json
     gomoku/
-    rps-decider/
 ```
 
 关键文件：
@@ -81,8 +80,8 @@ pudding-hub/
 
 ## 小组件源码包
 
-Widget 使用 React / TypeScript 源码包（格式 2），需要支持协议 18、SDK 1 的 Desktop。
-Hub 当前提供待办、五子棋 2.0.1 和猜拳 2.0.1。旧 HTML release 保留历史文件，不再进入安装候选列表；无旧 SDK 兼容运行时。
+Widget 使用 React / TypeScript 源码包（格式 2），需要支持协议 24、SDK 1 的 Desktop。
+Hub 首发仅提供待办和五子棋，版本均为 1.0.0。未上线的小组件历史发布包已清理；已有开发安装及其长期数据保持不变。
 
 ```sh
 pnpm install

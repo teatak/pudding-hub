@@ -120,11 +120,10 @@ export async function packageWidget(
     packageHash,
     requires: manifest.requires,
   };
-  // Retired HTML releases remain immutable on disk, but are not installable candidates.
   const releases = [
     release,
     ...(previous?.releases || []).filter(
-      (r) => r.requires?.protocolVersion && r.version !== manifest.version,
+      (r) => r.version !== manifest.version,
     ),
   ];
   const item = {
@@ -139,7 +138,6 @@ export async function packageWidget(
     item,
   ].sort((a, b) => a.id.localeCompare(b.id));
   registry.schemaVersion = policy.distribution.schemaVersion;
-  delete registry.schema_version;
   await fs.writeFile(registryPath, json(registry));
   console.log(`packaged ${name}@${manifest.version}: ${packageHash}`);
   return { packageHash, pkg };

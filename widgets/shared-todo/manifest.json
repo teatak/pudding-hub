@@ -1,6 +1,6 @@
 {
   "id": "teatak/pudding-hub/widgets/shared-todo",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "title": {
     "zh-CN": "待办",
     "zh-TW": "待辦",
@@ -12,7 +12,7 @@
     "zh-TW": "記錄任務，安排日常事項。"
   },
   "requires": {
-    "protocolVersion": 18,
+    "protocolVersion": 24,
     "sdkVersion": "1"
   },
   "icon": "./assets/icon.svg"

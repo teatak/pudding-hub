@@ -1,2 +1,165 @@
-export const zh = navigator.language.startsWith("zh");
-export const text = (en: string, cn: string) => (zh ? cn : en);
+import { pudding } from "@pudding/widget";
+export const messages = {
+  en: {
+    title: "Todo",
+    remaining: "{count} remaining",
+    placeholder: "What needs doing?",
+    add: "Add task",
+    all: "All",
+    active: "Active",
+    completed: "Completed",
+    filters: "Filter tasks",
+    loading: "Loading tasks…",
+    emptyTitle: "A little room to breathe",
+    emptyHint: "Add your first task above.",
+    activeEmpty: "All caught up",
+    activeHint: "Your completed tasks are still here.",
+    completedEmpty: "No completed tasks yet",
+    completedHint: "Check off a task when it is done.",
+    edit: "Edit {title}",
+    remove: "Delete {title}",
+    complete: "Complete {title}",
+    reopen: "Reopen {title}",
+    editTitle: "Task title",
+    save: "Save",
+    cancel: "Cancel",
+    retry: "Refresh",
+    dismiss: "Dismiss",
+    saved: "Saved",
+    removed: "Task deleted",
+    added: "Task added",
+    invalidData:
+      "Saved tasks could not be read. Refresh to try again; your data has not been changed.",
+    titleError: "Use 1–300 characters for the title",
+    batchError: "Choose 1–100 tasks",
+    missing: "Task no longer exists",
+    duplicate: "Each task may appear only once",
+    updateError: "Provide a title or completion state",
+    queryError: "Invalid task query",
+    cancelled: "Cancelled",
+    conflict:
+      "The list changed in another window. Refresh, review it and try again.",
+    descAdd:
+      "Add 1–100 task titles in one atomic write. Returns only added tasks, counts and storageVersion.",
+    descUpdate:
+      "Update 1–100 tasks by ID, changing title and/or done. All changes succeed together; unknown or duplicate IDs reject the whole batch. Returns only changed tasks, counts and storageVersion.",
+    descDelete:
+      "Delete 1–100 tasks by ID in one atomic write. Returns deletedIDs, counts and storageVersion, not the full list.",
+    descList:
+      "Read tasks on demand. status: active (default), completed or all. offset defaults to 0; limit defaults to 50, maximum 100. Returns a page, counts, totalMatched, hasMore and storageVersion. Use task IDs for edits.",
+  },
+  "zh-CN": {
+    title: "待办",
+    remaining: "{count} 项待完成",
+    placeholder: "接下来要做什么？",
+    add: "添加待办",
+    all: "全部",
+    active: "未完成",
+    completed: "已完成",
+    filters: "筛选待办",
+    loading: "正在读取待办…",
+    emptyTitle: "从一件小事开始",
+    emptyHint: "在上方添加第一项待办。",
+    activeEmpty: "待办都完成了",
+    activeHint: "已完成的任务仍为你保留。",
+    completedEmpty: "还没有已完成的任务",
+    completedHint: "完成一件事，就勾选它。",
+    edit: "编辑：{title}",
+    remove: "删除：{title}",
+    complete: "完成：{title}",
+    reopen: "标为未完成：{title}",
+    editTitle: "任务名称",
+    save: "保存",
+    cancel: "取消",
+    retry: "刷新",
+    dismiss: "关闭提示",
+    saved: "已保存",
+    removed: "已删除待办",
+    added: "已添加待办",
+    invalidData: "暂时无法读取已保存的待办，请刷新重试。原有数据未被修改。",
+    titleError: "任务名称请填写 1–300 个字符",
+    batchError: "每批请选择 1–100 项任务",
+    missing: "这项任务已不存在",
+    duplicate: "同一批中不能重复指定任务",
+    updateError: "请提供任务名称或完成状态",
+    queryError: "待办查询参数无效",
+    cancelled: "已取消",
+    conflict: "列表已在其他窗口更新，请刷新核对后再操作。",
+    descAdd:
+      "批量添加 1–100 项任务，一次性写入。只返回新增任务、counts 和 storageVersion。",
+    descUpdate:
+      "按 ID 批量修改 1–100 项任务的 title 和/或 done。整批同时成功；ID 不存在或重复则整批拒绝。只返回发生变化的任务、counts 和 storageVersion。",
+    descDelete:
+      "按 ID 批量删除 1–100 项任务，一次性写入。只返回 deletedIDs、counts 和 storageVersion，不返回完整列表。",
+    descList:
+      "按需读取待办。status 为 active（默认，未完成）、completed（已完成）或 all。offset 默认 0，limit 默认 50、最多 100。返回当前页、counts、totalMatched、hasMore 和 storageVersion；修改任务请使用其 ID。",
+  },
+  "zh-TW": {
+    title: "待辦",
+    remaining: "{count} 項待完成",
+    placeholder: "接下來要做什麼？",
+    add: "新增待辦",
+    all: "全部",
+    active: "未完成",
+    completed: "已完成",
+    filters: "篩選待辦",
+    loading: "正在讀取待辦…",
+    emptyTitle: "從一件小事開始",
+    emptyHint: "在上方新增第一項待辦。",
+    activeEmpty: "待辦都完成了",
+    activeHint: "已完成的任務仍為你保留。",
+    completedEmpty: "還沒有已完成的任務",
+    completedHint: "完成一件事，就勾選它。",
+    edit: "編輯：{title}",
+    remove: "刪除：{title}",
+    complete: "完成：{title}",
+    reopen: "標為未完成：{title}",
+    editTitle: "任務名稱",
+    save: "儲存",
+    cancel: "取消",
+    retry: "重新整理",
+    dismiss: "關閉提示",
+    saved: "已儲存",
+    removed: "已刪除待辦",
+    added: "已新增待辦",
+    invalidData: "暫時無法讀取已儲存的待辦，請重新整理再試。原有資料未被修改。",
+    titleError: "任務名稱請填寫 1–300 個字元",
+    batchError: "每批請選擇 1–100 項任務",
+    missing: "這項任務已不存在",
+    duplicate: "同一批中不能重複指定任務",
+    updateError: "請提供任務名稱或完成狀態",
+    queryError: "待辦查詢參數無效",
+    cancelled: "已取消",
+    conflict: "列表已在其他視窗更新，請重新整理確認後再操作。",
+    descAdd:
+      "批次新增 1–100 項任務，一次寫入。只回傳新增任務、counts 和 storageVersion。",
+    descUpdate:
+      "按 ID 批次修改 1–100 項任務的 title 和/或 done。整批同時成功；ID 不存在或重複則整批拒絕。只回傳有變更的任務、counts 和 storageVersion。",
+    descDelete:
+      "按 ID 批次刪除 1–100 項任務，一次寫入。只回傳 deletedIDs、counts 和 storageVersion，不回傳完整列表。",
+    descList:
+      "按需讀取待辦。status 為 active（預設，未完成）、completed（已完成）或 all。offset 預設 0，limit 預設 50、最多 100。回傳目前頁面、counts、totalMatched、hasMore 和 storageVersion；修改任務請使用其 ID。",
+  },
+} as const;
+export type TextKey = keyof typeof messages.en;
+export function t(key: TextKey, params: Record<string, string | number> = {}) {
+  return messages[pudding.locale.read()][key].replace(
+    /\{(\w+)\}/g,
+    (match, name) => String(params[name] ?? match),
+  );
+}
+const errors: Record<string, TextKey> = {
+  widget_data_conflict: "conflict",
+  "Unrecognized saved data": "invalidData",
+  "Use 1–300 characters for the title": "titleError",
+  "Choose 1–100 tasks": "batchError",
+  "Task no longer exists": "missing",
+  "Each task may appear only once": "duplicate",
+  "Provide a title or completion state": "updateError",
+  "Invalid task query": "queryError",
+  Cancelled: "cancelled",
+};
+export function errorText(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error);
+  return errors[message] ? t(errors[message]) : message;
+}

@@ -2,7 +2,7 @@
   "kind": "pudding.widget.source-package",
   "schemaVersion": 2,
   "id": "teatak/pudding-hub/widgets/gomoku",
-  "version": "2.7.0",
+  "version": "1.0.0",
   "title": {
     "zh-CN": "五子棋",
     "zh-TW": "五子棋",

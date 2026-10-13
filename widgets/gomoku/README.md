@@ -18,4 +18,4 @@ Notifications contain the current board, last move, move count, turn, winner, ro
 
 Player identity precedes side and status in document reading order, while the visual card layout remains unchanged. Opening hints distinguish the assigned color, waiting for that player's readiness, waiting for the opponent, and both players ready.
 
-Requires source-package format 2, protocol 24 (host locale and candidate model metadata) and SDK 1. See [development guide](../../docs/widget-development.md). Historical releases remain immutable; the current package has its own page-state revision.
+Requires source-package format 2, protocol 24 (host locale and candidate model metadata) and SDK 1. See [development guide](../../docs/widget-development.md). The initial public package is 1.0.0. Unreleased history was reset before production; installed development items are untouched. Future formal releases remain immutable; each source revision has its own page state.

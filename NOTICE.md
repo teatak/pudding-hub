@@ -2,8 +2,8 @@
 
 ## Lucide
 
-`widgets/rps-decider/assets/icon.svg` includes the `hand-fist` icon from Lucide.
+Todo and Gomoku use Lucide UI icons through the `lucide-react` library supplied by Pudding.
 
-- Source: https://lucide.dev/icons/hand-fist
+- Source: https://lucide.dev
 - License: ISC License
 - Copyright: Lucide Icons and Contributors

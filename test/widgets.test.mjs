@@ -9,7 +9,6 @@ import {
   describePosition,
   letters,
 } from "../widgets/gomoku/source/src/rules.ts";
-import { winner } from "../widgets/rps-decider/source/src/rules.ts";
 import {
   packageWidget,
   sourceFiles,
@@ -37,15 +36,6 @@ test("Gomoku enforces turns, occupancy, edges and horizontal/vertical/diagonal w
     assert.equal(state.winner, "Black");
     assert.throws(() => place(state, 14, "N", "White"), /finished/);
   }
-});
-test("RPS resolves all nine pairs without turn ordering", () => {
-  for (const a of ["rock", "paper", "scissors"])
-    for (const b of ["rock", "paper", "scissors"]) {
-      const result = winner(a, b);
-      if (a === b) assert.equal(result, "draw");
-      else assert.equal(winner(b, a), result === "A" ? "B" : "A");
-    }
-  assert.equal(winner("rock", "scissors"), "A");
 });
 test("Gomoku tool view preserves row/column orientation, history and last move without exposing flat indices", () => {
   const empty = describePosition(initial());
@@ -154,40 +144,3 @@ test("packages use Core validation and releases cannot be overwritten", async ()
     await fs.rm(root, { recursive: true, force: true });
   }
 });
-
-for (const widget of ["rps-decider"]) {
-  const { newLobby, joinSeat, setReady, leaveSeat } = await import(
-    `../widgets/${widget}/source/src/lobby.ts`
-  );
-  test(`${widget}: invitation has no assigned seats, participants choose and ready themselves`, () => {
-    const roles = widget === "gomoku" ? ["Black", "White"] : ["A", "B"];
-    let lobby = newLobby(1);
-    assert.deepEqual(lobby.seats, {});
-    assert.throws(() => setReady(lobby, roles, "first"), /Choose a seat/);
-    lobby = joinSeat(lobby, roles, roles[0], "first", false);
-    assert.throws(
-      () => joinSeat(lobby, roles, roles[0], "second", false),
-      /occupied/,
-    );
-    assert.throws(
-      () => joinSeat(lobby, roles, roles[1], "first", false),
-      /Leave/,
-    );
-    lobby = setReady(lobby, roles, "first");
-    assert.equal(lobby.phase, "lobby");
-    lobby = leaveSeat(lobby, "first");
-    assert.deepEqual(lobby.ready, []);
-    lobby = joinSeat(lobby, roles, roles[0], "first", false);
-    lobby = joinSeat(lobby, roles, roles[1], "second", false);
-    lobby = setReady(lobby, roles, "second");
-    assert.equal(lobby.phase, "lobby");
-    lobby = setReady(lobby, roles, "first");
-    assert.equal(lobby.phase, "playing");
-    assert.throws(() => leaveSeat(lobby, "first"), /new round/);
-    assert.deepEqual(
-      JSON.parse(JSON.stringify(lobby)),
-      lobby,
-      "author state survives serialization",
-    );
-  });
-}
