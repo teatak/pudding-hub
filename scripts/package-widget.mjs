@@ -61,12 +61,24 @@ export async function packageWidget(
     manifest = await read(path.join(dir, "manifest.json"));
   if (!manifest.id?.endsWith("/widgets/" + name))
     throw new Error("Widget ID must match its directory");
+  if (manifest.preview !== undefined && typeof manifest.preview !== "boolean")
+    throw new Error("Widget preview must be a boolean");
+  if (
+    manifest.channel !== undefined &&
+    (typeof manifest.channel !== "string" || manifest.channel.length > 64)
+  )
+    throw new Error("Widget channel must be a string up to 64 characters");
+  const releaseMetadata = {
+    ...(manifest.channel !== undefined ? { channel: manifest.channel } : {}),
+    ...(manifest.preview !== undefined ? { preview: manifest.preview } : {}),
+  };
   const files = await sourceFiles(path.join(dir, "source"));
   const pkg = {
     kind: policy.distribution.kind,
     schemaVersion: policy.distribution.schemaVersion,
     id: manifest.id,
     version: manifest.version,
+    ...releaseMetadata,
     title: manifest.title,
     description: manifest.description,
     icon: await widgetIcon(dir, manifest.icon),
@@ -121,10 +133,8 @@ export async function packageWidget(
     requires: manifest.requires,
   };
   const releases = [
-    release,
-    ...(previous?.releases || []).filter(
-      (r) => r.version !== manifest.version,
-    ),
+    { ...release, ...releaseMetadata },
+    ...(previous?.releases || []).filter((r) => r.version !== manifest.version),
   ];
   const item = {
     id: manifest.id,

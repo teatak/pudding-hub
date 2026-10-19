@@ -127,11 +127,40 @@ test("packages use Core validation and releases cannot be overwritten", async ()
     );
     const dev = await packageWidget("shared-todo", { root, dev: true });
     assert.notEqual(dev.packageHash, one.packageHash);
-    const registry = JSON.parse(
+    let registry = JSON.parse(
       await fs.readFile(path.join(root, "widgets/registry.json")),
     );
     assert.equal(registry.items[0].releases[0].packageHash, one.packageHash);
     assert.equal(registry.items[0].icon, one.pkg.icon);
+    const manifestPath = path.join(root, "widgets/shared-todo/manifest.json");
+    const manifest = JSON.parse(await fs.readFile(manifestPath, "utf8"));
+    await fs.writeFile(
+      manifestPath,
+      JSON.stringify({
+        ...manifest,
+        version: "1.1.0-preview.1",
+        preview: true,
+        channel: "preview",
+      }),
+    );
+    const preview = await packageWidget("shared-todo", { root });
+    assert.equal(preview.pkg.preview, true);
+    assert.equal(preview.pkg.channel, "preview");
+    registry = JSON.parse(
+      await fs.readFile(path.join(root, "widgets/registry.json"), "utf8"),
+    );
+    assert.equal(registry.items[0].releases.length, 2);
+    assert.equal(registry.items[0].releases[0].preview, true);
+    assert.equal(registry.items[0].releases[0].channel, "preview");
+    assert.equal(registry.items[0].releases[1].packageHash, one.packageHash);
+    await fs.writeFile(
+      manifestPath,
+      JSON.stringify({ ...manifest, preview: "true" }),
+    );
+    await assert.rejects(
+      packageWidget("shared-todo", { root }),
+      /preview must be a boolean/,
+    );
     await fs.symlink(
       "/tmp",
       path.join(root, "widgets/shared-todo/source/link"),

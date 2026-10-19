@@ -30,6 +30,8 @@ Restored interactions create a new paused run and revoke old targets. Register `
 
 The initial catalog contains Todo and Gomoku 1.0.0, requiring protocol 24. Unreleased widget history was reset once before production; future formal release bytes remain immutable. Development builds use `--dev` and do not accumulate catalog releases.
 
+For a distributed preview release, use a distinct version such as `1.1.0-preview.1` and set `"preview": true` in `manifest.json`; optional `"channel": "preview"` is descriptive metadata. The packager preserves these fields in both the source package and registry release. As with plugins, `preview` is the authoritative flag; a version suffix or channel alone does not opt a release into preview filtering. Desktop hides previews by default. Settings → Advanced → Show widget preview versions enables their selection independently of plugin previews. Disabling it never downgrades or removes an installed preview; a newer stable release can replace it while preserving item data. `--dev` remains local-only and does not publish a preview.
+
 ## Follow the application language
 
 Packages requiring protocol 24 can read `pudding.locale.read()` and subscribe with
