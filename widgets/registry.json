@@ -71,6 +71,33 @@
       ]
     },
     {
+      "id": "teatak/pudding-hub/widgets/notes",
+      "title": {
+        "zh-CN": "便签",
+        "zh-TW": "便簽",
+        "en": "Sticky Notes"
+      },
+      "description": {
+        "zh-CN": "轻量便签贴纸，记录灵感与备忘待办。",
+        "zh-TW": "輕量便簽貼紙，記錄靈感與備忘待辦。",
+        "en": "Color-coded sticky notes for quick memos and ideas."
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI0IiBmaWxsPSIjRjU5RTBCIi8+CiAgPCEtLSDkvr/nrb7kuLvkvZPvvIzlj7PkuIvop5LluKbmnInmipjop5LmlYjmnpwgLS0+CiAgPHBhdGggZD0iTTMwIDI2IEg5OCBWNzQgTDc0IDk4IEgzMCBaIiBmaWxsPSIjRkVGM0M3IiBvcGFjaXR5PSIwLjk1Ii8+CiAgPCEtLSDmipjop5LkuInop5IgLS0+CiAgPHBhdGggZD0iTTc0IDc0IEg5OCBMNzQgOTggWiIgZmlsbD0iI0ZERTY4QSIvPgogIDwhLS0g5L6/562+5qiq57q/IC0tPgogIDxyZWN0IHg9IjQyIiB5PSI0MiIgd2lkdGg9IjQ0IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjRDk3NzA2Ii8+CiAgPHJlY3QgeD0iNDIiIHk9IjU2IiB3aWR0aD0iMzQiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiNGNTlFMEIiLz4KICA8cmVjdCB4PSI0MiIgeT0iNzAiIHdpZHRoPSIyNCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iI0Y1OUUwQiIvPgogIDwhLS0g5Zu+6ZKJ54K557yAIC0tPgogIDxjaXJjbGUgY3g9IjY0IiBjeT0iMjIiIHI9IjUiIGZpbGw9IiNEQzI2MjYiLz4KICA8Y2lyY2xlIGN4PSI2NCIgY3k9IjIyIiByPSIyLjUiIGZpbGw9IiNFRjQ0NDQiLz4KPC9zdmc+Cg==",
+      "releases": [
+        {
+          "version": "1.0.0-preview.1",
+          "package": "./notes/releases/1.0.0-preview.1/notes.pudding-widget.json",
+          "packageHash": "3fc030e45c0cd748d93e47bec2a544b58a06439bcdf08562d3a228d6f37a710a",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        }
+      ]
+    },
+    {
       "id": "teatak/pudding-hub/widgets/shared-todo",
       "title": {
         "zh-CN": "待办",
