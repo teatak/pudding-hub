@@ -214,6 +214,18 @@ body {
 .kb-add-btn:hover:not(:disabled) {
   background: var(--kb-primary-hover);
 }
+.kb-add-desc {
+  width: 100%;
+  margin-top: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  border: 1px solid var(--kb-edge);
+  border-radius: 6px;
+  background: var(--kb-card-bg);
+  color: var(--kb-text);
+  resize: vertical;
+  min-height: 48px;
+}
 
 /* Cards List */
 .kb-cards-list {
@@ -283,6 +295,17 @@ body {
   border-radius: 6px;
   background: var(--kb-card-bg);
   color: var(--kb-text);
+}
+.kb-card-edit-desc {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 12px;
+  border: 1px solid var(--kb-edge);
+  border-radius: 6px;
+  background: var(--kb-card-bg);
+  color: var(--kb-text);
+  resize: vertical;
+  min-height: 56px;
 }
 .kb-card-edit-actions {
   display: flex;

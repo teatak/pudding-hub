@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useStorage, useWidgetLocale } from "@pudding/widget";
 import {
-  Kanban as KanbanIcon,
   Plus,
   Trash2,
   ChevronLeft,
@@ -23,18 +22,50 @@ import {
 import { t, errorText, type TextKey } from "./text";
 import "./style.css";
 
+function BoardIcon({ size = 22 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 128 128"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <g fill="currentColor" opacity="0.35">
+        <rect x="22" y="24" width="24" height="80" rx="4" />
+        <rect x="52" y="24" width="24" height="80" rx="4" />
+        <rect x="82" y="24" width="24" height="80" rx="4" />
+      </g>
+      <g fill="currentColor">
+        <rect x="25" y="28" width="18" height="22" rx="3" />
+        <rect x="25" y="56" width="18" height="30" rx="3" />
+        <rect x="55" y="28" width="18" height="36" rx="3" />
+        <rect x="85" y="28" width="18" height="20" rx="3" />
+        <rect x="85" y="54" width="18" height="20" rx="3" />
+        <rect x="85" y="80" width="18" height="18" rx="3" />
+      </g>
+    </svg>
+  );
+}
+
 export default function App() {
   useWidgetLocale();
   const storage = useStorage();
 
-  const [addDrafts, setAddDrafts] = useState<Record<ColumnId, string>>({
-    todo: "",
-    in_progress: "",
-    done: "",
+  const [addDrafts, setAddDrafts] = useState<
+    Record<ColumnId, { title: string; description: string; showDesc?: boolean }>
+  >({
+    todo: { title: "", description: "" },
+    in_progress: { title: "", description: "" },
+    done: { title: "", description: "" },
   });
-  const [editingCard, setEditingCard] = useState<{ id: string; title: string } | null>(null);
+  const [editingCard, setEditingCard] = useState<{
+    id: string;
+    title: string;
+    description: string;
+  } | null>(null);
   const [error, setError] = useState<unknown>(null);
-  const [notice, setNotice] = useState<TextKey | null>(null);
   const [busy, setBusy] = useState(false);
 
   let cards: Card[] = [];
@@ -53,24 +84,16 @@ export default function App() {
     if (unavailable) return;
     setBusy(true);
     setError(null);
-    setNotice(null);
     try {
       await edit(value);
       if (value.action === "add") {
+        const col = value.cards[0]?.column ?? "todo";
         setAddDrafts((prev) => ({
           ...prev,
-          [value.cards[0]?.column ?? "todo"]: "",
+          [col]: { title: "", description: "", showDesc: false },
         }));
-        setNotice("added");
       } else if (value.action === "update") {
         setEditingCard(null);
-        setNotice("saved");
-      } else if (value.action === "move") {
-        setNotice("moved");
-      } else if (value.action === "delete") {
-        setNotice("deleted");
-      } else if (value.action === "clear_completed") {
-        setNotice("clearedCompleted");
       }
     } catch (e) {
       setError(e);
@@ -81,11 +104,19 @@ export default function App() {
   }
 
   function handleAdd(column: ColumnId) {
-    const raw = addDrafts[column]?.trim();
-    if (!raw) return;
+    const draft = addDrafts[column];
+    const rawTitle = draft?.title?.trim();
+    if (!rawTitle) return;
+    const rawDesc = draft?.description?.trim();
     void submit({
       action: "add",
-      cards: [{ title: raw, column }],
+      cards: [
+        {
+          title: rawTitle,
+          column,
+          ...(rawDesc ? { description: rawDesc } : {}),
+        },
+      ],
     });
   }
 
@@ -118,7 +149,7 @@ export default function App() {
       <header className="kb-header">
         <div className="kb-heading">
           <div className="kb-emblem">
-            <KanbanIcon size={22} />
+            <BoardIcon size={24} />
           </div>
           <div>
             <h1>{t("title")}</h1>
@@ -128,21 +159,6 @@ export default function App() {
           {t("cardCount", { count: totals.total })}
         </div>
       </header>
-
-      {/* Notice / Feedback */}
-      {notice && (
-        <div className="kb-notice" role="status">
-          <span>{t(notice)}</span>
-          <button
-            type="button"
-            className="kb-icon-btn"
-            onClick={() => setNotice(null)}
-            aria-label={t("cancel")}
-          >
-            <X size={14} />
-          </button>
-        </div>
-      )}
 
       {!!failure && (
         <div className="kb-error" role="alert">
@@ -195,32 +211,57 @@ export default function App() {
 
               {/* Add Card in Column */}
               <div className="kb-column-add">
-                <form
-                  className="kb-add-form"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleAdd(col);
-                  }}
-                >
+                <div className="kb-add-form">
                   <input
                     type="text"
                     className="kb-add-input"
                     placeholder={t("addCardPlaceholder")}
-                    value={addDrafts[col]}
+                    value={addDrafts[col].title}
                     disabled={unavailable}
                     onChange={(e) =>
-                      setAddDrafts((prev) => ({ ...prev, [col]: e.target.value }))
+                      setAddDrafts((prev) => ({
+                        ...prev,
+                        [col]: { ...prev[col], title: e.target.value },
+                      }))
                     }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+                        e.preventDefault();
+                        handleAdd(col);
+                      }
+                    }}
                   />
                   <button
-                    type="submit"
+                    type="button"
                     className="kb-add-btn"
-                    disabled={unavailable || !addDrafts[col]?.trim()}
+                    disabled={unavailable || !addDrafts[col].title.trim()}
+                    onClick={() => handleAdd(col)}
                     aria-label={t("addCard")}
                   >
                     <Plus size={16} />
                   </button>
-                </form>
+                </div>
+                {(addDrafts[col].showDesc || !!addDrafts[col].title.trim()) && (
+                  <textarea
+                    className="kb-add-desc"
+                    placeholder={t("addDescPlaceholder")}
+                    rows={2}
+                    value={addDrafts[col].description}
+                    disabled={unavailable}
+                    onChange={(e) =>
+                      setAddDrafts((prev) => ({
+                        ...prev,
+                        [col]: { ...prev[col], description: e.target.value },
+                      }))
+                    }
+                    onKeyDown={(e) => {
+                      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+                        e.preventDefault();
+                        handleAdd(col);
+                      }
+                    }}
+                  />
+                )}
               </div>
 
               {/* Cards List */}
@@ -238,24 +279,66 @@ export default function App() {
                             <input
                               type="text"
                               className="kb-card-edit-input"
+                              placeholder={t("addCardPlaceholder")}
                               value={editingCard.title}
                               autoFocus
+                              disabled={unavailable}
                               onChange={(e) =>
                                 setEditingCard({ ...editingCard, title: e.target.value })
                               }
                               onKeyDown={(e) => {
-                                if (e.key === "Enter") {
+                                if (e.key === "Escape") {
+                                  setEditingCard(null);
+                                } else if (
+                                  e.key === "Enter" &&
+                                  !e.shiftKey &&
+                                  !e.nativeEvent.isComposing
+                                ) {
                                   e.preventDefault();
                                   if (editingCard.title.trim()) {
                                     void submit({
                                       action: "update",
                                       updates: [
-                                        { id: card.id, title: editingCard.title.trim() },
+                                        {
+                                          id: card.id,
+                                          title: editingCard.title.trim(),
+                                          description: editingCard.description.trim(),
+                                        },
                                       ],
                                     });
                                   }
-                                } else if (e.key === "Escape") {
+                                }
+                              }}
+                            />
+                            <textarea
+                              className="kb-card-edit-desc"
+                              placeholder={t("addDescPlaceholder")}
+                              rows={3}
+                              value={editingCard.description}
+                              disabled={unavailable}
+                              onChange={(e) =>
+                                setEditingCard({
+                                  ...editingCard,
+                                  description: e.target.value,
+                                })
+                              }
+                              onKeyDown={(e) => {
+                                if (e.key === "Escape") {
                                   setEditingCard(null);
+                                } else if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+                                  e.preventDefault();
+                                  if (editingCard.title.trim()) {
+                                    void submit({
+                                      action: "update",
+                                      updates: [
+                                        {
+                                          id: card.id,
+                                          title: editingCard.title.trim(),
+                                          description: editingCard.description.trim(),
+                                        },
+                                      ],
+                                    });
+                                  }
                                 }
                               }}
                             />
@@ -276,7 +359,11 @@ export default function App() {
                                     void submit({
                                       action: "update",
                                       updates: [
-                                        { id: card.id, title: editingCard.title.trim() },
+                                        {
+                                          id: card.id,
+                                          title: editingCard.title.trim(),
+                                          description: editingCard.description.trim(),
+                                        },
                                       ],
                                     });
                                   }
@@ -329,7 +416,11 @@ export default function App() {
                                   className="kb-icon-btn"
                                   disabled={unavailable}
                                   onClick={() =>
-                                    setEditingCard({ id: card.id, title: card.title })
+                                    setEditingCard({
+                                      id: card.id,
+                                      title: card.title,
+                                      description: card.description ?? "",
+                                    })
                                   }
                                   title={t("edit")}
                                 >
