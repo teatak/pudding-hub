@@ -144,8 +144,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Error alert */}
-      {failure && (
+      {!!failure && (
         <div className="kb-error" role="alert">
           <span>{errorText(failure)}</span>
           <button

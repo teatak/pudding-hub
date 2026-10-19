@@ -20,6 +20,8 @@
 
 打包器生成 `pudding.widget.source-package`（schemaVersion 2），包含 source.files 和 fileHashes。Core 验证身份、最低宿主能力、完整包 SHA-256、逐文件哈希、路径、大小和 widget.json；Desktop 使用现有编译器，不执行 Hub 的构建脚本。使用 `PUDDING_CORE_DIR` 指定同一 Core 契约，并执行 `pnpm package-widget <name> --dev` 验证，再升版本正式打包。旧发布文件不可改写。
 
+打包（包括 `--dev`）还会调用 Desktop 安装时使用的编译器：TypeScript 检查和 JS/CSS 打包全部通过后，才写入包与索引。用 `PUDDING_DESKTOP_DIR` 指向兼容的 Desktop 仓库（默认同级 `pudding-desktop`），安装其 `web` 依赖，并使用同一 `PUDDING_CORE_DIR` 执行 `npm run core:prepare`。缺少编译环境会阻止打包；错误包含源码文件和行号。只编译小组件源码，不执行它。
+
 ## state 与 storage
 
 - `pudding.state.read/write/subscribe`、`useWidgetState()`：当前页面的持久快照，作者模块执行前恢复。`read()` 同步读取，必须等待 `await write(...)` 提交成功再通知或返回。刷新、崩溃与重启保留，显式关闭标签页清理；源码版本间隔离。页面与接口共用它。

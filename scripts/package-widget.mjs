@@ -4,7 +4,9 @@ import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 import { execFileSync } from "node:child_process";
+const require = createRequire(import.meta.url);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const hash = (text) => createHash("sha256").update(text).digest("hex");
 const json = (value) => JSON.stringify(value, null, 2) + "\n";
@@ -47,7 +49,9 @@ export async function widgetIcon(dir, icon) {
 
 export async function packageWidget(
   name,
-  { root = ROOT, core = process.env.PUDDING_CORE_DIR, dev = false } = {},
+  { root = ROOT, core = process.env.PUDDING_CORE_DIR,
+    desktop = process.env.PUDDING_DESKTOP_DIR || path.resolve(ROOT, "../pudding-desktop"),
+    dev = false } = {},
 ) {
   if (!/^[a-z][a-z0-9-]*$/.test(name)) throw new Error("Invalid widget name");
   if (!core)
@@ -89,11 +93,29 @@ export async function packageWidget(
     ),
   };
   const text = json(pkg);
-  execFileSync("go", ["run", "./cmd/widget-package"], {
+  const validated = execFileSync("go", ["run", "./cmd/widget-package"], {
     cwd: core,
     input: text,
     stdio: ["pipe", "pipe", "pipe"],
   });
+  // Use the installation compiler, including its SDK types and import policy.
+  // This only compiles source; it never runs widget code or writes release files.
+  let compileWidget;
+  try {
+    ({ compileWidget } = require(path.join(desktop, "electron/widget-build.cjs")));
+  } catch (error) {
+    throw new Error("Widget compiler unavailable. Set PUDDING_DESKTOP_DIR to a prepared pudding-desktop checkout (install web dependencies and run core:prepare).", { cause: error });
+  }
+  const built = await compileWidget({
+    revisionHash: JSON.parse(validated.toString()).sourceHash,
+    files,
+  });
+  if (!built.ok) {
+    const diagnostics = built.diagnostics.map(({ file, line, message }) =>
+      `${file || name}${line ? `:${line}` : ""}: ${message}`,
+    ).join("\n");
+    throw new Error(`Widget compilation failed (${name}):\n${diagnostics}`);
+  }
   const packageHash = hash(text);
   const releaseDir = path.join(
     dir,

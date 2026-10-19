@@ -18,6 +18,8 @@ Package identity and requirements belong in `widgets/<name>/manifest.json`; edit
 
 Set `PUDDING_CORE_DIR` to the compatible Core checkout and run `pnpm package-widget <name> --dev`, then `pnpm test`. The packager invokes Core's installation validator. Bump the version before formal packaging; published bytes are immutable. The development output never changes the registry.
 
+Packaging (including `--dev`) also runs the Desktop installation compiler: TypeScript checks and JS/CSS bundling must pass before any package or registry is written. Set `PUDDING_DESKTOP_DIR` to a compatible Desktop checkout (defaults to sibling `pudding-desktop`), install its `web` dependencies and run `npm run core:prepare` with the same `PUDDING_CORE_DIR`. Missing compiler dependencies fail packaging; diagnostics include source files and line numbers. Widget source is compiled, never executed.
+
 Installation creates a normal Studio item with source provenance. Reinstall opens it. Only the LLM editing workflow forks downloaded originals, snapshotting current persistent data into an independent item. Upgrades refuse local edits and make the successfully built new source the default. Existing pages remain pinned; newly opened pages use the new version. Old pages offer an explicit reload with a page-state warning; durable storage is retained. Restore archived installations before reinstalling.
 
 ### Widget artwork

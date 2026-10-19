@@ -173,3 +173,35 @@ test("packages use Core validation and releases cannot be overwritten", async ()
     await fs.rm(root, { recursive: true, force: true });
   }
 });
+
+test("packaging rejects type and bundling errors without writing packages or registry", async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), "pudding-hub-compile-"));
+  try {
+    const dir = path.join(root, "widgets/shared-todo");
+    await fs.cp(new URL("../widgets/shared-todo", import.meta.url), dir, {
+      recursive: true, filter: (file) => !file.includes("/releases") && !file.includes("/dev"),
+    });
+    const registryPath = path.join(root, "widgets/registry.json");
+    const registry = '{"items":[]}\n';
+    await fs.writeFile(registryPath, registry);
+    const app = path.join(dir, "source/src/App.tsx");
+    for (const code of [
+      'const messages = {title:"Title"}; function t(key:keyof typeof messages){return messages[key]} export default function App(){return <div>{t("cancelled")}</div>}',
+      'const failure:unknown = {}; export default function App(){return <div>{failure && <p>Error</p>}</div>}',
+      'import "./missing.css"; export default function App(){return <p>Ready</p>}',
+    ]) {
+      await fs.writeFile(app, code);
+      for (const dev of [false, true]) {
+        await assert.rejects(packageWidget("shared-todo", { root, dev }), /Widget compilation failed.*\n.*(?:App.tsx|missing.css)/s);
+        assert.equal(await fs.readFile(registryPath, "utf8"), registry);
+        for (const output of ["releases", "dev"])
+          await assert.rejects(fs.access(path.join(dir, output)), { code: "ENOENT" });
+      }
+    }
+    await fs.writeFile(app, 'export default function App(){return <p>Ready</p>}');
+    const valid = await packageWidget("shared-todo", { root, dev: true });
+    assert.ok(valid.packageHash);
+    await fs.access(path.join(dir, "dev/shared-todo.pudding-widget.json"));
+    assert.equal(await fs.readFile(registryPath, "utf8"), registry);
+  } finally { await fs.rm(root, { recursive: true, force: true }); }
+});
