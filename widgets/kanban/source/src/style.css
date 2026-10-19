@@ -40,11 +40,20 @@ body {
   opacity: 0.45;
   cursor: default;
 }
-.kb-app button:focus-visible,
-.kb-app input:focus-visible,
-.kb-app textarea:focus-visible {
+.kb-app button:focus-visible {
   outline: 2px solid var(--kb-primary);
   outline-offset: 2px;
+}
+.kb-app input,
+.kb-app textarea {
+  outline: none;
+}
+.kb-app input:focus,
+.kb-app input:focus-visible,
+.kb-app textarea:focus,
+.kb-app textarea:focus-visible {
+  outline: none;
+  border-color: var(--kb-edge-hover);
 }
 
 /* Header */
@@ -291,7 +300,7 @@ body {
   width: 100%;
   padding: 6px 8px;
   font-size: 13px;
-  border: 1px solid var(--kb-primary);
+  border: 1px solid var(--kb-edge);
   border-radius: 6px;
   background: var(--kb-card-bg);
   color: var(--kb-text);
