@@ -33,6 +33,31 @@
       ]
     },
     {
+      "id": "teatak/pudding-hub/widgets/kanban",
+      "title": {
+        "zh-CN": "看板",
+        "zh-TW": "看板",
+        "en": "Kanban"
+      },
+      "description": {
+        "en": "Organize tasks across workflow columns.",
+        "zh-CN": "多泳道任务流转，整理与推进日常工作。",
+        "zh-TW": "多泳道任務流轉，整理與推進日常工作。"
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjIwIiBmaWxsPSIjRUE1ODBDIi8+CiAgPGcgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4yNSI+CiAgICA8cmVjdCB4PSIyMiIgeT0iMjQiIHdpZHRoPSIyNCIgaGVpZ2h0PSI4MCIgcng9IjQiLz4KICAgIDxyZWN0IHg9IjUyIiB5PSIyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjgwIiByeD0iNCIvPgogICAgPHJlY3QgeD0iODIiIHk9IjI0IiB3aWR0aD0iMjQiIGhlaWdodD0iODAiIHJ4PSI0Ii8+CiAgPC9nPgogIDxnIGZpbGw9IiNmZmZmZmYiPgogICAgPHJlY3QgeD0iMjUiIHk9IjI4IiB3aWR0aD0iMTgiIGhlaWdodD0iMjIiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSIyNSIgeT0iNTYiIHdpZHRoPSIxOCIgaGVpZ2h0PSIzMCIgcng9IjMiLz4KICAgIDxyZWN0IHg9IjU1IiB5PSIyOCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjM2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iODUiIHk9IjI4IiB3aWR0aD0iMTgiIGhlaWdodD0iMjAiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSI4NSIgeT0iNTQiIHdpZHRoPSIxOCIgaGVpZ2h0PSIyMCIgcng9IjMiLz4KICAgIDxyZWN0IHg9Ijg1IiB5PSI4MCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMyIvPgogIDwvZz4KPC9zdmc+Cg==",
+      "releases": [
+        {
+          "version": "1.0.0",
+          "package": "./kanban/releases/1.0.0/kanban.pudding-widget.json",
+          "packageHash": "2e79a0b21b4fc2ff45ce1e20ed1200913f4c70571e10f088b0f4de7276368ee7",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          }
+        }
+      ]
+    },
+    {
       "id": "teatak/pudding-hub/widgets/shared-todo",
       "title": {
         "zh-CN": "待办",

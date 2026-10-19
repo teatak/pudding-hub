@@ -1,0 +1,19 @@
+{
+  "id": "teatak/pudding-hub/widgets/kanban",
+  "version": "1.0.0",
+  "title": {
+    "zh-CN": "看板",
+    "zh-TW": "看板",
+    "en": "Kanban"
+  },
+  "description": {
+    "en": "Organize tasks across workflow columns.",
+    "zh-CN": "多泳道任务流转，整理与推进日常工作。",
+    "zh-TW": "多泳道任務流轉，整理與推進日常工作。"
+  },
+  "requires": {
+    "protocolVersion": 24,
+    "sdkVersion": "1"
+  },
+  "icon": "./assets/icon.svg"
+}

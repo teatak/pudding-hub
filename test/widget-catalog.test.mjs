@@ -15,7 +15,7 @@ test("widget catalog contains only Todo and Gomoku with complete, verifiable rel
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
     .sort();
-  assert.deepEqual(names, ["gomoku", "shared-todo"]);
+  assert.deepEqual(names, ["gomoku", "kanban", "shared-todo"]);
   const catalog = await read(path.join(root, "registry.json"));
   assert.equal(catalog.schemaVersion, 2);
   assert.equal(catalog.items.length, names.length);
