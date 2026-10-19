@@ -14,7 +14,7 @@ export async function edit(value: Edit, signal?: AbortSignal) {
   const result = editNotes(readNotes(old.data?.notes ?? []), value);
   if (signal?.aborted) throw new Error(t("cancelled"));
 
-  const hasChanges = result.changed.length > 0 || result.deletedIDs.length > 0;
+  const hasChanges = result.changed.length > 0 || result.deletedIDs.length > 0 || value.action === "reorder";
   const saved = hasChanges
     ? await pudding.storage.write({
         expectedVersion: old.version,
@@ -32,11 +32,6 @@ export async function edit(value: Edit, signal?: AbortSignal) {
 }
 
 function register() {
-  const title = z
-    .string()
-    .trim()
-    .max(100, t("titleError"));
-
   const content = z
     .string()
     .trim()
@@ -70,7 +65,6 @@ function register() {
             .array(
               z
                 .object({
-                  title: title.optional(),
                   content,
                   color: colorEnum.optional(),
                   pinned: z.boolean().optional(),
@@ -85,7 +79,6 @@ function register() {
         (
           input: {
             notes: Array<{
-              title?: string;
               content: string;
               color?: NoteColor;
               pinned?: boolean;
@@ -106,7 +99,6 @@ function register() {
               z
                 .object({
                   id: z.string(),
-                  title: title.optional(),
                   content: content.optional(),
                   color: colorEnum.optional(),
                   pinned: z.boolean().optional(),
@@ -122,7 +114,6 @@ function register() {
           input: {
             updates: Array<{
               id: string;
-              title?: string;
               content?: string;
               color?: NoteColor;
               pinned?: boolean;
@@ -139,6 +130,15 @@ function register() {
       input: z.object({ id: z.string() }).strict(),
       run: wrap((input: { id: string }, signal) =>
         edit({ action: "toggle_pin", id: input.id }, signal),
+      ),
+    }),
+
+    pudding.defineInterface({
+      name: "reorderNotes",
+      description: t("descReorder"),
+      input: z.object({ orderedIds: z.array(z.string()).min(1) }).strict(),
+      run: wrap((input: { orderedIds: string[] }, signal) =>
+        edit({ action: "reorder", orderedIds: input.orderedIds }, signal),
       ),
     }),
 

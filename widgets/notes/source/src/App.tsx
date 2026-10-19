@@ -8,6 +8,7 @@ import {
   Search,
   X,
   RotateCcw,
+  GripVertical,
 } from "lucide-react";
 import {
   type Note,
@@ -20,7 +21,7 @@ import { edit } from "./api";
 import { t, errorText } from "./text";
 import "./style.css";
 
-function NoteEmblemIcon({ size = 22 }: { size?: number }) {
+function NoteEmblemIcon({ size = 24 }: { size?: number }) {
   return (
     <svg
       width={size}
@@ -45,7 +46,6 @@ export default function App() {
   const storage = useStorage();
 
   const [search, setSearch] = useState("");
-  const [draftTitle, setDraftTitle] = useState("");
   const [draftContent, setDraftContent] = useState("");
   const [draftColor, setDraftColor] = useState<NoteColor>("yellow");
   const [draftPinned, setDraftPinned] = useState(false);
@@ -54,6 +54,9 @@ export default function App() {
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [error, setError] = useState<unknown>(null);
   const [busy, setBusy] = useState(false);
+
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
 
   let notes: Note[] = [];
   let invalid: unknown = null;
@@ -73,7 +76,6 @@ export default function App() {
     try {
       await edit(op);
       if (op.action === "add") {
-        setDraftTitle("");
         setDraftContent("");
         setDraftPinned(false);
         setIsComposerFocused(false);
@@ -95,7 +97,6 @@ export default function App() {
       action: "add",
       notes: [
         {
-          title: draftTitle.trim() || undefined,
           content,
           color: draftColor,
           pinned: draftPinned,
@@ -111,7 +112,6 @@ export default function App() {
       updates: [
         {
           id: editingNote.id,
-          title: editingNote.title.trim(),
           content: editingNote.content.trim(),
           color: editingNote.color,
           pinned: editingNote.pinned,
@@ -120,13 +120,62 @@ export default function App() {
     });
   }
 
+  function handleDragStart(e: React.DragEvent, id: string) {
+    e.dataTransfer.setData("text/plain", id);
+    e.dataTransfer.effectAllowed = "move";
+    setDraggedId(id);
+  }
+
+  function handleDragOver(e: React.DragEvent, id: string) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    if (dragOverId !== id) {
+      setDragOverId(id);
+    }
+  }
+
+  function handleDragLeave(e: React.DragEvent, id: string) {
+    if (dragOverId === id) {
+      setDragOverId(null);
+    }
+  }
+
+  function handleDrop(e: React.DragEvent, targetId: string) {
+    e.preventDefault();
+    const sourceId = draggedId || e.dataTransfer.getData("text/plain");
+    setDragOverId(null);
+    setDraggedId(null);
+    if (!sourceId || sourceId === targetId) return;
+
+    const sourceIdx = notes.findIndex((n) => n.id === sourceId);
+    const targetIdx = notes.findIndex((n) => n.id === targetId);
+    if (sourceIdx === -1 || targetIdx === -1) return;
+
+    const sourceNote = notes[sourceIdx];
+    const targetNote = notes[targetIdx];
+    if (sourceNote.pinned !== targetNote.pinned) return;
+
+    const updated = [...notes];
+    const [moved] = updated.splice(sourceIdx, 1);
+    const newTargetIdx = updated.findIndex((n) => n.id === targetId);
+    if (newTargetIdx === -1) return;
+    updated.splice(targetIdx > sourceIdx ? newTargetIdx + 1 : newTargetIdx, 0, moved);
+
+    void submit({
+      action: "reorder",
+      orderedIds: updated.map((n) => n.id),
+    });
+  }
+
+  function handleDragEnd() {
+    setDraggedId(null);
+    setDragOverId(null);
+  }
+
   const filteredNotes = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return notes;
-    return notes.filter(
-      (n) =>
-        n.title.toLowerCase().includes(q) || n.content.toLowerCase().includes(q),
-    );
+    return notes.filter((n) => n.content.toLowerCase().includes(q));
   }, [notes, search]);
 
   const pinnedNotes = useMemo(
@@ -153,21 +202,21 @@ export default function App() {
 
   return (
     <div className="nt-app">
-      {/* 头部标题与统计 */}
+      {/* 头部标题与统计（与看板像素级统一） */}
       <header className="nt-header">
         <div className="nt-heading">
           <div className="nt-emblem" aria-hidden="true">
-            <NoteEmblemIcon />
+            <NoteEmblemIcon size={24} />
           </div>
           <div>
             <h1>{t("appTitle")}</h1>
-            <span className="nt-total-badge">
-              {t("totalNotes", { count: notes.length })}
-            </span>
           </div>
         </div>
 
         <div className="nt-header-actions">
+          <span className="nt-total-badge">
+            {t("totalNotes", { count: notes.length })}
+          </span>
           {notes.length > 0 && (
             <div className="nt-search-box">
               <Search size={14} className="nt-search-icon" />
@@ -214,18 +263,8 @@ export default function App() {
         </div>
       )}
 
-      {/* 新建便签卡片 */}
+      {/* 新建便签卡片（无标题） */}
       <div className={`nt-composer ${isComposerFocused ? "is-focused" : ""}`}>
-        {isComposerFocused && (
-          <input
-            type="text"
-            className="nt-composer-title"
-            placeholder={t("addTitlePlaceholder")}
-            value={draftTitle}
-            disabled={unavailable}
-            onChange={(e) => setDraftTitle(e.target.value)}
-          />
-        )}
         <textarea
           className="nt-composer-content"
           placeholder={t("addPlaceholder")}
@@ -339,26 +378,27 @@ export default function App() {
     return (
       <article
         key={note.id}
-        className={`nt-card color-${isEditing ? editingNote.color : note.color}`}
+        className={`nt-card color-${isEditing ? editingNote.color : note.color} ${
+          isEditing ? "is-editing" : ""
+        } ${draggedId === note.id ? "is-dragging" : ""} ${
+          dragOverId === note.id ? "is-drag-over" : ""
+        }`}
         data-note-id={note.id}
+        draggable={!isEditing && !unavailable}
+        onDragStart={(e) => handleDragStart(e, note.id)}
+        onDragOver={(e) => handleDragOver(e, note.id)}
+        onDragLeave={(e) => handleDragLeave(e, note.id)}
+        onDrop={(e) => handleDrop(e, note.id)}
+        onDragEnd={handleDragEnd}
       >
         {isEditing ? (
           <div className="nt-card-edit-form">
-            <input
-              type="text"
-              className="nt-card-edit-title"
-              placeholder={t("addTitlePlaceholder")}
-              value={editingNote.title}
-              disabled={unavailable}
-              onChange={(e) =>
-                setEditingNote({ ...editingNote, title: e.target.value })
-              }
-            />
             <textarea
               className="nt-card-edit-content"
               placeholder={t("addPlaceholder")}
               value={editingNote.content}
               disabled={unavailable}
+              autoFocus
               onChange={(e) =>
                 setEditingNote({ ...editingNote, content: e.target.value })
               }
@@ -410,15 +450,13 @@ export default function App() {
           </div>
         ) : (
           <>
-            <div className="nt-card-header">
-              {note.title ? (
-                <h3 className="nt-card-title">{note.title}</h3>
-              ) : (
-                <div />
-              )}
+            <div className="nt-card-top-bar">
+              <div className="nt-drag-handle" title="拖拽排序">
+                <GripVertical size={14} />
+              </div>
               {note.pinned && (
                 <div className="nt-card-pin-badge" title={t("pinnedSection")}>
-                  <Pin size={12} />
+                  <Pin size={11} />
                 </div>
               )}
             </div>
@@ -431,9 +469,10 @@ export default function App() {
                 <button
                   type="button"
                   className="nt-icon-btn"
-                  onClick={() =>
-                    void submit({ action: "toggle_pin", id: note.id })
-                  }
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    void submit({ action: "toggle_pin", id: note.id });
+                  }}
                   title={note.pinned ? t("unpin") : t("pin")}
                   aria-label={note.pinned ? t("unpin") : t("pin")}
                 >
@@ -442,7 +481,10 @@ export default function App() {
                 <button
                   type="button"
                   className="nt-icon-btn"
-                  onClick={() => setEditingNote({ ...note })}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditingNote({ ...note });
+                  }}
                   title={t("edit")}
                   aria-label={t("edit")}
                 >
@@ -451,9 +493,10 @@ export default function App() {
                 <button
                   type="button"
                   className="nt-icon-btn is-danger"
-                  onClick={() =>
-                    void submit({ action: "delete", ids: [note.id] })
-                  }
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    void submit({ action: "delete", ids: [note.id] });
+                  }}
                   title={t("delete")}
                   aria-label={t("delete")}
                 >

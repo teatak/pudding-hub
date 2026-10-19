@@ -86,7 +86,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 .nt-heading {
   display: flex;
@@ -161,7 +161,7 @@ body {
   background: light-dark(#fef2f2, #7f1d1d22);
 }
 
-/* Composer: 添加便签面板 */
+/* Composer: 添加便签面板（不要标题，纯粹便签） */
 .nt-composer {
   background: var(--nt-panel);
   border: 1px solid var(--nt-edge);
@@ -174,16 +174,6 @@ body {
 .nt-composer.is-focused {
   border-color: var(--nt-edge-hover);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-}
-.nt-composer-title {
-  width: 100%;
-  padding: 6px 0;
-  margin-bottom: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  border: 0;
-  background: transparent;
-  color: var(--nt-text);
 }
 .nt-composer-content {
   width: 100%;
@@ -290,21 +280,40 @@ body {
   margin-bottom: 24px;
 }
 
-/* 便签卡片 */
+/* 便签卡片（支持拖拽） */
 .nt-card {
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 160px;
+  min-height: 140px;
   padding: 16px;
   border-radius: 12px;
   border: 1px solid transparent;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  cursor: grab;
+  user-select: none;
 }
 .nt-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+.nt-card:active {
+  cursor: grabbing;
+}
+.nt-card.is-editing {
+  cursor: default;
+  user-select: auto;
+  transform: none;
+}
+.nt-card.is-dragging {
+  opacity: 0.35;
+  transform: scale(0.96);
+}
+.nt-card.is-drag-over {
+  border-style: dashed !important;
+  transform: scale(1.02);
+  box-shadow: 0 0 0 2px var(--nt-primary);
 }
 
 /* 便签 5 色配色应用 */
@@ -329,37 +338,42 @@ body {
   border-color: var(--nt-note-purple-edge);
 }
 
-.nt-card-header {
+.nt-card-top-bar {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 8px;
   margin-bottom: 8px;
+  min-height: 20px;
 }
-.nt-card-title {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.4;
-  word-break: break-word;
+.nt-drag-handle {
+  display: flex;
+  align-items: center;
+  color: var(--nt-muted);
+  opacity: 0.4;
+  transition: opacity 0.15s ease;
 }
+.nt-card:hover .nt-drag-handle {
+  opacity: 0.8;
+}
+
 .nt-card-pin-badge {
   display: grid;
   place-items: center;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: light-dark(#ffffff88, #00000033);
   color: var(--nt-primary);
-  flex-shrink: 0;
 }
+
 .nt-card-body {
   flex: 1;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
   color: var(--nt-text);
+  user-select: text;
 }
 
 /* 便签底部操作 */
@@ -405,34 +419,24 @@ body {
   color: var(--nt-danger);
 }
 
-/* 编辑便签态 */
+/* 编辑便签态（无标题，仅内容与颜色） */
 .nt-card-edit-form {
   display: flex;
   flex-direction: column;
   gap: 8px;
   flex: 1;
 }
-.nt-card-edit-title {
-  width: 100%;
-  padding: 4px 6px;
-  font-size: 14px;
-  font-weight: 600;
-  border: 1px solid var(--nt-edge);
-  border-radius: 4px;
-  background: light-dark(#ffffffaa, #00000044);
-  color: var(--nt-text);
-}
 .nt-card-edit-content {
   width: 100%;
-  padding: 6px;
+  padding: 8px;
   font-size: 13px;
   line-height: 1.5;
   border: 1px solid var(--nt-edge);
-  border-radius: 4px;
+  border-radius: 6px;
   background: light-dark(#ffffffaa, #00000044);
   color: var(--nt-text);
   resize: vertical;
-  min-height: 70px;
+  min-height: 80px;
 }
 .nt-card-edit-actions {
   display: flex;
@@ -441,7 +445,7 @@ body {
   margin-top: 6px;
 }
 .nt-btn-save {
-  padding: 3px 10px;
+  padding: 4px 12px;
   font-size: 12px;
   border: 0;
   border-radius: 4px;
@@ -449,7 +453,7 @@ body {
   color: #fff;
 }
 .nt-btn-cancel {
-  padding: 3px 10px;
+  padding: 4px 12px;
   font-size: 12px;
   border: 1px solid var(--nt-edge);
   border-radius: 4px;

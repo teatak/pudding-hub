@@ -47,6 +47,15 @@
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjIwIiBmaWxsPSIjRUE1ODBDIi8+CiAgPGcgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4yNSI+CiAgICA8cmVjdCB4PSIyMiIgeT0iMjQiIHdpZHRoPSIyNCIgaGVpZ2h0PSI4MCIgcng9IjQiLz4KICAgIDxyZWN0IHg9IjUyIiB5PSIyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjgwIiByeD0iNCIvPgogICAgPHJlY3QgeD0iODIiIHk9IjI0IiB3aWR0aD0iMjQiIGhlaWdodD0iODAiIHJ4PSI0Ii8+CiAgPC9nPgogIDxnIGZpbGw9IiNmZmZmZmYiPgogICAgPHJlY3QgeD0iMjUiIHk9IjI4IiB3aWR0aD0iMTgiIGhlaWdodD0iMjIiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSIyNSIgeT0iNTYiIHdpZHRoPSIxOCIgaGVpZ2h0PSIzMCIgcng9IjMiLz4KICAgIDxyZWN0IHg9IjU1IiB5PSIyOCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjM2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iODUiIHk9IjI4IiB3aWR0aD0iMTgiIGhlaWdodD0iMjAiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSI4NSIgeT0iNTQiIHdpZHRoPSIxOCIgaGVpZ2h0PSIyMCIgcng9IjMiLz4KICAgIDxyZWN0IHg9Ijg1IiB5PSI4MCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMyIvPgogIDwvZz4KPC9zdmc+Cg==",
       "releases": [
         {
+          "version": "1.0.0",
+          "package": "./kanban/releases/1.0.0/kanban.pudding-widget.json",
+          "packageHash": "a2c5617f108968d0141c0ed502fccef066d51642c6dfe98dc4792029b7ce2240",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          }
+        },
+        {
           "version": "1.0.0-preview.5",
           "package": "./kanban/releases/1.0.0-preview.5/kanban.pudding-widget.json",
           "packageHash": "296c93b8535b190527538e8df7f749ad05d57b4d864b4d2d84c624f9aeeac17a",
@@ -84,6 +93,17 @@
       },
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI0IiBmaWxsPSIjRjU5RTBCIi8+CiAgPCEtLSDkvr/nrb7kuLvkvZPvvIzlj7PkuIvop5LluKbmnInmipjop5LmlYjmnpwgLS0+CiAgPHBhdGggZD0iTTMwIDI2IEg5OCBWNzQgTDc0IDk4IEgzMCBaIiBmaWxsPSIjRkVGM0M3IiBvcGFjaXR5PSIwLjk1Ii8+CiAgPCEtLSDmipjop5LkuInop5IgLS0+CiAgPHBhdGggZD0iTTc0IDc0IEg5OCBMNzQgOTggWiIgZmlsbD0iI0ZERTY4QSIvPgogIDwhLS0g5L6/562+5qiq57q/IC0tPgogIDxyZWN0IHg9IjQyIiB5PSI0MiIgd2lkdGg9IjQ0IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjRDk3NzA2Ii8+CiAgPHJlY3QgeD0iNDIiIHk9IjU2IiB3aWR0aD0iMzQiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiNGNTlFMEIiLz4KICA8cmVjdCB4PSI0MiIgeT0iNzAiIHdpZHRoPSIyNCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iI0Y1OUUwQiIvPgogIDwhLS0g5Zu+6ZKJ54K557yAIC0tPgogIDxjaXJjbGUgY3g9IjY0IiBjeT0iMjIiIHI9IjUiIGZpbGw9IiNEQzI2MjYiLz4KICA8Y2lyY2xlIGN4PSI2NCIgY3k9IjIyIiByPSIyLjUiIGZpbGw9IiNFRjQ0NDQiLz4KPC9zdmc+Cg==",
       "releases": [
+        {
+          "version": "1.0.0-preview.2",
+          "package": "./notes/releases/1.0.0-preview.2/notes.pudding-widget.json",
+          "packageHash": "b6d3c9efc5311702bf2762424d0728ccbafbeeb186f41e67449852ef29abe595",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
         {
           "version": "1.0.0-preview.1",
           "package": "./notes/releases/1.0.0-preview.1/notes.pudding-widget.json",

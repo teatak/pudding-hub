@@ -7,12 +7,12 @@ import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL("../widgets/notes", import.meta.url));
 
 test("Sticky Notes release package exists, is verified, and contains valid source files", async () => {
-  const pkgPath = path.join(root, "releases/1.0.0-preview.1/notes.pudding-widget.json");
+  const pkgPath = path.join(root, "releases/1.0.0-preview.2/notes.pudding-widget.json");
   const raw = await fs.readFile(pkgPath, "utf8");
   const pkg = JSON.parse(raw);
 
   assert.equal(pkg.id, "teatak/pudding-hub/widgets/notes");
-  assert.equal(pkg.version, "1.0.0-preview.1");
+  assert.equal(pkg.version, "1.0.0-preview.2");
   assert.equal(pkg.preview, true);
   assert.equal(pkg.channel, "preview");
   assert.equal(pkg.requires.protocolVersion, 24);
@@ -35,6 +35,15 @@ test("Sticky Notes release package exists, is verified, and contains valid sourc
   assert.match(apiSrc, /addNotes/);
   assert.match(apiSrc, /updateNotes/);
   assert.match(apiSrc, /togglePin/);
+  assert.match(apiSrc, /reorderNotes/);
   assert.match(apiSrc, /deleteNotes/);
   assert.match(apiSrc, /clearNotes/);
+
+  const typesSrc = pkg.source.files["src/types.ts"];
+  assert.match(typesSrc, /case "reorder":/);
+
+  const appSrc = pkg.source.files["src/App.tsx"];
+  assert.match(appSrc, /handleDragStart/);
+  assert.match(appSrc, /handleDrop/);
+  assert.doesNotMatch(appSrc, /draftTitle/);
 });

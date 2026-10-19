@@ -13,4 +13,4 @@ Models call interfaces through `widget_invoke({targetID, expectedStateVersion, n
 - `clearCompleted({})`: delete all cards in the `done` column in one atomic operation.
 - `listBoard({column?})`: list cards optionally filtered by column (`todo`, `in_progress`, `done`, or `all`). Returns `cards`, `counts`, and `storageVersion`.
 
-This is the initial `1.0.0-preview.1` source package, requiring format 2, protocol 24 and SDK 1.
+This is the `1.0.0` stable source package, requiring protocol 24 and SDK 1.

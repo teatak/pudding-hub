@@ -1,5 +1,3 @@
-import { t } from "./text";
-
 export type NoteColor = "yellow" | "pink" | "green" | "blue" | "purple";
 
 export const NOTE_COLORS: readonly NoteColor[] = [
@@ -12,7 +10,6 @@ export const NOTE_COLORS: readonly NoteColor[] = [
 
 export type Note = {
   id: string;
-  title: string;
   content: string;
   color: NoteColor;
   pinned: boolean;
@@ -24,7 +21,6 @@ export type Edit =
   | {
       action: "add";
       notes: Array<{
-        title?: string;
         content: string;
         color?: NoteColor;
         pinned?: boolean;
@@ -34,7 +30,6 @@ export type Edit =
       action: "update";
       updates: Array<{
         id: string;
-        title?: string;
         content?: string;
         color?: NoteColor;
         pinned?: boolean;
@@ -43,6 +38,10 @@ export type Edit =
   | {
       action: "toggle_pin";
       id: string;
+    }
+  | {
+      action: "reorder";
+      orderedIds: string[];
     }
   | {
       action: "delete";
@@ -64,7 +63,6 @@ export function readNotes(raw: unknown): Note[] {
     const content = typeof r.content === "string" ? r.content.trim() : "";
     if (!id || !content) continue;
 
-    const title = typeof r.title === "string" ? r.title.trim().slice(0, 100) : "";
     const color = NOTE_COLORS.includes(r.color as NoteColor)
       ? (r.color as NoteColor)
       : "yellow";
@@ -74,7 +72,6 @@ export function readNotes(raw: unknown): Note[] {
 
     valid.push({
       id,
-      title,
       content,
       color,
       pinned,
@@ -83,15 +80,14 @@ export function readNotes(raw: unknown): Note[] {
     });
   }
 
-  // 排序：置顶优先，其次按 updatedAt 降序
-  return sortNotes(valid);
+  // 保持置顶在前，同时尊重存储的顺序
+  return groupPinnedFirst(valid);
 }
 
-export function sortNotes(notes: Note[]): Note[] {
-  return [...notes].sort((a, b) => {
-    if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
-    return b.updatedAt - a.updatedAt;
-  });
+export function groupPinnedFirst(notes: Note[]): Note[] {
+  const pinned = notes.filter((n) => n.pinned);
+  const unpinned = notes.filter((n) => !n.pinned);
+  return [...pinned, ...unpinned];
 }
 
 export function editNotes(
@@ -106,16 +102,17 @@ export function editNotes(
   const changed: Note[] = [];
   const deletedIDs: string[] = [];
   const now = Date.now();
+  let resultList = [...current];
 
   switch (edit.action) {
     case "add": {
+      const added: Note[] = [];
       for (const item of edit.notes) {
         const content = item.content.trim();
         if (!content) continue;
         const id = `note_${now}_${Math.random().toString(36).slice(2, 8)}`;
         const note: Note = {
           id,
-          title: (item.title ?? "").trim().slice(0, 100),
           content: content.slice(0, 2000),
           color: item.color && NOTE_COLORS.includes(item.color) ? item.color : "yellow",
           pinned: Boolean(item.pinned),
@@ -124,7 +121,10 @@ export function editNotes(
         };
         map.set(id, note);
         changed.push(note);
+        added.push(note);
       }
+      // 新添加的便签插入在前面
+      resultList = [...added, ...resultList];
       break;
     }
     case "update": {
@@ -133,10 +133,6 @@ export function editNotes(
         if (!existing) continue;
         let modified = false;
 
-        if (item.title !== undefined) {
-          existing.title = item.title.trim().slice(0, 100);
-          modified = true;
-        }
         if (item.content !== undefined) {
           const content = item.content.trim();
           if (content) {
@@ -158,6 +154,7 @@ export function editNotes(
           changed.push(existing);
         }
       }
+      resultList = resultList.map((n) => map.get(n.id) ?? n);
       break;
     }
     case "toggle_pin": {
@@ -166,15 +163,38 @@ export function editNotes(
         existing.pinned = !existing.pinned;
         existing.updatedAt = now;
         changed.push(existing);
+        resultList = resultList.map((n) => (n.id === edit.id ? existing : n));
       }
       break;
     }
+    case "reorder": {
+      const newOrdered: Note[] = [];
+      const seen = new Set<string>();
+      for (const id of edit.orderedIds) {
+        const n = map.get(id);
+        if (n && !seen.has(id)) {
+          newOrdered.push(n);
+          seen.add(id);
+        }
+      }
+      // 如果有遗漏项追加到最后
+      for (const n of resultList) {
+        if (!seen.has(n.id)) {
+          newOrdered.push(n);
+          seen.add(n.id);
+        }
+      }
+      resultList = newOrdered;
+      break;
+    }
     case "delete": {
+      const toDelete = new Set(edit.ids);
       for (const id of edit.ids) {
         if (map.delete(id)) {
           deletedIDs.push(id);
         }
       }
+      resultList = resultList.filter((n) => !toDelete.has(n.id));
       break;
     }
     case "clear": {
@@ -182,13 +202,13 @@ export function editNotes(
         deletedIDs.push(id);
       }
       map.clear();
+      resultList = [];
       break;
     }
   }
 
-  const finalNotes = sortNotes(Array.from(map.values()));
   return {
-    notes: finalNotes,
+    notes: groupPinnedFirst(resultList),
     changed,
     deletedIDs,
   };

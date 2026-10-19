@@ -1,8 +1,6 @@
 {
   "id": "teatak/pudding-hub/widgets/kanban",
-  "version": "1.0.0-preview.5",
-  "preview": true,
-  "channel": "preview",
+  "version": "1.0.0",
   "title": {
     "zh-CN": "看板",
     "zh-TW": "看板",
