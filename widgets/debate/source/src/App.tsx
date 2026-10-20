@@ -16,6 +16,9 @@ import {
   Flame,
   Award,
   BookOpen,
+  User,
+  ChevronDown,
+  X,
 } from "lucide-react";
 import {
   type Role,
@@ -174,7 +177,9 @@ export default function App() {
     const participant = run?.participants.find((part) => part.id === participantID);
     if (!participant) return undefined;
     const isHuman = participant.kind === "human";
-    const sessionModel = candidates?.sessions.find((s) => s.participantID === participantID)?.model;
+    const sessionModel = candidates?.sessions.find(
+      (s) => s.participantID === participantID || s.id === participantID,
+    )?.model;
     return {
       id: participantID,
       name: isHuman ? t("playerHuman") : participant.name,
@@ -186,6 +191,10 @@ export default function App() {
   const proPlayer = getPlayerForRole("Pro");
   const conPlayer = getPlayerForRole("Con");
   const judgePlayer = getPlayerForRole("Judge");
+
+  const isProMe = Boolean(proPlayer?.id && human?.id && proPlayer.id === human.id);
+  const isConMe = Boolean(conPlayer?.id && human?.id && conPlayer.id === human.id);
+  const isJudgeMe = Boolean(judgePlayer?.id && human?.id && judgePlayer.id === human.id);
 
   return (
     <div className="db-app">
@@ -229,7 +238,7 @@ export default function App() {
               }}
             >
               <RotateCcw size={16} />
-              <span>{t("pickerTitle")}</span>
+              <span>{t("newDebate")}</span>
             </button>
           )}
         </div>
@@ -266,28 +275,34 @@ export default function App() {
                 ? t("phaseWaiting")
                 : l.phase === "verdict"
                   ? t("phaseVerdict")
-                  : `${t(
-                      l.round === 1
-                        ? "round1Title"
-                        : l.round === 2
-                          ? "round2Title"
-                          : "round3Title",
-                    )} · ${
-                      activeRole === "Pro"
-                        ? t("roleProShort")
-                        : activeRole === "Con"
-                          ? t("roleConShort")
-                          : t("roleJudgeShort")
-                    }${t("thinking")}`}
+                  : l.phase === "round1_pro"
+                    ? t("phaseRound1Pro")
+                    : l.phase === "round1_con"
+                      ? t("phaseRound1Con")
+                      : l.phase === "round2_pro"
+                        ? t("phaseRound2Pro")
+                        : l.phase === "round2_con"
+                          ? t("phaseRound2Con")
+                          : l.phase === "round3_pro"
+                            ? t("phaseRound3Pro")
+                            : l.phase === "round3_con"
+                              ? t("phaseRound3Con")
+                              : t("thinking")}
             </span>
           </div>
 
           <div className="db-versus-judge-info">
             {judgePlayer ? (
               <span className="db-versus-judge-tag">
-                <Gavel size={13} />
-                <span>{t("roleJudgeShort")}：{judgePlayer.name}</span>
-                {judgePlayer.id === human?.id && (
+                {judgePlayer.human ? (
+                  <User size={13} />
+                ) : judgePlayer.model?.icon ? (
+                  <img src={judgePlayer.model.icon} alt="" className="db-judge-logo-img" />
+                ) : (
+                  <Gavel size={13} />
+                )}
+                <span>{t("roleJudgeShort")}: {judgePlayer.name}</span>
+                {isJudgeMe && (
                   <span className="db-you-badge">{t("youIndicator")}</span>
                 )}
               </span>
@@ -350,34 +365,36 @@ export default function App() {
             <div className="db-fighter-main">
               <div className="db-fighter-avatar is-pro">
                 {proPlayer?.human ? (
-                  "你"
+                  <User size={20} />
                 ) : proPlayer?.model?.icon ? (
                   <img src={proPlayer.model.icon} alt="" className="db-avatar-img" />
                 ) : (
-                  "正"
+                  <Flame size={20} />
                 )}
               </div>
               <div className="db-fighter-info">
                 <strong className="db-fighter-name">
-                  {proPlayer?.name || "正方辩手"}
-                  {proPlayer?.id === human?.id && (
+                  {proPlayer?.name || t("unseatedPro")}
+                  {isProMe && (
                     <span className="db-you-badge">{t("youIndicator")}</span>
                   )}
                 </strong>
                 <small className="db-fighter-model">
-                  {proPlayer?.model?.name || (proPlayer?.human ? t("playerHuman") : "待入座")}
+                  {proPlayer?.model?.name || (proPlayer?.human ? t("playerHuman") : t("unseated"))}
                 </small>
               </div>
             </div>
 
             <div className="db-fighter-state">
               {l.phase === "lobby" ? (
-                proPlayer && l.ready.includes(proPlayer.id) ? (
+                !proPlayer ? (
+                  <span className="db-tag-waiting">{t("statusWaitingSeat")}</span>
+                ) : l.ready.includes(proPlayer.id) ? (
                   <span className="db-tag-ready">
                     <Check size={12} /> {t("readyBtn")}
                   </span>
                 ) : (
-                  <span className="db-tag-waiting">等待就绪</span>
+                  <span className="db-tag-waiting">{t("statusWaitingReady")}</span>
                 )
               ) : activeRole === "Pro" ? (
                 <span className="db-tag-thinking">{t("thinking")}</span>
@@ -385,7 +402,7 @@ export default function App() {
                 <span className="db-tag-idle">{t("waitingTurn")}</span>
               )}
 
-              {proPlayer && proPlayer.id === human?.id && l.phase === "lobby" && (
+              {proPlayer && isProMe && l.phase === "lobby" && (
                 <button
                   type="button"
                   className={`db-btn db-btn-sm ${
@@ -417,34 +434,36 @@ export default function App() {
             <div className="db-fighter-main is-reverse">
               <div className="db-fighter-avatar is-con">
                 {conPlayer?.human ? (
-                  "你"
+                  <User size={20} />
                 ) : conPlayer?.model?.icon ? (
                   <img src={conPlayer.model.icon} alt="" className="db-avatar-img" />
                 ) : (
-                  "反"
+                  <ShieldAlert size={20} />
                 )}
               </div>
               <div className="db-fighter-info is-reverse">
                 <strong className="db-fighter-name">
-                  {conPlayer?.name || "反方辩手"}
-                  {conPlayer?.id === human?.id && (
+                  {conPlayer?.name || t("unseatedCon")}
+                  {isConMe && (
                     <span className="db-you-badge">{t("youIndicator")}</span>
                   )}
                 </strong>
                 <small className="db-fighter-model">
-                  {conPlayer?.model?.name || (conPlayer?.human ? t("playerHuman") : "待入座")}
+                  {conPlayer?.model?.name || (conPlayer?.human ? t("playerHuman") : t("unseated"))}
                 </small>
               </div>
             </div>
 
             <div className="db-fighter-state is-reverse">
               {l.phase === "lobby" ? (
-                conPlayer && l.ready.includes(conPlayer.id) ? (
+                !conPlayer ? (
+                  <span className="db-tag-waiting">{t("statusWaitingSeat")}</span>
+                ) : l.ready.includes(conPlayer.id) ? (
                   <span className="db-tag-ready">
                     <Check size={12} /> {t("readyBtn")}
                   </span>
                 ) : (
-                  <span className="db-tag-waiting">等待就绪</span>
+                  <span className="db-tag-waiting">{t("statusWaitingReady")}</span>
                 )
               ) : activeRole === "Con" ? (
                 <span className="db-tag-thinking">{t("thinking")}</span>
@@ -452,7 +471,7 @@ export default function App() {
                 <span className="db-tag-idle">{t("waitingTurn")}</span>
               )}
 
-              {conPlayer && conPlayer.id === human?.id && l.phase === "lobby" && (
+              {conPlayer && isConMe && l.phase === "lobby" && (
                 <button
                   type="button"
                   className={`db-btn db-btn-sm ${
@@ -600,7 +619,7 @@ export default function App() {
                   setVerdictProScore(58);
                 }}
               >
-                正方胜
+                {t("btnVerdictPro")}
               </button>
               <button
                 type="button"
@@ -610,7 +629,7 @@ export default function App() {
                   setVerdictProScore(42);
                 }}
               >
-                反方胜
+                {t("btnVerdictCon")}
               </button>
               <button
                 type="button"
@@ -620,12 +639,12 @@ export default function App() {
                   setVerdictProScore(50);
                 }}
               >
-                平局
+                {t("btnVerdictDraw")}
               </button>
             </div>
             <textarea
               className="db-human-textarea"
-              placeholder="审判长结案综述与判决评语..."
+              placeholder={t("verdictSummaryPlaceholder")}
               value={verdictSummary}
               onChange={(e) => setVerdictSummary(e.target.value)}
             />
@@ -659,28 +678,28 @@ export default function App() {
           <div className="db-verdict-card">
             <Award size={40} style={{ margin: "0 auto 12px auto", color: "var(--db-judge)" }} />
             <div className="db-verdict-banner">
-              {t("winnerNotice", {
-                winner:
-                  p.verdict.winner === "Pro"
-                    ? t("winnerPro")
-                    : p.verdict.winner === "Con"
-                      ? t("winnerCon")
-                      : t("winnerDraw"),
-              })}
+              {p.verdict.winner === "Draw"
+                ? t("winnerDraw")
+                : t("winnerNotice", {
+                    winner:
+                      p.verdict.winner === "Pro"
+                        ? t("winnerPro")
+                        : t("winnerCon"),
+                  })}
             </div>
 
             <div className="db-verdict-scores">
               <span style={{ color: "var(--db-pro)" }}>
-                {t("roleProShort")} {p.verdict.proScore}分
+                {t("roleProShort")} {p.verdict.proScore}{t("scoreUnit")}
               </span>
               <span style={{ opacity: 0.4 }}>vs</span>
               <span style={{ color: "var(--db-con)" }}>
-                {p.verdict.conScore}分 {t("roleConShort")}
+                {p.verdict.conScore}{t("scoreUnit")} {t("roleConShort")}
               </span>
             </div>
 
             <div className="db-verdict-summary">
-              <strong>法庭结案综述：</strong>
+              <strong>{t("verdictSummaryLabel")}</strong>
               <p style={{ margin: "8px 0 0 0" }}>{p.verdict.summary}</p>
             </div>
           </div>
@@ -706,8 +725,18 @@ export default function App() {
     return (
       <div className="db-modal-overlay" onClick={() => setTopicModal(false)}>
         <div className="db-modal" onClick={(e) => e.stopPropagation()}>
-          <h2 className="db-modal-title">{t("changeTopic")}</h2>
-          <p className="db-modal-sub">{t("presetTopicSelect")}</p>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <h2 className="db-modal-title" style={{ margin: 0 }}>{t("changeTopic")}</h2>
+            <button
+              type="button"
+              className="db-btn"
+              style={{ padding: "4px 8px" }}
+              onClick={() => setTopicModal(false)}
+            >
+              <X size={16} />
+            </button>
+          </div>
+          <p className="db-modal-sub" style={{ marginTop: 8 }}>{t("presetTopicSelect")}</p>
 
           <div className="db-candidate-list">
             {getPresetTopics().map((topic) => (
@@ -733,7 +762,7 @@ export default function App() {
               <input
                 type="text"
                 className="db-human-input"
-                placeholder="输入想要探讨的议题..."
+                placeholder={t("topicInputPlaceholder")}
                 value={customTopic}
                 onChange={(e) => setCustomTopic(e.target.value)}
               />
@@ -747,9 +776,19 @@ export default function App() {
                   setTopicModal(false);
                 }}
               >
-                设定
+                {t("btnSetTopic")}
               </button>
             </div>
+          </div>
+
+          <div className="db-modal-actions" style={{ marginTop: 16 }}>
+            <button
+              type="button"
+              className="db-btn"
+              onClick={() => setTopicModal(false)}
+            >
+              {t("btnCancel")}
+            </button>
           </div>
         </div>
       </div>
@@ -782,21 +821,12 @@ export default function App() {
                 <span className="db-slot-badge is-pro">{t("seatProTitle")}</span>
                 <span className="db-slot-desc">{t("seatProDesc")}</span>
               </div>
-              <select
-                className="db-slot-select"
+              <CustomSeatSelect
                 value={proChoice}
-                onChange={(e) =>
-                  setPickerSlots((prev) => ({ ...prev, Pro: e.target.value }))
-                }
-              >
-                <option value="" disabled>-- 请选择正方辩手 --</option>
-                <option value="@me">{t("seatSelectPlayerMe")}</option>
-                {list.map((sess) => (
-                  <option key={sess.id} value={sess.id}>
-                    🤖 {sess.name} ({sess.model.name})
-                  </option>
-                ))}
-              </select>
+                onChange={(val) => setPickerSlots((prev) => ({ ...prev, Pro: val }))}
+                sessions={list}
+                placeholder={t("selectProPlaceholder")}
+              />
             </div>
 
             {/* 反方席位 */}
@@ -805,21 +835,12 @@ export default function App() {
                 <span className="db-slot-badge is-con">{t("seatConTitle")}</span>
                 <span className="db-slot-desc">{t("seatConDesc")}</span>
               </div>
-              <select
-                className="db-slot-select"
+              <CustomSeatSelect
                 value={conChoice}
-                onChange={(e) =>
-                  setPickerSlots((prev) => ({ ...prev, Con: e.target.value }))
-                }
-              >
-                <option value="" disabled>-- 请选择反方辩手 --</option>
-                <option value="@me">{t("seatSelectPlayerMe")}</option>
-                {list.map((sess) => (
-                  <option key={sess.id} value={sess.id}>
-                    🤖 {sess.name} ({sess.model.name})
-                  </option>
-                ))}
-              </select>
+                onChange={(val) => setPickerSlots((prev) => ({ ...prev, Con: val }))}
+                sessions={list}
+                placeholder={t("selectConPlaceholder")}
+              />
             </div>
 
             {/* 审判长席位 */}
@@ -828,21 +849,13 @@ export default function App() {
                 <span className="db-slot-badge is-judge">{t("seatJudgeTitle")}</span>
                 <span className="db-slot-desc">{t("seatJudgeDesc")}</span>
               </div>
-              <select
-                className="db-slot-select"
+              <CustomSeatSelect
                 value={judgeChoice}
-                onChange={(e) =>
-                  setPickerSlots((prev) => ({ ...prev, Judge: e.target.value }))
-                }
-              >
-                <option value="">{t("seatSelectAutoJudge")}</option>
-                <option value="@me">{t("seatSelectPlayerMe")}</option>
-                {list.map((sess) => (
-                  <option key={sess.id} value={sess.id}>
-                    🤖 {sess.name} ({sess.model.name})
-                  </option>
-                ))}
-              </select>
+                onChange={(val) => setPickerSlots((prev) => ({ ...prev, Judge: val }))}
+                sessions={list}
+                placeholder={t("seatSelectAutoJudge")}
+                allowAutoJudge
+              />
             </div>
           </div>
 
@@ -863,7 +876,7 @@ export default function App() {
               className="db-btn"
               onClick={() => setPicker(false)}
             >
-              取消
+              {t("btnCancel")}
             </button>
             <button
               type="button"
@@ -890,4 +903,145 @@ export default function App() {
       </div>
     );
   }
+}
+
+function CustomSeatSelect({
+  value,
+  onChange,
+  sessions,
+  placeholder,
+  allowAutoJudge = false,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  sessions: SessionCandidate[];
+  placeholder: string;
+  allowAutoJudge?: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+
+  const isMe = value === "@me";
+  const isAuto = allowAutoJudge && value === "";
+  const current = sessions.find((s) => s.id === value || s.participantID === value);
+
+  return (
+    <div className="db-custom-select-box">
+      <button
+        type="button"
+        className="db-custom-select-trigger"
+        onClick={() => setOpen(!open)}
+      >
+        <div className="db-custom-select-current">
+          {isMe ? (
+            <div className="db-select-avatar is-human">
+              <User size={15} />
+            </div>
+          ) : isAuto ? (
+            <div className="db-select-avatar is-auto">
+              <Scale size={15} />
+            </div>
+          ) : current?.model?.icon ? (
+            <img src={current.model.icon} alt="" className="db-select-logo-img" />
+          ) : (
+            <div className="db-select-avatar is-model">
+              <Sparkles size={15} />
+            </div>
+          )}
+
+          <div className="db-select-texts">
+            <span className="db-select-name">
+              {isMe
+                ? t("seatSelectPlayerMe")
+                : isAuto
+                  ? t("seatSelectAutoJudge")
+                  : current
+                    ? current.name
+                    : placeholder}
+            </span>
+            {current?.model?.name && (
+              <span className="db-select-model-badge">{current.model.name}</span>
+            )}
+          </div>
+        </div>
+        <ChevronDown size={15} className={`db-select-chevron ${open ? "is-open" : ""}`} />
+      </button>
+
+      {open && (
+        <>
+          <div
+            className="db-custom-select-backdrop"
+            onClick={() => setOpen(false)}
+          />
+          <div className="db-custom-select-menu">
+            {allowAutoJudge && (
+              <div
+                className={`db-custom-select-option ${value === "" ? "is-chosen" : ""}`}
+                onClick={() => {
+                  onChange("");
+                  setOpen(false);
+                }}
+              >
+                <div className="db-option-left">
+                  <div className="db-select-avatar is-auto">
+                    <Scale size={15} />
+                  </div>
+                  <div className="db-select-texts">
+                    <span className="db-select-name">{t("seatSelectAutoJudge")}</span>
+                  </div>
+                </div>
+                {value === "" && <Check size={15} className="db-option-check" />}
+              </div>
+            )}
+
+            <div
+              className={`db-custom-select-option ${value === "@me" ? "is-chosen" : ""}`}
+              onClick={() => {
+                onChange("@me");
+                setOpen(false);
+              }}
+            >
+              <div className="db-option-left">
+                <div className="db-select-avatar is-human">
+                  <User size={15} />
+                </div>
+                <div className="db-select-texts">
+                  <span className="db-select-name">{t("seatSelectPlayerMe")}</span>
+                </div>
+              </div>
+              {value === "@me" && <Check size={15} className="db-option-check" />}
+            </div>
+
+            {sessions.map((s) => {
+              const active = value === s.id || value === s.participantID;
+              return (
+                <div
+                  key={s.id}
+                  className={`db-custom-select-option ${active ? "is-chosen" : ""}`}
+                  onClick={() => {
+                    onChange(s.id);
+                    setOpen(false);
+                  }}
+                >
+                  <div className="db-option-left">
+                    {s.model?.icon ? (
+                      <img src={s.model.icon} alt="" className="db-select-logo-img" />
+                    ) : (
+                      <div className="db-select-avatar is-model">
+                        <Sparkles size={15} />
+                      </div>
+                    )}
+                    <div className="db-select-texts">
+                      <span className="db-select-name">{s.name}</span>
+                      <span className="db-select-model-badge">{s.model?.name}</span>
+                    </div>
+                  </div>
+                  {active && <Check size={15} className="db-option-check" />}
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
