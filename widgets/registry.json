@@ -94,6 +94,15 @@
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI0IiBmaWxsPSIjRjU5RTBCIi8+CiAgPCEtLSDkvr/nrb7kuLvkvZPvvIzlj7PkuIvop5LluKbmnInmipjop5LmlYjmnpwgLS0+CiAgPHBhdGggZD0iTTMwIDI2IEg5OCBWNzQgTDc0IDk4IEgzMCBaIiBmaWxsPSIjRkVGM0M3IiBvcGFjaXR5PSIwLjk1Ii8+CiAgPCEtLSDmipjop5LkuInop5IgLS0+CiAgPHBhdGggZD0iTTc0IDc0IEg5OCBMNzQgOTggWiIgZmlsbD0iI0ZERTY4QSIvPgogIDwhLS0g5L6/562+5qiq57q/IC0tPgogIDxyZWN0IHg9IjQyIiB5PSI0MiIgd2lkdGg9IjQ0IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjRDk3NzA2Ii8+CiAgPHJlY3QgeD0iNDIiIHk9IjU2IiB3aWR0aD0iMzQiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiNGNTlFMEIiLz4KICA8cmVjdCB4PSI0MiIgeT0iNzAiIHdpZHRoPSIyNCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iI0Y1OUUwQiIvPgogIDwhLS0g5Zu+6ZKJ54K557yAIC0tPgogIDxjaXJjbGUgY3g9IjY0IiBjeT0iMjIiIHI9IjUiIGZpbGw9IiNEQzI2MjYiLz4KICA8Y2lyY2xlIGN4PSI2NCIgY3k9IjIyIiByPSIyLjUiIGZpbGw9IiNFRjQ0NDQiLz4KPC9zdmc+Cg==",
       "releases": [
         {
+          "version": "1.0.0",
+          "package": "./notes/releases/1.0.0/notes.pudding-widget.json",
+          "packageHash": "0483dfbde502d18c0e7381f886468e3f7e10f825115ac0367bfdabeaca8ba0b3",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          }
+        },
+        {
           "version": "1.0.0-preview.2",
           "package": "./notes/releases/1.0.0-preview.2/notes.pudding-widget.json",
           "packageHash": "b6d3c9efc5311702bf2762424d0728ccbafbeeb186f41e67449852ef29abe595",

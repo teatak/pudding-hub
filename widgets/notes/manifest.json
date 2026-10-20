@@ -1,8 +1,6 @@
 {
   "id": "teatak/pudding-hub/widgets/notes",
-  "version": "1.0.0-preview.2",
-  "preview": true,
-  "channel": "preview",
+  "version": "1.0.0",
   "title": {
     "zh-CN": "便签",
     "zh-TW": "便簽",
