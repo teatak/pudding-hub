@@ -127,6 +127,33 @@
       ]
     },
     {
+      "id": "teatak/pudding-hub/widgets/reversi",
+      "title": {
+        "zh-CN": "黑白棋",
+        "zh-TW": "黑白棋",
+        "en": "Reversi"
+      },
+      "description": {
+        "zh-CN": "8×8 经典翻转棋，支持人机对弈或双大模型对决。",
+        "zh-TW": "8×8 經典翻轉棋，支援人機對弈或雙大模型對決。",
+        "en": "Classic 8×8 Reversi with human vs model and model vs model play."
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjIwIiBmaWxsPSIjMTU4MDNEIi8+CiAgPCEtLSDmo4vnm5jmtYXoibLnvZHmoLznur8gLS0+CiAgPGcgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utb3BhY2l0eT0iMC4xNSIgc3Ryb2tlLXdpZHRoPSIyIj4KICAgIDxsaW5lIHgxPSIyMCIgeTE9IjY0IiB4Mj0iMTA4IiB5Mj0iNjQiLz4KICAgIDxsaW5lIHgxPSI2NCIgeTE9IjIwIiB4Mj0iNjQiIHkyPSIxMDgiLz4KICAgIDxyZWN0IHg9IjI0IiB5PSIyNCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8L2c+CiAgPCEtLSDpu5Hmo4vlrZAgKOW4pueri+S9k+a4kOWPmOS4juaKleW9sSkgLS0+CiAgPGcgZmlsdGVyPSJkcm9wLXNoYWRvdygwcHggNHB4IDZweCByZ2JhKDAsMCwwLDAuMzUpKSI+CiAgICA8Y2lyY2xlIGN4PSI0OCIgY3k9IjY0IiByPSIyNCIgZmlsbD0iIzE4MTgxQiIvPgogICAgPGNpcmNsZSBjeD0iNDgiIGN5PSI2NCIgcj0iMjIuNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjM0YzRjQ2IiBzdHJva2Utd2lkdGg9IjEuNSIvPgogICAgPGVsbGlwc2UgY3g9IjQ0IiBjeT0iNTYiIHJ4PSI4IiByeT0iNCIgZmlsbD0iIzUyNTI1QiIgb3BhY2l0eT0iMC40Ii8+CiAgPC9nPgogIDwhLS0g55m95qOL5a2QICjluKbnq4vkvZPotKjmhJ/kuI7ovrnnvJjlhYkpIC0tPgogIDxnIGZpbHRlcj0iZHJvcC1zaGFkb3coMHB4IDRweCA2cHggcmdiYSgwLDAsMCwwLjMpKSI+CiAgICA8Y2lyY2xlIGN4PSI4MCIgY3k9IjY0IiByPSIyNCIgZmlsbD0iI0Y0RjRGNSIvPgogICAgPGNpcmNsZSBjeD0iODAiIGN5PSI2NCIgcj0iMjIuNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRTRFNEU3IiBzdHJva2Utd2lkdGg9IjEuNSIvPgogICAgPGVsbGlwc2UgY3g9Ijc2IiBjeT0iNTYiIHJ4PSI4IiByeT0iNCIgZmlsbD0iI0ZGRkZGRiIgb3BhY2l0eT0iMC44Ii8+CiAgPC9nPgo8L3N2Zz4K",
+      "releases": [
+        {
+          "version": "1.0.0-preview.1",
+          "package": "./reversi/releases/1.0.0-preview.1/reversi.pudding-widget.json",
+          "packageHash": "1497f5c0c6dc888a5bc9f15ce82c4b960d72b5319eaef6fd42f732500d7ebc17",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        }
+      ]
+    },
+    {
       "id": "teatak/pudding-hub/widgets/shared-todo",
       "title": {
         "zh-CN": "待办",

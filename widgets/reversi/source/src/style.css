@@ -1,0 +1,587 @@
+:root {
+  color-scheme: light dark;
+}
+body {
+  margin: 0;
+  padding: 0;
+  background: light-dark(#f8f9fa, oklch(0.18 0 0));
+}
+
+.rv-app {
+  --rv-text: light-dark(#1e293b, #f1f5f9);
+  --rv-muted: light-dark(#64748b, #94a3b8);
+  --rv-panel: light-dark(#ffffff, #ffffff08);
+  --rv-card-bg: light-dark(#ffffff, #ffffff0c);
+  --rv-edge: light-dark(#e2e8f0, #ffffff15);
+  --rv-edge-hover: light-dark(#cbd5e1, #ffffff30);
+  --rv-primary: light-dark(#15803d, #22c55e);
+  --rv-primary-hover: light-dark(#166534, #16a34a);
+  --rv-danger: light-dark(#ef4444, #f87171);
+
+  /* 棋盘专用色 */
+  --rv-board-bg: light-dark(#166534, #0f3d24);
+  --rv-board-grid: light-dark(#14532d, #092617);
+  --rv-cell-hover: light-dark(#15803d66, #16653466);
+  --rv-legal-dot: light-dark(#86efac, #4ade80);
+
+  color: var(--rv-text);
+  font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  max-width: 1040px;
+  padding: 24px 20px;
+  margin: 0 auto;
+  min-width: 0;
+}
+
+.rv-app * {
+  box-sizing: border-box;
+}
+
+.rv-app button,
+.rv-app input {
+  font: inherit;
+}
+.rv-app button {
+  cursor: pointer;
+}
+.rv-app button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.rv-app button:focus-visible {
+  outline: 2px solid var(--rv-primary);
+  outline-offset: 2px;
+}
+.rv-app input {
+  outline: none;
+}
+.rv-app input:focus,
+.rv-app input:focus-visible {
+  outline: none;
+  border-color: var(--rv-edge-hover);
+}
+
+/* Header (严格对齐看板与便签标准) */
+.rv-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.rv-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.rv-emblem {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #15803d;
+  color: #fff;
+  flex-shrink: 0;
+}
+.rv-heading h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.rv-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.rv-score-badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--rv-panel);
+  border: 1px solid var(--rv-edge);
+  color: var(--rv-text);
+}
+
+/* 按钮基础 */
+.rv-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: 1px solid var(--rv-edge);
+  background: var(--rv-panel);
+  color: var(--rv-text);
+  transition: all 0.15s ease;
+}
+.rv-btn:hover:not(:disabled) {
+  border-color: var(--rv-edge-hover);
+  background: light-dark(#f1f5f9, #ffffff12);
+}
+.rv-btn.is-primary {
+  background: var(--rv-primary);
+  border-color: var(--rv-primary);
+  color: #fff;
+}
+.rv-btn.is-primary:hover:not(:disabled) {
+  background: var(--rv-primary-hover);
+}
+.rv-btn.is-danger {
+  color: var(--rv-danger);
+}
+.rv-btn.is-danger:hover:not(:disabled) {
+  background: light-dark(#fef2f2, #7f1d1d33);
+  border-color: var(--rv-danger);
+}
+.rv-btn.is-active {
+  background: light-dark(#dcfce7, #14532d44);
+  border-color: var(--rv-primary);
+  color: var(--rv-primary);
+}
+
+.rv-icon-btn {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--rv-muted);
+}
+.rv-icon-btn.is-danger:hover {
+  color: var(--rv-danger);
+}
+
+/* 通告栏 */
+.rv-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+.rv-banner.is-info {
+  background: light-dark(#eff6ff, #1e3a8a33);
+  color: light-dark(#1d4ed8, #60a5fa);
+  border: 1px solid light-dark(#bfdbfe, #1e3a8a);
+}
+.rv-banner.is-winner {
+  background: light-dark(#f0fdf4, #14532d33);
+  color: light-dark(#15803d, #4ade80);
+  border: 1px solid light-dark(#bbf7d0, #14532d);
+}
+.rv-banner.is-warning {
+  background: light-dark(#fffbeb, #78350f33);
+  color: light-dark(#b45309, #fbbf24);
+  border: 1px solid light-dark(#fde68a, #78350f);
+}
+.rv-error-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  background: light-dark(#fef2f2, #7f1d1d33);
+  color: light-dark(#991b1b, #f87171);
+  border: 1px solid light-dark(#fecaca, #7f1d1d);
+}
+
+/* 主对弈布局 */
+.rv-game-layout {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 24px;
+}
+@media (max-width: 860px) {
+  .rv-game-layout {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* 选手卡片 */
+.rv-player-card {
+  flex: 1;
+  min-width: 200px;
+  max-width: 260px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--rv-card-bg);
+  border: 1px solid var(--rv-edge);
+  transition: all 0.2s ease;
+}
+@media (max-width: 860px) {
+  .rv-player-card {
+    max-width: 100%;
+  }
+}
+.rv-player-card.is-turn {
+  border-color: var(--rv-primary);
+  box-shadow: 0 0 0 2px light-dark(#22c55e33, #22c55e44);
+}
+.rv-player-card.is-winner {
+  border-color: #eab308;
+  box-shadow: 0 0 0 2px #eab30844;
+}
+
+.rv-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.rv-card-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.rv-avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: light-dark(#f1f5f9, #ffffff12);
+  color: var(--rv-text);
+  overflow: hidden;
+}
+.rv-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.rv-player-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+.rv-you-tag {
+  font-size: 11px;
+  color: var(--rv-muted);
+  margin-left: 4px;
+}
+.rv-player-role {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--rv-muted);
+  margin-top: 2px;
+}
+.rv-disc-badge {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+.rv-disc-badge.is-black {
+  background: #18181b;
+}
+.rv-disc-badge.is-white {
+  background: #f4f4f5;
+  border-color: rgba(0, 0, 0, 0.3);
+}
+
+.rv-player-disc-count {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--rv-text);
+}
+
+.rv-card-status {
+  min-height: 24px;
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+.rv-ready-yes {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--rv-primary);
+  font-weight: 500;
+}
+.rv-ready-no {
+  color: var(--rv-muted);
+}
+.rv-clock-active {
+  color: var(--rv-primary);
+  font-weight: 600;
+}
+.rv-clock-idle {
+  color: var(--rv-muted);
+}
+
+.rv-comment-bubble {
+  padding: 8px 10px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  background: light-dark(#f8fafc, #ffffff08);
+  border: 1px solid var(--rv-edge);
+  font-size: 12px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+.rv-comment-num {
+  font-weight: 600;
+  color: var(--rv-muted);
+  margin-right: 6px;
+}
+
+.rv-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+.rv-comment-input {
+  width: 100%;
+  height: 28px;
+  padding: 0 8px;
+  font-size: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--rv-edge);
+  background: var(--rv-panel);
+  color: var(--rv-text);
+}
+
+/* 棋盘容器 */
+.rv-board-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.rv-board {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  background: var(--rv-board-bg);
+  border: 3px solid var(--rv-board-grid);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  user-select: none;
+}
+
+.rv-col-labels {
+  display: flex;
+  align-items: center;
+  height: 20px;
+}
+.rv-coord-corner {
+  width: 20px;
+  height: 20px;
+}
+.rv-coord-label {
+  width: 44px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+}
+@media (max-width: 540px) {
+  .rv-coord-label {
+    width: 36px;
+  }
+}
+
+.rv-board-row {
+  display: flex;
+  align-items: center;
+}
+.rv-row-label {
+  width: 20px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* 棋盘格 */
+.rv-cell {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--rv-board-grid);
+  background: transparent;
+  display: grid;
+  place-items: center;
+  outline: none;
+  transition: background 0.15s ease;
+}
+@media (max-width: 540px) {
+  .rv-cell {
+    width: 36px;
+    height: 36px;
+  }
+}
+.rv-cell.is-legal {
+  cursor: pointer;
+}
+.rv-cell.is-legal:hover {
+  background: var(--rv-cell-hover);
+}
+
+/* 星位点 */
+.rv-star-point {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+/* 棋子 */
+.rv-disc {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+@media (max-width: 540px) {
+  .rv-disc {
+    width: 28px;
+    height: 28px;
+  }
+}
+.rv-disc.is-black {
+  background: radial-gradient(circle at 35% 35%, #3f3f46, #18181b 70%);
+  border: 1px solid #27272a;
+}
+.rv-disc.is-white {
+  background: radial-gradient(circle at 35% 35%, #ffffff, #e4e4e7 75%);
+  border: 1px solid #d4d4d8;
+}
+.rv-disc.is-last-move {
+  outline: 2px solid #eab308;
+  outline-offset: 1px;
+}
+
+/* 合法落子提示小圆点 */
+.rv-legal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--rv-legal-dot);
+  opacity: 0.85;
+  box-shadow: 0 0 6px var(--rv-legal-dot);
+  pointer-events: none;
+  animation: rv-pulse 1.8s infinite ease-in-out;
+}
+@keyframes rv-pulse {
+  0%, 100% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+
+/* 复盘控制条 */
+.rv-replay-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+.rv-replay-counter {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--rv-muted);
+}
+
+/* 选手选择模态框 */
+.rv-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: grid;
+  place-items: center;
+  z-index: 50;
+  padding: 16px;
+}
+.rv-modal {
+  width: 100%;
+  max-width: 420px;
+  padding: 20px;
+  border-radius: 12px;
+  background: light-dark(#ffffff, #1e293b);
+  border: 1px solid var(--rv-edge);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+.rv-modal-header h3 {
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+.rv-modal-subtitle {
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: var(--rv-muted);
+}
+.rv-candidate-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+.rv-candidate-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--rv-edge);
+  background: var(--rv-panel);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.rv-candidate-item:hover {
+  border-color: var(--rv-primary);
+  background: light-dark(#f8fafc, #ffffff08);
+}
+.rv-candidate-icon {
+  color: var(--rv-muted);
+}
+.rv-candidate-icon-img {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+}
+.rv-candidate-info {
+  display: flex;
+  flex-direction: column;
+}
+.rv-candidate-info strong {
+  font-size: 13px;
+}
+.rv-candidate-info span {
+  font-size: 11px;
+  color: var(--rv-muted);
+}
+.rv-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}

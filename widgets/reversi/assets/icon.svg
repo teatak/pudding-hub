@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="20" fill="#15803D"/>
+  <!-- 棋盘浅色网格线 -->
+  <g stroke="#ffffff" stroke-opacity="0.15" stroke-width="2">
+    <line x1="20" y1="64" x2="108" y2="64"/>
+    <line x1="64" y1="20" x2="64" y2="108"/>
+    <rect x="24" y="24" width="80" height="80" rx="8" fill="none" stroke-width="2.5"/>
+  </g>
+  <!-- 黑棋子 (带立体渐变与投影) -->
+  <g filter="drop-shadow(0px 4px 6px rgba(0,0,0,0.35))">
+    <circle cx="48" cy="64" r="24" fill="#18181B"/>
+    <circle cx="48" cy="64" r="22.5" fill="none" stroke="#3F3F46" stroke-width="1.5"/>
+    <ellipse cx="44" cy="56" rx="8" ry="4" fill="#52525B" opacity="0.4"/>
+  </g>
+  <!-- 白棋子 (带立体质感与边缘光) -->
+  <g filter="drop-shadow(0px 4px 6px rgba(0,0,0,0.3))">
+    <circle cx="80" cy="64" r="24" fill="#F4F4F5"/>
+    <circle cx="80" cy="64" r="22.5" fill="none" stroke="#E4E4E7" stroke-width="1.5"/>
+    <ellipse cx="76" cy="56" rx="8" ry="4" fill="#FFFFFF" opacity="0.8"/>
+  </g>
+</svg>
