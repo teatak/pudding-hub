@@ -6,19 +6,12 @@ import {
   Role,
   VerdictData,
 } from "./types";
+import { t, getDefaultTopic, getPresetTopics } from "./text";
 
 export const roles: Role[] = ["Pro", "Con", "Judge"];
 
-export const PRESET_TOPICS = [
-  "AI 是否会在未来五年全面取代初级程序员？",
-  "远程居家办公是否比线下坐班更具长远生产力？",
-  "微服务架构是否在绝大多数中小型团队中被过度设计？",
-  "大模型开源生态是否终将超越闭源私有模型？",
-  "深海探索是否比深空探索对人类生存更具紧迫性？",
-  "社交媒体的个性化算法推荐利大于弊还是弊大于利？",
-];
-
-export const DEFAULT_TOPIC = PRESET_TOPICS[0];
+export const PRESET_TOPICS = getPresetTopics();
+export const DEFAULT_TOPIC = getDefaultTopic();
 
 export const PHASE_SEQUENCE: DebatePhase[] = [
   "round1_pro",
@@ -54,7 +47,7 @@ export function getRoundForPhase(phase: DebatePhase): number {
   return 3;
 }
 
-export function initialLobby(topic = DEFAULT_TOPIC): DebateLobby {
+export function initialLobby(topic = getDefaultTopic()): DebateLobby {
   return {
     round: 0,
     phase: "lobby",
@@ -134,7 +127,6 @@ export function addArgument(
   role: Role,
   headline: string,
   content: string,
-  comment = "",
   speakerName = "",
   now = Date.now(),
 ): { position: DebatePosition; lobby: DebateLobby } {
@@ -145,7 +137,6 @@ export function addArgument(
     round,
     headline: headline.trim(),
     content: content.trim(),
-    comment: comment.trim() || undefined,
     timestamp: now,
     speakerName,
   };
@@ -158,6 +149,37 @@ export function addArgument(
     delta += role === "Pro" ? 1 : -1;
   }
   const newAdvantage = Math.min(85, Math.max(15, pos.proAdvantage + delta));
+
+  if (nextP === "verdict" && !lobby.seats.Judge) {
+    const winner = newAdvantage > 50 ? "Pro" : newAdvantage < 50 ? "Con" : "Draw";
+    const verdict: VerdictData = {
+      winner,
+      proScore: newAdvantage,
+      conScore: 100 - newAdvantage,
+      summary:
+        winner === "Pro"
+          ? t("autoVerdictPro")
+          : winner === "Con"
+            ? t("autoVerdictCon")
+            : t("autoVerdictDraw"),
+    };
+
+    return {
+      position: {
+        ...pos,
+        arguments: [...pos.arguments, newArg],
+        verdict,
+        proAdvantage: newAdvantage,
+        turnStartedAt: null,
+        turnElapsedMS: 0,
+      },
+      lobby: {
+        ...lobby,
+        phase: "verdict",
+        startsAt: null,
+      },
+    };
+  }
 
   return {
     position: {
@@ -179,7 +201,6 @@ export function submitVerdict(
   pos: DebatePosition,
   lobby: DebateLobby,
   verdict: VerdictData,
-  now = Date.now(),
 ): { position: DebatePosition; lobby: DebateLobby } {
   return {
     position: {

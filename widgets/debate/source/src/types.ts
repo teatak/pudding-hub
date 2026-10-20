@@ -16,7 +16,6 @@ export interface ArgumentItem {
   round: number; // 1: 立论, 2: 攻辩, 3: 结辩
   headline: string;
   content: string;
-  comment?: string;
   timestamp: number;
   speakerName?: string;
 }

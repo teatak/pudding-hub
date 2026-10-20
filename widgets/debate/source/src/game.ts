@@ -207,22 +207,108 @@ export async function publish(retry = false) {
   }
 }
 
-export const start = (sessionIDs: string[], includeMe: boolean, customTopic?: string) =>
+export const start = (
+  assignments:
+    | { Pro: string; Con: string; Judge?: string | null }
+    | string[],
+  includeMeOrTopic?: boolean | string,
+  customTopic?: string,
+) =>
   change(async () => {
-    const totalPlayers = sessionIDs.length + Number(includeMe);
-    if (totalPlayers < 2 || totalPlayers > 3) {
-      throw new Error("Choose 2 or 3 players for the debate");
-    }
     const previous = lobby();
-    const run = await pudding.interaction.connect({ sessionIDs });
-    const players = run.participants
-      .filter((p) => p.kind === "session" || includeMe)
-      .map((p) => p.id);
+    let seats: Record<Role, string | null>;
+    let topicToUse: string;
+
+    if (Array.isArray(assignments)) {
+      // 兼容旧签名
+      const sessionIDs = assignments;
+      const includeMe = Boolean(includeMeOrTopic);
+      const totalPlayers = sessionIDs.length + Number(includeMe);
+      if (totalPlayers < 2 || totalPlayers > 3) {
+        throw new Error("Choose 2 or 3 players for the debate");
+      }
+      const run = await pudding.interaction.connect({ sessionIDs });
+      const players = run.participants
+        .filter((p) => p.kind === "session" || includeMe)
+        .map((p) => p.id);
+      seats = {
+        Pro: players[0] || null,
+        Con: players[1] || null,
+        Judge: players[2] || null,
+      };
+      topicToUse = customTopic || previous.topic;
+    } else {
+      // 席位明确指定
+      if (!assignments.Pro || !assignments.Con) {
+        throw new Error("Pro and Con seats must be assigned");
+      }
+      const chosenList = [assignments.Pro, assignments.Con];
+      if (assignments.Judge) chosenList.push(assignments.Judge);
+
+      if (new Set(chosenList).size !== chosenList.length) {
+        throw new Error("Each participant can only occupy one seat");
+      }
+
+      const includeMe = chosenList.includes("@me");
+      const sessionCandidates = (await pudding.interaction.candidates()).sessions;
+      const sessionIDs = chosenList
+        .filter((id) => id !== "@me")
+        .map((id) => {
+          const match = sessionCandidates.find(
+            (s) => s.id === id || s.participantID === id,
+          );
+          return match ? match.id : id;
+        });
+
+      const run = await pudding.interaction.connect({ sessionIDs });
+
+      const participantFor = (chosenID: string | null | undefined): string | null => {
+        if (!chosenID) return null;
+        if (chosenID === "@me") {
+          return run.participants.find((p) => p.kind === "human")?.id || null;
+        }
+        const match = sessionCandidates.find(
+          (s) => s.id === chosenID || s.participantID === chosenID,
+        );
+        if (match) {
+          const fromRun = run.participants.find((p) => p.id === match.participantID);
+          if (fromRun) return fromRun.id;
+        }
+        return run.participants.find((p) => p.id === chosenID)?.id || null;
+      };
+
+      seats = {
+        Pro: participantFor(assignments.Pro),
+        Con: participantFor(assignments.Con),
+        Judge: participantFor(assignments.Judge),
+      };
+      topicToUse = (typeof includeMeOrTopic === "string" ? includeMeOrTopic : customTopic) || previous.topic;
+    }
 
     await pudding.interaction.setRequests([]);
-    const chosenTopic = customTopic || previous.topic;
-    await save(assignDebateLobby(previous, players, chosenTopic), initialPosition());
-    if (run.status === "paused") await pudding.interaction.resume();
+    await save(
+      {
+        round: previous.round + 1,
+        phase: "lobby",
+        topic: topicToUse,
+        seats,
+        ready: [],
+        startsAt: null,
+      },
+      initialPosition(),
+    );
+    const runStatus = pudding.interaction.read()?.status;
+    if (runStatus === "paused") await pudding.interaction.resume();
+    await publish();
+  });
+
+export const forceStart = () =>
+  change(async () => {
+    const l = lobby();
+    if (l.phase !== "lobby") return;
+    const now = Date.now();
+    const needed = Object.values(l.seats).filter((id): id is string => Boolean(id));
+    await save({ ...l, ready: needed, phase: "round1_pro", startsAt: now }, position());
     await publish();
   });
 
@@ -241,7 +327,7 @@ export const changeReadiness = (ready: boolean, context: InteractionContext) =>
   });
 
 export const argue = (
-  input: { headline: string; content: string; comment?: string },
+  input: { headline: string; content: string },
   context: InteractionContext,
 ) =>
   change(async () => {
@@ -262,7 +348,6 @@ export const argue = (
       activeRole,
       input.headline,
       input.content,
-      input.comment,
       who.name,
     );
     await save(res.lobby, res.position);
@@ -341,7 +426,6 @@ function registerInterfaces() {
         .object({
           headline: z.string().min(1).max(60),
           content: z.string().min(1).max(400),
-          comment: z.string().max(40).optional(),
         })
         .strict(),
       run: argue,
