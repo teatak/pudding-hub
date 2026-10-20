@@ -9,13 +9,13 @@ const root = fileURLToPath(new URL("../widgets/reversi", import.meta.url));
 test("Reversi release package exists, is verified, and contains valid source files", async () => {
   const pkgPath = path.join(
     root,
-    "releases/1.0.0-preview.1/reversi.pudding-widget.json",
+    "releases/1.0.0-preview.2/reversi.pudding-widget.json",
   );
   const raw = await fs.readFile(pkgPath, "utf8");
   const pkg = JSON.parse(raw);
 
   assert.equal(pkg.id, "teatak/pudding-hub/widgets/reversi");
-  assert.equal(pkg.version, "1.0.0-preview.1");
+  assert.equal(pkg.version, "1.0.0-preview.2");
   assert.equal(pkg.preview, true);
   assert.equal(pkg.channel, "preview");
   assert.equal(pkg.requires.protocolVersion, 24);
@@ -48,8 +48,10 @@ test("Reversi release package exists, is verified, and contains valid source fil
   assert.match(rulesSrc, /getFlippedDiscs/);
   assert.match(rulesSrc, /getLegalMovesFor/);
 
-  // Ensure App.tsx renders Reversi board and uses interaction protocol
+  // Ensure App.tsx renders Reversi board, danmaku and right-side player seats
   const appSrc = pkg.source.files["src/App.tsx"];
   assert.match(appSrc, /useWidgetInteraction/);
   assert.match(appSrc, /rv-board/);
+  assert.match(appSrc, /rv-players/);
+  assert.match(appSrc, /rv-board-danmaku/);
 });

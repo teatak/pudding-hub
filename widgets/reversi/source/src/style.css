@@ -14,15 +14,16 @@ body {
   --rv-card-bg: light-dark(#ffffff, #ffffff0c);
   --rv-edge: light-dark(#e2e8f0, #ffffff15);
   --rv-edge-hover: light-dark(#cbd5e1, #ffffff30);
-  --rv-primary: light-dark(#15803d, #22c55e);
-  --rv-primary-hover: light-dark(#166534, #16a34a);
+  --rv-primary: light-dark(#2e8b57, #22c55e);
+  --rv-primary-hover: light-dark(#237045, #16a34a);
   --rv-danger: light-dark(#ef4444, #f87171);
 
-  /* 棋盘专用色 */
-  --rv-board-bg: light-dark(#166534, #0f3d24);
-  --rv-board-grid: light-dark(#14532d, #092617);
-  --rv-cell-hover: light-dark(#15803d66, #16653466);
-  --rv-legal-dot: light-dark(#86efac, #4ade80);
+  /* 棋盘专用浅绿呢绒色 (高对比度、棋子清晰) */
+  --rv-board-bg: light-dark(#2e8b57, #1f6b40);
+  --rv-board-border: light-dark(#1f5f3a, #134428);
+  --rv-board-grid: light-dark(#246f45, #165230);
+  --rv-cell-hover: light-dark(#3ba76966, #28855066);
+  --rv-legal-dot: #facc15;
 
   color: var(--rv-text);
   font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -79,7 +80,7 @@ body {
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background: #15803d;
+  background: #2e8b57;
   color: #fff;
   flex-shrink: 0;
 }
@@ -109,6 +110,7 @@ body {
 .rv-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   height: 32px;
   padding: 0 12px;
@@ -143,46 +145,19 @@ body {
   border-color: var(--rv-primary);
   color: var(--rv-primary);
 }
+.rv-btn.is-compact {
+  height: 26px;
+  padding: 0 8px;
+  font-size: 12px;
+}
 
 .rv-icon-btn {
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  border: 0;
-  border-radius: 4px;
-  background: transparent;
-  color: var(--rv-muted);
-}
-.rv-icon-btn.is-danger:hover {
-  color: var(--rv-danger);
+  width: 32px;
+  height: 32px;
+  padding: 0;
 }
 
-/* 通告栏 */
-.rv-banner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 16px;
-  margin-bottom: 16px;
-  border-radius: 8px;
-  font-size: 13px;
-}
-.rv-banner.is-info {
-  background: light-dark(#eff6ff, #1e3a8a33);
-  color: light-dark(#1d4ed8, #60a5fa);
-  border: 1px solid light-dark(#bfdbfe, #1e3a8a);
-}
-.rv-banner.is-winner {
-  background: light-dark(#f0fdf4, #14532d33);
-  color: light-dark(#15803d, #4ade80);
-  border: 1px solid light-dark(#bbf7d0, #14532d);
-}
-.rv-banner.is-warning {
-  background: light-dark(#fffbeb, #78350f33);
-  color: light-dark(#b45309, #fbbf24);
-  border: 1px solid light-dark(#fde68a, #78350f);
-}
+/* 错误条 */
 .rv-error-banner {
   display: flex;
   align-items: center;
@@ -196,182 +171,104 @@ body {
   border: 1px solid light-dark(#fecaca, #7f1d1d);
 }
 
-/* 主对弈布局 */
-.rv-game-layout {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 24px;
-}
-@media (max-width: 860px) {
-  .rv-game-layout {
-    flex-direction: column;
-    align-items: stretch;
-  }
-}
-
-/* 选手卡片 */
-.rv-player-card {
-  flex: 1;
-  min-width: 200px;
-  max-width: 260px;
-  padding: 16px;
-  border-radius: 12px;
-  background: var(--rv-card-bg);
-  border: 1px solid var(--rv-edge);
-  transition: all 0.2s ease;
-}
-@media (max-width: 860px) {
-  .rv-player-card {
-    max-width: 100%;
-  }
-}
-.rv-player-card.is-turn {
-  border-color: var(--rv-primary);
-  box-shadow: 0 0 0 2px light-dark(#22c55e33, #22c55e44);
-}
-.rv-player-card.is-winner {
-  border-color: #eab308;
-  box-shadow: 0 0 0 2px #eab30844;
-}
-
-.rv-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-.rv-card-identity {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.rv-avatar {
+/* 主对弈竞技场：棋盘在左，席位固定在右侧 */
+.rv-arena {
   display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background: light-dark(#f1f5f9, #ffffff12);
-  color: var(--rv-text);
-  overflow: hidden;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  grid-template-areas: "board players";
+  gap: 20px;
+  align-items: start;
 }
-.rv-avatar-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+@media (max-width: 768px) {
+  .rv-arena {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "board" "players";
+  }
 }
-.rv-player-name {
-  font-weight: 600;
-  font-size: 14px;
-}
-.rv-you-tag {
-  font-size: 11px;
-  color: var(--rv-muted);
-  margin-left: 4px;
-}
-.rv-player-role {
+
+/* 棋盘左侧主区域 */
+.rv-board-area {
+  grid-area: board;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--rv-muted);
-  margin-top: 2px;
+  min-width: 0;
 }
-.rv-disc-badge {
+
+.rv-board-wrapper {
+  position: relative;
   display: inline-block;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-}
-.rv-disc-badge.is-black {
-  background: #18181b;
-}
-.rv-disc-badge.is-white {
-  background: #f4f4f5;
-  border-color: rgba(0, 0, 0, 0.3);
+  margin: 0 auto;
 }
 
-.rv-player-disc-count {
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 1;
-  color: var(--rv-text);
-}
-
-.rv-card-status {
-  min-height: 24px;
-  margin-bottom: 10px;
-  font-size: 12px;
-}
-.rv-ready-yes {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--rv-primary);
-  font-weight: 500;
-}
-.rv-ready-no {
-  color: var(--rv-muted);
-}
-.rv-clock-active {
-  color: var(--rv-primary);
-  font-weight: 600;
-}
-.rv-clock-idle {
-  color: var(--rv-muted);
-}
-
-.rv-comment-bubble {
-  padding: 8px 10px;
-  margin-bottom: 12px;
-  border-radius: 8px;
-  background: light-dark(#f8fafc, #ffffff08);
-  border: 1px solid var(--rv-edge);
-  font-size: 12px;
-  line-height: 1.4;
-  word-break: break-word;
-}
-.rv-comment-num {
-  font-weight: 600;
-  color: var(--rv-muted);
-  margin-right: 6px;
-}
-
-.rv-card-actions {
+/* 浮动走棋弹幕 (位于棋盘内部顶层，绝不挤压或改变棋盘高度) */
+.rv-board-danmaku {
+  position: absolute;
+  top: 14px;
+  left: 20px;
+  right: 20px;
+  z-index: 15;
+  pointer-events: none;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 8px;
-  margin-top: 8px;
-}
-.rv-comment-input {
-  width: 100%;
-  height: 28px;
-  padding: 0 8px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #f8fafc;
   font-size: 12px;
-  border-radius: 6px;
-  border: 1px solid var(--rv-edge);
-  background: var(--rv-panel);
-  color: var(--rv-text);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  animation: rv-danmaku-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes rv-danmaku-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.rv-danmaku-tag {
+  font-weight: 600;
+  color: #facc15;
+  white-space: nowrap;
+}
+.rv-danmaku-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* 棋盘容器 */
-.rv-board-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
+/* 自动让步浮层提示 */
+.rv-board-toast {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  pointer-events: none;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: rgba(180, 83, 9, 0.92);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
+/* 8×8 绿呢绒棋盘 (浅绿透亮、棋子鲜明) */
 .rv-board {
   display: flex;
   flex-direction: column;
   padding: 8px;
   background: var(--rv-board-bg);
-  border: 3px solid var(--rv-board-grid);
+  border: 5px solid var(--rv-board-border);
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
   user-select: none;
 }
 
@@ -388,8 +285,9 @@ body {
   width: 44px;
   text-align: center;
   font-size: 11px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 @media (max-width: 540px) {
   .rv-coord-label {
@@ -405,8 +303,9 @@ body {
   width: 20px;
   text-align: center;
   font-size: 11px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 /* 棋盘格 */
@@ -442,17 +341,16 @@ body {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.45);
   pointer-events: none;
 }
 
-/* 棋子 */
+/* 棋子 (大号、高对比度、极其清晰) */
 .rv-disc {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
   pointer-events: none;
 }
 @media (max-width: 540px) {
@@ -461,34 +359,40 @@ body {
     height: 28px;
   }
 }
+/* 黑子：深黑油亮、白边立体光晕、在浅绿背景上极其显眼 */
 .rv-disc.is-black {
-  background: radial-gradient(circle at 35% 35%, #3f3f46, #18181b 70%);
-  border: 1px solid #27272a;
+  background: radial-gradient(circle at 32% 32%, #475569 0%, #1e293b 40%, #090d16 100%);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.45);
 }
+/* 白子：纯正明亮高光白、柔和阴影、边缘分明 */
 .rv-disc.is-white {
-  background: radial-gradient(circle at 35% 35%, #ffffff, #e4e4e7 75%);
-  border: 1px solid #d4d4d8;
+  background: radial-gradient(circle at 32% 32%, #ffffff 0%, #f8fafc 55%, #cbd5e1 100%);
+  border: 2px solid #94a3b8;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35), inset 0 -2px 3px rgba(0, 0, 0, 0.15);
 }
+/* 最后一步落子标识金环 */
 .rv-disc.is-last-move {
-  outline: 2px solid #eab308;
+  outline: 3px solid #f59e0b;
   outline-offset: 1px;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.8);
 }
 
-/* 合法落子提示小圆点 */
+/* 合法落子提示点 */
 .rv-legal-dot {
-  width: 10px;
-  height: 10px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  background: var(--rv-legal-dot);
-  opacity: 0.85;
-  box-shadow: 0 0 6px var(--rv-legal-dot);
+  border: 2px dashed rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
   pointer-events: none;
   animation: rv-pulse 1.8s infinite ease-in-out;
 }
 @keyframes rv-pulse {
   0%, 100% {
     transform: scale(0.9);
-    opacity: 0.7;
+    opacity: 0.75;
   }
   50% {
     transform: scale(1.15);
@@ -496,17 +400,293 @@ body {
   }
 }
 
-/* 复盘控制条 */
+/* 读秒覆盖层 (直接覆盖在棋盘中心，绝不撑开高度导致棋盘跳动) */
+.rv-board-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+  pointer-events: auto;
+}
+.rv-overlay-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+.rv-overlay-number {
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1;
+  color: #facc15;
+  text-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+.rv-overlay-hint {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 6px;
+}
+
+/* 复盘控制栏 */
 .rv-replay-bar {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 .rv-replay-counter {
   font-size: 13px;
   font-weight: 500;
   color: var(--rv-muted);
+}
+
+/* 右侧选手卡片容器 */
+.rv-players {
+  grid-area: players;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* 选手卡片：严格固定 192px 高度，任何内容绝不撑开卡片 */
+.rv-player-card {
+  height: 192px;
+  min-height: 192px;
+  max-height: 192px;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--rv-card-bg);
+  border: 1px solid var(--rv-edge);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.rv-player-card.is-turn {
+  border-color: var(--rv-primary);
+  box-shadow: 0 0 0 2px light-dark(#2e8b5733, #22c55e44);
+}
+.rv-player-card.is-winner {
+  border-color: #eab308;
+  box-shadow: 0 0 0 2px #eab30844;
+}
+
+/* 卡片第 1 行 (20px): 执棋身份 + 思考用时 */
+.rv-player-top {
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  min-width: 0;
+}
+.rv-side-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--rv-muted);
+  white-space: nowrap;
+}
+.rv-color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+.rv-color-dot.is-black {
+  background: #0f172a;
+  border: 1px solid #334155;
+}
+.rv-color-dot.is-white {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+}
+
+.rv-player-status {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--rv-muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.rv-status-ready {
+  color: var(--rv-primary);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.rv-status-waiting,
+.rv-status-idle {
+  color: var(--rv-muted);
+}
+.rv-think-time {
+  color: var(--rv-primary);
+  font-weight: 600;
+}
+
+/* 卡片第 2 行 (44px): 头像 + 名字 + 大号比分 */
+.rv-player-head {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+.rv-avatar-and-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.rv-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: light-dark(#f1f5f9, #ffffff12);
+  color: var(--rv-text);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.rv-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.rv-player-identity {
+  min-width: 0;
+}
+.rv-player-name {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rv-player-sub {
+  display: block;
+  font-size: 11px;
+  color: var(--rv-muted);
+  white-space: nowrap;
+}
+.rv-you-tag {
+  font-size: 11px;
+  color: var(--rv-muted);
+  font-weight: normal;
+  margin-left: 4px;
+}
+.rv-player-score {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--rv-text);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+/* 卡片第 3 行: 卡片正文主体 (严格定高 78px，绝对不撑开外层高度) */
+.rv-card-body {
+  height: 78px;
+  min-height: 78px;
+  max-height: 78px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* 走棋弹幕与留言展示 (两行截断，严格定高) */
+.rv-speech {
+  height: 60px;
+  max-height: 60px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: light-dark(#f8fafc, #ffffff08);
+  border: 1px solid var(--rv-edge);
+  font-size: 12px;
+  line-height: 1.45;
+  overflow: hidden;
+  animation: rv-speech-arrive 0.2s ease-out both;
+}
+@keyframes rv-speech-arrive {
+  from {
+    opacity: 0.4;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.rv-speech-prefix {
+  font-weight: 600;
+  color: var(--rv-muted);
+  font-size: 11px;
+  margin-right: 4px;
+}
+.rv-speech-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+/* 人类操作与留言输入 */
+.rv-human-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.rv-comment-input {
+  width: 100%;
+  height: 28px;
+  padding: 0 8px;
+  font-size: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--rv-edge);
+  background: var(--rv-panel);
+  color: var(--rv-text);
+}
+
+.rv-card-placeholder {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: light-dark(#f8fafc, #ffffff05);
+  border: 1px dashed var(--rv-edge);
+  color: var(--rv-muted);
+  font-size: 11px;
+}
+.rv-placeholder-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 10px;
+}
+.rv-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* 选手选择模态框 */

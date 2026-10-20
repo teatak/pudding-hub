@@ -18,6 +18,8 @@ import {
   UsersRound,
   X,
   RotateCcw,
+  MessagesSquare,
+  MessageSquareOff,
 } from "lucide-react";
 import { roles } from "./lobby";
 import {
@@ -70,14 +72,14 @@ function ReversiEmblemIcon({ size = 24 }: { size?: number }) {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      <rect width="128" height="128" rx="20" fill="#15803D" />
-      <g stroke="#ffffff" strokeOpacity="0.2" strokeWidth="3">
+      <rect width="128" height="128" rx="20" fill="#2e8b57" />
+      <g stroke="#ffffff" strokeOpacity="0.25" strokeWidth="3">
         <line x1="20" y1="64" x2="108" y2="64" />
         <line x1="64" y1="20" x2="64" y2="108" />
         <rect x="24" y="24" width="80" height="80" rx="8" fill="none" strokeWidth="3" />
       </g>
-      <circle cx="48" cy="64" r="22" fill="#18181B" stroke="#3F3F46" strokeWidth="2" />
-      <circle cx="80" cy="64" r="22" fill="#F4F4F5" stroke="#E4E4E7" strokeWidth="2" />
+      <circle cx="48" cy="64" r="22" fill="#0f172a" stroke="#cbd5e1" strokeWidth="2" />
+      <circle cx="80" cy="64" r="22" fill="#ffffff" stroke="#94a3b8" strokeWidth="2" />
     </svg>
   );
 }
@@ -109,6 +111,7 @@ export default function App() {
   const [selected, setSelected] = useState<string[]>([]);
   const [picker, setPicker] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [danmaku, setDanmaku] = useState(true);
   const [error, setError] = useState<{
     cause: unknown;
     retry?: "candidates" | "notification";
@@ -200,16 +203,6 @@ export default function App() {
     return () => clearInterval(clock);
   }, [l.phase, p.turnStartedAt, p.winner, run?.status]);
 
-  const chosenPlayer = (id: string): Player | undefined => {
-    if (id === me) {
-      return { id, name: t("pickerYou"), human: true };
-    }
-    const candidate = candidates?.sessions.find((s) => s.id === id);
-    return candidate
-      ? { id, name: candidate.name, human: false, model: candidate.model }
-      : undefined;
-  };
-
   const getPlayerForRole = (role: Color): Player | undefined => {
     const participantID = l.seats[role];
     if (!participantID) return undefined;
@@ -258,6 +251,16 @@ export default function App() {
       ? Math.ceil((l.startsAt - now) / 1000)
       : 0;
 
+  // 提取最新的走棋留言用于弹幕展示
+  const lastMoveWithComment = [...view.history].reverse().find((m) => m.comment);
+  const latestComment = lastMoveWithComment
+    ? {
+        role: lastMoveWithComment.stone === "B" ? ("Black" as Color) : ("White" as Color),
+        moveNumber: view.history.indexOf(lastMoveWithComment) + 1,
+        text: lastMoveWithComment.comment!,
+      }
+    : null;
+
   return (
     <div className="rv-app">
       {/* 头部：与看板和便签完全一致的布局标准 */}
@@ -274,12 +277,30 @@ export default function App() {
         <div className="rv-header-actions">
           {l.round > 0 && (
             <div className="rv-score-badge">
-              {t("scoreText", {
-                black: String(view.blackCount),
-                white: String(view.whiteCount),
-              })}
+              {p.winner
+                ? p.winner === "draw"
+                  ? t("matchDraw")
+                  : p.winner === "Black"
+                    ? t("winnerBlack")
+                    : t("winnerWhite")
+                : t("scoreText", {
+                    black: String(view.blackCount),
+                    white: String(view.whiteCount),
+                  })}
             </div>
           )}
+
+          {/* 弹幕开关按钮（类似五子棋） */}
+          <button
+            type="button"
+            className={`rv-btn rv-icon-btn ${danmaku ? "is-active" : ""}`}
+            title={t("toggleDanmaku")}
+            aria-label={t("toggleDanmaku")}
+            aria-pressed={danmaku}
+            onClick={() => setDanmaku(!danmaku)}
+          >
+            {danmaku ? <MessagesSquare size={16} /> : <MessageSquareOff size={16} />}
+          </button>
 
           {run?.status === "paused" && (
             <button
@@ -365,119 +386,169 @@ export default function App() {
         </div>
       )}
 
-      {/* 状态通告栏 */}
-      {renderStatusBanner()}
-
-      {/* 主对弈区 */}
-      <div className="rv-game-layout">
-        {/* 左/上 选手卡片：黑方 */}
-        {renderPlayerCard("Black", blackPlayer)}
-
-        {/* 棋盘 */}
-        <div className="rv-board-container">
-          <div className="rv-board">
-            {/* 列坐标标头 A–H */}
-            <div className="rv-col-labels">
-              <span className="rv-coord-corner" />
-              {[...letters].map((letter) => (
-                <span key={letter} className="rv-coord-label">
-                  {letter}
+      {/* 主对弈竞技场：棋盘在左，席位固定在右 */}
+      <div className="rv-arena">
+        {/* 棋盘主区域 */}
+        <div className="rv-board-area">
+          <div className="rv-board-wrapper">
+            {/* 走棋弹幕浮层（位于棋盘上方，绝不撑开高度） */}
+            {danmaku && latestComment && (
+              <div
+                key={`${latestComment.role}-${latestComment.moveNumber}`}
+                className="rv-board-danmaku"
+              >
+                <span className="rv-danmaku-tag">
+                  {latestComment.role === "Black" ? "● " : "○ "}
+                  #{latestComment.moveNumber}
                 </span>
-              ))}
-              <span className="rv-coord-corner" />
+                <span className="rv-danmaku-text">{latestComment.text}</span>
+              </div>
+            )}
+
+            {/* 自动让步浮动提示（不占外部高度） */}
+            {l.phase === "playing" && p.passedColor && (
+              <div className="rv-board-toast">
+                {t("autoPassed", {
+                  color:
+                    p.passedColor === "Black"
+                      ? t("colorBlack")
+                      : t("colorWhite"),
+                })}
+              </div>
+            )}
+
+            {/* 8×8 绿呢绒棋盘 */}
+            <div className="rv-board">
+              {/* 顶部列坐标 A–H */}
+              <div className="rv-col-labels">
+                <span className="rv-coord-corner" />
+                {[...letters].map((letter) => (
+                  <span key={letter} className="rv-coord-label">
+                    {letter}
+                  </span>
+                ))}
+                <span className="rv-coord-corner" />
+              </div>
+
+              {/* 8 个行 */}
+              {Array.from({ length: size }, (_, visualRow) => {
+                const rowNum = size - visualRow; // 8 down to 1
+                return (
+                  <div key={rowNum} className="rv-board-row">
+                    <span className="rv-row-label">{rowNum}</span>
+                    {Array.from({ length: size }, (_, colIdx) => {
+                      const colLetter = letters[colIdx];
+                      const coord = `${colLetter}${rowNum}`;
+                      const cellIdx = (rowNum - 1) * size + colIdx;
+                      const disc = view.board[cellIdx]; // 0: empty, 1: Black, 2: White
+                      const isLegal =
+                        !replaying &&
+                        myTurn &&
+                        p.legalMoves.includes(coord);
+                      const isLast = !replaying && p.last === cellIdx;
+
+                      return (
+                        <button
+                          key={coord}
+                          type="button"
+                          className={`rv-cell ${isLegal ? "is-legal" : ""}`}
+                          disabled={busy || replaying || !isLegal}
+                          onClick={() => {
+                            if (!isLegal) return;
+                            void perform(async () => {
+                              await pudding.interaction.handle((c) =>
+                                move(
+                                  {
+                                    row: rowNum,
+                                    column: colLetter,
+                                    comment: draftComment.trim() || undefined,
+                                  },
+                                  c,
+                                ),
+                              );
+                              setDraftComment("");
+                            });
+                          }}
+                          aria-label={`${coord}: ${
+                            disc === 1
+                              ? t("colorBlack")
+                              : disc === 2
+                                ? t("colorWhite")
+                                : isLegal
+                                  ? t("legalMoveHint")
+                                  : ""
+                          }`}
+                        >
+                          {/* 4 个天元星位点 (C3, F3, C6, F6) */}
+                          {((colIdx === 2 || colIdx === 5) &&
+                            (rowNum === 3 || rowNum === 6)) && (
+                            <span className="rv-star-point" />
+                          )}
+
+                          {disc === 1 && (
+                            <span
+                              className={`rv-disc is-black ${
+                                isLast ? "is-last-move" : ""
+                              }`}
+                            />
+                          )}
+                          {disc === 2 && (
+                            <span
+                              className={`rv-disc is-white ${
+                                isLast ? "is-last-move" : ""
+                              }`}
+                            />
+                          )}
+
+                          {disc === 0 && isLegal && (
+                            <span className="rv-legal-dot" />
+                          )}
+                        </button>
+                      );
+                    })}
+                    <span className="rv-row-label">{rowNum}</span>
+                  </div>
+                );
+              })}
+
+              {/* 底部列坐标 A–H */}
+              <div className="rv-col-labels">
+                <span className="rv-coord-corner" />
+                {[...letters].map((letter) => (
+                  <span key={letter} className="rv-coord-label">
+                    {letter}
+                  </span>
+                ))}
+                <span className="rv-coord-corner" />
+              </div>
             </div>
 
-            {/* 8 个行 */}
-            {Array.from({ length: size }, (_, visualRow) => {
-              const rowNum = size - visualRow; // 8 down to 1
-              return (
-                <div key={rowNum} className="rv-board-row">
-                  <span className="rv-row-label">{rowNum}</span>
-                  {Array.from({ length: size }, (_, colIdx) => {
-                    const colLetter = letters[colIdx];
-                    const coord = `${colLetter}${rowNum}`;
-                    const cellIdx = (rowNum - 1) * size + colIdx;
-                    const disc = view.board[cellIdx]; // 0: empty, 1: Black, 2: White
-                    const isLegal =
-                      !replaying &&
-                      myTurn &&
-                      p.legalMoves.includes(coord);
-                    const isLast = !replaying && p.last === cellIdx;
-
-                    return (
-                      <button
-                        key={coord}
-                        type="button"
-                        className={`rv-cell ${isLegal ? "is-legal" : ""}`}
-                        disabled={busy || replaying || !isLegal}
-                        onClick={() => {
-                          if (!isLegal) return;
-                          void perform(async () => {
-                            await pudding.interaction.handle((c) =>
-                              move(
-                                {
-                                  row: rowNum,
-                                  column: colLetter,
-                                  comment: draftComment.trim() || undefined,
-                                },
-                                c,
-                              ),
-                            );
-                            setDraftComment("");
-                          });
-                        }}
-                        aria-label={`${coord}: ${
-                          disc === 1
-                            ? t("colorBlack")
-                            : disc === 2
-                              ? t("colorWhite")
-                              : isLegal
-                                ? t("legalMoveHint")
-                                : ""
-                        }`}
-                      >
-                        {/* 4 个天元星位点 (C3, F3, C6, F6) */}
-                        {((colIdx === 2 || colIdx === 5) &&
-                          (rowNum === 3 || rowNum === 6)) && (
-                          <span className="rv-star-point" />
-                        )}
-
-                        {disc === 1 && (
-                          <span
-                            className={`rv-disc is-black ${
-                              isLast ? "is-last-move" : ""
-                            }`}
-                          />
-                        )}
-                        {disc === 2 && (
-                          <span
-                            className={`rv-disc is-white ${
-                              isLast ? "is-last-move" : ""
-                            }`}
-                          />
-                        )}
-
-                        {disc === 0 && isLegal && (
-                          <span className="rv-legal-dot" />
-                        )}
-                      </button>
-                    );
-                  })}
-                  <span className="rv-row-label">{rowNum}</span>
-                </div>
-              );
-            })}
-
-            {/* 底部列坐标标头 A–H */}
-            <div className="rv-col-labels">
-              <span className="rv-coord-corner" />
-              {[...letters].map((letter) => (
-                <span key={letter} className="rv-coord-label">
-                  {letter}
-                </span>
-              ))}
-              <span className="rv-coord-corner" />
-            </div>
+            {/* 倒计时浮层（棋盘中心覆盖，绝不额外占高度导致棋盘跳动） */}
+            {l.phase === "countdown" && run?.status === "running" && (
+              <div className="rv-board-overlay" aria-live="polite">
+                <span className="rv-overlay-title">{t("countdownTitle")}</span>
+                <strong className="rv-overlay-number">
+                  {Math.max(1, countdownSeconds)}
+                </strong>
+                <span className="rv-overlay-hint">{t("sideBlackFirst")}</span>
+                {humanRole && (
+                  <button
+                    type="button"
+                    className="rv-btn"
+                    disabled={busy}
+                    onClick={() =>
+                      void perform(() =>
+                        pudding.interaction.handle((c) =>
+                          changeReadiness(false, c),
+                        ),
+                      )
+                    }
+                  >
+                    {t("cancelReady")}
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
           {/* 复盘控制栏 */}
@@ -523,64 +594,17 @@ export default function App() {
           )}
         </div>
 
-        {/* 右/下 选手卡片：白方 */}
-        {renderPlayerCard("White", whitePlayer)}
+        {/* 席位全部位于右侧（垂直并列，固定 192px 高度，保证内容不撑高卡片） */}
+        <div className="rv-players">
+          {renderPlayerCard("Black", blackPlayer)}
+          {renderPlayerCard("White", whitePlayer)}
+        </div>
       </div>
 
       {/* 选手选择弹窗 */}
       {picker && renderPickerModal()}
     </div>
   );
-
-  function renderStatusBanner() {
-    if (l.phase === "countdown" && countdownSeconds > 0) {
-      return (
-        <div className="rv-banner is-info">
-          <span>{t("countdownText", { count: String(countdownSeconds) })}</span>
-        </div>
-      );
-    }
-
-    if (p.winner) {
-      const winnerName =
-        p.winner === "draw"
-          ? t("matchDraw")
-          : p.resigned
-            ? t("matchResigned", {
-                name: p.resigned === "Black" ? blackPlayer?.name || t("colorBlack") : whitePlayer?.name || t("colorWhite"),
-                winner: p.winner === "Black" ? t("colorBlack") : t("colorWhite"),
-              })
-            : p.winner === "Black"
-              ? t("winnerBlack")
-              : t("winnerWhite");
-
-      return (
-        <div className="rv-banner is-winner">
-          <strong>{winnerName}</strong>
-          <span>
-            {t("scoreText", {
-              black: String(p.blackCount),
-              white: String(p.whiteCount),
-            })}
-          </span>
-        </div>
-      );
-    }
-
-    if (l.phase === "playing" && p.passedColor) {
-      return (
-        <div className="rv-banner is-warning">
-          <span>
-            {t("autoPassed", {
-              color: p.passedColor === "Black" ? t("colorBlack") : t("colorWhite"),
-            })}
-          </span>
-        </div>
-      );
-    }
-
-    return null;
-  }
 
   function renderPlayerCard(role: Color, player?: Player) {
     const isCurrentTurn = l.phase === "playing" && !p.winner && p.turn === role;
@@ -591,70 +615,65 @@ export default function App() {
     const comment = p.comments[role];
 
     return (
-      <div
+      <article
+        key={role}
         className={`rv-player-card is-${role.toLowerCase()} ${
           isCurrentTurn ? "is-turn" : ""
         } ${isWinner ? "is-winner" : ""}`}
       >
-        <div className="rv-card-header">
-          <div className="rv-card-identity">
+        {/* 第一行 (20px): 执棋身份 + 思考用时/状态 */}
+        <div className="rv-player-top">
+          <span className="rv-side-badge">
+            <span className={`rv-color-dot is-${role.toLowerCase()}`} />
+            <span>
+              {role === "Black" ? t("sideBlackFirst") : t("sideWhiteSecond")}
+            </span>
+          </span>
+
+          <span className="rv-player-status">
+            {l.phase === "lobby" ? (
+              isReady ? (
+                <span className="rv-status-ready">
+                  <Check size={12} /> {t("readyBtn")}
+                </span>
+              ) : (
+                <span className="rv-status-waiting">{t("waitingReady")}</span>
+              )
+            ) : isCurrentTurn ? (
+              <span className="rv-think-time">
+                {t("thinking")} {elapsedTime(elapsed)}
+              </span>
+            ) : (
+              <span className="rv-status-idle">{t("opponentTurn")}</span>
+            )}
+          </span>
+        </div>
+
+        {/* 第二行 (44px): 头像 + 名字 + 大号比分 */}
+        <div className="rv-player-head">
+          <div className="rv-avatar-and-name">
             <PlayerAvatar player={player} />
-            <div>
-              <div className="rv-player-name">
+            <div className="rv-player-identity">
+              <strong className="rv-player-name">
                 {player?.name || t("undecided")}
                 {isMe ? <span className="rv-you-tag">{t("youIndicator")}</span> : null}
-              </div>
-              <div className="rv-player-role">
-                <span className={`rv-disc-badge is-${role.toLowerCase()}`} />
-                <span>{role === "Black" ? t("sideBlackFirst") : t("sideWhiteSecond")}</span>
-              </div>
+              </strong>
+              <small className="rv-player-sub">
+                {player?.model?.name ||
+                  (player?.human ? t("playerHuman") : t("playerSlot"))}
+              </small>
             </div>
           </div>
 
-          <div className="rv-player-disc-count">
+          <div className="rv-player-score">
             {role === "Black" ? view.blackCount : view.whiteCount}
           </div>
         </div>
 
-        {/* 思考计时与状态 */}
-        <div className="rv-card-status">
-          {l.phase === "lobby" && (
-            <div className="rv-status-tag">
-              {isReady ? (
-                <span className="rv-ready-yes">
-                  <Check size={13} /> {t("readyBtn")}
-                </span>
-              ) : (
-                <span className="rv-ready-no">{t("waitingReady")}</span>
-              )}
-            </div>
-          )}
-
-          {l.phase === "playing" && (
-            <div className="rv-clock-row">
-              {isCurrentTurn ? (
-                <span className="rv-clock-active">
-                  {t("thinking")} {elapsedTime(elapsed)}
-                </span>
-              ) : (
-                <span className="rv-clock-idle">{t("opponentTurn")}</span>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* 走棋留言气泡 */}
-        {comment && comment.text && (
-          <div className="rv-comment-bubble">
-            <span className="rv-comment-num">#{comment.moveNumber}</span>
-            <span className="rv-comment-body">{comment.text}</span>
-          </div>
-        )}
-
-        {/* 人类操作栏（如果是你自己的卡片） */}
-        {isMe && (
-          <div className="rv-card-actions">
-            {l.phase === "lobby" && (
+        {/* 第三行: 卡片正文主体 (严格定高，绝对不撑开卡片高度) */}
+        <div className="rv-card-body">
+          {isMe && l.phase === "lobby" ? (
+            <div className="rv-action-row">
               <button
                 type="button"
                 className={`rv-btn ${isReady ? "" : "is-primary"}`}
@@ -669,37 +688,53 @@ export default function App() {
               >
                 {isReady ? t("cancelReady") : t("readyBtn")}
               </button>
-            )}
-
-            {l.phase === "playing" && !p.winner && (
-              <>
-                {myTurn && (
-                  <input
-                    type="text"
-                    className="rv-comment-input"
-                    placeholder={t("commentPlaceholder")}
-                    value={draftComment}
-                    maxLength={40}
-                    onChange={(e) => setDraftComment(e.target.value)}
-                  />
-                )}
-                <button
-                  type="button"
-                  className="rv-btn is-danger"
-                  disabled={busy}
-                  onClick={() => {
-                    if (window.confirm(t("resignConfirm"))) {
-                      void perform(() => pudding.interaction.handle(resign));
-                    }
-                  }}
-                >
-                  {t("actionResign")}
-                </button>
-              </>
-            )}
-          </div>
-        )}
-      </div>
+            </div>
+          ) : isMe && l.phase === "playing" && !p.winner ? (
+            <div className="rv-human-controls">
+              <input
+                type="text"
+                className="rv-comment-input"
+                placeholder={t("commentPlaceholder")}
+                value={draftComment}
+                maxLength={40}
+                disabled={busy || !myTurn}
+                onChange={(e) => setDraftComment(e.target.value)}
+              />
+              <button
+                type="button"
+                className="rv-btn is-danger is-compact"
+                disabled={busy}
+                onClick={() => {
+                  if (window.confirm(t("resignConfirm"))) {
+                    void perform(() => pudding.interaction.handle(resign));
+                  }
+                }}
+              >
+                {t("actionResign")}
+              </button>
+            </div>
+          ) : danmaku && comment && comment.text ? (
+            <div className="rv-speech" title={comment.text}>
+              <span className="rv-speech-prefix">
+                {t("commentPrefix", { number: comment.moveNumber })}
+              </span>
+              <span className="rv-speech-text">{comment.text}</span>
+            </div>
+          ) : (
+            <div className="rv-card-placeholder">
+              <span className="rv-placeholder-text">
+                {p.winner
+                  ? t("cardNoComment")
+                  : l.phase === "playing"
+                    ? isCurrentTurn
+                      ? t("thinking")
+                      : t("waitingMove", { name: player?.name || "" })
+                    : t("waitingReady")}
+              </span>
+            </div>
+          )}
+        </div>
+      </article>
     );
   }
 
@@ -713,7 +748,6 @@ export default function App() {
           </div>
 
           <div className="rv-candidate-list">
-            {/* 你 (人类) */}
             <label className="rv-candidate-item">
               <input
                 type="checkbox"
@@ -732,7 +766,6 @@ export default function App() {
               </div>
             </label>
 
-            {/* 其它大模型会话 */}
             {candidates?.sessions.map((s) => (
               <label key={s.id} className="rv-candidate-item">
                 <input
