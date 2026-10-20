@@ -24,7 +24,7 @@
         {
           "version": "1.0.0-preview.2",
           "package": "./debate/releases/1.0.0-preview.2/debate.pudding-widget.json",
-          "packageHash": "6ad10b7f3f3c64076063326674f24e5aec6fe023ee4d9c3382bab3f987a0155c",
+          "packageHash": "262742847f9e575bd913c11b46455d6944da36dbf68d7c58676ef0656ab0b882",
           "requires": {
             "protocolVersion": 24,
             "sdkVersion": "1"

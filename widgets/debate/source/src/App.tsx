@@ -148,20 +148,26 @@ export default function App() {
   }
 
   function initPickerFromSessions(c: Candidates) {
-    // 按 session id 稳定排序，避免宿主因会话最后活跃时间变动导致顺序对调
-    const sessions = [...(c.sessions || [])].sort((a, b) =>
-      a.id.localeCompare(b.id),
+    // 首次默认选择：优先采用当前分屏推荐的 preferredSessionIDs，其余按会话最近活跃时间（原始 sessions 顺序）选取
+    const sessions = c.sessions || [];
+    const preferred = (c.preferredSessionIDs || []).filter((id) =>
+      sessions.some((s) => s.id === id),
     );
-    if (sessions.length >= 2) {
+    const pool = [
+      ...preferred,
+      ...sessions.map((s) => s.id).filter((id) => !preferred.includes(id)),
+    ];
+
+    if (pool.length >= 2) {
       setPickerSlots({
-        Pro: sessions[0].id,
-        Con: sessions[1].id,
+        Pro: pool[0],
+        Con: pool[1],
         Judge: "",
       });
-    } else if (sessions.length === 1) {
+    } else if (pool.length === 1) {
       setPickerSlots({
         Pro: "@me",
-        Con: sessions[0].id,
+        Con: pool[0],
         Judge: "",
       });
     } else {
