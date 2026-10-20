@@ -1265,3 +1265,37 @@ body {
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.2);
 }
+
+/* 弹窗辩题选择区域 */
+.db-topic-slot-card {
+  padding: 12px 14px;
+}
+.db-topic-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.db-topic-pill {
+  padding: 4px 10px;
+  border-radius: 14px;
+  border: 1px solid var(--db-edge);
+  background: var(--db-panel);
+  color: var(--db-muted);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1.3;
+  text-align: left;
+}
+.db-topic-pill:hover {
+  border-color: var(--db-edge-hover);
+  color: var(--db-text);
+  background: var(--db-panel-raised);
+}
+.db-topic-pill.is-selected {
+  border-color: var(--db-primary);
+  color: var(--db-primary);
+  background: light-dark(rgba(79, 70, 229, 0.08), rgba(99, 102, 241, 0.15));
+  font-weight: 600;
+}

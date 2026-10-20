@@ -100,6 +100,7 @@ export default function App() {
     Con: string;
     Judge: string;
   }>({ Pro: "", Con: "", Judge: "" });
+  const [pickerTopic, setPickerTopic] = useState("");
   const [picker, setPicker] = useState(false);
   const [topicModal, setTopicModal] = useState(false);
   const [customTopic, setCustomTopic] = useState("");
@@ -194,6 +195,7 @@ export default function App() {
   }
 
   function openPickerModal() {
+    setPickerTopic(l.topic);
     if (l.seats.Pro || l.seats.Con) {
       // 保持当前已有辩手席位，红蓝严格对应不乱反转
       setPickerSlots({
@@ -878,13 +880,15 @@ export default function App() {
     const proChoice = pickerSlots.Pro;
     const conChoice = pickerSlots.Con;
     const judgeChoice = pickerSlots.Judge;
+    const topicChoice = pickerTopic.trim() || l.topic;
 
     const missingDebaters = !proChoice || !conChoice;
     const debaterConflict = Boolean(proChoice && conChoice && proChoice === conChoice);
     const judgeConflict = Boolean(
       judgeChoice && (judgeChoice === proChoice || judgeChoice === conChoice),
     );
-    const canSubmit = !missingDebaters && !debaterConflict && !judgeConflict && !busy;
+    const missingTopic = !topicChoice;
+    const canSubmit = !missingDebaters && !debaterConflict && !judgeConflict && !missingTopic && !busy;
 
     return (
       <div className="db-modal-overlay" onClick={() => setPicker(false)}>
@@ -893,6 +897,33 @@ export default function App() {
           <p className="db-modal-sub">{t("pickerSubtitle")}</p>
 
           <div className="db-slot-config-list">
+            {/* 当前辩论议题选择与编辑 */}
+            <div className="db-slot-card db-topic-slot-card">
+              <div className="db-slot-header">
+                <span className="db-slot-badge" style={{ color: "var(--db-primary)" }}>{t("topicLabel")}</span>
+                <span className="db-slot-desc">{t("presetTopicSelect")}</span>
+              </div>
+              <input
+                type="text"
+                className="db-human-input"
+                placeholder={t("topicInputPlaceholder")}
+                value={pickerTopic}
+                onChange={(e) => setPickerTopic(e.target.value)}
+              />
+              <div className="db-topic-pills">
+                {getPresetTopics().map((preset) => (
+                  <button
+                    key={preset}
+                    type="button"
+                    className={`db-topic-pill ${pickerTopic === preset ? "is-selected" : ""}`}
+                    onClick={() => setPickerTopic(preset)}
+                  >
+                    <span>{preset}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* 正方席位 */}
             <div className="db-slot-card is-pro">
               <div className="db-slot-header">
@@ -974,7 +1005,7 @@ export default function App() {
                       Con: conChoice,
                       Judge: judgeChoice || null,
                     },
-                    l.topic,
+                    topicChoice,
                   );
                   setPicker(false);
                 })
