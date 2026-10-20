@@ -8,6 +8,33 @@
   },
   "items": [
     {
+      "id": "teatak/pudding-hub/widgets/debate",
+      "title": {
+        "zh-CN": "辩论法庭",
+        "zh-TW": "辯論法庭",
+        "en": "Debate Tribunal"
+      },
+      "description": {
+        "zh-CN": "多模型思辨交锋与裁判天平，围绕关键议题深度论辩。",
+        "zh-TW": "多模型思辨交鋒與裁判天平，圍繞關鍵議題深度論辯。",
+        "en": "Multi-model AI debate arena with argument stream and live tribunal scales."
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8IS0tIOeah+Wutumdm+iTnS/ntKvlupXoibIgLS0+CiAgPHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIyMCIgZmlsbD0iIzRGNDZFNSIvPgogIDwhLS0g6IOM5pmv5aSp5bmz5YWJ5ZyI5LiO5b6u5byx5Yi75bqmIC0tPgogIDxjaXJjbGUgY3g9IjY0IiBjeT0iNjgiIHI9IjQ2IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS1vcGFjaXR5PSIwLjEiIHN0cm9rZS13aWR0aD0iMiIvPgogIAogIDwhLS0g5aSp5bmz5Lit5b+D5pSv5p+xIC0tPgogIDxwYXRoIGQ9Ik02MiA0MGg0djU0aC00eiIgZmlsbD0iI0Y4RkFGQyIvPgogIDxwYXRoIGQ9Ik00OCA5NGgzMnY2SDQ4eiIgZmlsbD0iI0UyRThGMCIgcng9IjIiLz4KICA8IS0tIOmhtuerr+aUr+eCueWuneePoCAtLT4KICA8Y2lyY2xlIGN4PSI2NCIgY3k9IjM4IiByPSI2IiBmaWxsPSIjRkJCRjI0Ii8+CiAgPGNpcmNsZSBjeD0iNjQiIGN5PSIzOCIgcj0iMyIgZmlsbD0iI0Y1OUUwQiIvPgoKICA8IS0tIOWkqeW5s+aoquaigSAo5b6u5YC+5pac77yM5ZGI546w5oCd6L6o5Yqo5oCBKSAtLT4KICA8cGF0aCBkPSJNMjggNDYgTDEwMCA0MiIgc3Ryb2tlPSIjRjhGQUZDIiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgoKICA8IS0tIOW3puebmCAo5q2j5pa5IC0g6JOd6YeRKSAtLT4KICA8cGF0aCBkPSJNMzAgNDYgTDIwIDY4IE0zMCA0NiBMNDAgNjgiIHN0cm9rZT0iI0NCRDVFMSIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8cGF0aCBkPSJNMTYgNjggQzE2IDc2IDQ0IDc2IDQ0IDY4IFoiIGZpbGw9IiM2MEE1RkEiLz4KICA8Y2lyY2xlIGN4PSIzMCIgY3k9IjY0IiByPSIzLjUiIGZpbGw9IiNGQkJGMjQiLz4KCiAgPCEtLSDlj7Pnm5ggKOWPjeaWuSAtIOapmemHkSkgLS0+CiAgPHBhdGggZD0iTTk4IDQyIEw4OCA2NCBNOTggNDIgTDEwOCA2NCIgc3Ryb2tlPSIjQ0JENUUxIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxwYXRoIGQ9Ik04NCA2NCBDODQgNzIgMTEyIDcyIDExMiA2NCBaIiBmaWxsPSIjRjg3MTcxIi8+CiAgPGNpcmNsZSBjeD0iOTgiIGN5PSI2MCIgcj0iMy41IiBmaWxsPSIjRkJCRjI0Ii8+Cjwvc3ZnPgo=",
+      "releases": [
+        {
+          "version": "1.0.0-preview.1",
+          "package": "./debate/releases/1.0.0-preview.1/debate.pudding-widget.json",
+          "packageHash": "d64cc1ec73161c769f96d5a11b01c6c6f9edb3fff2fea59a0ae56a8c52a20898",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        }
+      ]
+    },
+    {
       "id": "teatak/pudding-hub/widgets/gomoku",
       "title": {
         "zh-CN": "五子棋",

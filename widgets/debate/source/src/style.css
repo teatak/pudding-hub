@@ -1,0 +1,554 @@
+:root {
+  --db-bg: light-dark(#f8fafc, #0f172a);
+  --db-panel: light-dark(#ffffff, #1e293b);
+  --db-panel-raised: light-dark(#f1f5f9, #334155);
+  --db-edge: light-dark(#e2e8f0, #334155);
+  --db-edge-hover: light-dark(#cbd5e1, #475569);
+  --db-text: light-dark(#0f172a, #f8fafc);
+  --db-muted: light-dark(#64748b, #94a3b8);
+
+  --db-primary: #4f46e5;
+  --db-primary-hover: #4338ca;
+  --db-pro: #2563eb;
+  --db-pro-bg: light-dark(#eff6ff, #1e3a8a33);
+  --db-pro-edge: light-dark(#bfdbfe, #1e40af66);
+
+  --db-con: #dc2626;
+  --db-con-bg: light-dark(#fef2f2, #991b1b33);
+  --db-con-edge: light-dark(#fecaca, #b91c1c66);
+
+  --db-judge: #d97706;
+  --db-judge-bg: light-dark(#fffbeb, #78350f33);
+  --db-judge-edge: light-dark(#fde68a, #92400e66);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  color: var(--db-text);
+  font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--db-bg);
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+.db-app {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 24px;
+}
+@media (max-width: 640px) {
+  .db-app {
+    padding: 16px;
+  }
+}
+
+.db-app button,
+.db-app input,
+.db-app textarea {
+  font: inherit;
+}
+.db-app button {
+  cursor: pointer;
+}
+.db-btn:disabled,
+.db-app button.db-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.db-app button:focus-visible {
+  outline: 2px solid var(--db-primary);
+  outline-offset: 2px;
+}
+
+/* Header (严格对齐看板与便签规范) */
+.db-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.db-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.db-emblem {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--db-primary);
+  color: #fff;
+  flex-shrink: 0;
+}
+.db-heading h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+.db-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 按钮基础 */
+.db-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--db-edge);
+  background: var(--db-panel);
+  color: var(--db-text);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+.db-btn:hover:not(:disabled) {
+  background: var(--db-panel-raised);
+  border-color: var(--db-edge-hover);
+}
+.db-btn.is-primary {
+  background: var(--db-primary);
+  border-color: var(--db-primary);
+  color: #fff;
+}
+.db-btn.is-primary:hover:not(:disabled) {
+  background: var(--db-primary-hover);
+  border-color: var(--db-primary-hover);
+}
+.db-btn.is-pro {
+  background: var(--db-pro);
+  border-color: var(--db-pro);
+  color: #fff;
+}
+.db-btn.is-con {
+  background: var(--db-con);
+  border-color: var(--db-con);
+  color: #fff;
+}
+.db-btn.is-judge {
+  background: var(--db-judge);
+  border-color: var(--db-judge);
+  color: #fff;
+}
+
+/* 辩题横幅栏 */
+.db-topic-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  border-radius: 12px;
+  background: var(--db-panel);
+  border: 1px solid var(--db-edge);
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.db-topic-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.db-topic-tag {
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--db-primary);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.db-topic-text {
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 思辨胜负天平 (Debate Scale) */
+.db-scale-card {
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: var(--db-panel);
+  border: 1px solid var(--db-edge);
+  margin-bottom: 24px;
+}
+.db-scale-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.db-scale-label-pro {
+  color: var(--db-pro);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.db-scale-label-con {
+  color: var(--db-con);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.db-scale-balance-badge {
+  font-size: 12px;
+  color: var(--db-muted);
+}
+.db-scale-track {
+  display: flex;
+  height: 12px;
+  border-radius: 6px;
+  background: var(--db-panel-raised);
+  overflow: hidden;
+  position: relative;
+}
+.db-scale-bar-pro {
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.db-scale-bar-con {
+  background: linear-gradient(90deg, #f87171, #ef4444);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.db-scale-pivot {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background: #fff;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+}
+
+/* 辩论竞技场分栏：左侧论点长廊 + 右侧席位 */
+.db-arena {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 860px) {
+  .db-arena {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* 论点流 (Argument Stream) */
+.db-stream {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.db-round-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0;
+}
+.db-round-line {
+  flex: 1;
+  height: 1px;
+  background: var(--db-edge);
+}
+.db-round-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: var(--db-panel-raised);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--db-muted);
+}
+
+/* 论点陈词卡片 */
+.db-arg-card {
+  padding: 18px 20px;
+  border-radius: 12px;
+  background: var(--db-panel);
+  border: 1px solid var(--db-edge);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  position: relative;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.db-arg-card.is-pro {
+  border-left: 5px solid var(--db-pro);
+  background: var(--db-pro-bg);
+}
+.db-arg-card.is-con {
+  border-left: 5px solid var(--db-con);
+  background: var(--db-con-bg);
+}
+.db-arg-card.is-judge {
+  border-left: 5px solid var(--db-judge);
+  background: var(--db-judge-bg);
+}
+
+.db-arg-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.db-arg-role-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.db-arg-card.is-pro .db-arg-role-tag { color: var(--db-pro); }
+.db-arg-card.is-con .db-arg-role-tag { color: var(--db-con); }
+.db-arg-card.is-judge .db-arg-role-tag { color: var(--db-judge); }
+
+.db-arg-time {
+  font-size: 11px;
+  color: var(--db-muted);
+}
+.db-arg-headline {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: var(--db-text);
+}
+.db-arg-content {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--db-text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.db-arg-comment {
+  margin-top: 10px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.04);
+  font-size: 12px;
+  color: var(--db-muted);
+  font-style: italic;
+}
+
+/* 终局裁决书卡片 */
+.db-verdict-card {
+  padding: 24px;
+  border-radius: 14px;
+  background: var(--db-judge-bg);
+  border: 2px solid var(--db-judge);
+  box-shadow: 0 8px 24px rgba(217, 119, 6, 0.15);
+  text-align: center;
+}
+.db-verdict-banner {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: var(--db-judge);
+}
+.db-verdict-scores {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.db-verdict-summary {
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.6;
+  background: var(--db-panel);
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid var(--db-edge);
+}
+
+/* 席位卡片 (垂直右侧排列，严格定高) */
+.db-seats {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.db-seat-card {
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--db-panel);
+  border: 1px solid var(--db-edge);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+.db-seat-card.is-active {
+  border-color: var(--db-primary);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+.db-seat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+}
+.db-seat-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.db-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 13px;
+  background: var(--db-panel-raised);
+  flex-shrink: 0;
+}
+.db-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.db-seat-names strong {
+  display: block;
+  font-size: 13px;
+}
+.db-seat-names small {
+  display: block;
+  font-size: 11px;
+  color: var(--db-muted);
+}
+.db-seat-status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--db-panel-raised);
+}
+.db-seat-status.is-thinking {
+  background: rgba(79, 70, 229, 0.1);
+  color: var(--db-primary);
+  animation: db-pulse 1.8s infinite ease-in-out;
+}
+@keyframes db-pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* 人类玩家输入面板 */
+.db-human-panel {
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--db-panel);
+  border: 2px solid var(--db-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+.db-human-input {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--db-edge);
+  background: var(--db-bg);
+  color: var(--db-text);
+  font-size: 13px;
+  outline: none;
+}
+.db-human-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--db-edge);
+  background: var(--db-bg);
+  color: var(--db-text);
+  font-size: 13px;
+  resize: vertical;
+  outline: none;
+}
+.db-human-input:focus,
+.db-human-textarea:focus {
+  border-color: var(--db-primary);
+}
+
+/* 选手选择弹窗与辩题弹窗 */
+.db-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+.db-modal {
+  width: 100%;
+  max-width: 500px;
+  background: var(--db-panel);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--db-edge);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.db-modal-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+.db-modal-sub {
+  font-size: 12px;
+  color: var(--db-muted);
+}
+.db-candidate-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+.db-candidate-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--db-edge);
+  background: var(--db-bg);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.db-candidate-item.is-selected {
+  border-color: var(--db-primary);
+  background: rgba(79, 70, 229, 0.08);
+}
+.db-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}

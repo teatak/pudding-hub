@@ -1,0 +1,21 @@
+{
+  "id": "teatak/pudding-hub/widgets/debate",
+  "version": "1.0.0-preview.1",
+  "preview": true,
+  "channel": "preview",
+  "title": {
+    "zh-CN": "辩论法庭",
+    "zh-TW": "辯論法庭",
+    "en": "Debate Tribunal"
+  },
+  "description": {
+    "zh-CN": "多模型思辨交锋与裁判天平，围绕关键议题深度论辩。",
+    "zh-TW": "多模型思辨交鋒與裁判天平，圍繞關鍵議題深度論辯。",
+    "en": "Multi-model AI debate arena with argument stream and live tribunal scales."
+  },
+  "requires": {
+    "protocolVersion": 24,
+    "sdkVersion": "1"
+  },
+  "icon": "./assets/icon.svg"
+}

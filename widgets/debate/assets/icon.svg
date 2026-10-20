@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- 皇家靛蓝/紫底色 -->
+  <rect width="128" height="128" rx="20" fill="#4F46E5"/>
+  <!-- 背景天平光圈与微弱刻度 -->
+  <circle cx="64" cy="68" r="46" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="2"/>
+  
+  <!-- 天平中心支柱 -->
+  <path d="M62 40h4v54h-4z" fill="#F8FAFC"/>
+  <path d="M48 94h32v6H48z" fill="#E2E8F0" rx="2"/>
+  <!-- 顶端支点宝珠 -->
+  <circle cx="64" cy="38" r="6" fill="#FBBF24"/>
+  <circle cx="64" cy="38" r="3" fill="#F59E0B"/>
+
+  <!-- 天平横梁 (微倾斜，呈现思辨动态) -->
+  <path d="M28 46 L100 42" stroke="#F8FAFC" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- 左盘 (正方 - 蓝金) -->
+  <path d="M30 46 L20 68 M30 46 L40 68" stroke="#CBD5E1" stroke-width="1.5"/>
+  <path d="M16 68 C16 76 44 76 44 68 Z" fill="#60A5FA"/>
+  <circle cx="30" cy="64" r="3.5" fill="#FBBF24"/>
+
+  <!-- 右盘 (反方 - 橙金) -->
+  <path d="M98 42 L88 64 M98 42 L108 64" stroke="#CBD5E1" stroke-width="1.5"/>
+  <path d="M84 64 C84 72 112 72 112 64 Z" fill="#F87171"/>
+  <circle cx="98" cy="60" r="3.5" fill="#FBBF24"/>
+</svg>
