@@ -44,7 +44,8 @@ body {
 .rv-app button {
   cursor: pointer;
 }
-.rv-app button:disabled {
+.rv-btn:disabled,
+.rv-app button.rv-btn:disabled {
   opacity: 0.45;
   cursor: default;
 }
@@ -201,48 +202,6 @@ body {
   margin: 0 auto;
 }
 
-/* 浮动走棋弹幕 (位于棋盘内部顶层，绝不挤压或改变棋盘高度) */
-.rv-board-danmaku {
-  position: absolute;
-  top: 14px;
-  left: 20px;
-  right: 20px;
-  z-index: 15;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  border-radius: 20px;
-  background: rgba(15, 23, 42, 0.9);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #f8fafc;
-  font-size: 12px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
-  animation: rv-danmaku-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-@keyframes rv-danmaku-in {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.rv-danmaku-tag {
-  font-weight: 600;
-  color: #facc15;
-  white-space: nowrap;
-}
-.rv-danmaku-text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 /* 自动让步浮层提示 */
 .rv-board-toast {
   position: absolute;
@@ -331,7 +290,13 @@ body {
   display: grid;
   place-items: center;
   outline: none;
+  opacity: 1;
+  cursor: default;
   transition: background 0.15s ease;
+}
+.rv-cell:disabled {
+  opacity: 1;
+  cursor: default;
 }
 @media (max-width: 600px) {
   .rv-cell {

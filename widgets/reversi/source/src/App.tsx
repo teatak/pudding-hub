@@ -251,16 +251,6 @@ export default function App() {
       ? Math.ceil((l.startsAt - now) / 1000)
       : 0;
 
-  // 提取最新的走棋留言用于弹幕展示
-  const lastMoveWithComment = [...view.history].reverse().find((m) => m.comment);
-  const latestComment = lastMoveWithComment
-    ? {
-        role: lastMoveWithComment.stone === "B" ? ("Black" as Color) : ("White" as Color),
-        moveNumber: view.history.indexOf(lastMoveWithComment) + 1,
-        text: lastMoveWithComment.comment!,
-      }
-    : null;
-
   return (
     <div className="rv-app">
       {/* 头部：与看板和便签完全一致的布局标准 */}
@@ -391,20 +381,6 @@ export default function App() {
         {/* 棋盘主区域 */}
         <div className="rv-board-area">
           <div className="rv-board-wrapper">
-            {/* 走棋弹幕浮层（位于棋盘上方，绝不撑开高度） */}
-            {danmaku && latestComment && (
-              <div
-                key={`${latestComment.role}-${latestComment.moveNumber}`}
-                className="rv-board-danmaku"
-              >
-                <span className="rv-danmaku-tag">
-                  {latestComment.role === "Black" ? "● " : "○ "}
-                  #{latestComment.moveNumber}
-                </span>
-                <span className="rv-danmaku-text">{latestComment.text}</span>
-              </div>
-            )}
-
             {/* 自动让步浮动提示（不占外部高度） */}
             {l.phase === "playing" && p.passedColor && (
               <div className="rv-board-toast">
