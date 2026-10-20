@@ -54,6 +54,6 @@ test("Debate release package exists, is verified, and contains valid source file
   assert.match(appSrc, /useWidgetState/);
   assert.match(appSrc, /useWidgetInteraction/);
   assert.match(appSrc, /db-scale-card/);
-  assert.match(appSrc, /db-topic-bar/);
+  assert.match(appSrc, /db-combobox/);
   assert.match(appSrc, /db-stream/);
 });

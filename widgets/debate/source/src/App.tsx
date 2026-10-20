@@ -102,8 +102,6 @@ export default function App() {
   }>({ Pro: "", Con: "", Judge: "" });
   const [pickerTopic, setPickerTopic] = useState("");
   const [picker, setPicker] = useState(false);
-  const [topicModal, setTopicModal] = useState(false);
-  const [customTopic, setCustomTopic] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -565,26 +563,6 @@ export default function App() {
         </div>
       </header>
 
-      {/* 辩题展示横幅 */}
-      <div className="db-topic-bar">
-        <div className="db-topic-left">
-          <span className="db-topic-tag">{t("topicLabel")}</span>
-          <span className="db-topic-text" title={l.topic}>
-            {l.topic}
-          </span>
-        </div>
-        {l.phase === "lobby" && (
-          <button
-            type="button"
-            className="db-btn"
-            disabled={busy}
-            onClick={() => setTopicModal(true)}
-          >
-            <span>{t("changeTopic")}</span>
-          </button>
-        )}
-      </div>
-
       {/* 辩方卡片与思辨交锋对决横幅 (Debate Versus & Momentum Banner) */}
       <main className="db-versus-banner db-scale-card db-stream">
         {/* 顶部阶段状态与审判席信息 */}
@@ -793,87 +771,10 @@ export default function App() {
         )}
       </main>
 
-      {/* 辩题更换弹窗 */}
-      {topicModal && renderTopicModal()}
-
-      {/* 辩手选择弹窗 */}
+      {/* 辩手与辩题配置弹窗 */}
       {picker && renderPickerModal()}
     </div>
   );
-
-  function renderTopicModal() {
-    return (
-      <div className="db-modal-overlay" onClick={() => setTopicModal(false)}>
-        <div className="db-modal" onClick={(e) => e.stopPropagation()}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <h2 className="db-modal-title" style={{ margin: 0 }}>{t("changeTopic")}</h2>
-            <button
-              type="button"
-              className="db-btn"
-              style={{ padding: "4px 8px" }}
-              onClick={() => setTopicModal(false)}
-            >
-              <X size={16} />
-            </button>
-          </div>
-          <p className="db-modal-sub" style={{ marginTop: 8 }}>{t("presetTopicSelect")}</p>
-
-          <div className="db-candidate-list">
-            {getPresetTopics().map((topic) => (
-              <div
-                key={topic}
-                className={`db-candidate-item ${l.topic === topic ? "is-selected" : ""}`}
-                onClick={() => {
-                  void perform(() => setTopic(topic));
-                  setTopicModal(false);
-                }}
-              >
-                <span style={{ fontSize: 13, fontWeight: 500 }}>{topic}</span>
-                {l.topic === topic && <Check size={16} color="var(--db-primary)" />}
-              </div>
-            ))}
-          </div>
-
-          <div style={{ marginTop: 12 }}>
-            <p className="db-modal-sub" style={{ marginBottom: 6 }}>
-              {t("customTopicInput")}
-            </p>
-            <div style={{ display: "flex", gap: 8 }}>
-              <input
-                type="text"
-                className="db-human-input"
-                placeholder={t("topicInputPlaceholder")}
-                value={customTopic}
-                onChange={(e) => setCustomTopic(e.target.value)}
-              />
-              <button
-                type="button"
-                className="db-btn is-primary"
-                disabled={!customTopic.trim() || busy}
-                onClick={() => {
-                  void perform(() => setTopic(customTopic));
-                  setCustomTopic("");
-                  setTopicModal(false);
-                }}
-              >
-                {t("btnSetTopic")}
-              </button>
-            </div>
-          </div>
-
-          <div className="db-modal-actions" style={{ marginTop: 16 }}>
-            <button
-              type="button"
-              className="db-btn"
-              onClick={() => setTopicModal(false)}
-            >
-              {t("btnCancel")}
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   function renderPickerModal() {
     const list = candidates?.sessions || [];
@@ -897,31 +798,18 @@ export default function App() {
           <p className="db-modal-sub">{t("pickerSubtitle")}</p>
 
           <div className="db-slot-config-list">
-            {/* 当前辩论议题选择与编辑 */}
+            {/* 当前辩论议题选择与编辑 (Combobox) */}
             <div className="db-slot-card db-topic-slot-card">
               <div className="db-slot-header">
                 <span className="db-slot-badge" style={{ color: "var(--db-primary)" }}>{t("topicLabel")}</span>
                 <span className="db-slot-desc">{t("presetTopicSelect")}</span>
               </div>
-              <input
-                type="text"
-                className="db-human-input"
-                placeholder={t("topicInputPlaceholder")}
+              <TopicCombobox
                 value={pickerTopic}
-                onChange={(e) => setPickerTopic(e.target.value)}
+                onChange={setPickerTopic}
+                presets={getPresetTopics()}
+                placeholder={t("topicInputPlaceholder")}
               />
-              <div className="db-topic-pills">
-                {getPresetTopics().map((preset) => (
-                  <button
-                    key={preset}
-                    type="button"
-                    className={`db-topic-pill ${pickerTopic === preset ? "is-selected" : ""}`}
-                    onClick={() => setPickerTopic(preset)}
-                  >
-                    <span>{preset}</span>
-                  </button>
-                ))}
-              </div>
             </div>
 
             {/* 正方席位 */}
@@ -1154,6 +1042,69 @@ function CustomSeatSelect({
                 </div>
               );
             })}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function TopicCombobox({
+  value,
+  onChange,
+  presets,
+  placeholder,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  presets: string[];
+  placeholder?: string;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="db-combobox">
+      <div className="db-combobox-input-wrapper">
+        <input
+          type="text"
+          className="db-combobox-input"
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onFocus={() => setOpen(true)}
+        />
+        <button
+          type="button"
+          tabIndex={-1}
+          className={`db-combobox-trigger ${open ? "is-open" : ""}`}
+          onClick={() => setOpen((prev) => !prev)}
+        >
+          <ChevronDown size={15} />
+        </button>
+      </div>
+
+      {open && (
+        <>
+          <div
+            className="db-custom-select-backdrop"
+            onClick={() => setOpen(false)}
+          />
+          <div className="db-combobox-menu">
+            {presets.map((preset) => (
+              <div
+                key={preset}
+                className={`db-combobox-option ${value === preset ? "is-chosen" : ""}`}
+                onClick={() => {
+                  onChange(preset);
+                  setOpen(false);
+                }}
+              >
+                <span className="db-combobox-option-text">{preset}</span>
+                {value === preset && (
+                  <Check size={14} className="db-option-check" />
+                )}
+              </div>
+            ))}
           </div>
         </>
       )}
