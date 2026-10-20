@@ -1,8 +1,6 @@
 {
   "id": "teatak/pudding-hub/widgets/debate",
-  "version": "1.0.0-preview.2",
-  "preview": true,
-  "channel": "preview",
+  "version": "1.0.0",
   "title": {
     "zh-CN": "辩论",
     "zh-TW": "辯論",

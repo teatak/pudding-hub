@@ -9,15 +9,14 @@ const root = fileURLToPath(new URL("../widgets/debate", import.meta.url));
 test("Debate release package exists, is verified, and contains valid source files", async () => {
   const pkgPath = path.join(
     root,
-    "releases/1.0.0-preview.2/debate.pudding-widget.json",
+    "releases/1.0.0/debate.pudding-widget.json",
   );
   const raw = await fs.readFile(pkgPath, "utf8");
   const pkg = JSON.parse(raw);
 
   assert.equal(pkg.id, "teatak/pudding-hub/widgets/debate");
-  assert.equal(pkg.version, "1.0.0-preview.2");
-  assert.equal(pkg.preview, true);
-  assert.equal(pkg.channel, "preview");
+  assert.equal(pkg.version, "1.0.0");
+  assert.equal(pkg.preview, undefined);
   assert.equal(pkg.requires.protocolVersion, 24);
   assert.equal(pkg.requires.sdkVersion, "1");
 

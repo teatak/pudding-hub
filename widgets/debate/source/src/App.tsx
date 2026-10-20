@@ -13,7 +13,7 @@ import {
   RotateCcw,
   Sparkles,
   MessageSquare,
-  ShieldAlert,
+  Shield,
   Flame,
   Award,
   User,
@@ -73,7 +73,7 @@ function DebateEmblemIcon({ size = 26 }: { size?: number }) {
       <rect x="36" y="32" width="38" height="4.5" rx="2.25" fill="#FFFFFF" />
       <rect x="36" y="42" width="28" height="4.5" rx="2.25" fill="#FFFFFF" fillOpacity="0.85" />
       <rect x="36" y="52" width="20" height="4.5" rx="2.25" fill="#FFFFFF" fillOpacity="0.85" />
-      <path d="M104 98 C104 104 100 108 94 108 H50 C44 108 40 104 40 98 V72 C40 66 44 62 50 62 H78 L94 50 V62 H94 C100 62 104 66 104 72 Z" fill="#F87171" />
+      <path d="M104 98 C104 104 100 108 94 108 H50 C44 108 40 104 40 98 V72 C40 66 44 62 50 62 H78 L94 50 V62 H94 C100 62 104 66 104 72 Z" fill="#FB7185" />
       <rect x="52" y="74" width="38" height="4.5" rx="2.25" fill="#FFFFFF" />
       <rect x="52" y="84" width="28" height="4.5" rx="2.25" fill="#FFFFFF" fillOpacity="0.85" />
       <rect x="52" y="94" width="18" height="4.5" rx="2.25" fill="#FFFFFF" fillOpacity="0.85" />
@@ -337,7 +337,7 @@ export default function App() {
             ) : role === "Pro" ? (
               <Flame size={22} />
             ) : (
-              <ShieldAlert size={22} />
+              <Shield size={22} />
             )}
           </div>
           <div className="db-fighter-info">
@@ -400,7 +400,7 @@ export default function App() {
             <div className={`db-arg-latest is-${role.toLowerCase()}`}>
               <div className="db-arg-latest-header">
                 <span className="db-arg-latest-badge">
-                  {role === "Pro" ? <Flame size={13} /> : <ShieldAlert size={13} />}
+                  {role === "Pro" ? <Flame size={13} /> : <Shield size={13} />}
                   <span>
                     {latestArg.round === 1
                       ? t("round1Title")
@@ -635,7 +635,7 @@ export default function App() {
 
             <span className="db-scale-score is-con">
               <span>{100 - p.proAdvantage}% {t("roleConShort")}</span>
-              <ShieldAlert size={16} />
+              <Shield size={16} />
             </span>
           </div>
 

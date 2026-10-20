@@ -16,9 +16,9 @@
   --db-pro-bg: light-dark(#eff6ff, rgba(37, 99, 235, 0.12));
   --db-pro-edge: light-dark(#bfdbfe, rgba(96, 165, 250, 0.28));
 
-  --db-con: light-dark(#dc2626, #f87171);
-  --db-con-bg: light-dark(#fef2f2, rgba(220, 38, 38, 0.12));
-  --db-con-edge: light-dark(#fecaca, rgba(248, 113, 113, 0.28));
+  --db-con: light-dark(#e11d48, #fb7185);
+  --db-con-bg: light-dark(#fff1f2, rgba(244, 63, 94, 0.08));
+  --db-con-edge: light-dark(#fecdd3, rgba(251, 113, 133, 0.24));
 
   --db-judge: light-dark(#d97706, #fbbf24);
   --db-judge-bg: light-dark(#fffbeb, rgba(217, 119, 6, 0.12));
@@ -315,7 +315,7 @@ body {
   transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .db-scale-bar-con {
-  background: linear-gradient(90deg, #f87171, #dc2626);
+  background: linear-gradient(90deg, #f43f5e, #e11d48);
   transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .db-scale-pivot {
@@ -409,7 +409,7 @@ body {
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
 }
 .db-fighter-avatar.is-con {
-  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  background: linear-gradient(135deg, #f43f5e, #be123c);
 }
 .db-avatar-img {
   width: 100%;
