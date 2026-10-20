@@ -21,7 +21,7 @@ import { edit } from "./api";
 import { t, errorText } from "./text";
 import "./style.css";
 
-function NoteEmblemIcon({ size = 24 }: { size?: number }) {
+function NoteEmblemIcon({ size = 40 }: { size?: number }) {
   return (
     <svg
       width={size}
@@ -31,12 +31,14 @@ function NoteEmblemIcon({ size = 24 }: { size?: number }) {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
+      <rect width="128" height="128" rx="24" fill="#F59E0B" />
       <path d="M30 26 H98 V74 L74 98 H30 Z" fill="#FEF3C7" opacity="0.95" />
       <path d="M74 74 H98 L74 98 Z" fill="#FDE68A" />
       <rect x="42" y="42" width="44" height="6" rx="3" fill="#D97706" />
       <rect x="42" y="56" width="34" height="6" rx="3" fill="#F59E0B" />
       <rect x="42" y="70" width="24" height="6" rx="3" fill="#F59E0B" />
-      <circle cx="64" cy="22" r="6" fill="#DC2626" />
+      <circle cx="64" cy="22" r="5" fill="#DC2626" />
+      <circle cx="64" cy="22" r="2.5" fill="#EF4444" />
     </svg>
   );
 }
@@ -206,7 +208,7 @@ export default function App() {
       <header className="nt-header">
         <div className="nt-heading">
           <div className="nt-emblem" aria-hidden="true">
-            <NoteEmblemIcon size={24} />
+            <NoteEmblemIcon size={40} />
           </div>
           <div>
             <h1>{t("appTitle")}</h1>
@@ -331,7 +333,7 @@ export default function App() {
         </div>
       ) : notes.length === 0 ? (
         <div className="nt-empty-state">
-          <NoteEmblemIcon size={32} />
+          <NoteEmblemIcon size={48} />
           <p className="nt-empty-text">{t("emptyNotes")}</p>
         </div>
       ) : filteredNotes.length === 0 ? (

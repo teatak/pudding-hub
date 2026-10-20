@@ -98,9 +98,6 @@ body {
   place-items: center;
   width: 40px;
   height: 40px;
-  border-radius: 10px;
-  background: var(--nt-primary);
-  color: #fff;
   flex-shrink: 0;
 }
 .nt-heading h1 {

@@ -24,7 +24,7 @@
         {
           "version": "1.0.0-preview.2",
           "package": "./debate/releases/1.0.0-preview.2/debate.pudding-widget.json",
-          "packageHash": "84369e4cc132f3ece08788f616baef34b325497e65dc8ee735227b7fcb4c2dfb",
+          "packageHash": "563a5bc8e44526beeac43c8402a39a708fb1dadcfb81f3296aeeb75746aef8c1",
           "requires": {
             "protocolVersion": 24,
             "sdkVersion": "1"
@@ -134,7 +134,7 @@
         {
           "version": "1.0.0",
           "package": "./notes/releases/1.0.0/notes.pudding-widget.json",
-          "packageHash": "0483dfbde502d18c0e7381f886468e3f7e10f825115ac0367bfdabeaca8ba0b3",
+          "packageHash": "d4371ceb446652cb6627e5c7627a4c12a650a7bf48d5510e4b3d789b79b18c55",
           "requires": {
             "protocolVersion": 24,
             "sdkVersion": "1"
