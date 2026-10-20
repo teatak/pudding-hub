@@ -417,6 +417,16 @@ export const setTopic = (newTopic: string) =>
     await save(next, position());
   });
 
+export const pause = async () => {
+  if (lobby().phase === "lobby" || position().verdict) throw new Error("No ongoing debate");
+  await pudding.interaction.pause();
+  await mutation?.catch(() => {});
+};
+
+export const resume = async () => {
+  await pudding.interaction.resume();
+};
+
 export function describeDebate() {
   const l = lobby();
   const p = position();

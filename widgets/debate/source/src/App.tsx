@@ -18,6 +18,8 @@ import {
   User,
   ChevronDown,
   X,
+  Pause,
+  Play,
 } from "lucide-react";
 import {
   type Role,
@@ -39,6 +41,8 @@ import {
   giveVerdict,
   setTopic,
   NotificationError,
+  pause,
+  resume,
 } from "./game";
 import { t, setLocale, getPresetTopics } from "./text";
 import "./style.css";
@@ -144,7 +148,10 @@ export default function App() {
   }
 
   function initPickerFromSessions(c: Candidates) {
-    const sessions = c.sessions || [];
+    // 按 session id 稳定排序，避免宿主因会话最后活跃时间变动导致顺序对调
+    const sessions = [...(c.sessions || [])].sort((a, b) =>
+      a.id.localeCompare(b.id),
+    );
     if (sessions.length >= 2) {
       setPickerSlots({
         Pro: sessions[0].id,
@@ -166,6 +173,33 @@ export default function App() {
     }
   }
 
+  function resolveSessionChoice(participantID: string | null | undefined): string {
+    if (!participantID) return "";
+    if (human?.id && participantID === human.id) return "@me";
+    const session = candidates?.sessions.find(
+      (s) =>
+        s.participantID === participantID ||
+        s.id === participantID ||
+        (run?.participants.find((p) => p.id === participantID) as unknown as { sessionID?: string })?.sessionID === s.id ||
+        run?.participants.find((p) => p.id === participantID)?.name === s.name,
+    );
+    return session ? session.id : participantID;
+  }
+
+  function openPickerModal() {
+    if (l.seats.Pro || l.seats.Con) {
+      // 保持当前已有辩手席位，红蓝严格对应不乱反转
+      setPickerSlots({
+        Pro: resolveSessionChoice(l.seats.Pro),
+        Con: resolveSessionChoice(l.seats.Con),
+        Judge: resolveSessionChoice(l.seats.Judge),
+      });
+    } else if (candidates && (!pickerSlots.Pro || !pickerSlots.Con)) {
+      initPickerFromSessions(candidates);
+    }
+    setPicker(true);
+  }
+
   async function loadCandidates(): Promise<Candidates | null> {
     try {
       const value = await pudding.interaction.candidates();
@@ -179,7 +213,7 @@ export default function App() {
 
   useEffect(() => {
     void loadCandidates().then((val) => {
-      if (val) initPickerFromSessions(val);
+      if (val && !l.seats.Pro && !l.seats.Con) initPickerFromSessions(val);
     });
   }, []);
 
@@ -250,11 +284,14 @@ export default function App() {
                 <span className="db-tag-waiting">{t("statusWaitingSeat")}</span>
               ) : l.ready.includes(player.id) ? (
                 <span className="db-tag-ready">
-                  <Check size={12} /> {t("readyBtn")}
+                  <Check size={12} />
+                  <span>{t("readyBtn")}</span>
                 </span>
               ) : (
                 <span className="db-tag-waiting">{t("statusWaitingReady")}</span>
               )
+            ) : run?.status === "paused" ? (
+              <span className="db-tag-idle">{t("statusPaused")}</span>
             ) : isRoleActive ? (
               <span className="db-tag-thinking">{t("thinking")}</span>
             ) : (
@@ -457,34 +494,60 @@ export default function App() {
         </div>
 
         <div className="db-header-actions">
-          {l.phase === "lobby" ? (
+          {l.phase === "lobby" && (
             <button
               type="button"
               className="db-btn is-primary"
               disabled={busy}
-              onClick={() => {
-                if (candidates) initPickerFromSessions(candidates);
-                void loadCandidates().then((val) => {
-                  if (val && !candidates) initPickerFromSessions(val);
-                });
-                setPicker(true);
-              }}
+              onClick={openPickerModal}
             >
               <Users size={16} />
               <span>{t("startDebate")}</span>
             </button>
-          ) : (
+          )}
+
+          {l.phase !== "lobby" && !p.verdict && run?.status !== "paused" && (
             <button
               type="button"
               className="db-btn"
               disabled={busy}
-              onClick={() => {
-                if (candidates) initPickerFromSessions(candidates);
-                void loadCandidates().then((val) => {
-                  if (val && !candidates) initPickerFromSessions(val);
-                });
-                setPicker(true);
-              }}
+              onClick={() => void perform(pause)}
+              title={t("pauseDebate")}
+            >
+              <Pause size={16} />
+              <span>{t("pauseDebate")}</span>
+            </button>
+          )}
+
+          {l.phase !== "lobby" && !p.verdict && run?.status === "paused" && (
+            <>
+              <button
+                type="button"
+                className="db-btn is-primary"
+                disabled={busy}
+                onClick={() => void perform(resume)}
+              >
+                <Play size={16} />
+                <span>{t("continueDebate")}</span>
+              </button>
+              <button
+                type="button"
+                className="db-btn"
+                disabled={busy}
+                onClick={openPickerModal}
+              >
+                <RotateCcw size={16} />
+                <span>{t("newDebate")}</span>
+              </button>
+            </>
+          )}
+
+          {Boolean(p.verdict) && (
+            <button
+              type="button"
+              className="db-btn is-primary"
+              disabled={busy}
+              onClick={openPickerModal}
             >
               <RotateCcw size={16} />
               <span>{t("newDebate")}</span>

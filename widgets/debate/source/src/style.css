@@ -150,6 +150,8 @@ body {
   justify-content: space-between;
   gap: 16px;
   padding: 14px 20px;
+  min-height: 62px;
+  box-sizing: border-box;
   border-radius: 12px;
   background: var(--db-panel);
   border: 1px solid var(--db-edge);
@@ -436,10 +438,42 @@ body {
 }
 
 .db-fighter-state {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 8px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.db-tag-ready,
+.db-tag-waiting,
+.db-tag-thinking,
+.db-tag-idle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.db-tag-ready {
+  color: #10b981;
+}
+.db-tag-ready svg {
+  flex-shrink: 0;
+}
+
+.db-tag-waiting,
+.db-tag-idle {
+  color: var(--db-muted);
+}
+
+.db-tag-thinking {
+  color: var(--db-primary);
 }
 
 /* 辩词陈述区域 (内嵌于辩手卡片内部) */
