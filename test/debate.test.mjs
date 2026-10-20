@@ -41,6 +41,7 @@ test("Debate release package exists, is verified, and contains valid source file
   assert.match(gameSrc, /giveVerdict/);
   assert.match(gameSrc, /ready/);
   assert.match(gameSrc, /setTopic/);
+  assert.match(gameSrc, /onResume/);
 
   // Ensure tribunal logic is correct
   const rulesSrc = pkg.source.files["src/tribunal.ts"];
@@ -51,6 +52,7 @@ test("Debate release package exists, is verified, and contains valid source file
   // Ensure App.tsx renders Debate tribunal elements
   const appSrc = pkg.source.files["src/App.tsx"];
   assert.match(appSrc, /useWidgetState/);
+  assert.match(appSrc, /useWidgetInteraction/);
   assert.match(appSrc, /db-scale-card/);
   assert.match(appSrc, /db-topic-bar/);
   assert.match(appSrc, /db-stream/);

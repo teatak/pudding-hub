@@ -3,6 +3,7 @@ import {
   pudding,
   useWidgetLocale,
   useWidgetState,
+  useWidgetInteraction,
 } from "@pudding/widget";
 import {
   Cpu,
@@ -91,7 +92,7 @@ export default function App() {
 
   const l = lobby();
   const p = position();
-  const run = pudding.interaction.read();
+  const run = useWidgetInteraction();
 
   const [candidates, setCandidates] = useState<Candidates | null>(null);
   const [pickerSlots, setPickerSlots] = useState<{

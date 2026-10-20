@@ -307,14 +307,16 @@ export const start = (
     }
 
     await pudding.interaction.setRequests([]);
+    const now = Date.now();
+    const needed = Object.values(seats).filter((id): id is string => Boolean(id));
     await save(
       {
         round: previous.round + 1,
-        phase: "lobby",
+        phase: "round1_pro",
         topic: topicToUse,
         seats,
-        ready: [],
-        startsAt: null,
+        ready: needed,
+        startsAt: now,
       },
       initialPosition(),
     );
@@ -484,3 +486,10 @@ function registerInterfaces() {
 }
 
 registerInterfaces();
+
+pudding.interaction.onResume(async () => {
+  if (changing || lobby().phase === "lobby" || position().verdict) return;
+  await change(async () => {
+    await publish(true);
+  });
+});
