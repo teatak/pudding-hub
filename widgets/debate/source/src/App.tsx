@@ -15,7 +15,6 @@ import {
   ShieldAlert,
   Flame,
   Award,
-  BookOpen,
   User,
   ChevronDown,
   X,
@@ -111,26 +110,16 @@ export default function App() {
   const [verdictProScore, setVerdictProScore] = useState(55);
   const [verdictSummary, setVerdictSummary] = useState("");
 
-  // 轮次导航状态 (自动跟随最新活跃轮次，亦可手动回看)
-  const maxRoundWithArgs = p.arguments.reduce((max, a) => Math.max(max, a.round), 1);
-  const debateActiveRound =
-    p.verdict || l.phase === "verdict"
-      ? 4
-      : l.phase === "round1_pro" || l.phase === "round1_con"
-        ? 1
-        : l.phase === "round2_pro" || l.phase === "round2_con"
-          ? 2
-          : l.phase === "round3_pro" || l.phase === "round3_con"
-            ? 3
-            : maxRoundWithArgs;
+  // 历史老轮次左右联动展开状态集合 (例如 [1] 表示双方的第 1 轮均联动展开)
+  const [expandedRounds, setExpandedRounds] = useState<number[]>([]);
 
-  const [selectedRound, setSelectedRound] = useState<number | null>(null);
-
-  useEffect(() => {
-    setSelectedRound(null);
-  }, [debateActiveRound]);
-
-  const currentViewRound = selectedRound ?? debateActiveRound;
+  function toggleRound(roundNum: number) {
+    setExpandedRounds((prev) =>
+      prev.includes(roundNum)
+        ? prev.filter((r) => r !== roundNum)
+        : [...prev, roundNum],
+    );
+  }
 
   const human = run?.participants.find((part) => part.kind === "human");
   const humanRole = human && roles.find((role) => l.seats[role] === human.id);
@@ -194,15 +183,27 @@ export default function App() {
     });
   }, []);
 
+  // 当运行状态或参与者列表变化时，刷新候选以保持模型信息和图标映射最新
+  useEffect(() => {
+    void loadCandidates();
+  }, [run?.status, run?.participants?.map((part) => `${part.id}:${part.name}`).join(",")]);
+
   const getPlayerForRole = (role: Role): Player | undefined => {
     const participantID = l.seats[role];
     if (!participantID) return undefined;
     const participant = run?.participants.find((part) => part.id === participantID);
     if (!participant) return undefined;
     const isHuman = participant.kind === "human";
+
+    // 强健的多层匹配策略：participantID、sessionID 属性、会话名字双向映射
     const sessionModel = candidates?.sessions.find(
-      (s) => s.participantID === participantID || s.id === participantID,
+      (s) =>
+        (s.participantID && s.participantID === participantID) ||
+        s.id === participantID ||
+        (participant as unknown as { sessionID?: string }).sessionID === s.id ||
+        (participant.name && s.name === participant.name),
     )?.model;
+
     return {
       id: participantID,
       name: isHuman ? t("playerHuman") : participant.name,
@@ -218,6 +219,229 @@ export default function App() {
   const isProMe = Boolean(proPlayer?.id && human?.id && proPlayer.id === human.id);
   const isConMe = Boolean(conPlayer?.id && human?.id && conPlayer.id === human.id);
   const isJudgeMe = Boolean(judgePlayer?.id && human?.id && judgePlayer.id === human.id);
+
+  function renderDebaterCard(role: "Pro" | "Con") {
+    const player = role === "Pro" ? proPlayer : conPlayer;
+    const isMe = role === "Pro" ? isProMe : isConMe;
+    const isRoleActive = l.phase !== "lobby" && activeRole === role;
+    const isHumanTurn = myTurn && activeRole === role;
+
+    const roleArgs = p.arguments.filter((a) => a.role === role);
+    const oldArgs = roleArgs.slice(0, -1);
+    const latestArg = roleArgs[roleArgs.length - 1];
+
+    const currentRoundNum = getRoundForPhase(l.phase);
+    const hasCurrentRoundArg = roleArgs.some((a) => a.round === currentRoundNum);
+
+    return (
+      <div
+        className={`db-fighter-card is-${role.toLowerCase()} ${
+          isRoleActive ? "is-active" : ""
+        }`}
+      >
+        {/* 顶部辩手信息栏 */}
+        <div className="db-fighter-header">
+          <div className="db-fighter-role-tag">
+            {role === "Pro" ? t("rolePro") : t("roleCon")}
+          </div>
+          <div className="db-fighter-state">
+            {l.phase === "lobby" ? (
+              !player ? (
+                <span className="db-tag-waiting">{t("statusWaitingSeat")}</span>
+              ) : l.ready.includes(player.id) ? (
+                <span className="db-tag-ready">
+                  <Check size={12} /> {t("readyBtn")}
+                </span>
+              ) : (
+                <span className="db-tag-waiting">{t("statusWaitingReady")}</span>
+              )
+            ) : isRoleActive ? (
+              <span className="db-tag-thinking">{t("thinking")}</span>
+            ) : (
+              <span className="db-tag-idle">{t("waitingTurn")}</span>
+            )}
+
+            {player && isMe && l.phase === "lobby" && (
+              <button
+                type="button"
+                className={`db-btn db-btn-sm ${
+                  l.ready.includes(player.id) ? "" : "is-primary"
+                }`}
+                disabled={busy}
+                onClick={() => {
+                  const pid = player.id;
+                  void perform(() =>
+                    pudding.interaction.handle((c) =>
+                      changeReadiness(!l.ready.includes(pid), c),
+                    ),
+                  );
+                }}
+              >
+                {l.ready.includes(player.id) ? t("cancelReady") : t("readyBtn")}
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* 辩手头像与名称 */}
+        <div className="db-fighter-main">
+          <div className={`db-fighter-avatar is-${role.toLowerCase()}`}>
+            {player?.human ? (
+              <User size={22} />
+            ) : player?.model?.icon ? (
+              <img src={player.model.icon} alt="" className="db-avatar-img" />
+            ) : role === "Pro" ? (
+              <Flame size={22} />
+            ) : (
+              <ShieldAlert size={22} />
+            )}
+          </div>
+          <div className="db-fighter-info">
+            <strong className="db-fighter-name">
+              {player?.name || (role === "Pro" ? t("unseatedPro") : t("unseatedCon"))}
+              {isMe && <span className="db-you-badge">{t("youIndicator")}</span>}
+            </strong>
+            <small className="db-fighter-model">
+              {player?.model?.name || (player?.human ? t("playerHuman") : player ? t("playerModel") : t("unseated"))}
+            </small>
+          </div>
+        </div>
+
+        {/* 辩词陈述区域 (内嵌于辩手卡片内部) */}
+        <div className="db-fighter-debates">
+          {/* 1. 历史老轮次折叠 (左右同轮次联动展开) */}
+          {oldArgs.map((arg) => {
+            const roundTitle =
+              arg.round === 1
+                ? t("round1Title")
+                : arg.round === 2
+                  ? t("round2Title")
+                  : t("round3Title");
+            const isOpen = expandedRounds.includes(arg.round);
+            return (
+              <div key={arg.id} className={`db-arg-fold ${isOpen ? "is-open" : ""}`}>
+                <button
+                  type="button"
+                  className="db-arg-fold-summary"
+                  onClick={() => toggleRound(arg.round)}
+                >
+                  <div className="db-arg-fold-title">
+                    <ChevronDown
+                      size={14}
+                      className={`db-arg-fold-icon ${isOpen ? "is-open" : ""}`}
+                    />
+                    <span className="db-arg-fold-badge">{roundTitle}</span>
+                    <span className="db-arg-fold-headline" title={arg.headline}>
+                      {arg.headline}
+                    </span>
+                  </div>
+                  <span className="db-arg-time">
+                    {new Date(arg.timestamp).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </button>
+                {isOpen && (
+                  <div className="db-arg-fold-body">
+                    <div className="db-arg-content">{arg.content}</div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
+          {/* 2. 最新一轮辩词：直接完整展开展示 */}
+          {latestArg && (
+            <div className={`db-arg-latest is-${role.toLowerCase()}`}>
+              <div className="db-arg-latest-header">
+                <span className="db-arg-latest-badge">
+                  {role === "Pro" ? <Flame size={13} /> : <ShieldAlert size={13} />}
+                  <span>
+                    {latestArg.round === 1
+                      ? t("round1Title")
+                      : latestArg.round === 2
+                        ? t("round2Title")
+                        : t("round3Title")}
+                  </span>
+                </span>
+                <span className="db-arg-time">
+                  {new Date(latestArg.timestamp).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+              </div>
+              <h4 className="db-arg-latest-headline">{latestArg.headline}</h4>
+              <div className="db-arg-latest-content">{latestArg.content}</div>
+            </div>
+          )}
+
+          {/* 3. 正在思考：当前轮到该辩手，且本轮辩词尚未生成，且非人类发言回合 */}
+          {isRoleActive && !hasCurrentRoundArg && !isHumanTurn && (
+            <div className="db-debater-thinking">
+              <span className="db-versus-phase-dot" />
+              <span>{t("thinking")}</span>
+            </div>
+          )}
+
+          {/* 4. 人类玩家直接在此卡片内输入陈词 */}
+          {isHumanTurn && !hasCurrentRoundArg && (
+            <div className="db-human-card-panel">
+              <div className="db-human-card-header">
+                <MessageSquare size={14} />
+                <span>{t("submitArgBtn")}</span>
+              </div>
+              <input
+                type="text"
+                className="db-human-input"
+                placeholder={t("headlinePlaceholder")}
+                maxLength={60}
+                value={draftHeadline}
+                onChange={(e) => setDraftHeadline(e.target.value)}
+              />
+              <textarea
+                className="db-human-textarea"
+                placeholder={t("contentPlaceholder")}
+                maxLength={400}
+                value={draftContent}
+                onChange={(e) => setDraftContent(e.target.value)}
+              />
+              <button
+                type="button"
+                className="db-btn is-primary db-btn-sm"
+                disabled={busy || !draftHeadline.trim() || !draftContent.trim()}
+                onClick={() =>
+                  void perform(async () => {
+                    await pudding.interaction.handle((c) =>
+                      argue(
+                        {
+                          headline: draftHeadline,
+                          content: draftContent,
+                        },
+                        c,
+                      ),
+                    );
+                    setDraftHeadline("");
+                    setDraftContent("");
+                  })
+                }
+              >
+                <span>{t("submitArgBtn")}</span>
+              </button>
+            </div>
+          )}
+
+          {/* 5. 初始空闲等待状态 */}
+          {roleArgs.length === 0 && !isRoleActive && (
+            <div className="db-debater-idle">
+              <span>{l.phase === "lobby" ? t("statusWaitingReady") : t("waitingTurn")}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="db-app">
@@ -290,7 +514,7 @@ export default function App() {
       </div>
 
       {/* 辩方卡片与思辨交锋对决横幅 (Debate Versus & Momentum Banner) */}
-      <section className="db-versus-banner db-scale-card">
+      <main className="db-versus-banner db-scale-card db-stream">
         {/* 顶部阶段状态与审判席信息 */}
         <div className="db-versus-header">
           <div className="db-versus-phase">
@@ -326,7 +550,10 @@ export default function App() {
                 ) : (
                   <Gavel size={13} />
                 )}
-                <span>{t("roleJudgeShort")}: {judgePlayer.name}</span>
+                <span>
+                  {t("roleJudgeShort")}: {judgePlayer.name}
+                  {judgePlayer.model?.name ? ` (${judgePlayer.model.name})` : ""}
+                </span>
                 {isJudgeMe && (
                   <span className="db-you-badge">{t("youIndicator")}</span>
                 )}
@@ -378,388 +605,47 @@ export default function App() {
           </div>
         </div>
 
-        {/* 辩方卡片置于能量槽下方 (格斗对决舞台) */}
+        {/* 双方辩手对垒舞台 (辩词直接内嵌于卡片内：最新展开，老轮折叠) */}
         <div className="db-fighters-grid">
-          {/* 正方辩手卡片 */}
-          <div
-            className={`db-fighter-card is-pro ${
-              l.phase !== "lobby" && activeRole === "Pro" ? "is-active" : ""
-            }`}
-          >
-            <div className="db-fighter-role-tag">{t("rolePro")}</div>
-            <div className="db-fighter-main">
-              <div className="db-fighter-avatar is-pro">
-                {proPlayer?.human ? (
-                  <User size={20} />
-                ) : proPlayer?.model?.icon ? (
-                  <img src={proPlayer.model.icon} alt="" className="db-avatar-img" />
-                ) : (
-                  <Flame size={20} />
-                )}
-              </div>
-              <div className="db-fighter-info">
-                <strong className="db-fighter-name">
-                  {proPlayer?.name || t("unseatedPro")}
-                  {isProMe && (
-                    <span className="db-you-badge">{t("youIndicator")}</span>
-                  )}
-                </strong>
-                <small className="db-fighter-model">
-                  {proPlayer?.model?.name || (proPlayer?.human ? t("playerHuman") : t("unseated"))}
-                </small>
-              </div>
-            </div>
-
-            <div className="db-fighter-state">
-              {l.phase === "lobby" ? (
-                !proPlayer ? (
-                  <span className="db-tag-waiting">{t("statusWaitingSeat")}</span>
-                ) : l.ready.includes(proPlayer.id) ? (
-                  <span className="db-tag-ready">
-                    <Check size={12} /> {t("readyBtn")}
-                  </span>
-                ) : (
-                  <span className="db-tag-waiting">{t("statusWaitingReady")}</span>
-                )
-              ) : activeRole === "Pro" ? (
-                <span className="db-tag-thinking">{t("thinking")}</span>
-              ) : (
-                <span className="db-tag-idle">{t("waitingTurn")}</span>
-              )}
-
-              {proPlayer && isProMe && l.phase === "lobby" && (
-                <button
-                  type="button"
-                  className={`db-btn db-btn-sm ${
-                    l.ready.includes(proPlayer.id) ? "" : "is-primary"
-                  }`}
-                  disabled={busy}
-                  onClick={() => {
-                    const pid = proPlayer.id;
-                    void perform(() =>
-                      pudding.interaction.handle((c) =>
-                        changeReadiness(!l.ready.includes(pid), c),
-                      ),
-                    );
-                  }}
-                >
-                  {l.ready.includes(proPlayer.id) ? t("cancelReady") : t("readyBtn")}
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* 反方辩手卡片 */}
-          <div
-            className={`db-fighter-card is-con ${
-              l.phase !== "lobby" && activeRole === "Con" ? "is-active" : ""
-            }`}
-          >
-            <div className="db-fighter-role-tag">{t("roleCon")}</div>
-            <div className="db-fighter-main is-reverse">
-              <div className="db-fighter-avatar is-con">
-                {conPlayer?.human ? (
-                  <User size={20} />
-                ) : conPlayer?.model?.icon ? (
-                  <img src={conPlayer.model.icon} alt="" className="db-avatar-img" />
-                ) : (
-                  <ShieldAlert size={20} />
-                )}
-              </div>
-              <div className="db-fighter-info is-reverse">
-                <strong className="db-fighter-name">
-                  {conPlayer?.name || t("unseatedCon")}
-                  {isConMe && (
-                    <span className="db-you-badge">{t("youIndicator")}</span>
-                  )}
-                </strong>
-                <small className="db-fighter-model">
-                  {conPlayer?.model?.name || (conPlayer?.human ? t("playerHuman") : t("unseated"))}
-                </small>
-              </div>
-            </div>
-
-            <div className="db-fighter-state is-reverse">
-              {l.phase === "lobby" ? (
-                !conPlayer ? (
-                  <span className="db-tag-waiting">{t("statusWaitingSeat")}</span>
-                ) : l.ready.includes(conPlayer.id) ? (
-                  <span className="db-tag-ready">
-                    <Check size={12} /> {t("readyBtn")}
-                  </span>
-                ) : (
-                  <span className="db-tag-waiting">{t("statusWaitingReady")}</span>
-                )
-              ) : activeRole === "Con" ? (
-                <span className="db-tag-thinking">{t("thinking")}</span>
-              ) : (
-                <span className="db-tag-idle">{t("waitingTurn")}</span>
-              )}
-
-              {conPlayer && isConMe && l.phase === "lobby" && (
-                <button
-                  type="button"
-                  className={`db-btn db-btn-sm ${
-                    l.ready.includes(conPlayer.id) ? "" : "is-primary"
-                  }`}
-                  disabled={busy}
-                  onClick={() => {
-                    const pid = conPlayer.id;
-                    void perform(() =>
-                      pudding.interaction.handle((c) =>
-                        changeReadiness(!l.ready.includes(pid), c),
-                      ),
-                    );
-                  }}
-                >
-                  {l.ready.includes(conPlayer.id) ? t("cancelReady") : t("readyBtn")}
-                </button>
-              )}
-            </div>
-          </div>
+          {renderDebaterCard("Pro")}
+          {renderDebaterCard("Con")}
         </div>
-      </section>
 
-      {/* 辩论轮次切换与左右双列对垒舞台 (无全文长廊，单轮聚焦) */}
-      <main className="db-stream">
-        {p.arguments.length === 0 && !p.verdict && l.phase === "lobby" ? (
-          <div className="db-arg-card" style={{ textAlign: "center", padding: "40px 20px" }}>
-            <BookOpen size={36} style={{ margin: "0 auto 12px auto", opacity: 0.4 }} />
-            <p style={{ margin: 0, fontSize: 14, color: "var(--db-muted)" }}>
-              {t("noArgumentsYet")}
-            </p>
-          </div>
-        ) : (
-          <>
-            {/* 轮次 Tab 控制条 */}
-            <div className="db-round-tabs">
-              {[1, 2, 3].map((r) => {
-                const isRoundActive = currentViewRound === r;
-                const roundArgs = p.arguments.filter((a) => a.round === r);
-                const isDone = roundArgs.length >= 2 || debateActiveRound > r;
-                const title =
-                  r === 1
-                    ? t("round1Title")
-                    : r === 2
-                      ? t("round2Title")
-                      : t("round3Title");
-
-                return (
-                  <button
-                    key={r}
-                    type="button"
-                    className={`db-round-tab ${isRoundActive ? "is-active" : ""}`}
-                    onClick={() => setSelectedRound(r)}
-                  >
-                    <span>{title}</span>
-                    {isDone && <Check size={13} className="db-round-done-check" />}
-                  </button>
-                );
-              })}
-
-              <button
-                type="button"
-                className={`db-round-tab is-verdict ${currentViewRound === 4 ? "is-active" : ""}`}
-                onClick={() => setSelectedRound(4)}
-              >
-                <Award size={14} />
-                <span>{t("verdictTitle")}</span>
-                {Boolean(p.verdict) && <Check size={13} className="db-round-done-check" />}
-              </button>
+        {/* 终局裁决书展示 */}
+        {p.verdict && (
+          <div className="db-verdict-card">
+            <Award size={40} style={{ margin: "0 auto 12px auto", color: "var(--db-judge)" }} />
+            <div className="db-verdict-banner">
+              {p.verdict.winner === "Draw"
+                ? t("winnerDraw")
+                : t("winnerNotice", {
+                    winner:
+                      p.verdict.winner === "Pro"
+                        ? t("winnerPro")
+                        : t("winnerCon"),
+                  })}
             </div>
 
-            {/* 辩论稿双列对垒展示 (蓝方左，红方右) */}
-            {currentViewRound >= 1 && currentViewRound <= 3 && (
-              <div className="db-round-versus-grid">
-                {/* 左列：正方（蓝方） */}
-                {(() => {
-                  const proArg = p.arguments.find(
-                    (a) => a.round === currentViewRound && a.role === "Pro",
-                  );
-                  if (proArg) {
-                    return (
-                      <article className="db-arg-card is-pro">
-                        <div className="db-arg-header">
-                          <span className="db-arg-role-tag">
-                            <Flame size={14} />
-                            <span>{t("roleProShort")} · {proArg.speakerName || t("playerModel")}</span>
-                          </span>
-                          <span className="db-arg-time">
-                            {new Date(proArg.timestamp).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </span>
-                        </div>
-                        <h3 className="db-arg-headline">{proArg.headline}</h3>
-                        <div className="db-arg-content">{proArg.content}</div>
-                      </article>
-                    );
-                  }
-                  return (
-                    <div className="db-arg-card is-pro is-placeholder">
-                      <div className="db-arg-header">
-                        <span className="db-arg-role-tag">
-                          <Flame size={14} />
-                          <span>{t("roleProShort")}</span>
-                        </span>
-                      </div>
-                      <div className="db-arg-placeholder-body">
-                        {l.phase === `round${currentViewRound}_pro` ? (
-                          <>
-                            <span className="db-versus-phase-dot" />
-                            <span>{t("thinking")}</span>
-                          </>
-                        ) : (
-                          <span>{t("waitingTurn")}</span>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })()}
-
-                {/* 右列：反方（红方） */}
-                {(() => {
-                  const conArg = p.arguments.find(
-                    (a) => a.round === currentViewRound && a.role === "Con",
-                  );
-                  if (conArg) {
-                    return (
-                      <article className="db-arg-card is-con">
-                        <div className="db-arg-header is-reverse">
-                          <span className="db-arg-role-tag">
-                            <ShieldAlert size={14} />
-                            <span>{t("roleConShort")} · {conArg.speakerName || t("playerModel")}</span>
-                          </span>
-                          <span className="db-arg-time">
-                            {new Date(conArg.timestamp).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </span>
-                        </div>
-                        <h3 className="db-arg-headline">{conArg.headline}</h3>
-                        <div className="db-arg-content">{conArg.content}</div>
-                      </article>
-                    );
-                  }
-                  return (
-                    <div className="db-arg-card is-con is-placeholder">
-                      <div className="db-arg-header is-reverse">
-                        <span className="db-arg-role-tag">
-                          <ShieldAlert size={14} />
-                          <span>{t("roleConShort")}</span>
-                        </span>
-                      </div>
-                      <div className="db-arg-placeholder-body">
-                        {l.phase === `round${currentViewRound}_con` ? (
-                          <>
-                            <span className="db-versus-phase-dot" />
-                            <span>{t("thinking")}</span>
-                          </>
-                        ) : (
-                          <span>{t("waitingTurn")}</span>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })()}
-              </div>
-            )}
-
-            {/* 终局裁决书展示 */}
-            {currentViewRound === 4 && (
-              p.verdict ? (
-                <div className="db-verdict-card">
-                  <Award size={40} style={{ margin: "0 auto 12px auto", color: "var(--db-judge)" }} />
-                  <div className="db-verdict-banner">
-                    {p.verdict.winner === "Draw"
-                      ? t("winnerDraw")
-                      : t("winnerNotice", {
-                          winner:
-                            p.verdict.winner === "Pro"
-                              ? t("winnerPro")
-                              : t("winnerCon"),
-                        })}
-                  </div>
-
-                  <div className="db-verdict-scores">
-                    <span style={{ color: "var(--db-pro)" }}>
-                      {t("roleProShort")} {p.verdict.proScore}{t("scoreUnit")}
-                    </span>
-                    <span style={{ opacity: 0.4 }}>vs</span>
-                    <span style={{ color: "var(--db-con)" }}>
-                      {p.verdict.conScore}{t("scoreUnit")} {t("roleConShort")}
-                    </span>
-                  </div>
-
-                  <div className="db-verdict-summary">
-                    <strong>{t("verdictSummaryLabel")}</strong>
-                    <p style={{ margin: "8px 0 0 0" }}>{p.verdict.summary}</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="db-arg-card is-judge is-placeholder" style={{ textAlign: "center", padding: "40px 20px" }}>
-                  <Gavel size={36} style={{ margin: "0 auto 12px auto", color: "var(--db-judge)" }} />
-                  <p style={{ margin: 0, fontSize: 14, color: "var(--db-muted)" }}>
-                    {l.phase === "verdict" ? t("phaseVerdict") : t("waitingTurn")}
-                  </p>
-                </div>
-              )
-            )}
-          </>
-        )}
-
-        {/* 人类辩手发言面板 */}
-        {myTurn && l.phase !== "verdict" && (
-          <div className="db-human-panel">
-            <div style={{ fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 6 }}>
-              <MessageSquare size={16} />
-              <span>{t("submitArgBtn")}</span>
+            <div className="db-verdict-scores">
+              <span style={{ color: "var(--db-pro)" }}>
+                {t("roleProShort")} {p.verdict.proScore}{t("scoreUnit")}
+              </span>
+              <span style={{ opacity: 0.4 }}>vs</span>
+              <span style={{ color: "var(--db-con)" }}>
+                {p.verdict.conScore}{t("scoreUnit")} {t("roleConShort")}
+              </span>
             </div>
-            <input
-              type="text"
-              className="db-human-input"
-              placeholder={t("headlinePlaceholder")}
-              maxLength={60}
-              value={draftHeadline}
-              onChange={(e) => setDraftHeadline(e.target.value)}
-            />
-            <textarea
-              className="db-human-textarea"
-              placeholder={t("contentPlaceholder")}
-              maxLength={400}
-              value={draftContent}
-              onChange={(e) => setDraftContent(e.target.value)}
-            />
-            <button
-              type="button"
-              className="db-btn is-primary"
-              disabled={busy || !draftHeadline.trim() || !draftContent.trim()}
-              onClick={() =>
-                void perform(async () => {
-                  await pudding.interaction.handle((c) =>
-                    argue(
-                      {
-                        headline: draftHeadline,
-                        content: draftContent,
-                      },
-                      c,
-                    ),
-                  );
-                  setDraftHeadline("");
-                  setDraftContent("");
-                })
-              }
-            >
-              <span>{t("submitArgBtn")}</span>
-            </button>
+
+            <div className="db-verdict-summary">
+              <strong>{t("verdictSummaryLabel")}</strong>
+              <p style={{ margin: "8px 0 0 0" }}>{p.verdict.summary}</p>
+            </div>
           </div>
         )}
 
         {/* 人类裁判敲锤宣判面板 */}
-        {myTurn && l.phase === "verdict" && (
-          <div className="db-human-panel">
+        {myTurn && l.phase === "verdict" && !p.verdict && (
+          <div className="db-human-panel" style={{ marginTop: 16 }}>
             <div style={{ fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", gap: 6 }}>
               <Gavel size={16} />
               <span>{t("deliverVerdictBtn")}</span>
@@ -827,11 +713,9 @@ export default function App() {
           </div>
         )}
 
-
-
         {/* 错误提示 */}
         {error && (
-          <div style={{ color: "#ef4444", fontSize: 13, padding: "8px 12px", background: "#fee2e2", borderRadius: 8 }}>
+          <div style={{ color: "#ef4444", fontSize: 13, padding: "8px 12px", background: "#fee2e2", borderRadius: 8, marginTop: 12 }}>
             {error}
           </div>
         )}
