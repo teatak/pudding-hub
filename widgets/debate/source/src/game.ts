@@ -249,32 +249,49 @@ export const start = (
         throw new Error("Each participant can only occupy one seat");
       }
 
-      const includeMe = chosenList.includes("@me");
       const sessionCandidates = (await pudding.interaction.candidates()).sessions;
-      const sessionIDs = chosenList
-        .filter((id) => id !== "@me")
-        .map((id) => {
-          const match = sessionCandidates.find(
-            (s) => s.id === id || s.participantID === id,
-          );
-          return match ? match.id : id;
-        });
 
+      const sessionIDs = chosenList.filter((id) => id !== "@me");
       const run = await pudding.interaction.connect({ sessionIDs });
+
+      const humanPart = run.participants.find((p) => p.kind === "human");
+      const sessionParts = run.participants.filter((p) => p.kind === "session");
 
       const participantFor = (chosenID: string | null | undefined): string | null => {
         if (!chosenID) return null;
         if (chosenID === "@me") {
-          return run.participants.find((p) => p.kind === "human")?.id || null;
+          return humanPart?.id || null;
         }
+
+        // 1. 尝试直接从运行时对象的 sessionID 属性匹配
+        const byDirectSessionID = run.participants.find(
+          (p) => (p as unknown as { sessionID?: string }).sessionID === chosenID,
+        );
+        if (byDirectSessionID) return byDirectSessionID.id;
+
+        // 2. 如果 chosenID 本身已是 participantID
+        const byPartID = run.participants.find((p) => p.id === chosenID);
+        if (byPartID) return byPartID.id;
+
+        // 3. 按照 connect 传入的 sessionIDs 列表位置精确映射
+        const sessionIndex = sessionIDs.indexOf(chosenID);
+        if (sessionIndex >= 0 && sessionIndex < sessionParts.length) {
+          return sessionParts[sessionIndex].id;
+        }
+
+        // 4. 兜底候选集匹配
         const match = sessionCandidates.find(
           (s) => s.id === chosenID || s.participantID === chosenID,
         );
         if (match) {
-          const fromRun = run.participants.find((p) => p.id === match.participantID);
+          const fromRun = run.participants.find(
+            (p) =>
+              (match.participantID && p.id === match.participantID) ||
+              p.name === match.name,
+          );
           if (fromRun) return fromRun.id;
         }
-        return run.participants.find((p) => p.id === chosenID)?.id || null;
+        return null;
       };
 
       seats = {
@@ -282,6 +299,10 @@ export const start = (
         Con: participantFor(assignments.Con),
         Judge: participantFor(assignments.Judge),
       };
+
+      if (!seats.Pro || !seats.Con) {
+        throw new Error("Failed to assign debater seats to participants");
+      }
       topicToUse = (typeof includeMeOrTopic === "string" ? includeMeOrTopic : customTopic) || previous.topic;
     }
 

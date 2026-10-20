@@ -4,14 +4,14 @@
   "preview": true,
   "channel": "preview",
   "title": {
-    "zh-CN": "辩论法庭",
-    "zh-TW": "辯論法庭",
-    "en": "Debate Tribunal"
+    "zh-CN": "辩论",
+    "zh-TW": "辯論",
+    "en": "AI Debate"
   },
   "description": {
     "zh-CN": "多模型思辨交锋与裁判天平，围绕关键议题深度论辩。",
     "zh-TW": "多模型思辨交鋒與裁判天平，圍繞關鍵議題深度論辯。",
-    "en": "Multi-model AI debate arena with argument stream and live tribunal scales."
+    "en": "Multi-model AI debate arena with argument stream and live judgment scales."
   },
   "requires": {
     "protocolVersion": 24,

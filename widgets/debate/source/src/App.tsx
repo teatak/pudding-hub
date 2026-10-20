@@ -164,12 +164,10 @@ export default function App() {
   }
 
   useEffect(() => {
-    if (!l.round && !run) {
-      void loadCandidates().then((val) => {
-        if (val) initPickerFromSessions(val);
-      });
-    }
-  }, [l.round, run]);
+    void loadCandidates().then((val) => {
+      if (val) initPickerFromSessions(val);
+    });
+  }, []);
 
   const getPlayerForRole = (role: Role): Player | undefined => {
     const participantID = l.seats[role];
@@ -216,8 +214,9 @@ export default function App() {
               className="db-btn is-primary"
               disabled={busy}
               onClick={() => {
+                if (candidates) initPickerFromSessions(candidates);
                 void loadCandidates().then((val) => {
-                  if (val) initPickerFromSessions(val);
+                  if (val && !candidates) initPickerFromSessions(val);
                 });
                 setPicker(true);
               }}
@@ -231,8 +230,9 @@ export default function App() {
               className="db-btn"
               disabled={busy}
               onClick={() => {
+                if (candidates) initPickerFromSessions(candidates);
                 void loadCandidates().then((val) => {
-                  if (val) initPickerFromSessions(val);
+                  if (val && !candidates) initPickerFromSessions(val);
                 });
                 setPicker(true);
               }}
@@ -860,6 +860,11 @@ export default function App() {
           </div>
 
           {/* 校验冲突提示 */}
+          {error && (
+            <div className="db-slot-alert" style={{ background: "#fee2e2", color: "#dc2626" }}>
+              {error}
+            </div>
+          )}
           {debaterConflict && (
             <div className="db-slot-alert">{t("seatConflictError")}</div>
           )}
@@ -874,6 +879,7 @@ export default function App() {
             <button
               type="button"
               className="db-btn"
+              disabled={busy}
               onClick={() => setPicker(false)}
             >
               {t("btnCancel")}
@@ -896,7 +902,7 @@ export default function App() {
                 })
               }
             >
-              {t("confirmStartDebate")}
+              {busy ? t("startingDebate") : t("confirmStartDebate")}
             </button>
           </div>
         </div>
