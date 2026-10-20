@@ -9,13 +9,13 @@ const root = fileURLToPath(new URL("../widgets/reversi", import.meta.url));
 test("Reversi release package exists, is verified, and contains valid source files", async () => {
   const pkgPath = path.join(
     root,
-    "releases/1.0.0/reversi.pudding-widget.json",
+    "releases/1.0.1/reversi.pudding-widget.json",
   );
   const raw = await fs.readFile(pkgPath, "utf8");
   const pkg = JSON.parse(raw);
 
   assert.equal(pkg.id, "teatak/pudding-hub/widgets/reversi");
-  assert.equal(pkg.version, "1.0.0");
+  assert.equal(pkg.version, "1.0.1");
   assert.equal(pkg.preview, undefined);
   assert.equal(pkg.requires.protocolVersion, 24);
   assert.equal(pkg.requires.sdkVersion, "1");

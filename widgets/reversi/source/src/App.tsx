@@ -62,7 +62,7 @@ function elapsedTime(ms: number) {
   );
 }
 
-function ReversiEmblemIcon({ size = 24 }: { size?: number }) {
+function ReversiEmblemIcon({ size = 26 }: { size?: number }) {
   return (
     <svg
       width={size}
@@ -72,14 +72,22 @@ function ReversiEmblemIcon({ size = 24 }: { size?: number }) {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      <rect width="128" height="128" rx="20" fill="#2e8b57" />
-      <g stroke="#ffffff" strokeOpacity="0.25" strokeWidth="3">
+      <rect width="128" height="128" rx="20" fill="#22C55E" />
+      <g stroke="#ffffff" strokeOpacity="0.25" strokeWidth="2">
         <line x1="20" y1="64" x2="108" y2="64" />
         <line x1="64" y1="20" x2="64" y2="108" />
-        <rect x="24" y="24" width="80" height="80" rx="8" fill="none" strokeWidth="3" />
+        <rect x="24" y="24" width="80" height="80" rx="8" fill="none" strokeWidth="2.5" />
       </g>
-      <circle cx="48" cy="64" r="22" fill="#0f172a" stroke="#cbd5e1" strokeWidth="2" />
-      <circle cx="80" cy="64" r="22" fill="#ffffff" stroke="#94a3b8" strokeWidth="2" />
+      <g filter="drop-shadow(0px 4px 6px rgba(0,0,0,0.35))">
+        <circle cx="48" cy="64" r="24" fill="#18181B" />
+        <circle cx="48" cy="64" r="22.5" fill="none" stroke="#3F3F46" strokeWidth="1.5" />
+        <ellipse cx="44" cy="56" rx="8" ry="4" fill="#52525B" opacity="0.4" />
+      </g>
+      <g filter="drop-shadow(0px 4px 6px rgba(0,0,0,0.3))">
+        <circle cx="80" cy="64" r="24" fill="#F4F4F5" />
+        <circle cx="80" cy="64" r="22.5" fill="none" stroke="#E4E4E7" strokeWidth="1.5" />
+        <ellipse cx="76" cy="56" rx="8" ry="4" fill="#FFFFFF" opacity="0.8" />
+      </g>
     </svg>
   );
 }
