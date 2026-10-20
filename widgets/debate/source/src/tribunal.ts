@@ -143,7 +143,7 @@ export function addArgument(
 
   const nextP = nextPhase(lobby.phase);
 
-  // 论证力度动态天平调整 (基于内容深度及交锋轮次微调)
+  // 论证力度动态势能调整 (基于内容深度及交锋轮次微调)
   let delta = role === "Pro" ? 2 : -2;
   if (headline.length > 10 && content.length > 50) {
     delta += role === "Pro" ? 1 : -1;

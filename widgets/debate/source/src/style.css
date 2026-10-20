@@ -180,7 +180,7 @@ body {
   text-overflow: ellipsis;
 }
 
-/* 思辨胜负天平与辩方一体化对决横幅 (Debate Versus Banner) */
+/* 思辨胜负势能与辩方一体化对决横幅 (Debate Versus Banner) */
 .db-versus-banner {
   padding: 18px 22px;
   border-radius: 14px;
@@ -247,7 +247,7 @@ body {
   object-fit: contain;
 }
 
-/* 格斗对冲能量天平槽 (顶部通栏) */
+/* 格斗对冲能量槽 (顶部通栏) */
 .db-versus-scale-core {
   display: flex;
   flex-direction: column;
@@ -466,14 +466,76 @@ body {
   color: var(--db-muted);
 }
 
-/* 论点陈词卡片 */
+/* 轮次切换控制器 (Round Tabs) */
+.db-round-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 0 14px 0;
+  border-bottom: 1px solid var(--db-edge);
+  padding-bottom: 10px;
+  overflow-x: auto;
+}
+.db-round-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--db-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+.db-round-tab:hover:not(:disabled) {
+  background: var(--db-panel-raised);
+  color: var(--db-text);
+}
+.db-round-tab.is-active {
+  background: var(--db-panel-raised);
+  border-color: var(--db-edge);
+  color: var(--db-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.db-round-tab.is-verdict.is-active {
+  color: var(--db-judge);
+  border-color: var(--db-judge-edge);
+  background: var(--db-judge-bg);
+}
+.db-round-done-check {
+  color: #10b981;
+}
+
+/* 左右双列对垒网格 (蓝方左，红方右) */
+.db-round-versus-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: stretch;
+}
+@media (max-width: 640px) {
+  .db-round-versus-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 论点陈词卡片 (固定最大高度，内容超长内滚) */
 .db-arg-card {
-  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 18px;
   border-radius: 12px;
   background: var(--db-panel);
   border: 1px solid var(--db-edge);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   position: relative;
+  min-height: 180px;
+  max-height: 280px;
+  overflow: hidden;
   transition: transform 0.2s ease, border-color 0.2s ease;
 }
 .db-arg-card.is-pro {
@@ -488,12 +550,20 @@ body {
   border-left: 5px solid var(--db-judge);
   background: var(--db-judge-bg);
 }
+.db-arg-card.is-placeholder {
+  border-style: dashed;
+  opacity: 0.8;
+}
 
 .db-arg-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 8px;
+  flex-shrink: 0;
+}
+.db-arg-header.is-reverse {
+  flex-direction: row-reverse;
 }
 .db-arg-role-tag {
   display: inline-flex;
@@ -511,17 +581,41 @@ body {
   color: var(--db-muted);
 }
 .db-arg-headline {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   margin: 0 0 8px 0;
   color: var(--db-text);
+  line-height: 1.4;
+  flex-shrink: 0;
 }
 .db-arg-content {
+  flex: 1;
   font-size: 13px;
   line-height: 1.6;
   color: var(--db-text);
   white-space: pre-wrap;
   word-break: break-word;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--db-edge) transparent;
+}
+.db-arg-content::-webkit-scrollbar {
+  width: 4px;
+}
+.db-arg-content::-webkit-scrollbar-thumb {
+  background: var(--db-edge);
+  border-radius: 4px;
+}
+.db-arg-placeholder-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--db-muted);
+  font-size: 13px;
 }
 .db-arg-comment {
   margin-top: 10px;

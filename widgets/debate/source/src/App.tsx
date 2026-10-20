@@ -5,7 +5,7 @@ import {
   useWidgetState,
 } from "@pudding/widget";
 import {
-  Scale,
+  Cpu,
   Gavel,
   Users,
   Check,
@@ -63,16 +63,20 @@ function DebateEmblemIcon({ size = 26 }: { size?: number }) {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      <rect width="128" height="128" rx="20" fill="#4F46E5" />
-      <circle cx="64" cy="68" r="46" fill="none" stroke="#ffffff" strokeOpacity="0.12" strokeWidth="2" />
-      <path d="M62 40h4v54h-4z" fill="#F8FAFC" />
-      <path d="M48 94h32v6H48z" fill="#E2E8F0" rx="2" />
-      <circle cx="64" cy="38" r="6" fill="#FBBF24" />
-      <path d="M28 46 L100 42" stroke="#F8FAFC" strokeWidth="4" strokeLinecap="round" />
-      <path d="M30 46 L20 68 M30 46 L40 68" stroke="#CBD5E1" strokeWidth="1.5" />
-      <path d="M16 68 C16 76 44 76 44 68 Z" fill="#60A5FA" />
-      <path d="M98 42 L88 64 M98 42 L108 64" stroke="#CBD5E1" strokeWidth="1.5" />
-      <path d="M84 64 C84 72 112 72 112 64 Z" fill="#F87171" />
+      <rect width="128" height="128" rx="24" fill="#4F46E5" />
+      <circle cx="64" cy="64" r="44" fill="none" stroke="#ffffff" strokeOpacity="0.08" strokeWidth="2" />
+      <path d="M24 30 C24 24 28 20 34 20 H78 C84 20 88 24 88 30 V56 C88 62 84 66 78 66 H50 L34 78 V66 H34 C28 66 24 62 24 56 Z" fill="#38BDF8" />
+      <rect x="36" y="32" width="38" height="4.5" rx="2.25" fill="#FFFFFF" />
+      <rect x="36" y="42" width="28" height="4.5" rx="2.25" fill="#FFFFFF" fillOpacity="0.85" />
+      <rect x="36" y="52" width="20" height="4.5" rx="2.25" fill="#FFFFFF" fillOpacity="0.85" />
+      <path d="M104 98 C104 104 100 108 94 108 H50 C44 108 40 104 40 98 V72 C40 66 44 62 50 62 H78 L94 50 V62 H94 C100 62 104 66 104 72 Z" fill="#F87171" />
+      <rect x="52" y="74" width="38" height="4.5" rx="2.25" fill="#FFFFFF" />
+      <rect x="52" y="84" width="28" height="4.5" rx="2.25" fill="#FFFFFF" fillOpacity="0.85" />
+      <rect x="52" y="94" width="18" height="4.5" rx="2.25" fill="#FFFFFF" fillOpacity="0.85" />
+      <g transform="translate(64, 64)">
+        <path d="M0 -14 Q0 0 -14 0 Q0 0 0 14 Q0 0 14 0 Q0 0 0 -14 Z" fill="#FBBF24" />
+        <circle cx="0" cy="0" r="3" fill="#FFFFFF" />
+      </g>
     </svg>
   );
 }
@@ -106,6 +110,27 @@ export default function App() {
   const [verdictWinner, setVerdictWinner] = useState<"Pro" | "Con" | "Draw">("Pro");
   const [verdictProScore, setVerdictProScore] = useState(55);
   const [verdictSummary, setVerdictSummary] = useState("");
+
+  // 轮次导航状态 (自动跟随最新活跃轮次，亦可手动回看)
+  const maxRoundWithArgs = p.arguments.reduce((max, a) => Math.max(max, a.round), 1);
+  const debateActiveRound =
+    p.verdict || l.phase === "verdict"
+      ? 4
+      : l.phase === "round1_pro" || l.phase === "round1_con"
+        ? 1
+        : l.phase === "round2_pro" || l.phase === "round2_con"
+          ? 2
+          : l.phase === "round3_pro" || l.phase === "round3_con"
+            ? 3
+            : maxRoundWithArgs;
+
+  const [selectedRound, setSelectedRound] = useState<number | null>(null);
+
+  useEffect(() => {
+    setSelectedRound(null);
+  }, [debateActiveRound]);
+
+  const currentViewRound = selectedRound ?? debateActiveRound;
 
   const human = run?.participants.find((part) => part.kind === "human");
   const humanRole = human && roles.find((role) => l.seats[role] === human.id);
@@ -264,7 +289,7 @@ export default function App() {
         )}
       </div>
 
-      {/* 辩方卡片与热力天平一体化对决横幅 (Debate Versus & Scale Banner) */}
+      {/* 辩方卡片与思辨交锋对决横幅 (Debate Versus & Momentum Banner) */}
       <section className="db-versus-banner db-scale-card">
         {/* 顶部阶段状态与审判席信息 */}
         <div className="db-versus-header">
@@ -308,14 +333,14 @@ export default function App() {
               </span>
             ) : (
               <span className="db-versus-judge-tag is-auto">
-                <Scale size={13} />
+                <Cpu size={13} />
                 <span>{t("seatAutoJudge")}</span>
               </span>
             )}
           </div>
         </div>
 
-        {/* 格斗对决能量天平槽 (顶部横贯全宽) */}
+        {/* 格斗对决能量槽 (顶部横贯全宽) */}
         <div className="db-versus-scale-core">
           <div className="db-versus-score-row">
             <span className="db-scale-score is-pro">
@@ -495,66 +520,195 @@ export default function App() {
         </div>
       </section>
 
-      {/* 观点交锋流与长廊 */}
+      {/* 辩论轮次切换与左右双列对垒舞台 (无全文长廊，单轮聚焦) */}
       <main className="db-stream">
-        {p.arguments.length === 0 && !p.verdict ? (
+        {p.arguments.length === 0 && !p.verdict && l.phase === "lobby" ? (
           <div className="db-arg-card" style={{ textAlign: "center", padding: "40px 20px" }}>
             <BookOpen size={36} style={{ margin: "0 auto 12px auto", opacity: 0.4 }} />
             <p style={{ margin: 0, fontSize: 14, color: "var(--db-muted)" }}>
               {t("noArgumentsYet")}
             </p>
           </div>
-        ) : null}
+        ) : (
+          <>
+            {/* 轮次 Tab 控制条 */}
+            <div className="db-round-tabs">
+              {[1, 2, 3].map((r) => {
+                const isRoundActive = currentViewRound === r;
+                const roundArgs = p.arguments.filter((a) => a.round === r);
+                const isDone = roundArgs.length >= 2 || debateActiveRound > r;
+                const title =
+                  r === 1
+                    ? t("round1Title")
+                    : r === 2
+                      ? t("round2Title")
+                      : t("round3Title");
 
-        {/* 渲染各轮辩词 */}
-        {[1, 2, 3].map((roundNum) => {
-          const roundArgs = p.arguments.filter((a) => a.round === roundNum);
-          if (roundArgs.length === 0) return null;
+                return (
+                  <button
+                    key={r}
+                    type="button"
+                    className={`db-round-tab ${isRoundActive ? "is-active" : ""}`}
+                    onClick={() => setSelectedRound(r)}
+                  >
+                    <span>{title}</span>
+                    {isDone && <Check size={13} className="db-round-done-check" />}
+                  </button>
+                );
+              })}
 
-          const roundTitle =
-            roundNum === 1
-              ? t("round1Title")
-              : roundNum === 2
-                ? t("round2Title")
-                : t("round3Title");
+              <button
+                type="button"
+                className={`db-round-tab is-verdict ${currentViewRound === 4 ? "is-active" : ""}`}
+                onClick={() => setSelectedRound(4)}
+              >
+                <Award size={14} />
+                <span>{t("verdictTitle")}</span>
+                {Boolean(p.verdict) && <Check size={13} className="db-round-done-check" />}
+              </button>
+            </div>
 
-          return (
-            <div key={roundNum} className="space-y-4">
-              <div className="db-round-divider">
-                <div className="db-round-line" />
-                <span className="db-round-badge">{roundTitle}</span>
-                <div className="db-round-line" />
+            {/* 辩论稿双列对垒展示 (蓝方左，红方右) */}
+            {currentViewRound >= 1 && currentViewRound <= 3 && (
+              <div className="db-round-versus-grid">
+                {/* 左列：正方（蓝方） */}
+                {(() => {
+                  const proArg = p.arguments.find(
+                    (a) => a.round === currentViewRound && a.role === "Pro",
+                  );
+                  if (proArg) {
+                    return (
+                      <article className="db-arg-card is-pro">
+                        <div className="db-arg-header">
+                          <span className="db-arg-role-tag">
+                            <Flame size={14} />
+                            <span>{t("roleProShort")} · {proArg.speakerName || t("playerModel")}</span>
+                          </span>
+                          <span className="db-arg-time">
+                            {new Date(proArg.timestamp).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
+                        </div>
+                        <h3 className="db-arg-headline">{proArg.headline}</h3>
+                        <div className="db-arg-content">{proArg.content}</div>
+                      </article>
+                    );
+                  }
+                  return (
+                    <div className="db-arg-card is-pro is-placeholder">
+                      <div className="db-arg-header">
+                        <span className="db-arg-role-tag">
+                          <Flame size={14} />
+                          <span>{t("roleProShort")}</span>
+                        </span>
+                      </div>
+                      <div className="db-arg-placeholder-body">
+                        {l.phase === `round${currentViewRound}_pro` ? (
+                          <>
+                            <span className="db-versus-phase-dot" />
+                            <span>{t("thinking")}</span>
+                          </>
+                        ) : (
+                          <span>{t("waitingTurn")}</span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* 右列：反方（红方） */}
+                {(() => {
+                  const conArg = p.arguments.find(
+                    (a) => a.round === currentViewRound && a.role === "Con",
+                  );
+                  if (conArg) {
+                    return (
+                      <article className="db-arg-card is-con">
+                        <div className="db-arg-header is-reverse">
+                          <span className="db-arg-role-tag">
+                            <ShieldAlert size={14} />
+                            <span>{t("roleConShort")} · {conArg.speakerName || t("playerModel")}</span>
+                          </span>
+                          <span className="db-arg-time">
+                            {new Date(conArg.timestamp).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
+                        </div>
+                        <h3 className="db-arg-headline">{conArg.headline}</h3>
+                        <div className="db-arg-content">{conArg.content}</div>
+                      </article>
+                    );
+                  }
+                  return (
+                    <div className="db-arg-card is-con is-placeholder">
+                      <div className="db-arg-header is-reverse">
+                        <span className="db-arg-role-tag">
+                          <ShieldAlert size={14} />
+                          <span>{t("roleConShort")}</span>
+                        </span>
+                      </div>
+                      <div className="db-arg-placeholder-body">
+                        {l.phase === `round${currentViewRound}_con` ? (
+                          <>
+                            <span className="db-versus-phase-dot" />
+                            <span>{t("thinking")}</span>
+                          </>
+                        ) : (
+                          <span>{t("waitingTurn")}</span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
+            )}
 
-              {roundArgs.map((arg) => (
-                <article
-                  key={arg.id}
-                  className={`db-arg-card is-${arg.role.toLowerCase()}`}
-                >
-                  <div className="db-arg-header">
-                    <span className="db-arg-role-tag">
-                      {arg.role === "Pro"
-                        ? t("roleProShort")
-                        : arg.role === "Con"
-                          ? t("roleConShort")
-                          : t("roleJudgeShort")}
-                      <span>· {arg.speakerName || t("playerModel")}</span>
+            {/* 终局裁决书展示 */}
+            {currentViewRound === 4 && (
+              p.verdict ? (
+                <div className="db-verdict-card">
+                  <Award size={40} style={{ margin: "0 auto 12px auto", color: "var(--db-judge)" }} />
+                  <div className="db-verdict-banner">
+                    {p.verdict.winner === "Draw"
+                      ? t("winnerDraw")
+                      : t("winnerNotice", {
+                          winner:
+                            p.verdict.winner === "Pro"
+                              ? t("winnerPro")
+                              : t("winnerCon"),
+                        })}
+                  </div>
+
+                  <div className="db-verdict-scores">
+                    <span style={{ color: "var(--db-pro)" }}>
+                      {t("roleProShort")} {p.verdict.proScore}{t("scoreUnit")}
                     </span>
-                    <span className="db-arg-time">
-                      {new Date(arg.timestamp).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                    <span style={{ opacity: 0.4 }}>vs</span>
+                    <span style={{ color: "var(--db-con)" }}>
+                      {p.verdict.conScore}{t("scoreUnit")} {t("roleConShort")}
                     </span>
                   </div>
 
-                  <h3 className="db-arg-headline">{arg.headline}</h3>
-                  <div className="db-arg-content">{arg.content}</div>
-                </article>
-              ))}
-            </div>
-          );
-        })}
+                  <div className="db-verdict-summary">
+                    <strong>{t("verdictSummaryLabel")}</strong>
+                    <p style={{ margin: "8px 0 0 0" }}>{p.verdict.summary}</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="db-arg-card is-judge is-placeholder" style={{ textAlign: "center", padding: "40px 20px" }}>
+                  <Gavel size={36} style={{ margin: "0 auto 12px auto", color: "var(--db-judge)" }} />
+                  <p style={{ margin: 0, fontSize: 14, color: "var(--db-muted)" }}>
+                    {l.phase === "verdict" ? t("phaseVerdict") : t("waitingTurn")}
+                  </p>
+                </div>
+              )
+            )}
+          </>
+        )}
 
         {/* 人类辩手发言面板 */}
         {myTurn && l.phase !== "verdict" && (
@@ -673,37 +827,7 @@ export default function App() {
           </div>
         )}
 
-        {/* 终局裁决书展示 */}
-        {p.verdict && (
-          <div className="db-verdict-card">
-            <Award size={40} style={{ margin: "0 auto 12px auto", color: "var(--db-judge)" }} />
-            <div className="db-verdict-banner">
-              {p.verdict.winner === "Draw"
-                ? t("winnerDraw")
-                : t("winnerNotice", {
-                    winner:
-                      p.verdict.winner === "Pro"
-                        ? t("winnerPro")
-                        : t("winnerCon"),
-                  })}
-            </div>
 
-            <div className="db-verdict-scores">
-              <span style={{ color: "var(--db-pro)" }}>
-                {t("roleProShort")} {p.verdict.proScore}{t("scoreUnit")}
-              </span>
-              <span style={{ opacity: 0.4 }}>vs</span>
-              <span style={{ color: "var(--db-con)" }}>
-                {p.verdict.conScore}{t("scoreUnit")} {t("roleConShort")}
-              </span>
-            </div>
-
-            <div className="db-verdict-summary">
-              <strong>{t("verdictSummaryLabel")}</strong>
-              <p style={{ margin: "8px 0 0 0" }}>{p.verdict.summary}</p>
-            </div>
-          </div>
-        )}
 
         {/* 错误提示 */}
         {error && (
@@ -944,7 +1068,7 @@ function CustomSeatSelect({
             </div>
           ) : isAuto ? (
             <div className="db-select-avatar is-auto">
-              <Scale size={15} />
+              <Cpu size={15} />
             </div>
           ) : current?.model?.icon ? (
             <img src={current.model.icon} alt="" className="db-select-logo-img" />
@@ -989,7 +1113,7 @@ function CustomSeatSelect({
               >
                 <div className="db-option-left">
                   <div className="db-select-avatar is-auto">
-                    <Scale size={15} />
+                    <Cpu size={15} />
                   </div>
                   <div className="db-select-texts">
                     <span className="db-select-name">{t("seatSelectAutoJudge")}</span>
