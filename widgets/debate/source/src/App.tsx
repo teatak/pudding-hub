@@ -785,7 +785,7 @@ export default function App() {
 
         {/* 错误提示 */}
         {error && (
-          <div style={{ color: "#ef4444", fontSize: 13, padding: "8px 12px", background: "#fee2e2", borderRadius: 8, marginTop: 12 }}>
+          <div className="db-slot-alert" style={{ marginTop: 12 }}>
             {error}
           </div>
         )}
@@ -939,7 +939,7 @@ export default function App() {
 
           {/* 校验冲突提示 */}
           {error && (
-            <div className="db-slot-alert" style={{ background: "#fee2e2", color: "#dc2626" }}>
+            <div className="db-slot-alert">
               {error}
             </div>
           )}
