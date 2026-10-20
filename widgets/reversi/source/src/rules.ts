@@ -259,12 +259,12 @@ export function describePosition(p: Position) {
   return {
     board: {
       coordinates:
-        "Columns A–H run left to right. Row 1 is the BOTTOM; row 8 is the TOP. Use column letters and numeric rows directly, e.g. column D, row 3.",
+        "Columns A–H run left to right. Row 1 is the TOP; row 8 is the BOTTOM. Use column letters and numeric rows directly, e.g. column D, row 3.",
       legend: ". = empty, B = Black, W = White",
       text: [
         "   " + [...letters].join(" "),
         ...Array.from({ length: size }, (_, visualRow) => {
-          const row = size - visualRow;
+          const row = visualRow + 1;
           return (
             String(row).padStart(2) +
             " " +

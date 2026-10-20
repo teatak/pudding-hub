@@ -430,9 +430,9 @@ export default function App() {
                 <span className="rv-coord-corner" />
               </div>
 
-              {/* 8 个行 */}
+              {/* 8 个行 (由上至下 1–8) */}
               {Array.from({ length: size }, (_, visualRow) => {
-                const rowNum = size - visualRow; // 8 down to 1
+                const rowNum = visualRow + 1; // 1 to 8 (top to bottom)
                 return (
                   <div key={rowNum} className="rv-board-row">
                     <span className="rv-row-label">{rowNum}</span>
