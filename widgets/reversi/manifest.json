@@ -1,8 +1,6 @@
 {
   "id": "teatak/pudding-hub/widgets/reversi",
-  "version": "1.0.0-preview.4",
-  "preview": true,
-  "channel": "preview",
+  "version": "1.0.0",
   "title": {
     "zh-CN": "黑白棋",
     "zh-TW": "黑白棋",
