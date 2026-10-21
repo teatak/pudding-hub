@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { pudding, useStorage, useWidgetLocale } from "@pudding/widget";
 import { type SongState, type Instrument } from "./types";
 import { edit, editSong, readSong, getDefaultSong, registerPlaybackController, importSong, exportSong, canExportWav } from "./api";
@@ -267,6 +268,7 @@ export default function App() {
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [fileBusy, setFileBusy] = useState(false);
+  const [exporting, setExporting] = useState<"project" | "wav" | null>(null);
   const [fileNotice, setFileNotice] = useState<{ error: boolean; text: string } | null>(null);
   const [importPending, setImportPending] = useState<{ content: string; project: ReturnType<typeof parseProject>; version: number } | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -312,6 +314,12 @@ export default function App() {
     if (!importPending && dialog?.open) dialog.close();
   }, [importPending]);
 
+  useEffect(() => {
+    if (!fileNotice || fileNotice.error) return;
+    const timer = window.setTimeout(() => setFileNotice(null), 3000);
+    return () => window.clearTimeout(timer);
+  }, [fileNotice]);
+
   async function prepareImport(file: File) {
     setFileBusy(true); setFileNotice(null);
     try {
@@ -338,12 +346,12 @@ export default function App() {
   }
 
   async function saveSong(format: "project" | "wav") {
-    setFileBusy(true); setFileNotice({ error: false, text: t(format === "wav" ? "renderingWav" : "savingProject") });
+    setFileBusy(true); setExporting(format); setFileNotice(null);
     try {
       const result = await exportSong(format);
       setFileNotice({ error: false, text: t(result.saved ? "fileSaved" : "fileSaveCancelled") });
     } catch (error) { setFileNotice({ error: true, text: errorText(error) }); }
-    finally { setFileBusy(false); }
+    finally { setFileBusy(false); setExporting(null); }
   }
 
   async function perform(action: Parameters<typeof edit>[0]) {
@@ -681,12 +689,21 @@ export default function App() {
             if (file) void prepareImport(file);
           }} />
           <button type="button" className="ps-btn-pill" data-music-action="import" disabled={busy || fileBusy} title={t("importReplacesSong")} onClick={() => fileInput.current?.click()}>{t("importProject")}</button>
-          <button type="button" className="ps-btn-pill" data-music-action="project" disabled={fileBusy} onClick={() => void saveSong("project")}>{t("exportProject")}</button>
-          <button type="button" className="ps-btn-pill" data-music-action="wav" disabled={fileBusy} title={canExportWav() ? undefined : t("wavRequiresUpdate")} onClick={() => void saveSong("wav")}>{t("exportWav")}</button>
+          <button type="button" className="ps-btn-pill ps-file-export" data-music-action="project" disabled={fileBusy} aria-busy={exporting === "project"} aria-label={t(exporting === "project" ? "savingProject" : "exportProject")} title={exporting === "project" ? t("savingProject") : undefined} onClick={() => void saveSong("project")}>
+            <span className="ps-file-label">{t("exportProject")}</span>
+            {exporting === "project" && <span className="ps-file-spinner" aria-hidden="true" />}
+          </button>
+          <button type="button" className="ps-btn-pill ps-file-export" data-music-action="wav" disabled={fileBusy} aria-busy={exporting === "wav"} aria-label={t(exporting === "wav" ? "renderingWav" : "exportWav")} title={exporting === "wav" ? t("renderingWav") : canExportWav() ? undefined : t("wavRequiresUpdate")} onClick={() => void saveSong("wav")}>
+            <span className="ps-file-label">{t("exportWav")}</span>
+            {exporting === "wav" && <span className="ps-file-spinner" aria-hidden="true" />}
+          </button>
         </div>
         </div>
       </header>
-      {fileNotice && <p className="ps-file-notice" role={fileNotice.error ? "alert" : "status"} data-error={fileNotice.error}>{fileNotice.text}</p>}
+      {fileNotice && createPortal(<div className="ps-file-notice" role={fileNotice.error ? "alert" : "status"} data-error={fileNotice.error}>
+        <span className="ps-file-notice-text">{fileNotice.text}</span>
+        <button type="button" className="ps-notice-dismiss" aria-label={t("dismissNotice")} title={t("dismissNotice")} onClick={() => setFileNotice(null)}>×</button>
+      </div>, document.body)}
       <dialog ref={importDialog} className="ps-import-dialog" onCancel={event => { if (fileBusy) event.preventDefault(); else setImportPending(null); }}>
         {importPending && <>
           <h2>{t("importProject")}</h2>

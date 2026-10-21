@@ -72,6 +72,9 @@ the timer. Explicit pause resets playback to the beginning, as in the UI.
 ## Project and audio files
 
 The toolbar provides **Import project**, **Export project** and **Export WAV**.
+Export progress stays inside the original button bounds. Save results and errors
+use bounded, dismissible overlays; none of these states takes space from the score.
+Success and cancellation messages disappear automatically.
 Project files use a versioned JSON envelope:
 
 ```json

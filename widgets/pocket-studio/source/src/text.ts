@@ -28,6 +28,7 @@ export const DICT: Record<string, Record<Locale, string>> = {
   savingProject: {"zh-CN": "正在保存工程…", "zh-TW": "正在儲存工程…", "en": "Saving project…"},
   fileSaved: {"zh-CN": "文件已保存。", "zh-TW": "檔案已儲存。", "en": "File saved."},
   fileSaveCancelled: {"zh-CN": "已取消导出。", "zh-TW": "已取消匯出。", "en": "Export cancelled."},
+  dismissNotice: {"zh-CN": "关闭提示", "zh-TW": "關閉提示", "en": "Dismiss notification"},
   descImportProject: {"zh-CN": "导入音乐工坊 JSON 工程，整曲校验后一次替换，保留其他小组件数据；支持 dryRun 与 expectedStorageVersion，成功导入后暂停播放，返回精简回执。", "zh-TW": "匯入音樂工坊 JSON 工程，整曲驗證後一次取代，保留其他小組件資料；支援 dryRun 與 expectedStorageVersion，成功匯入後暫停播放，回傳精簡回執。", "en": "Import a Pocket Studio JSON project with full validation and one atomic replacement. Preserves unrelated data. Supports dryRun and expectedStorageVersion. Pauses playback after a committed import. Returns a compact receipt."},
   descExportSong: {"zh-CN": "导出当前曲目：project 为可重新导入编辑的 JSON 工程，wav 为 44.1 kHz PCM16 单声道音频，包含末尾长音；打开系统保存对话框，返回保存结果，不回传文件内容。", "zh-TW": "匯出目前曲目：project 為可重新匯入編輯的 JSON 工程，wav 為 44.1 kHz PCM16 單聲道音訊，包含末尾長音；開啟系統儲存對話框，回傳儲存結果，不回傳檔案內容。", "en": "Export the current song: project saves editable JSON; wav renders 44.1 kHz PCM16 mono audio including note tails. Opens the system save dialog. Returns save status and file metadata, not file content."},
 
