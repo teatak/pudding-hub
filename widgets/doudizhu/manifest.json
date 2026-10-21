@@ -1,0 +1,21 @@
+{
+  "id": "teatak/pudding-hub/widgets/doudizhu",
+  "version": "1.0.0-preview.1",
+  "preview": true,
+  "channel": "preview",
+  "title": {
+    "zh-CN": "斗地主",
+    "zh-TW": "鬥地主",
+    "en": "Dou Dizhu"
+  },
+  "description": {
+    "zh-CN": "经典三人扑克斗地主，支持叫抢地主翻倍、暗牌防透视、人机/多模型同台与内置机器人补位。",
+    "zh-TW": "經典三人撲克鬥地主，支援叫搶地主翻倍、暗牌防透視、人機/多模型同台與內建機器人補位。",
+    "en": "Classic 3-player Dou Dizhu poker game with Call/Rob Landlord multipliers, hidden hands, multi-model play, and built-in bots."
+  },
+  "requires": {
+    "protocolVersion": 24,
+    "sdkVersion": "1"
+  },
+  "icon": "./assets/icon.svg"
+}

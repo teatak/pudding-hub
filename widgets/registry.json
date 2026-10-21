@@ -55,6 +55,33 @@
       ]
     },
     {
+      "id": "teatak/pudding-hub/widgets/doudizhu",
+      "title": {
+        "zh-CN": "斗地主",
+        "zh-TW": "鬥地主",
+        "en": "Dou Dizhu"
+      },
+      "description": {
+        "zh-CN": "经典三人扑克斗地主，支持叫抢地主翻倍、暗牌防透视、人机/多模型同台与内置机器人补位。",
+        "zh-TW": "經典三人撲克鬥地主，支援叫搶地主翻倍、暗牌防透視、人機/多模型同台與內建機器人補位。",
+        "en": "Classic 3-player Dou Dizhu poker game with Call/Rob Landlord multipliers, hidden hands, multi-model play, and built-in bots."
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIyNiIgZmlsbD0iI0I5MUMxQyIvPgogIDxyZWN0IHg9IjYiIHk9IjYiIHdpZHRoPSIxMTYiIGhlaWdodD0iMTE2IiByeD0iMjIiIHN0cm9rZT0iI0ZDQTVBNSIgc3Ryb2tlLW9wYWNpdHk9IjAuMjUiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxnIHRyYW5zZm9ybT0icm90YXRlKC0xNCA0NiA2OCkiPgogICAgPHJlY3QgeD0iMjAiIHk9IjI2IiB3aWR0aD0iNTIiIGhlaWdodD0iNzQiIHJ4PSI4IiBmaWxsPSIjRkZGQkVCIiBzdHJva2U9IiNEOTc3MDYiIHN0cm9rZS13aWR0aD0iMiIvPgogICAgPHRleHQgeD0iMjciIHk9IjQ0IiBmaWxsPSIjMUUyOTNCIiBmb250LWZhbWlseT0iLWFwcGxlLXN5c3RlbSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNSIgZm9udC13ZWlnaHQ9IjgwMCI+QTwvdGV4dD4KICAgIDxwYXRoIGQ9Ik00NiA1MkM0NiA1MiAzNiA2MiAzNiA2OEMzNiA3MiAzOSA3NSA0MyA3NUM0NSA3NSA0NiA3NCA0NiA3NEM0NiA3NCA0NyA3NSA0OSA3NUM1MyA3NSA1NiA3MiA1NiA2OEM1NiA2MiA0NiA1MiA0NiA1MloiIGZpbGw9IiMxRTI5M0IiLz4KICA8L2c+CiAgPGcgdHJhbnNmb3JtPSJyb3RhdGUoMTAgNzggNjYpIj4KICAgIDxyZWN0IHg9IjUyIiB5PSIyNCIgd2lkdGg9IjU0IiBoZWlnaHQ9Ijc2IiByeD0iOCIgZmlsbD0iI0ZGRkZGRiIgc3Ryb2tlPSIjRjU5RTBCIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogICAgPHRleHQgeD0iNTkiIHk9IjQyIiBmaWxsPSIjREMyNjI2IiBmb250LWZhbWlseT0iLWFwcGxlLXN5c3RlbSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9IjgwMCI+546LPC90ZXh0PgogICAgPHBhdGggZD0iTTY0IDc0TDY4IDU0TDc5IDYzTDkwIDU0TDk0IDc0SDY0WiIgZmlsbD0iI0Y1OUUwQiIgc3Ryb2tlPSIjQjQ1MzA5IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICAgIDxjaXJjbGUgY3g9IjY4IiBjeT0iNTAiIHI9IjIuNSIgZmlsbD0iI0VGNDQ0NCIvPgogICAgPGNpcmNsZSBjeD0iNzkiIGN5PSI0OCIgcj0iMyIgZmlsbD0iI0VGNDQ0NCIvPgogICAgPGNpcmNsZSBjeD0iOTAiIGN5PSI1MCIgcj0iMi41IiBmaWxsPSIjRUY0NDQ0Ii8+CiAgPC9nPgo8L3N2Zz4K",
+      "releases": [
+        {
+          "version": "1.0.0-preview.1",
+          "package": "./doudizhu/releases/1.0.0-preview.1/doudizhu.pudding-widget.json",
+          "packageHash": "ba3077fbb6095218b1b0aad3bd89674e0caf78a7ea6fb3e85082c8721a51ea6f",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        }
+      ]
+    },
+    {
       "id": "teatak/pudding-hub/widgets/gomoku",
       "title": {
         "zh-CN": "五子棋",
