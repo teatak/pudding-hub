@@ -11,6 +11,27 @@ export function setLocale(locale: string) {
 }
 
 export const DICT: Record<string, Record<Locale, string>> = {
+  fileActions: {"zh-CN": "工程与音频", "zh-TW": "工程與音訊", "en": "Project and audio"},
+  importProject: {"zh-CN": "导入工程", "zh-TW": "匯入工程", "en": "Import project"},
+  exportProject: {"zh-CN": "导出工程", "zh-TW": "匯出工程", "en": "Export project"},
+  exportWav: {"zh-CN": "导出 WAV", "zh-TW": "匯出 WAV", "en": "Export WAV"},
+  wavRequiresUpdate: {"zh-CN": "请升级 Pudding 后导出 WAV，当前仍可编辑和导出工程。", "zh-TW": "請升級 Pudding 後匯出 WAV，目前仍可編輯和匯出工程。", "en": "Update Pudding to export WAV. Editing and project export are still available."},
+  importReplacesSong: {"zh-CN": "导入会替换当前曲目。需要保留时，请先导出工程。", "zh-TW": "匯入會取代目前曲目。需要保留時，請先匯出工程。", "en": "Import replaces the current song. Export its project first if you want to keep it."},
+  importSummary: {"zh-CN": "{bars} 小节 · {tracks} 条音轨 · BPM {bpm}", "zh-TW": "{bars} 小節 · {tracks} 條音軌 · BPM {bpm}", "en": "{bars} bars · {tracks} tracks · BPM {bpm}"},
+  confirmImport: {"zh-CN": "导入并替换", "zh-TW": "匯入並取代", "en": "Import and replace"},
+  cancelImport: {"zh-CN": "取消", "zh-TW": "取消", "en": "Cancel"},
+  projectImported: {"zh-CN": "工程已导入，可继续编辑。", "zh-TW": "工程已匯入，可繼續編輯。", "en": "Project imported. You can continue editing."},
+  projectMalformed: {"zh-CN": "无法读取工程文件，请选择有效的音乐工坊 JSON 工程。", "zh-TW": "無法讀取工程檔案，請選擇有效的音樂工坊 JSON 工程。", "en": "Cannot read this project. Select a valid Pocket Studio JSON project."},
+  projectVersionError: {"zh-CN": "工程格式应为 pudding.pocket-studio，版本应为 1。", "zh-TW": "工程格式應為 pudding.pocket-studio，版本應為 1。", "en": "Project format must be pudding.pocket-studio, version 1."},
+  projectInvalid: {"zh-CN": "工程字段无效：{field}。请检查音轨、16 步数组和音符范围。", "zh-TW": "工程欄位無效：{field}。請檢查音軌、16 步陣列和音符範圍。", "en": "Invalid project fields: {field}. Check track keys, 16-step arrays and note ranges."},
+  projectTooLarge: {"zh-CN": "工程文件不能超过 256 KiB。", "zh-TW": "工程檔案不能超過 256 KiB。", "en": "Project files must not exceed 256 KiB."},
+  renderingWav: {"zh-CN": "正在生成 WAV…", "zh-TW": "正在產生 WAV…", "en": "Rendering WAV…"},
+  savingProject: {"zh-CN": "正在保存工程…", "zh-TW": "正在儲存工程…", "en": "Saving project…"},
+  fileSaved: {"zh-CN": "文件已保存。", "zh-TW": "檔案已儲存。", "en": "File saved."},
+  fileSaveCancelled: {"zh-CN": "已取消导出。", "zh-TW": "已取消匯出。", "en": "Export cancelled."},
+  descImportProject: {"zh-CN": "导入音乐工坊 JSON 工程，整曲校验后一次替换，保留其他小组件数据；支持 dryRun 与 expectedStorageVersion，成功导入后暂停播放，返回精简回执。", "zh-TW": "匯入音樂工坊 JSON 工程，整曲驗證後一次取代，保留其他小組件資料；支援 dryRun 與 expectedStorageVersion，成功匯入後暫停播放，回傳精簡回執。", "en": "Import a Pocket Studio JSON project with full validation and one atomic replacement. Preserves unrelated data. Supports dryRun and expectedStorageVersion. Pauses playback after a committed import. Returns a compact receipt."},
+  descExportSong: {"zh-CN": "导出当前曲目：project 为可重新导入编辑的 JSON 工程，wav 为 44.1 kHz PCM16 单声道音频，包含末尾长音；打开系统保存对话框，返回保存结果，不回传文件内容。", "zh-TW": "匯出目前曲目：project 為可重新匯入編輯的 JSON 工程，wav 為 44.1 kHz PCM16 單聲道音訊，包含末尾長音；開啟系統儲存對話框，回傳儲存結果，不回傳檔案內容。", "en": "Export the current song: project saves editable JSON; wav renders 44.1 kHz PCM16 mono audio including note tails. Opens the system save dialog. Returns save status and file metadata, not file content."},
+
   presetGroup: { "zh-CN": "预设曲目", "zh-TW": "預設曲目", "en": "Presets" },
   barActions: { "zh-CN": "小节操作", "zh-TW": "小節操作", "en": "Bar actions" },
   invalidRange: {"zh-CN": "{field} 必须是 {min}–{max} 范围内的整数。", "zh-TW": "{field} 必須是 {min}–{max} 範圍內的整數。", "en": "{field} must be an integer in range {min}–{max}."},

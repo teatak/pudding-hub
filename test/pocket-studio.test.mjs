@@ -9,13 +9,13 @@ const root = fileURLToPath(new URL("../widgets/pocket-studio", import.meta.url))
 test("Pocket Studio release package exists, is verified, and contains Mario & Donkey Kong presets", async () => {
   const pkgPath = path.join(
     root,
-    "releases/1.0.0-preview.16/pocket-studio.pudding-widget.json",
+    "releases/1.0.0-preview.20/pocket-studio.pudding-widget.json",
   );
   const raw = await fs.readFile(pkgPath, "utf8");
   const pkg = JSON.parse(raw);
 
   assert.equal(pkg.id, "teatak/pudding-hub/widgets/pocket-studio");
-  assert.equal(pkg.version, "1.0.0-preview.16");
+  assert.equal(pkg.version, "1.0.0-preview.20");
   assert.equal(pkg.preview, true);
   assert.equal(pkg.requires.protocolVersion, 24);
   assert.equal(pkg.requires.sdkVersion, "1");
@@ -26,6 +26,10 @@ test("Pocket Studio release package exists, is verified, and contains Mario & Do
     "src/api.ts",
     "src/song.ts",
     "src/audio.ts",
+    "src/instruments.ts",
+    "src/project.ts",
+    "src/render.ts",
+    "src/wav.ts",
     "src/demoTracks.ts",
     "src/types.ts",
     "src/text.ts",
@@ -83,7 +87,7 @@ test("Pocket Studio release package exists, is verified, and contains Mario & Do
 
 test("Pocket Studio release matches the exact shipped source and file hashes", async () => {
   const { createHash } = await import("node:crypto");
-  const pkg = JSON.parse(await fs.readFile(path.join(root, "releases/1.0.0-preview.16/pocket-studio.pudding-widget.json"), "utf8"));
+  const pkg = JSON.parse(await fs.readFile(path.join(root, "releases/1.0.0-preview.20/pocket-studio.pudding-widget.json"), "utf8"));
   for (const [file, content] of Object.entries(pkg.source.files)) {
     assert.equal(await fs.readFile(path.join(root, "source", file), "utf8"), content, file);
     assert.equal(createHash("sha256").update(content).digest("hex"), pkg.fileHashes[file]);

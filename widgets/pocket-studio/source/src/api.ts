@@ -3,11 +3,19 @@ import { z } from "zod";
 import type { EditAction, EditOptions, ReadOptions } from "./types";
 import { INSTRUMENT_IDS, readSong, applyEdits, readSongView } from "./song";
 import { t, errorText, setLocale } from "./text";
+import { encodeProject, parseProject, maxProjectBytes } from "./project";
+import { renderSongWav } from "./render";
+import { bytesToBase64 } from "./wav";
 export { INSTRUMENT_IDS, getDefaultSong, readSong, editSong } from "./song";
 
 // One widget instance serializes read/modify/write. Storage CAS still protects
 // other open instances; an explicit version also protects a model's earlier read.
 let writeQueue: Promise<unknown> = Promise.resolve();
+function enqueue<T>(execute: () => Promise<T>) {
+  const next = writeQueue.then(execute, execute);
+  writeQueue = next.then(() => {}, () => {});
+  return next;
+}
 export function editBatch(actions: EditAction[], options: EditOptions = {}, signal?: AbortSignal) {
   const execute = async () => {
     if (signal?.aborted) throw new Error(t("cancelled"));
@@ -28,9 +36,45 @@ export function editBatch(actions: EditAction[], options: EditOptions = {}, sign
       trackCount: result.song.tracks.length, storageVersion: saved.version,
     };
   };
-  const next = writeQueue.then(execute, execute);
-  writeQueue = next.then(() => {}, () => {});
-  return next;
+  return enqueue(execute);
+}
+
+export function importSong(projectJSON: string, options: EditOptions = {}, signal?: AbortSignal) {
+  return enqueue(async () => {
+    if (signal?.aborted) throw new Error(t("cancelled"));
+    const project = parseProject(projectJSON), old = await pudding.storage.read({ signal });
+    if (options.expectedStorageVersion !== undefined && options.expectedStorageVersion !== old.version) throw new Error(t("storageConflict").replace("{version}", String(old.version)));
+    if (signal?.aborted) throw new Error(t("cancelled"));
+    const changed = JSON.stringify(old.data?.song) !== JSON.stringify(project.song);
+    const committed = changed && !options.dryRun;
+    const saved = committed ? await pudding.storage.write({ expectedVersion: old.version, data: { ...old.data, song: project.song } }) : old;
+    if (committed) playbackController?.pause();
+    return { dryRun: Boolean(options.dryRun), changed, committed, totalBars: project.song.bars.length, trackCount: project.song.tracks.length, storageVersion: saved.version };
+  });
+}
+
+export function canExportWav() {
+  const host = pudding as typeof pudding & { capabilities?: { binaryFileExport?: boolean } };
+  return host.capabilities?.binaryFileExport === true;
+}
+
+export async function exportSong(format: "project" | "wav", signal?: AbortSignal) {
+  if (format === "wav" && !canExportWav()) throw new Error(t("wavRequiresUpdate"));
+  await writeQueue;
+  const old = await pudding.storage.read({ signal }), song = readSong(old.data);
+  if (signal?.aborted) throw new Error(t("cancelled"));
+  if (format === "project") {
+    const content = encodeProject(song);
+    const result = await pudding.exportFile({ filename: "pocket-studio.pudding-music.json", content });
+    return { saved: result.saved, format, byteLength: new TextEncoder().encode(content).length };
+  }
+  const rendered = await renderSongWav(song);
+  if (signal?.aborted) throw new Error(t("cancelled"));
+  // An optional host extension on a separate value also typechecks with the
+  // text-only SDK. The capability check prevents sending it to older hosts.
+  const file = { filename: "pocket-studio.wav", content: bytesToBase64(rendered.bytes), encoding: "base64" as const };
+  const result = await pudding.exportFile(file);
+  return { saved: result.saved, format, byteLength: rendered.bytes.length, durationSeconds: rendered.durationSeconds, sampleRate: rendered.sampleRate };
 }
 
 export function edit(action: EditAction, signal?: AbortSignal, options: EditOptions = {}) {
@@ -114,6 +158,16 @@ function register() {
     });
   };
   return [
+    pudding.defineInterface({
+      name: "importProject", description: t("descImportProject"),
+      input: z.object({ projectJSON: z.string().max(maxProjectBytes), ...options }).strict(),
+      run: wrap(async (input: { projectJSON: string } & EditOptions, signal) => importSong(input.projectJSON, input, signal)),
+    }),
+    pudding.defineInterface({
+      name: "exportSong", description: t("descExportSong"),
+      input: z.object({ format: z.enum(["project", "wav"]) }).strict(),
+      run: wrap(async (input: { format: "project" | "wav" }, signal) => exportSong(input.format, signal)),
+    }),
     pudding.defineInterface({
       name: "getSong", description: t("descGetSong"),
       input: z.object({

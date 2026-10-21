@@ -9,7 +9,9 @@ const require = createRequire(path.join(desktop, "web/package.json"));
 const source = new URL("../widgets/pocket-studio/source/src/", import.meta.url);
 const interfaces = new Map();
 let stored, writes, locale = "en", localeChanged, failWrite = false, readGate;
+let exported = [], exportSaved = true;
 globalThis.__musicSDK = {
+  exportFile: async request => { exported.push(request); return { saved: exportSaved }; },
   storage: {
     async read({ signal } = {}) { if (readGate) await readGate; signal?.throwIfAborted(); return structuredClone(stored); },
     async write(input) {
@@ -33,6 +35,8 @@ const hook = registerHooks({ resolve(specifier, context, next) {
   return next(specifier, context);
 } });
 const api = await import(new URL("api.ts", source));
+const { encodeProject, parseProject, normalizeSong, maxProjectBytes } = await import(new URL("project.ts", source));
+const { encodeWav, bytesToBase64 } = await import(new URL("wav.ts", source));
 const { applyEdits } = await import(new URL("song.ts", source));
 const { DICT } = await import(new URL("text.ts", source));
 const { toJSONSchema } = await import(pathToFileURL(require.resolve("zod")).href);
@@ -46,7 +50,8 @@ const step = (barIndex = 0, stepIndex = 4) => ({ action: "setStep", barIndex, tr
 let removePlayback;
 beforeEach(() => {
   removePlayback?.(); removePlayback = null;
-  locale = "en"; localeChanged(); writes = 0; readGate = null; failWrite = false;
+  locale = "en"; localeChanged(); writes = 0; exported = []; exportSaved = true; readGate = null; failWrite = false;
+  delete globalThis.__musicSDK.capabilities;
   stored = { version: 7, data: { song: api.getDefaultSong(), unrelated: { preserve: true } } };
 });
 
@@ -223,4 +228,93 @@ test("three locales have complete placeholders, localized interface schemas and 
       assert.ok(JSON.stringify(toJSONSchema(definition.input, { io: "input" })).length <= 16000, definition.name);
     }
   }
+});
+
+test("project export round-trips every track and note; import commits once and can be edited afterwards", async () => {
+  const song = normalizeSong(api.getDefaultSong());
+  song.tracks[0].volume = 0.5;
+  const content = encodeProject(song);
+  assert.deepEqual(parseProject(content).song, song);
+  const preview = await api.importSong(content, { dryRun: true, expectedStorageVersion: 7 });
+  assert.equal(preview.committed, false); assert.equal(writes, 0);
+  await api.importSong(content, { expectedStorageVersion: 7 });
+  assert.equal(writes, 1); assert.deepEqual(stored.data.unrelated, { preserve: true });
+  await invoke("setStep", { barIndex: 0, trackKey: track, stepIndex: 0, enabled: true, pitch: 523.25, duration: 4 });
+  assert.equal(stored.data.song.bars[0].pitches[track][0], 523.25);
+  assert.equal(stored.data.song.bars[0].durations[track][0], 4);
+  assert.equal(stored.data.song.tracks[0].volume, 0.5);
+});
+
+test("malformed, oversized, future-version and inconsistent projects never overwrite song data", async () => {
+  const project = JSON.parse(encodeProject(api.getDefaultSong())), before = structuredClone(stored);
+  const invalid = change => { const copy = structuredClone(project); change(copy); return JSON.stringify(copy); };
+  for (const content of ["not JSON", "null", " ".repeat(maxProjectBytes + 1),
+    invalid(p => { p.version = 99; }),
+    invalid(p => { p.song.tracks.push({ ...p.song.tracks[0] }); }),
+    invalid(p => { delete p.song.bars[0].steps[track]; }),
+    invalid(p => { p.song.bars[0].steps.missing = Array(16).fill(false); }),
+    invalid(p => { p.song.bars[0].pitches[track][0] = -440; }),
+    invalid(p => { p.song.bars[0].durations[track][0] = 33; }),
+    invalid(p => { p.song.tracks[0].instId = "unknown"; }),
+    invalid(p => { p.song.bars[0].steps[track] = [true]; }),
+    invalid(p => { p.script = "do not execute"; }),
+  ]) await assert.rejects(api.importSong(content));
+  assert.equal(writes, 0); assert.deepEqual(stored, before);
+  await assert.rejects(api.importSong(JSON.stringify(project), { expectedStorageVersion: 6 }), /storageVersion is 7/);
+  assert.equal(writes, 0);
+});
+
+test("project export saves editable JSON without mutating or pausing; cancellation is reported", async () => {
+  let paused = 0;
+  removePlayback = api.registerPlaybackController({ play() {}, pause() { paused++; }, isPlaying: () => true, getStep: () => 4 });
+  const result = await api.exportSong("project");
+  assert.equal(result.saved, true); assert.equal(result.format, "project");
+  assert.equal(exported[0].filename, "pocket-studio.pudding-music.json");
+  assert.deepEqual(parseProject(exported[0].content).song, normalizeSong(stored.data.song));
+  exportSaved = false;
+  assert.equal((await api.exportSong("project")).saved, false);
+  assert.equal(writes, 0); assert.equal(paused, 0);
+  stored.data.song.bpm = 100;
+  await api.importSong(exported[0].content);
+  assert.equal(paused, 1);
+});
+
+test("older hosts keep project export and editing; WAV requests fail early with a localized upgrade hint", async () => {
+  let paused = 0;
+  removePlayback = api.registerPlaybackController({ play() {}, pause() { paused++; }, isPlaying: () => true, getStep: () => 4 });
+  for (const language of ["zh-CN", "zh-TW", "en"]) {
+    locale = language; localeChanged();
+    for (const capabilities of [undefined, {}, { binaryFileExport: false }, { binaryFileExport: "true" }]) {
+      if (capabilities) globalThis.__musicSDK.capabilities = capabilities;
+      else delete globalThis.__musicSDK.capabilities;
+      assert.equal(api.canExportWav(), false);
+      const before = structuredClone(stored), calls = exported.length;
+      await assert.rejects(invoke("exportSong", { format: "wav" }), { message: DICT.wavRequiresUpdate[language] });
+      assert.equal(exported.length, calls, "unsupported WAV never sends a host request");
+      assert.deepEqual(stored, before);
+      assert.equal(paused, 0);
+    }
+  }
+  assert.equal((await api.exportSong("project")).saved, true);
+  await invoke("setBpm", { bpm: 100 });
+  await api.importSong(exported[0].content);
+  assert.equal(stored.data.song.bpm, 128);
+  assert.equal(writes, 2);
+  globalThis.__musicSDK.capabilities = { binaryFileExport: true };
+  assert.equal(api.canExportWav(), true, "only explicit host support enables WAV");
+});
+
+test("WAV encoding has valid PCM16 mono headers, correct duration and normalized finite samples", () => {
+  const bytes = encodeWav(new Float32Array([-0.5, 0, 0.5, NaN]), 44100), view = new DataView(bytes.buffer);
+  assert.equal(new TextDecoder().decode(bytes.slice(0, 4)), "RIFF");
+  assert.equal(new TextDecoder().decode(bytes.slice(8, 12)), "WAVE");
+  assert.equal(view.getUint32(4, true), bytes.length - 8);
+  assert.equal(view.getUint16(20, true), 1); assert.equal(view.getUint16(22, true), 1);
+  assert.equal(view.getUint32(24, true), 44100); assert.equal(view.getUint32(28, true), 88200);
+  assert.equal(view.getUint16(34, true), 16); assert.equal(view.getUint32(40, true), 8);
+  assert.equal(view.getInt16(44, true), -16384); assert.equal(view.getInt16(48, true), 16384); assert.equal(view.getInt16(50, true), 0);
+  const loud = encodeWav(new Float32Array([-4, 4]), 44100), loudView = new DataView(loud.buffer);
+  assert.ok(Math.abs(loudView.getInt16(44, true)) < 32768); assert.ok(loudView.getInt16(46, true) < 32767);
+  assert.deepEqual(Uint8Array.from(atob(bytesToBase64(bytes)), c => c.charCodeAt(0)), bytes);
+  assert.throws(() => encodeWav(new Float32Array(1), 0));
 });

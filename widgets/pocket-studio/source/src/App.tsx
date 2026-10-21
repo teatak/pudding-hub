@@ -1,23 +1,20 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { useStorage, useWidgetLocale } from "@pudding/widget";
+import { pudding, useStorage, useWidgetLocale } from "@pudding/widget";
 import { type SongState, type Instrument } from "./types";
-import { edit, editSong, readSong, getDefaultSong, registerPlaybackController } from "./api";
+import { edit, editSong, readSong, getDefaultSong, registerPlaybackController, importSong, exportSong, canExportWav } from "./api";
 import "./api";
-import {
-  getAudioContext,
-  audioState,
-  playSquareWave,
-  playTriangleBass,
-  playKick,
-  playSnare,
-  playHat,
-  playAnalogBass,
-  playSoftPluck,
-  playRhodes,
-  playMarimba
-} from "./audio";
+import { getAudioContext, audioState } from "./audio";
+import { playInstrument, resolvePitch } from "./instruments";
+import { parseProject, maxProjectBytes } from "./project";
 import { t, setLocale, errorText } from "./text";
 import "./style.css";
+
+const PRESETS = [
+  ["mario", "presetMario"],
+  ["donkeyKong", "presetDonkeyKong"],
+  ["oriental", "presetOriental"],
+  ["lofi", "presetLofi"],
+] as const;
 
 // 音乐工坊官方统一徽标 (与 assets/icon.svg 100% 保持一致)
 function StudioBrandIcon({ size = 28 }: { size?: number }) {
@@ -95,110 +92,93 @@ function InstrumentSvgIcon({ type }: { type: string }) {
   }
 }
 
-// 乐器音色库 (支持持续发音时长 duration)
-const INSTRUMENT_MAP: Record<string, Instrument & { playSound: (time: number, step: number, pitch?: number | null, duration?: number) => void }> = {
-  marioLead: {
-    id: "marioLead",
-    name: "8-Bit 经典方波",
-    category: "Melodic",
-    iconType: "mario",
-    colorClass: "is-mario",
-    desc: "经典复古脉冲方波",
-    playSound: (time, _s, pitch, dur) => playSquareWave(pitch || 659.25, time, dur || 0.12)
+// The live player and offline export use the same synthesizers and pitch rules.
+const INSTRUMENTS: Instrument[] = [
+  {
+    "id": "marioLead",
+    "name": "8-Bit 经典方波",
+    "category": "Melodic",
+    "iconType": "mario",
+    "colorClass": "is-mario",
+    "desc": "经典复古脉冲方波"
   },
-  kongLead: {
-    id: "kongLead",
-    name: "街机 8-Bit 方波",
-    category: "Melodic",
-    iconType: "kong",
-    colorClass: "is-kong",
-    desc: "街机跳跃脉冲波",
-    playSound: (time, _s, pitch, dur) => playSquareWave(pitch || 349.23, time, dur || 0.16)
+  {
+    "id": "kongLead",
+    "name": "街机 8-Bit 方波",
+    "category": "Melodic",
+    "iconType": "kong",
+    "colorClass": "is-kong",
+    "desc": "街机跳跃脉冲波"
   },
-  marioBass: {
-    id: "marioBass",
-    name: "8-Bit 三角波低音",
-    category: "Bass",
-    iconType: "bass",
-    colorClass: "is-bass",
-    desc: "弹性复古芯片低音",
-    playSound: (time, _s, pitch, dur) => playTriangleBass(pitch || 130.81, time, dur || 0.18)
+  {
+    "id": "marioBass",
+    "name": "8-Bit 三角波低音",
+    "category": "Bass",
+    "iconType": "bass",
+    "colorClass": "is-bass",
+    "desc": "弹性复古芯片低音"
   },
-  kick: {
-    id: "kick",
-    name: "808 底鼓 (Kick)",
-    category: "Drums",
-    iconType: "kick",
-    colorClass: "is-kick",
-    desc: "下潜重低音",
-    playSound: (time) => playKick(time)
+  {
+    "id": "kick",
+    "name": "808 底鼓 (Kick)",
+    "category": "Drums",
+    "iconType": "kick",
+    "colorClass": "is-kick",
+    "desc": "下潜重低音"
   },
-  snare: {
-    id: "snare",
-    name: "8-Bit 军鼓 (Snare)",
-    category: "Drums",
-    iconType: "snare",
-    colorClass: "is-snare",
-    desc: "清脆切分敲击",
-    playSound: (time) => playSnare(time)
+  {
+    "id": "snare",
+    "name": "8-Bit 军鼓 (Snare)",
+    "category": "Drums",
+    "iconType": "snare",
+    "colorClass": "is-snare",
+    "desc": "清脆切分敲击"
   },
-  hat: {
-    id: "hat",
-    name: "闭镲 (Hi-Hat)",
-    category: "Drums",
-    iconType: "hat",
-    colorClass: "is-hat",
-    desc: "金属碎拍律动",
-    playSound: (time) => playHat(time)
+  {
+    "id": "hat",
+    "name": "闭镲 (Hi-Hat)",
+    "category": "Drums",
+    "iconType": "hat",
+    "colorClass": "is-hat",
+    "desc": "金属碎拍律动"
   },
-  lead: {
-    id: "lead",
-    name: "五声音阶琴",
-    category: "Melodic",
-    iconType: "lead",
-    colorClass: "is-lead",
-    desc: "空灵自然音色",
-    playSound: (time, step, pitch, dur) => {
-      const pentatonic = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
-      playSoftPluck(pitch || pentatonic[step % pentatonic.length], time, dur || 0.38);
-    }
+  {
+    "id": "lead",
+    "name": "五声音阶琴",
+    "category": "Melodic",
+    "iconType": "lead",
+    "colorClass": "is-lead",
+    "desc": "空灵自然音色"
   },
-  bass: {
-    id: "bass",
-    name: "模拟低音 Bass",
-    category: "Bass",
-    iconType: "bass",
-    colorClass: "is-bass",
-    desc: "温暖低通贝斯",
-    playSound: (time, step, pitch, dur) => {
-      const progression = [65.41, 87.31, 98.00, 110.00];
-      playAnalogBass(pitch || progression[Math.floor(step / 16) % 4], time, dur || 0.32);
-    }
+  {
+    "id": "bass",
+    "name": "模拟低音 Bass",
+    "category": "Bass",
+    "iconType": "bass",
+    "colorClass": "is-bass",
+    "desc": "温暖低通贝斯"
   },
-  epiano: {
-    id: "epiano",
-    name: "电钢琴 Rhodes",
-    category: "Melodic",
-    iconType: "synth",
-    colorClass: "is-snare",
-    desc: "温润爵士和弦",
-    playSound: (time, step, pitch, dur) => {
-      const scale = [261.63, 329.63, 392.00, 493.88, 523.25];
-      playRhodes(pitch || scale[step % scale.length], time, dur || 0.5);
-    }
+  {
+    "id": "epiano",
+    "name": "电钢琴 Rhodes",
+    "category": "Melodic",
+    "iconType": "synth",
+    "colorClass": "is-snare",
+    "desc": "温润爵士和弦"
   },
-  marimba: {
-    id: "marimba",
-    name: "木琴 Marimba",
-    category: "Melodic",
-    iconType: "synth",
-    colorClass: "is-hat",
-    desc: "清脆热带木质",
-    playSound: (time, _step, pitch, dur) => {
-      playMarimba(pitch || 440, time, dur || 0.22);
-    }
+  {
+    "id": "marimba",
+    "name": "木琴 Marimba",
+    "category": "Melodic",
+    "iconType": "synth",
+    "colorClass": "is-hat",
+    "desc": "清脆热带木质"
   }
-};
+];
+const INSTRUMENT_MAP: Record<string, Instrument & { playSound: (time: number, step: number, pitch?: number | null, duration?: number, volume?: number) => void }> = Object.fromEntries(INSTRUMENTS.map(inst => [inst.id, {
+  ...inst,
+  playSound: (time: number, step: number, pitch?: number | null, duration?: number, volume = 1) => playInstrument(inst.id, time, step, pitch, duration, undefined, volume),
+}]));
 
 function getInstName(instId: string): string {
   const key = `inst_${instId}_name`;
@@ -250,29 +230,7 @@ function midiToNoteName(midi: number): string {
   return `${NOTE_LABELS[semitone]}${octave}`;
 }
 
-function getResolvedPitch(instId: string, stepIndex: number, rawPitch?: number | null): number | null {
-  const inst = INSTRUMENT_MAP[instId];
-  if (!inst || inst.category === "Drums") return null;
-  if (typeof rawPitch === "number" && rawPitch > 0) return rawPitch;
-
-  if (instId === "marioLead") return 659.25;
-  if (instId === "kongLead") return 349.23;
-  if (instId === "marioBass") return 130.81;
-  if (instId === "lead") {
-    const scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
-    return scale[stepIndex % scale.length];
-  }
-  if (instId === "bass") {
-    const progression = [65.41, 87.31, 98.00, 110.00];
-    return progression[Math.floor(stepIndex / 16) % 4] || 65.41;
-  }
-  if (instId === "epiano") {
-    const scale = [261.63, 329.63, 392.00, 493.88, 523.25];
-    return scale[stepIndex % scale.length];
-  }
-  if (instId === "marimba") return 440.00;
-  return 440.00;
-}
+const getResolvedPitch = resolvePitch;
 
 interface ActivePopoverState {
   trackKey: string;
@@ -308,6 +266,12 @@ export default function App() {
   const [pickerTarget, setPickerTarget] = useState<string | null>(null);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [fileBusy, setFileBusy] = useState(false);
+  const [fileNotice, setFileNotice] = useState<{ error: boolean; text: string } | null>(null);
+  const [importPending, setImportPending] = useState<{ content: string; project: ReturnType<typeof parseProject>; version: number } | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
+  const importDialog = useRef<HTMLDialogElement>(null);
+  const presetMenu = useRef<HTMLDetailsElement>(null);
   const [activePopover, setActivePopover] = useState<ActivePopoverState | null>(null);
 
   const [draggingNote, setDraggingNote] = useState<{
@@ -331,6 +295,56 @@ export default function App() {
 
   const totalBars = song.bars.length;
   const totalSteps = totalBars * 16;
+
+  useEffect(() => {
+    const dismiss = (event: PointerEvent) => {
+      if (event.target instanceof Node && !presetMenu.current?.contains(event.target) && presetMenu.current) {
+        presetMenu.current.open = false;
+      }
+    };
+    document.addEventListener("pointerdown", dismiss);
+    return () => document.removeEventListener("pointerdown", dismiss);
+  }, []);
+
+  useEffect(() => {
+    const dialog = importDialog.current;
+    if (importPending && dialog && !dialog.open) dialog.showModal();
+    if (!importPending && dialog?.open) dialog.close();
+  }, [importPending]);
+
+  async function prepareImport(file: File) {
+    setFileBusy(true); setFileNotice(null);
+    try {
+      if (file.size > maxProjectBytes) throw new Error(t("projectTooLarge"));
+      const content = await file.text(), project = parseProject(content);
+      const saved = await pudding.storage.read();
+      setImportPending({ content, project, version: saved.version });
+    } catch (error) { setFileNotice({ error: true, text: errorText(error) }); }
+    finally { setFileBusy(false); }
+  }
+
+  async function confirmImport() {
+    if (!importPending) return;
+    setFileBusy(true);
+    try {
+      await importSong(importPending.content, { expectedStorageVersion: importPending.version });
+      songRef.current = importPending.project.song;
+      setSong(importPending.project.song);
+      isPlayingRef.current = false; setIsPlaying(false);
+      setActivePopover(null); setIsPickerOpen(false);
+      setFileNotice({ error: false, text: t("projectImported") });
+    } catch (error) { setFileNotice({ error: true, text: errorText(error) }); }
+    finally { setImportPending(null); setFileBusy(false); }
+  }
+
+  async function saveSong(format: "project" | "wav") {
+    setFileBusy(true); setFileNotice({ error: false, text: t(format === "wav" ? "renderingWav" : "savingProject") });
+    try {
+      const result = await exportSong(format);
+      setFileNotice({ error: false, text: t(result.saved ? "fileSaved" : "fileSaveCancelled") });
+    } catch (error) { setFileNotice({ error: true, text: errorText(error) }); }
+    finally { setFileBusy(false); }
+  }
 
   async function perform(action: Parameters<typeof edit>[0]) {
     setBusy(true);
@@ -401,7 +415,7 @@ export default function App() {
                 const pitch = barData.pitches?.[t.trackKey]?.[stepInBar];
                 const durSteps = barData.durations?.[t.trackKey]?.[stepInBar] || 1;
                 const durSec = durSteps * stepSec;
-                inst.playSound(now, currentGlobalStep, pitch, durSec);
+                inst.playSound(now, currentGlobalStep, pitch, durSec, t.volume ?? 1);
               }
             }
           });
@@ -458,7 +472,8 @@ export default function App() {
   // 键盘快捷键：空格播放/暂停；Escape 关闭气泡；Delete/Backspace 删除当前选中的音符
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLElement && e.target.tagName === "INPUT") return;
+      if (importPending) return;
+      if (e.target instanceof HTMLElement && e.target.closest('input,button,summary,select,textarea,[contenteditable="true"]')) return;
 
       if (e.code === "Space") {
         e.preventDefault();
@@ -483,7 +498,7 @@ export default function App() {
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [activePopover]);
+  }, [activePopover, importPending]);
 
   // 方案 A：右侧拖拽手柄放长音符
   function startDrag(
@@ -592,40 +607,42 @@ export default function App() {
         </div>
 
         <div className="ps-toolbar-secondary">
-        <div className="ps-preset-group" role="group" aria-label={t("presetGroup")}>
-          <button
-            type="button"
-            className="ps-btn-pill"
-            disabled={busy}
-            onClick={() => void perform({ action: "loadPreset", presetName: "mario" })}
-          >
-            🕹️ {t("presetMario")}
-          </button>
-          <button
-            type="button"
-            className="ps-btn-pill"
-            disabled={busy}
-            onClick={() => void perform({ action: "loadPreset", presetName: "donkeyKong" })}
-          >
-            👾 {t("presetDonkeyKong")}
-          </button>
-          <button
-            type="button"
-            className="ps-btn-pill"
-            disabled={busy}
-            onClick={() => void perform({ action: "loadPreset", presetName: "oriental" })}
-          >
-            🎋 {t("presetOriental")}
-          </button>
-          <button
-            type="button"
-            className="ps-btn-pill"
-            disabled={busy}
-            onClick={() => void perform({ action: "loadPreset", presetName: "lofi" })}
-          >
-            ☕ {t("presetLofi")}
-          </button>
-        </div>
+        <details
+          ref={presetMenu}
+          className="ps-preset-menu"
+          onBlur={event => {
+            if (!event.currentTarget.contains(event.relatedTarget)) event.currentTarget.open = false;
+          }}
+          onKeyDown={event => {
+            if (event.key === "Escape") {
+              event.preventDefault();
+              event.stopPropagation();
+              event.currentTarget.open = false;
+              event.currentTarget.querySelector("summary")?.focus();
+            }
+          }}
+        >
+          <summary className="ps-btn-pill">
+            {t("presetGroup")}
+            <svg className="ps-preset-chevron" aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="m3 4.5 3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </summary>
+          <div className="ps-preset-options" role="group" aria-label={t("presetGroup")}>
+            {PRESETS.map(([name, label]) => <button
+              key={name}
+              type="button"
+              className="ps-btn-pill"
+              data-preset={name}
+              disabled={busy}
+              onClick={() => {
+                if (presetMenu.current) {
+                  presetMenu.current.open = false;
+                  presetMenu.current.querySelector("summary")?.focus();
+                }
+                void perform({ action: "loadPreset", presetName: name });
+              }}
+            >{t(label)}</button>)}
+          </div>
+        </details>
         <div className="ps-bar-actions" role="group" aria-label={t("barActions")}>
           <button
             type="button"
@@ -658,8 +675,29 @@ export default function App() {
             {t("clearAll")}
           </button>
         </div>
+        <div className="ps-file-actions" role="group" aria-label={t("fileActions")}>
+          <input ref={fileInput} type="file" accept=".json,application/json" hidden data-music-import-input onChange={event => {
+            const file = event.currentTarget.files?.[0]; event.currentTarget.value = "";
+            if (file) void prepareImport(file);
+          }} />
+          <button type="button" className="ps-btn-pill" data-music-action="import" disabled={busy || fileBusy} title={t("importReplacesSong")} onClick={() => fileInput.current?.click()}>{t("importProject")}</button>
+          <button type="button" className="ps-btn-pill" data-music-action="project" disabled={fileBusy} onClick={() => void saveSong("project")}>{t("exportProject")}</button>
+          <button type="button" className="ps-btn-pill" data-music-action="wav" disabled={fileBusy} title={canExportWav() ? undefined : t("wavRequiresUpdate")} onClick={() => void saveSong("wav")}>{t("exportWav")}</button>
+        </div>
         </div>
       </header>
+      {fileNotice && <p className="ps-file-notice" role={fileNotice.error ? "alert" : "status"} data-error={fileNotice.error}>{fileNotice.text}</p>}
+      <dialog ref={importDialog} className="ps-import-dialog" onCancel={event => { if (fileBusy) event.preventDefault(); else setImportPending(null); }}>
+        {importPending && <>
+          <h2>{t("importProject")}</h2>
+          <p>{t("importReplacesSong")}</p>
+          <p>{t("importSummary").replace("{bars}", String(importPending.project.song.bars.length)).replace("{tracks}", String(importPending.project.song.tracks.length)).replace("{bpm}", String(importPending.project.song.bpm))}</p>
+          <div className="ps-file-actions">
+            <button type="button" className="ps-btn-pill" disabled={fileBusy} onClick={() => setImportPending(null)}>{t("cancelImport")}</button>
+            <button type="button" className="ps-btn-pill" data-music-confirm-import disabled={fileBusy} onClick={() => void confirmImport()}>{t("confirmImport")}</button>
+          </div>
+        </>}
+      </dialog>
 
       {/* 连续横向滚动时间轴主体 (不分页) */}
       <div className="ps-timeline-viewport" ref={timelineScrollRef}>

@@ -20,8 +20,7 @@ export function getAudioContext(): AudioContext {
 }
 
 // 1. 8-Bit 方波 (马里奥、大金刚等经典街机/红白机声音，支持持续时长)
-export function playSquareWave(freq: number, time: number, duration = 0.12) {
-  const ctx = getAudioContext();
+export function playSquareWave(freq: number, time: number, duration = 0.12, ctx: BaseAudioContext = getAudioContext(), output: AudioNode = ctx.destination) {
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
 
@@ -39,14 +38,13 @@ export function playSquareWave(freq: number, time: number, duration = 0.12) {
   gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
 
   osc.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(output);
   osc.start(time);
   osc.stop(time + duration);
 }
 
 // 2. 8-Bit 三角波贝斯 (纯正跳跃低音，支持持续时长)
-export function playTriangleBass(freq: number, time: number, duration = 0.18) {
-  const ctx = getAudioContext();
+export function playTriangleBass(freq: number, time: number, duration = 0.18, ctx: BaseAudioContext = getAudioContext(), output: AudioNode = ctx.destination) {
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
 
@@ -63,14 +61,13 @@ export function playTriangleBass(freq: number, time: number, duration = 0.18) {
   gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
 
   osc.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(output);
   osc.start(time);
   osc.stop(time + duration);
 }
 
 // 3. 808 底鼓 (Kick): 快速频率俯冲下潜
-export function playKick(time: number) {
-  const ctx = getAudioContext();
+export function playKick(time: number, ctx: BaseAudioContext = getAudioContext(), output: AudioNode = ctx.destination) {
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
 
@@ -81,14 +78,13 @@ export function playKick(time: number) {
   gain.gain.exponentialRampToValueAtTime(0.001, time + 0.35);
 
   osc.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(output);
   osc.start(time);
   osc.stop(time + 0.35);
 }
 
 // 4. 808 军鼓 (Snare): 白噪声 + 调谐三角波
-export function playSnare(time: number) {
-  const ctx = getAudioContext();
+export function playSnare(time: number, ctx: BaseAudioContext = getAudioContext(), output: AudioNode = ctx.destination) {
   const bufferSize = ctx.sampleRate * 0.18;
   const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
   const data = buffer.getChannelData(0);
@@ -107,14 +103,13 @@ export function playSnare(time: number) {
 
   noise.connect(filter);
   filter.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(output);
   noise.start(time);
   noise.stop(time + 0.18);
 }
 
 // 5. 闭镲 (Hi-Hat): 高通滤波金属感短促白噪声
-export function playHat(time: number) {
-  const ctx = getAudioContext();
+export function playHat(time: number, ctx: BaseAudioContext = getAudioContext(), output: AudioNode = ctx.destination) {
   const bufferSize = ctx.sampleRate * 0.04;
   const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
   const data = buffer.getChannelData(0);
@@ -133,14 +128,13 @@ export function playHat(time: number) {
 
   noise.connect(filter);
   filter.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(output);
   noise.start(time);
   noise.stop(time + 0.04);
 }
 
 // 6. 模拟低通滤波低音 (Sub Bass，支持持续时长)
-export function playAnalogBass(freq: number, time: number, duration = 0.32) {
-  const ctx = getAudioContext();
+export function playAnalogBass(freq: number, time: number, duration = 0.32, ctx: BaseAudioContext = getAudioContext(), output: AudioNode = ctx.destination) {
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
 
@@ -163,14 +157,13 @@ export function playAnalogBass(freq: number, time: number, duration = 0.32) {
 
   osc.connect(filter);
   filter.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(output);
   osc.start(time);
   osc.stop(time + duration);
 }
 
 // 7. 柔和五声音阶琴 (支持持续时长)
-export function playSoftPluck(freq: number, time: number, duration = 0.38) {
-  const ctx = getAudioContext();
+export function playSoftPluck(freq: number, time: number, duration = 0.38, ctx: BaseAudioContext = getAudioContext(), output: AudioNode = ctx.destination) {
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
 
@@ -187,14 +180,13 @@ export function playSoftPluck(freq: number, time: number, duration = 0.38) {
   gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
 
   osc.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(output);
   osc.start(time);
   osc.stop(time + duration);
 }
 
 // 8. 电钢琴 Rhodes (支持持续时长)
-export function playRhodes(freq: number, time: number, duration = 0.5) {
-  const ctx = getAudioContext();
+export function playRhodes(freq: number, time: number, duration = 0.5, ctx: BaseAudioContext = getAudioContext(), output: AudioNode = ctx.destination) {
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
 
@@ -211,14 +203,13 @@ export function playRhodes(freq: number, time: number, duration = 0.5) {
   gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
 
   osc.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(output);
   osc.start(time);
   osc.stop(time + duration);
 }
 
 // 9. 木琴 Marimba (支持持续时长)
-export function playMarimba(freq: number, time: number, duration = 0.22) {
-  const ctx = getAudioContext();
+export function playMarimba(freq: number, time: number, duration = 0.22, ctx: BaseAudioContext = getAudioContext(), output: AudioNode = ctx.destination) {
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
 
@@ -229,7 +220,7 @@ export function playMarimba(freq: number, time: number, duration = 0.22) {
   gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
 
   osc.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(output);
   osc.start(time);
   osc.stop(time + duration);
 }

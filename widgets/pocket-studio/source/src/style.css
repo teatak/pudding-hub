@@ -71,14 +71,36 @@ body {
   min-width: 0;
 }
 
-.ps-preset-group,
-.ps-bar-actions {
+.ps-bar-actions,
+.ps-file-actions {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
   min-width: 0;
 }
+.ps-file-notice {
+  flex: 0 0 auto;
+  margin: 0;
+  color: var(--ps-muted);
+  font-size: 12px;
+  max-height: 72px;
+  overflow: auto;
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+.ps-file-notice[data-error="true"] { color: #fca5a5; }
+.ps-import-dialog {
+  width: min(440px, calc(100% - 32px));
+  border: 1px solid var(--ps-edge);
+  border-radius: 12px;
+  padding: 24px;
+  background: var(--ps-chassis);
+  color: var(--ps-text);
+}
+.ps-import-dialog::backdrop { background: rgba(0, 0, 0, 0.65); }
+.ps-import-dialog h2 { font-size: 18px; margin: 0 0 12px; }
+.ps-import-dialog p { color: var(--ps-muted); font-size: 13px; line-height: 1.6; }
 
 @container (min-width: 1100px) {
   .ps-top-bar {
@@ -773,6 +795,30 @@ body {
   opacity: 0.35;
   cursor: not-allowed;
 }
+.ps-preset-menu { position: relative; flex: 0 0 auto; }
+.ps-preset-menu summary { list-style: none; }
+.ps-preset-menu summary::-webkit-details-marker { display: none; }
+.ps-preset-chevron { flex: 0 0 auto; }
+.ps-preset-menu[open] .ps-preset-chevron { transform: rotate(180deg); }
+.ps-preset-options {
+  position: absolute;
+  z-index: 60;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 200px;
+  max-width: calc(100vw - 40px);
+  max-height: min(240px, 50vh);
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid var(--ps-edge);
+  border-radius: 8px;
+  background: var(--ps-chassis);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+.ps-preset-options .ps-btn-pill { justify-content: flex-start; }
 
 /* 音符块上的音名标签 */
 .ps-note-pitch-tag {
