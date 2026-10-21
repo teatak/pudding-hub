@@ -25,7 +25,12 @@ export type Instrument = {
   iconType: "kick" | "snare" | "hat" | "bass" | "lead" | "mario" | "kong" | "synth";
 };
 
+export type EditOptions = { dryRun?: boolean; expectedStorageVersion?: number };
+
+export type ReadOptions = { includePatterns?: boolean; barIndices?: number[]; trackKeys?: string[] };
+
 export type EditAction =
+  | { action: "setStep"; barIndex: number; trackKey: string; stepIndex: number; enabled: boolean; pitch?: number; duration?: number }
   | { action: "toggleStep"; barIndex: number; trackKey: string; stepIndex: number; pitch?: number; duration?: number }
   | { action: "setNotePitch"; barIndex: number; trackKey: string; stepIndex: number; pitch: number }
   | { action: "setNoteDuration"; barIndex: number; trackKey: string; stepIndex: number; duration: number }

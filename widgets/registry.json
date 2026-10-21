@@ -224,6 +224,50 @@
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI0IiBmaWxsPSIjNEY0NkU1Ii8+CiAgPGNpcmNsZSBjeD0iNjQiIGN5PSI2NCIgcj0iNDgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLW9wYWNpdHk9IjAuMDgiIHN0cm9rZS13aWR0aD0iMiIvPgogIAogIDwhLS0gMngyIOWPkeWFieefqemYteaJk+WHu+WeqyAtLT4KICA8ZyBmaWx0ZXI9ImRyb3Atc2hhZG93KDAgNHB4IDhweCByZ2JhKDAsMCwwLDAuMjUpKSI+CiAgICA8cmVjdCB4PSIyOCIgeT0iMjgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgcng9IjciIGZpbGw9IiNGRjMzNjYiLz4KICAgIDxyZWN0IHg9IjY4IiB5PSIyOCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzAwRDJGRiIvPgogICAgPHJlY3QgeD0iMjgiIHk9IjY4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHJ4PSI3IiBmaWxsPSIjRkZCNzAzIi8+CiAgICA8cmVjdCB4PSI2OCIgeT0iNjgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgcng9IjciIGZpbGw9IiMxMEI5ODEiLz4KICAgIAogICAgPCEtLSDmjInplK7lvq7pq5jlhYkgLS0+CiAgICA8cmVjdCB4PSIzMyIgeT0iMzMiIHdpZHRoPSIyMiIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+CiAgICA8cmVjdCB4PSI3MyIgeT0iMzMiIHdpZHRoPSIyMiIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+CiAgICA8cmVjdCB4PSIzMyIgeT0iNzMiIHdpZHRoPSIyMiIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+CiAgICA8cmVjdCB4PSI3MyIgeT0iNzMiIHdpZHRoPSIyMiIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+CiAgPC9nPgoKICA8IS0tIOS4reWkrumfs+S5kOi3g+WKqOiEieWGsue6v+adoSAtLT4KICA8cGF0aCBkPSJNMjIgNjQgTDM4IDY0IEw0NiA0OCBMNTYgODAgTDY2IDQwIEw3NiA4OCBMODYgNTQgTDk0IDY0IEwxMDYgNjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K",
       "releases": [
         {
+          "version": "1.0.0-preview.16",
+          "package": "./pocket-studio/releases/1.0.0-preview.16/pocket-studio.pudding-widget.json",
+          "packageHash": "45241e45b82dfa75b36c7449f5994a2986521ac524df680f34c4dfa7344dafd5",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.15",
+          "package": "./pocket-studio/releases/1.0.0-preview.15/pocket-studio.pudding-widget.json",
+          "packageHash": "f5bd17a4b3ead298e557b54f035054f6bea4d1ea8732eeab009d707641c06668",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.14",
+          "package": "./pocket-studio/releases/1.0.0-preview.14/pocket-studio.pudding-widget.json",
+          "packageHash": "5588654d1db5086d13090970c4f9bdccd4b5f88d3d08f7abe742c8fba50d830f",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.13",
+          "package": "./pocket-studio/releases/1.0.0-preview.13/pocket-studio.pudding-widget.json",
+          "packageHash": "4e57b6ed03f5c39acbd40d61436c8ffc5744329fe87b7e166c7ee3fa82e6fb49",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
           "version": "1.0.0-preview.12",
           "package": "./pocket-studio/releases/1.0.0-preview.12/pocket-studio.pudding-widget.json",
           "packageHash": "3966bd20a441d5942be70445dace2dfe84e6fe2a810c550c38fc5f961736d59c",

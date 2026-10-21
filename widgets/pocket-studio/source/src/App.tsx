@@ -5,6 +5,7 @@ import { edit, editSong, readSong, getDefaultSong, registerPlaybackController } 
 import "./api";
 import {
   getAudioContext,
+  audioState,
   playSquareWave,
   playTriangleBass,
   playKick,
@@ -333,32 +334,42 @@ export default function App() {
 
   async function perform(action: Parameters<typeof edit>[0]) {
     setBusy(true);
-    // 乐观更新：点击即时生效
-    setSong((prev) => editSong(prev, action));
     try {
+      // Validate before rendering the optimistic state. The shared reducer also
+      // validates interface edits, so UI and model calls use the same rules.
+      const next = editSong(songRef.current, action);
+      songRef.current = next;
+      setSong(next);
       await edit(action);
     } catch (e) {
       console.error(errorText(e));
-      await storage.refetch?.();
+      const saved = await storage.refetch();
+      const restored = readSong(saved.data);
+      songRef.current = restored;
+      setSong(restored);
     } finally {
       setBusy(false);
     }
   }
 
   const playStepRef = useRef(0);
+  const nextStepRef = useRef(0);
 
   // 绑定宿主与会话的播放控制接口，支持精准的幂等 play / pause / 状态查询
   useEffect(() => {
     return registerPlaybackController({
       play: () => {
         getAudioContext();
+        isPlayingRef.current = true;
         setIsPlaying(true);
       },
       pause: () => {
+        isPlayingRef.current = false;
         setIsPlaying(false);
       },
       isPlaying: () => isPlayingRef.current,
-      getStep: () => playStepRef.current
+      getStep: () => playStepRef.current,
+      getAudioState: audioState,
     });
   }, []);
 
@@ -368,13 +379,11 @@ export default function App() {
     if (isPlaying) {
       const stepMs = (60 / song.bpm / 4) * 1000;
       const stepSec = stepMs / 1000;
-      let currentGlobalStep = playStepRef.current;
-
       timer = setInterval(() => {
         const now = getAudioContext().currentTime;
         const currentBarsCount = songRef.current.bars.length || 1;
         const currentTotalSteps = currentBarsCount * 16;
-        currentGlobalStep = currentGlobalStep % currentTotalSteps;
+        const currentGlobalStep = nextStepRef.current % currentTotalSteps;
 
         const barIdx = Math.floor(currentGlobalStep / 16);
         const stepInBar = currentGlobalStep % 16;
@@ -398,17 +407,18 @@ export default function App() {
           });
         }
 
-        currentGlobalStep = (currentGlobalStep + 1) % currentTotalSteps;
+        nextStepRef.current = (currentGlobalStep + 1) % currentTotalSteps;
       }, stepMs);
     } else {
       playStepRef.current = 0;
+      nextStepRef.current = 0;
       setPlayStep(0);
     }
 
     return () => {
       if (timer) clearInterval(timer);
     };
-  }, [isPlaying, song.bpm, song.bars.length]);
+  }, [isPlaying, song.bpm]);
 
   const lastStepRef = useRef(playStep);
 
@@ -441,7 +451,8 @@ export default function App() {
 
   function togglePlay() {
     getAudioContext();
-    setIsPlaying((prev) => !prev);
+    isPlayingRef.current = !isPlayingRef.current;
+    setIsPlaying(isPlayingRef.current);
   }
 
   // 键盘快捷键：空格播放/暂停；Escape 关闭气泡；Delete/Backspace 删除当前选中的音符
@@ -533,9 +544,10 @@ export default function App() {
   const currentPlayingBar = Math.floor(playStep / 16);
 
   return (
-    <main className="ps-console">
+    <main className="ps-console" data-playing={isPlaying} data-play-step={playStep}>
       {/* 顶部控制栏 */}
       <header className="ps-top-bar">
+        <div className="ps-toolbar-primary">
         <div className="ps-brand">
           <div className="ps-brand-badge">
             <StudioBrandIcon size={32} />
@@ -564,7 +576,7 @@ export default function App() {
             >
               −
             </button>
-            <span style={{ color: "var(--ps-dim)" }}>{t("bpm")}</span>
+            <span className="ps-tempo-label">{t("bpm")}</span>
             <span className="ps-tempo-val">{song.bpm}</span>
             <button
               type="button"
@@ -577,8 +589,10 @@ export default function App() {
             </button>
           </div>
         </div>
+        </div>
 
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        <div className="ps-toolbar-secondary">
+        <div className="ps-preset-group" role="group" aria-label={t("presetGroup")}>
           <button
             type="button"
             className="ps-btn-pill"
@@ -611,6 +625,8 @@ export default function App() {
           >
             ☕ {t("presetLofi")}
           </button>
+        </div>
+        <div className="ps-bar-actions" role="group" aria-label={t("barActions")}>
           <button
             type="button"
             className="ps-btn-pill"
@@ -641,6 +657,7 @@ export default function App() {
           >
             {t("clearAll")}
           </button>
+        </div>
         </div>
       </header>
 
@@ -786,10 +803,10 @@ export default function App() {
                         </div>
                         <div className="ps-title-box">
                           <div className="ps-row-name">
-                            <span>{getInstName(tConfig.instId)}</span>
-                            <span style={{ fontSize: 8, color: "var(--ps-dim)" }}>▾</span>
+                            <span className="ps-row-name-text" title={getInstName(tConfig.instId)}>{getInstName(tConfig.instId)}</span>
+                            <span className="ps-row-name-chevron" aria-hidden="true">▾</span>
                           </div>
-                          <div className="ps-row-desc">{getInstDesc(tConfig.instId)}</div>
+                          <div className="ps-row-desc" title={getInstDesc(tConfig.instId)}>{getInstDesc(tConfig.instId)}</div>
                         </div>
                       </div>
                       {song.tracks.length > 1 && (

@@ -2,6 +2,10 @@
 
 let audioCtx: AudioContext | null = null;
 
+export function audioState() {
+  return audioCtx?.state ?? "uninitialized";
+}
+
 export function getAudioContext(): AudioContext {
   if (!audioCtx) {
     const AudioContextClass =

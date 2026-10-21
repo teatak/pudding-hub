@@ -10,7 +10,38 @@ export function setLocale(locale: string) {
   }
 }
 
-const DICT: Record<string, Record<Locale, string>> = {
+export const DICT: Record<string, Record<Locale, string>> = {
+  presetGroup: { "zh-CN": "预设曲目", "zh-TW": "預設曲目", "en": "Presets" },
+  barActions: { "zh-CN": "小节操作", "zh-TW": "小節操作", "en": "Bar actions" },
+  invalidRange: {"zh-CN": "{field} 必须是 {min}–{max} 范围内的整数。", "zh-TW": "{field} 必須是 {min}–{max} 範圍內的整數。", "en": "{field} must be an integer in range {min}–{max}."},
+  invalidTrack: {"zh-CN": "trackKey={field} 不存在；有效值：{allowed}。", "zh-TW": "trackKey={field} 不存在；有效值：{allowed}。", "en": "trackKey: track does not exist ({field}); allowed: {allowed}."},
+  invalidPitch: {"zh-CN": "音高必须是 20–10000 Hz 的有限数值。", "zh-TW": "音高必須是 20–10000 Hz 的有限數值。", "en": "Pitch must be a finite frequency from 20 to 10000 Hz."},
+  invalidInstrument: {"zh-CN": "乐器不存在。", "zh-TW": "樂器不存在。", "en": "Unknown instrument."},
+  invalidPattern: {"zh-CN": "节奏、音高和时值数组必须各有 16 个元素。", "zh-TW": "節奏、音高和時值陣列必須各有 16 個元素。", "en": "Pattern arrays must contain exactly 16 values."},
+  invalidSelection: {"zh-CN": "读取范围不能留空或包含重复项。", "zh-TW": "讀取範圍不能留空或包含重複項。", "en": "Selections must be nonempty and contain no duplicates."},
+  inactiveNote: {"zh-CN": "这个格子没有音符，请先使用 setStep 启用。", "zh-TW": "這個格子沒有音符，請先使用 setStep 啟用。", "en": "This step has no note. Enable it with setStep first."},
+  batchLimit: {"zh-CN": "一次可提交 1–100 项编辑。", "zh-TW": "一次可提交 1–100 項編輯。", "en": "Submit 1–100 edits in one batch."},
+  barLimit: {"zh-CN": "最多支持 16 小节。", "zh-TW": "最多支援 16 小節。", "en": "A song supports up to 16 bars."},
+  lastBar: {"zh-CN": "至少保留一个小节。", "zh-TW": "至少保留一個小節。", "en": "Keep at least one bar."},
+  lastTrack: {"zh-CN": "至少保留一条音轨。", "zh-TW": "至少保留一條音軌。", "en": "Keep at least one track."},
+  storageConflict: {"zh-CN": "曲目已变化，当前 storageVersion 为 {version}。请重新读取后再编辑。", "zh-TW": "曲目已變更，目前 storageVersion 為 {version}。請重新讀取後再編輯。", "en": "The song changed. Current storageVersion is {version}. Read it again before editing."},
+  playbackUnavailable: {"zh-CN": "播放器尚未就绪，请等待小组件加载。", "zh-TW": "播放器尚未就緒，請等待小組件載入。", "en": "The player is not ready. Wait for the widget to load."},
+  paramBar: {"zh-CN": "小节索引，从 0 开始，必须指向已有小节。", "zh-TW": "小節索引，從 0 開始，必須指向已有小節。", "en": "Zero-based index of an existing bar."},
+  paramStep: {"zh-CN": "步进索引，0–15；第 5 格传 4。", "zh-TW": "步進索引，0–15；第 5 格傳 4。", "en": "Zero-based step index, 0–15; step 5 is index 4."},
+  paramTrack: {"zh-CN": "已有音轨键，通过 getSong 获取。", "zh-TW": "已有音軌鍵，透過 getSong 取得。", "en": "Existing track key, obtained from getSong."},
+  paramPitch: {"zh-CN": "音高频率，20–10000 Hz，例如 A4 = 440。", "zh-TW": "音高頻率，20–10000 Hz，例如 A4 = 440。", "en": "Frequency, 20–10000 Hz; for example A4 = 440."},
+  paramDuration: {"zh-CN": "持续步数，1–32；4 步为一拍。", "zh-TW": "持續步數，1–32；4 步為一拍。", "en": "Duration in steps, 1–32; four steps make one beat."},
+  paramDryRun: {"zh-CN": "只校验并预览修改，不保存，也不影响播放。", "zh-TW": "只驗證並預覽修改，不儲存，也不影響播放。", "en": "Validate and preview without saving or affecting playback."},
+  paramVersion: {"zh-CN": "可选：要求曲目仍是读取时的 storageVersion，否则整批拒绝。", "zh-TW": "選填：要求曲目仍是讀取時的 storageVersion，否則整批拒絕。", "en": "Optional storageVersion from your previous read; reject the entire batch if it changed."},
+  paramSteps: {"zh-CN": "恰好 16 个开关值，对应步进 0–15。", "zh-TW": "恰好 16 個開關值，對應步進 0–15。", "en": "Exactly 16 booleans for steps 0–15."},
+  paramDurations: {"zh-CN": "16 项时值；不传时启用音符重置为 1 步；关闭音符规范为 null。", "zh-TW": "16 項時值；不傳時啟用音符重設為 1 步；關閉音符規範為 null。", "en": "16 durations; omitted durations reset enabled notes to one step. Disabled notes become null."},
+  paramIncludePatterns: {"zh-CN": "默认只读概要；设为 true 读取曲谱。指定小节或音轨范围时默认读取对应曲谱。", "zh-TW": "預設只讀概要；設為 true 讀取曲譜。指定小節或音軌範圍時預設讀取對應曲譜。", "en": "Summary by default. Set true for patterns; selecting bars or tracks includes their patterns by default."},
+  descEditSong: {"zh-CN": "原子批量编辑 1–100 项，按顺序校验，任一失败则全部不保存；小节和步进从 0 开始。优先使用 setStep 明确开关。dryRun 只预览；返回精简 changes 和 storageVersion，不返回整首曲谱。", "zh-TW": "原子批次編輯 1–100 項，依序驗證，任一失敗則全部不儲存；小節和步進從 0 開始。優先使用 setStep 明確開關。dryRun 只預覽；回傳精簡 changes 和 storageVersion，不回傳整首曲譜。", "en": "Atomically edit 1–100 actions in order; any invalid action rejects the entire batch. Bars and steps are zero-based. Prefer deterministic setStep. dryRun previews without saving. Returns compact changes and storageVersion, never the full song."},
+  descSetStep: {"zh-CN": "明确启用或关闭一个音符，可同时设置音高和时值；支持 dryRun，重复设置不会反转。", "zh-TW": "明確啟用或關閉一個音符，可同時設定音高和時值；支援 dryRun，重複設定不會反轉。", "en": "Explicitly enable or disable a note, optionally setting pitch and duration. Supports dryRun; repeated settings do not toggle."},
+  descCopyBar: {"zh-CN": "将一个已有小节的全部音轨、音高和时值复制到另一个已有小节；不新增小节。", "zh-TW": "將一個已有小節的全部音軌、音高和時值複製到另一個已有小節；不新增小節。", "en": "Copy all patterns, pitches and durations from one existing bar to another; does not append a bar."},
+  mutationHint: {"zh-CN": "返回精简修改回执，不返回整曲；支持 dryRun 和 expectedStorageVersion。", "zh-TW": "回傳精簡修改回執，不回傳整曲；支援 dryRun 和 expectedStorageVersion。", "en": "Returns a compact edit receipt, not the whole song. Supports dryRun and expectedStorageVersion."},
+  trackLimit: {"zh-CN": "最多支持 8 条音轨。", "zh-TW": "最多支援 8 條音軌。", "en": "A song supports up to eight tracks."},
+
   appName: {
     "zh-CN": "音乐工坊",
     "zh-TW": "音樂工坊",
@@ -364,9 +395,9 @@ const DICT: Record<string, Record<Locale, string>> = {
   },
   // Tool 接口描述
   descGetSong: {
-    "zh-CN": "读取音乐工坊的完整状态：包含速度 BPM、小节总数、所有音轨列表以及音符步进矩阵",
-    "zh-TW": "讀取音樂工坊的完整狀態：包含速度 BPM、小節總數、所有音軌列表以及音符步進矩陣",
-    en: "Get full studio state: BPM, bar count, track list, and note matrix"
+    "zh-CN": "按需读取曲目：默认返回速度、音轨和小节数量概要；includePatterns:true 读取曲谱，barIndices / trackKeys 可筛选范围。索引从 0 开始。",
+    "zh-TW": "按需讀取曲目：預設回傳速度、音軌和小節數量概要；includePatterns:true 讀取曲譜，barIndices / trackKeys 可篩選範圍。索引從 0 開始。",
+    en: "Read song on demand: summary by default; includePatterns:true reads patterns. Filter with barIndices / trackKeys. Indices are zero-based."
   },
   descAddBar: {
     "zh-CN": "添加一个新的小节（最多支持 16 小节，可选复制已有小节）",
@@ -421,7 +452,7 @@ const DICT: Record<string, Record<Locale, string>> = {
   descToggleStep: {
     "zh-CN": "点亮或熄灭指定小节、音轨和步进格子的音符",
     "zh-TW": "點亮或熄滅指定小節、音軌和步進格子的音符",
-    en: "Toggle a step on/off for a track in a bar"
+    en: "Toggle one step; prefer setStep for deterministic edits and safe retries"
   },
   descSetNoteDuration: {
     "zh-CN": "调整指定音符的持续时长（持续步数，如 2 格、3 格、4 格）",

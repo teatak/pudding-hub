@@ -9,13 +9,13 @@ const root = fileURLToPath(new URL("../widgets/pocket-studio", import.meta.url))
 test("Pocket Studio release package exists, is verified, and contains Mario & Donkey Kong presets", async () => {
   const pkgPath = path.join(
     root,
-    "releases/1.0.0-preview.12/pocket-studio.pudding-widget.json",
+    "releases/1.0.0-preview.16/pocket-studio.pudding-widget.json",
   );
   const raw = await fs.readFile(pkgPath, "utf8");
   const pkg = JSON.parse(raw);
 
   assert.equal(pkg.id, "teatak/pudding-hub/widgets/pocket-studio");
-  assert.equal(pkg.version, "1.0.0-preview.12");
+  assert.equal(pkg.version, "1.0.0-preview.16");
   assert.equal(pkg.preview, true);
   assert.equal(pkg.requires.protocolVersion, 24);
   assert.equal(pkg.requires.sdkVersion, "1");
@@ -24,6 +24,7 @@ test("Pocket Studio release package exists, is verified, and contains Mario & Do
     "widget.json",
     "src/App.tsx",
     "src/api.ts",
+    "src/song.ts",
     "src/audio.ts",
     "src/demoTracks.ts",
     "src/types.ts",
@@ -80,21 +81,11 @@ test("Pocket Studio release package exists, is verified, and contains Mario & Do
   assert.match(appSrc, /ps-mini-piano/);
 });
 
-test("Pocket Studio API logic supports clearSong, resets durations on setTrackPattern, and supports explicit durations", async () => {
-  const pkgPath = path.join(
-    root,
-    "releases/1.0.0-preview.12/pocket-studio.pudding-widget.json",
-  );
-  const raw = await fs.readFile(pkgPath, "utf8");
-  const pkg = JSON.parse(raw);
-
-  const apiSrc = pkg.source.files["src/api.ts"];
-
-  // 验证 writeQueue 互斥队列已引入
-  assert.match(apiSrc, /writeQueue/);
-  assert.match(apiSrc, /clearSong/);
-
-  // 验证 setTrackPattern 支持 durations 参数
-  assert.match(apiSrc, /durations:/);
-  assert.match(apiSrc, /playbackController/);
+test("Pocket Studio release matches the exact shipped source and file hashes", async () => {
+  const { createHash } = await import("node:crypto");
+  const pkg = JSON.parse(await fs.readFile(path.join(root, "releases/1.0.0-preview.16/pocket-studio.pudding-widget.json"), "utf8"));
+  for (const [file, content] of Object.entries(pkg.source.files)) {
+    assert.equal(await fs.readFile(path.join(root, "source", file), "utf8"), content, file);
+    assert.equal(createHash("sha256").update(content).digest("hex"), pkg.fileHashes[file]);
+  }
 });
