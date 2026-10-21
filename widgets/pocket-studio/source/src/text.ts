@@ -41,6 +41,31 @@ const DICT: Record<string, Record<Locale, string>> = {
     "zh-TW": "小節 4 · 過門",
     en: "Bar 4 · Outro"
   },
+  barPrefix: {
+    "zh-CN": "小节",
+    "zh-TW": "小節",
+    en: "Bar"
+  },
+  addBar: {
+    "zh-CN": "添加小节",
+    "zh-TW": "添加小節",
+    en: "Add Bar"
+  },
+  removeBar: {
+    "zh-CN": "删除此节",
+    "zh-TW": "刪除此節",
+    en: "Delete Bar"
+  },
+  maxBarLimit: {
+    "zh-CN": "最多支持 16 个小节",
+    "zh-TW": "最多支援 16 個小節",
+    en: "Up to 16 bars supported"
+  },
+  minBarLimit: {
+    "zh-CN": "至少保留 1 个小节",
+    "zh-TW": "至少保留 1 個小節",
+    en: "At least 1 bar required"
+  },
   play: {
     "zh-CN": "播放",
     "zh-TW": "播放",
@@ -85,6 +110,16 @@ const DICT: Record<string, Record<Locale, string>> = {
     "zh-CN": "清空当前节",
     "zh-TW": "清空當前節",
     en: "Clear Bar"
+  },
+  clearAll: {
+    "zh-CN": "清空整曲",
+    "zh-TW": "清空整曲",
+    en: "Clear All"
+  },
+  tracks: {
+    "zh-CN": "音轨",
+    "zh-TW": "音軌",
+    en: "Tracks"
   },
   addTrack: {
     "zh-CN": "添加新乐器音轨 (从音色库中自由挑选)",
@@ -131,6 +166,11 @@ const DICT: Record<string, Record<Locale, string>> = {
     "zh-CN": "点亮或熄灭指定小节、音轨和步进格子的音符",
     "zh-TW": "點亮或熄滅指定小節、音軌和步進格子的音符",
     en: "Toggle a step on/off for a track in a bar"
+  },
+  descSetNoteDuration: {
+    "zh-CN": "调整指定音符的持续时长（持续步数，如 2 格、3 格、4 格）",
+    "zh-TW": "調整指定音符的持續時長（持續步數，如 2 格、3 格、4 格）",
+    en: "Set duration (steps) for a note in a track"
   },
   descChangeInstrument: {
     "zh-CN": "更换指定音轨的乐器音色",

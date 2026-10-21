@@ -40,11 +40,13 @@ export function readSong(data: unknown): SongState {
   return {
     bpm: typeof songData.bpm === "number" && songData.bpm >= 60 && songData.bpm <= 180 ? songData.bpm : 120,
     tracks: songData.tracks,
-    bars: Array.isArray(songData.bars) && songData.bars.length === 4 ? songData.bars : getDefaultSong().bars
+    bars: Array.isArray(songData.bars) && songData.bars.length >= 1 ? songData.bars : getDefaultSong().bars
   };
 }
 
 export function editSong(current: SongState, action: EditAction): SongState {
+  const maxBarIdx = Math.max(0, current.bars.length - 1);
+
   switch (action.action) {
     case "setBpm":
       return {
@@ -73,7 +75,8 @@ export function editSong(current: SongState, action: EditAction): SongState {
       const newBars = current.bars.map((bar) => ({
         ...bar,
         steps: { ...bar.steps, [newKey]: new Array(16).fill(false) },
-        pitches: bar.pitches ? { ...bar.pitches, [newKey]: new Array(16).fill(null) } : undefined
+        pitches: bar.pitches ? { ...bar.pitches, [newKey]: new Array(16).fill(null) } : undefined,
+        durations: bar.durations ? { ...bar.durations, [newKey]: new Array(16).fill(null) } : undefined
       }));
       return { ...current, tracks: newTracks, bars: newBars };
     }
@@ -86,13 +89,46 @@ export function editSong(current: SongState, action: EditAction): SongState {
         delete nextSteps[action.trackKey];
         const nextPitches = bar.pitches ? { ...bar.pitches } : undefined;
         if (nextPitches) delete nextPitches[action.trackKey];
-        return { steps: nextSteps, pitches: nextPitches };
+        const nextDurations = bar.durations ? { ...bar.durations } : undefined;
+        if (nextDurations) delete nextDurations[action.trackKey];
+        return { steps: nextSteps, pitches: nextPitches, durations: nextDurations };
       });
       return { ...current, tracks: newTracks, bars: newBars };
     }
 
+    case "addBar": {
+      if (current.bars.length >= 16) return current;
+      const steps: Record<string, boolean[]> = {};
+      const pitches: Record<string, (number | null)[]> = {};
+      const durations: Record<string, (number | null)[]> = {};
+      if (action.copyFrom !== undefined && current.bars[action.copyFrom]) {
+        const src = current.bars[action.copyFrom];
+        current.tracks.forEach((t) => {
+          steps[t.trackKey] = [...(src.steps[t.trackKey] || new Array(16).fill(false))];
+          pitches[t.trackKey] = [...(src.pitches?.[t.trackKey] || new Array(16).fill(null))];
+          durations[t.trackKey] = [...(src.durations?.[t.trackKey] || new Array(16).fill(null))];
+        });
+      } else {
+        current.tracks.forEach((t) => {
+          steps[t.trackKey] = new Array(16).fill(false);
+          pitches[t.trackKey] = new Array(16).fill(null);
+          durations[t.trackKey] = new Array(16).fill(null);
+        });
+      }
+      return { ...current, bars: [...current.bars, { steps, pitches, durations }] };
+    }
+
+    case "removeBar": {
+      if (current.bars.length <= 1) return current;
+      const targetIdx =
+        action.barIndex !== undefined && action.barIndex >= 0 && action.barIndex < current.bars.length
+          ? action.barIndex
+          : current.bars.length - 1;
+      return { ...current, bars: current.bars.filter((_, idx) => idx !== targetIdx) };
+    }
+
     case "toggleStep": {
-      const bIdx = Math.max(0, Math.min(3, action.barIndex));
+      const bIdx = Math.max(0, Math.min(maxBarIdx, action.barIndex));
       const sIdx = Math.max(0, Math.min(15, action.stepIndex));
       const newBars = current.bars.map((bar, idx) => {
         if (idx !== bIdx) return bar;
@@ -106,13 +142,38 @@ export function editSong(current: SongState, action: EditAction): SongState {
           trackPitches[sIdx] = trackSteps[sIdx] ? action.pitch : null;
           nextPitches = { ...bar.pitches, [action.trackKey]: trackPitches };
         }
-        return { steps: nextSteps, pitches: nextPitches };
+
+        let nextDurations = bar.durations;
+        if (action.duration !== undefined) {
+          const trackDurations = [...(bar.durations?.[action.trackKey] || new Array(16).fill(null))];
+          trackDurations[sIdx] = trackSteps[sIdx] ? Math.max(1, action.duration) : null;
+          nextDurations = { ...bar.durations, [action.trackKey]: trackDurations };
+        } else if (!trackSteps[sIdx] && bar.durations?.[action.trackKey]) {
+          const trackDurations = [...bar.durations[action.trackKey]];
+          trackDurations[sIdx] = null;
+          nextDurations = { ...bar.durations, [action.trackKey]: trackDurations };
+        }
+
+        return { steps: nextSteps, pitches: nextPitches, durations: nextDurations };
+      });
+      return { ...current, bars: newBars };
+    }
+
+    case "setNoteDuration": {
+      const bIdx = Math.max(0, Math.min(maxBarIdx, action.barIndex));
+      const sIdx = Math.max(0, Math.min(15, action.stepIndex));
+      const newBars = current.bars.map((bar, idx) => {
+        if (idx !== bIdx) return bar;
+        const trackDurations = [...(bar.durations?.[action.trackKey] || new Array(16).fill(null))];
+        trackDurations[sIdx] = Math.max(1, Math.min(32, action.duration));
+        const nextDurations = { ...(bar.durations || {}), [action.trackKey]: trackDurations };
+        return { ...bar, durations: nextDurations };
       });
       return { ...current, bars: newBars };
     }
 
     case "setTrackPattern": {
-      const bIdx = Math.max(0, Math.min(3, action.barIndex));
+      const bIdx = Math.max(0, Math.min(maxBarIdx, action.barIndex));
       const newBars = current.bars.map((bar, idx) => {
         if (idx !== bIdx) return bar;
         const nextSteps = {
@@ -123,14 +184,18 @@ export function editSong(current: SongState, action: EditAction): SongState {
         if (action.pitches) {
           nextPitches[action.trackKey] = action.pitches.slice(0, 16);
         }
-        return { steps: nextSteps, pitches: nextPitches };
+        const nextDurations = bar.durations ? { ...bar.durations } : {};
+        if (action.durations) {
+          nextDurations[action.trackKey] = action.durations.slice(0, 16);
+        }
+        return { steps: nextSteps, pitches: nextPitches, durations: nextDurations };
       });
       return { ...current, bars: newBars };
     }
 
     case "copyBar": {
-      const from = Math.max(0, Math.min(3, action.fromBar));
-      const to = Math.max(0, Math.min(3, action.toBar));
+      const from = Math.max(0, Math.min(maxBarIdx, action.fromBar));
+      const to = Math.max(0, Math.min(maxBarIdx, action.toBar));
       const newBars = current.bars.map((bar, idx) => {
         if (idx !== to) return bar;
         const sourceBar = current.bars[from];
@@ -138,6 +203,9 @@ export function editSong(current: SongState, action: EditAction): SongState {
           steps: JSON.parse(JSON.stringify(sourceBar.steps)) as Record<string, boolean[]>,
           pitches: sourceBar.pitches
             ? (JSON.parse(JSON.stringify(sourceBar.pitches)) as Record<string, (number | null)[]>)
+            : undefined,
+          durations: sourceBar.durations
+            ? (JSON.parse(JSON.stringify(sourceBar.durations)) as Record<string, (number | null)[]>)
             : undefined
         };
       });
@@ -145,16 +213,18 @@ export function editSong(current: SongState, action: EditAction): SongState {
     }
 
     case "clearBar": {
-      const bIdx = Math.max(0, Math.min(3, action.barIndex));
+      const bIdx = Math.max(0, Math.min(maxBarIdx, action.barIndex));
       const newBars = current.bars.map((bar, idx) => {
         if (idx !== bIdx) return bar;
         const clearedSteps: Record<string, boolean[]> = {};
         const clearedPitches: Record<string, (number | null)[]> = {};
+        const clearedDurations: Record<string, (number | null)[]> = {};
         current.tracks.forEach((t) => {
           clearedSteps[t.trackKey] = new Array(16).fill(false);
           clearedPitches[t.trackKey] = new Array(16).fill(null);
+          clearedDurations[t.trackKey] = new Array(16).fill(null);
         });
-        return { steps: clearedSteps, pitches: clearedPitches };
+        return { steps: clearedSteps, pitches: clearedPitches, durations: clearedDurations };
       });
       return { ...current, bars: newBars };
     }
@@ -199,13 +269,14 @@ function register() {
   return [
     pudding.defineInterface({
       name: "getSong",
-      description: "获取当前曲目状态：包含速度 BPM、所有音轨列表（trackKey、instId）及 4 小节音符矩阵",
+      description: "【首选查询接口】读取音乐工坊的完整状态：包含速度 BPM、小节总数、所有音轨列表（trackKey、instId）以及所有小节的当前音符步进矩阵。无需调用 widget_observe。",
       input: z.object({}).strict(),
       run: wrap(async (_input: Record<string, never>, signal) => {
         const old = await pudding.storage.read({ signal });
         const song = readSong(old.data);
         return {
           bpm: song.bpm,
+          totalBars: song.bars.length,
           tracks: song.tracks,
           bars: song.bars,
           availableInstruments: INSTRUMENT_IDS,
@@ -238,11 +309,37 @@ function register() {
     }),
 
     pudding.defineInterface({
+      name: "addBar",
+      description: "添加一个新的小节（最多支持 16 小节，可选复制已有小节）",
+      input: z
+        .object({
+          copyFrom: z.number().int().min(0).max(15).optional().describe("可选：从指定小节复制节奏")
+        })
+        .strict(),
+      run: wrap((input: { copyFrom?: number }, signal) =>
+        edit({ action: "addBar", copyFrom: input.copyFrom }, signal)
+      )
+    }),
+
+    pudding.defineInterface({
+      name: "removeBar",
+      description: "删除指定小节（至少保留 1 小节，默认删除最后一小节）",
+      input: z
+        .object({
+          barIndex: z.number().int().min(0).max(15).optional().describe("要删除的小节索引，默认最后一节")
+        })
+        .strict(),
+      run: wrap((input: { barIndex?: number }, signal) =>
+        edit({ action: "removeBar", barIndex: input.barIndex }, signal)
+      )
+    }),
+
+    pudding.defineInterface({
       name: "setTrackPattern",
       description: "批量设置指定小节内某音轨的 16 步进节奏（16位布尔数组）及可选音高频率",
       input: z
         .object({
-          barIndex: z.number().int().min(0).max(3).describe("小节索引 (0-3)"),
+          barIndex: z.number().int().min(0).max(15).describe("小节索引 (0起)"),
           trackKey: z.string().describe("音轨键 (如 t_lead, t_bass 等，通过 getSong 获取)"),
           steps: z.array(z.boolean()).min(16).max(16).describe("16步进开关布尔值数组"),
           pitches: z
@@ -281,15 +378,16 @@ function register() {
       description: t("descToggleStep"),
       input: z
         .object({
-          barIndex: z.number().int().min(0).max(3),
+          barIndex: z.number().int().min(0).max(15).describe("小节索引 (0起)"),
           trackKey: z.string(),
           stepIndex: z.number().int().min(0).max(15),
-          pitch: z.number().optional()
+          pitch: z.number().optional(),
+          duration: z.number().int().min(1).max(32).optional().describe("音符持续步长 (选填，默认为 1)")
         })
         .strict(),
       run: wrap(
         (
-          input: { barIndex: number; trackKey: string; stepIndex: number; pitch?: number },
+          input: { barIndex: number; trackKey: string; stepIndex: number; pitch?: number; duration?: number },
           signal
         ) =>
           edit(
@@ -298,7 +396,37 @@ function register() {
               barIndex: input.barIndex,
               trackKey: input.trackKey,
               stepIndex: input.stepIndex,
-              pitch: input.pitch
+              pitch: input.pitch,
+              duration: input.duration
+            },
+            signal
+          )
+      )
+    }),
+
+    pudding.defineInterface({
+      name: "setNoteDuration",
+      description: t("descSetNoteDuration"),
+      input: z
+        .object({
+          barIndex: z.number().int().min(0).max(15).describe("小节索引 (0起)"),
+          trackKey: z.string().describe("音轨键"),
+          stepIndex: z.number().int().min(0).max(15).describe("步进索引 (0-15)"),
+          duration: z.number().int().min(1).max(32).describe("持续时长（步数，如 2、3、4 等）")
+        })
+        .strict(),
+      run: wrap(
+        (
+          input: { barIndex: number; trackKey: string; stepIndex: number; duration: number },
+          signal
+        ) =>
+          edit(
+            {
+              action: "setNoteDuration",
+              barIndex: input.barIndex,
+              trackKey: input.trackKey,
+              stepIndex: input.stepIndex,
+              duration: input.duration
             },
             signal
           )
@@ -347,7 +475,7 @@ function register() {
     pudding.defineInterface({
       name: "clearBar",
       description: "清空指定小节内的所有音符步进",
-      input: z.object({ barIndex: z.number().int().min(0).max(3) }).strict(),
+      input: z.object({ barIndex: z.number().int().min(0).max(15).describe("小节索引 (0起)") }).strict(),
       run: wrap((input: { barIndex: number }, signal) =>
         edit({ action: "clearBar", barIndex: input.barIndex }, signal)
       )

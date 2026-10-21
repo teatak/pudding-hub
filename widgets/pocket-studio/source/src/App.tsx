@@ -18,6 +18,34 @@ import {
 import { t, setLocale, errorText } from "./text";
 import "./style.css";
 
+// 音乐工坊官方统一徽标 (与 assets/icon.svg 100% 保持一致)
+function StudioBrandIcon({ size = 28 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="128" height="128" rx="24" fill="#4F46E5" />
+      <circle cx="64" cy="64" r="48" fill="none" stroke="#ffffff" strokeOpacity="0.08" strokeWidth="2" />
+      <g>
+        <rect x="28" y="28" width="32" height="32" rx="7" fill="#FF3366" />
+        <rect x="68" y="28" width="32" height="32" rx="7" fill="#00D2FF" />
+        <rect x="28" y="68" width="32" height="32" rx="7" fill="#FFB703" />
+        <rect x="68" y="68" width="32" height="32" rx="7" fill="#10B981" />
+        <rect x="33" y="33" width="22" height="4" rx="2" fill="#FFFFFF" fillOpacity="0.35" />
+        <rect x="73" y="33" width="22" height="4" rx="2" fill="#FFFFFF" fillOpacity="0.35" />
+        <rect x="33" y="73" width="22" height="4" rx="2" fill="#FFFFFF" fillOpacity="0.35" />
+        <rect x="73" y="73" width="22" height="4" rx="2" fill="#FFFFFF" fillOpacity="0.35" />
+      </g>
+      <path
+        d="M22 64 L38 64 L46 48 L56 80 L66 40 L76 88 L86 54 L94 64 L106 64"
+        fill="none"
+        stroke="#FFFFFF"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 // 规范工业级 SVG 矢量乐器微图标
 function InstrumentSvgIcon({ type }: { type: string }) {
   switch (type) {
@@ -66,8 +94,8 @@ function InstrumentSvgIcon({ type }: { type: string }) {
   }
 }
 
-// 乐器音色库
-const INSTRUMENT_MAP: Record<string, Instrument & { playSound: (time: number, step: number, pitch?: number | null) => void }> = {
+// 乐器音色库 (支持持续发音时长 duration)
+const INSTRUMENT_MAP: Record<string, Instrument & { playSound: (time: number, step: number, pitch?: number | null, duration?: number) => void }> = {
   marioLead: {
     id: "marioLead",
     name: "Mario 8-Bit 方波",
@@ -75,7 +103,7 @@ const INSTRUMENT_MAP: Record<string, Instrument & { playSound: (time: number, st
     iconType: "mario",
     colorClass: "is-mario",
     desc: "经典红白机方波",
-    playSound: (time, _s, pitch) => playSquareWave(pitch || 659.25, time)
+    playSound: (time, _s, pitch, dur) => playSquareWave(pitch || 659.25, time, dur || 0.12)
   },
   kongLead: {
     id: "kongLead",
@@ -84,7 +112,7 @@ const INSTRUMENT_MAP: Record<string, Instrument & { playSound: (time: number, st
     iconType: "kong",
     colorClass: "is-kong",
     desc: "街机跳跃方波",
-    playSound: (time, _s, pitch) => playSquareWave(pitch || 349.23, time, 0.16)
+    playSound: (time, _s, pitch, dur) => playSquareWave(pitch || 349.23, time, dur || 0.16)
   },
   marioBass: {
     id: "marioBass",
@@ -93,7 +121,7 @@ const INSTRUMENT_MAP: Record<string, Instrument & { playSound: (time: number, st
     iconType: "bass",
     colorClass: "is-bass",
     desc: "弹性跳跃贝斯",
-    playSound: (time, _s, pitch) => playTriangleBass(pitch || 130.81, time)
+    playSound: (time, _s, pitch, dur) => playTriangleBass(pitch || 130.81, time, dur || 0.18)
   },
   kick: {
     id: "kick",
@@ -129,9 +157,9 @@ const INSTRUMENT_MAP: Record<string, Instrument & { playSound: (time: number, st
     iconType: "lead",
     colorClass: "is-lead",
     desc: "空灵自然音色",
-    playSound: (time, step) => {
+    playSound: (time, step, pitch, dur) => {
       const pentatonic = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
-      playSoftPluck(pentatonic[step % pentatonic.length], time);
+      playSoftPluck(pitch || pentatonic[step % pentatonic.length], time, dur || 0.38);
     }
   },
   bass: {
@@ -141,9 +169,9 @@ const INSTRUMENT_MAP: Record<string, Instrument & { playSound: (time: number, st
     iconType: "bass",
     colorClass: "is-bass",
     desc: "温暖低通贝斯",
-    playSound: (time, step) => {
+    playSound: (time, step, pitch, dur) => {
       const progression = [65.41, 87.31, 98.00, 110.00];
-      playAnalogBass(progression[Math.floor(step / 16) % 4], time);
+      playAnalogBass(pitch || progression[Math.floor(step / 16) % 4], time, dur || 0.32);
     }
   },
   epiano: {
@@ -153,9 +181,9 @@ const INSTRUMENT_MAP: Record<string, Instrument & { playSound: (time: number, st
     iconType: "synth",
     colorClass: "is-snare",
     desc: "温润爵士和弦",
-    playSound: (time, step) => {
+    playSound: (time, step, pitch, dur) => {
       const scale = [261.63, 329.63, 392.00, 493.88, 523.25];
-      playRhodes(scale[step % scale.length], time);
+      playRhodes(pitch || scale[step % scale.length], time, dur || 0.5);
     }
   },
   marimba: {
@@ -165,9 +193,8 @@ const INSTRUMENT_MAP: Record<string, Instrument & { playSound: (time: number, st
     iconType: "synth",
     colorClass: "is-hat",
     desc: "清脆热带木质",
-    playSound: (time, step) => {
-      const scale = [329.63, 392.00, 440.00, 523.25, 659.25];
-      playMarimba(scale[step % scale.length], time);
+    playSound: (time, _step, pitch, dur) => {
+      playMarimba(pitch || 440, time, dur || 0.22);
     }
   }
 };
@@ -184,19 +211,33 @@ export default function App() {
     setSong(songFromStorage);
   }, [songFromStorage]);
 
-  const [activeBar, setActiveBar] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [playStep, setPlayStep] = useState(0); // 0 ~ 63
+  const [playStep, setPlayStep] = useState(0); // 0 ~ (totalSteps - 1)
   const [pickerTarget, setPickerTarget] = useState<string | null>(null);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [busy, setBusy] = useState(false);
 
+  const [draggingNote, setDraggingNote] = useState<{
+    trackKey: string;
+    barIdx: number;
+    stepIdx: number;
+    gStep: number;
+    duration: number;
+  } | null>(null);
+
+  const timelineScrollRef = useRef<HTMLDivElement>(null);
   const isPlayingRef = useRef(isPlaying);
   isPlayingRef.current = isPlaying;
   const songRef = useRef(song);
   songRef.current = song;
-  const activeBarRef = useRef(activeBar);
-  activeBarRef.current = activeBar;
+
+  const HEADER_WIDTH = 154;
+  const STEP_WIDTH = 34;
+  const STEP_GAP = 4;
+  const STEP_PITCH = STEP_WIDTH + STEP_GAP;
+
+  const totalBars = song.bars.length;
+  const totalSteps = totalBars * 16;
 
   async function perform(action: Parameters<typeof edit>[0]) {
     setBusy(true);
@@ -212,22 +253,27 @@ export default function App() {
     }
   }
 
-  // 64 步进跨小节播放循环
+  const playStepRef = useRef(0);
+
+  // 动态步进跨小节播放循环：支持实时变速，根据每个音符的 duration 持续发音
   useEffect(() => {
     let timer: ReturnType<typeof setInterval> | null = null;
     if (isPlaying) {
-      const stepMs = (60 / songRef.current.bpm / 4) * 1000;
-      let currentGlobalStep = 0;
+      const stepMs = (60 / song.bpm / 4) * 1000;
+      const stepSec = stepMs / 1000;
+      let currentGlobalStep = playStepRef.current;
 
       timer = setInterval(() => {
         const now = getAudioContext().currentTime;
+        const currentBarsCount = songRef.current.bars.length || 1;
+        const currentTotalSteps = currentBarsCount * 16;
+        currentGlobalStep = currentGlobalStep % currentTotalSteps;
+
         const barIdx = Math.floor(currentGlobalStep / 16);
         const stepInBar = currentGlobalStep % 16;
 
+        playStepRef.current = currentGlobalStep;
         setPlayStep(currentGlobalStep);
-        if (barIdx !== activeBarRef.current) {
-          setActiveBar(barIdx);
-        }
 
         const currentSong = songRef.current;
         const barData = currentSong.bars[barIdx];
@@ -237,22 +283,40 @@ export default function App() {
               const inst = INSTRUMENT_MAP[t.instId];
               if (inst) {
                 const pitch = barData.pitches?.[t.trackKey]?.[stepInBar];
-                inst.playSound(now, currentGlobalStep, pitch);
+                const durSteps = barData.durations?.[t.trackKey]?.[stepInBar] || 1;
+                const durSec = durSteps * stepSec;
+                inst.playSound(now, currentGlobalStep, pitch, durSec);
               }
             }
           });
         }
 
-        currentGlobalStep = (currentGlobalStep + 1) % 64;
+        currentGlobalStep = (currentGlobalStep + 1) % currentTotalSteps;
       }, stepMs);
     } else {
+      playStepRef.current = 0;
       setPlayStep(0);
     }
 
     return () => {
       if (timer) clearInterval(timer);
     };
-  }, [isPlaying]);
+  }, [isPlaying, song.bpm, song.bars.length]);
+
+  // 播放时时间轴自动跟随指针平滑向右滚动
+  useEffect(() => {
+    if (isPlaying && timelineScrollRef.current) {
+      const container = timelineScrollRef.current;
+      const playheadX = HEADER_WIDTH + playStep * STEP_PITCH;
+      const viewLeft = container.scrollLeft;
+      const viewRight = viewLeft + container.clientWidth;
+
+      if (playheadX > viewRight - 100 || playheadX < viewLeft + HEADER_WIDTH) {
+        const targetScroll = Math.max(0, playheadX - HEADER_WIDTH - 60);
+        container.scrollTo({ left: targetScroll, behavior: "smooth" });
+      }
+    }
+  }, [isPlaying, playStep]);
 
   function togglePlay() {
     getAudioContext();
@@ -271,8 +335,63 @@ export default function App() {
     return () => window.removeEventListener("keydown", handleKey);
   }, []);
 
+  // 方案 A：右侧拖拽手柄放长音符
+  function startDrag(
+    e: React.PointerEvent,
+    trackKey: string,
+    barIdx: number,
+    stepIdx: number,
+    gStep: number,
+    initialDuration: number,
+    totalTimelineSteps: number
+  ) {
+    e.preventDefault();
+    e.stopPropagation();
+    const startX = e.clientX;
+    let lastDur = initialDuration;
+
+    setDraggingNote({ trackKey, barIdx, stepIdx, gStep, duration: initialDuration });
+
+    const maxAllowedDuration = Math.min(32, totalTimelineSteps - gStep);
+
+    const onPointerMove = (moveEvent: PointerEvent) => {
+      const deltaX = moveEvent.clientX - startX;
+      const deltaSteps = Math.round(deltaX / STEP_PITCH);
+      const nextDur = Math.max(1, Math.min(maxAllowedDuration, initialDuration + deltaSteps));
+      if (nextDur !== lastDur) {
+        lastDur = nextDur;
+        setDraggingNote({ trackKey, barIdx, stepIdx, gStep, duration: nextDur });
+      }
+    };
+
+    const onPointerUp = () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      setDraggingNote(null);
+      if (lastDur !== initialDuration) {
+        void perform({
+          action: "setNoteDuration",
+          barIndex: barIdx,
+          trackKey,
+          stepIndex: stepIdx,
+          duration: lastDur
+        });
+        const now = getAudioContext().currentTime;
+        const trackConf = songRef.current.tracks.find((t) => t.trackKey === trackKey);
+        const inst = trackConf ? INSTRUMENT_MAP[trackConf.instId] : undefined;
+        if (inst) {
+          const pitch = songRef.current.bars[barIdx]?.pitches?.[trackKey]?.[stepIdx];
+          const stepSec = 60 / songRef.current.bpm / 4;
+          inst.playSound(now, gStep, pitch, lastDur * stepSec);
+        }
+      }
+    };
+
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+  }
+
   const currentPlayingBar = Math.floor(playStep / 16);
-  const currentStepInBar = playStep % 16;
 
   return (
     <main className="ps-console">
@@ -280,9 +399,7 @@ export default function App() {
       <header className="ps-top-bar">
         <div className="ps-brand">
           <div className="ps-brand-badge">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M2 10v4M6 6v12M10 3v18M14 8v8M18 5v14M22 10v4" />
-            </svg>
+            <StudioBrandIcon size={32} />
           </div>
           <div>
             <div className="ps-brand-title">{t("appName")}</div>
@@ -299,12 +416,30 @@ export default function App() {
             {isPlaying ? "■" : "▶"}
           </button>
           <div className="ps-tempo-pill">
+            <button
+              type="button"
+              className="ps-tempo-step-btn"
+              disabled={busy || song.bpm <= 60}
+              onClick={() => void perform({ action: "setBpm", bpm: song.bpm - 5 })}
+              title="减速 (-5)"
+            >
+              −
+            </button>
             <span style={{ color: "var(--ps-dim)" }}>{t("bpm")}</span>
             <span className="ps-tempo-val">{song.bpm}</span>
+            <button
+              type="button"
+              className="ps-tempo-step-btn"
+              disabled={busy || song.bpm >= 180}
+              onClick={() => void perform({ action: "setBpm", bpm: song.bpm + 5 })}
+              title="加速 (+5)"
+            >
+              +
+            </button>
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: 8 }}>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <button
             type="button"
             className="ps-btn-pill mario"
@@ -333,88 +468,153 @@ export default function App() {
             type="button"
             className="ps-btn-pill"
             disabled={busy}
-            onClick={() =>
-              void perform({ action: "copyBar", fromBar: activeBar, toBar: (activeBar + 1) % 4 })
-            }
+            onClick={() => void perform({ action: "loadPreset", presetName: "lofi" })}
           >
-            {t("copyNext")}
+            ☕ {t("presetLofi")}
           </button>
           <button
             type="button"
             className="ps-btn-pill"
-            style={{ color: "#f87171" }}
-            disabled={busy}
-            onClick={() => void perform({ action: "clearBar", barIndex: activeBar })}
+            style={{ color: "#818cf8" }}
+            disabled={busy || totalBars >= 16}
+            onClick={() => void perform({ action: "addBar" })}
+            title="追加小节"
           >
-            {t("clearBar")}
+            + {t("addBar")}
+          </button>
+          {totalBars > 1 && (
+            <button
+              type="button"
+              className="ps-btn-pill"
+              style={{ color: "#f87171" }}
+              disabled={busy}
+              onClick={() => void perform({ action: "removeBar" })}
+              title="删除最后一节"
+            >
+              - {t("removeBar")}
+            </button>
+          )}
+          <button
+            type="button"
+            className="ps-btn-pill"
+            style={{ color: "#94a3b8" }}
+            disabled={busy}
+            onClick={() => {
+              for (let i = 0; i < totalBars; i++) {
+                void perform({ action: "clearBar", barIndex: i });
+              }
+            }}
+          >
+            {t("clearAll")}
           </button>
         </div>
       </header>
 
-      {/* 4 小节翻页条 */}
-      <div className="ps-structure-bar">
-        <div className="ps-bars-selector">
-          {[t("bar1"), t("bar2"), t("bar3"), t("bar4")].map((barLabel, idx) => (
-            <button
-              key={idx}
-              type="button"
-              className={`ps-bar-btn ${activeBar === idx ? "active" : ""} ${
-                isPlaying && currentPlayingBar === idx ? "playing-now" : ""
-              }`}
-              onClick={() => setActiveBar(idx)}
-            >
-              <span className="ps-bar-dot" />
-              <span>{barLabel}</span>
-            </button>
-          ))}
-        </div>
+      {/* 连续横向滚动时间轴主体 (不分页) */}
+      <div className="ps-timeline-viewport" ref={timelineScrollRef}>
+        {/* 时间标尺行 (Sticky Top) */}
+        <div className="ps-timeline-ruler-row">
+          <div className="ps-ruler-corner">
+            <span>{t("tracks")} ({song.tracks.length})</span>
+            <span className="ps-total-bars-pill">{totalBars} BARS</span>
+          </div>
 
-        <div style={{ fontSize: 11, fontWeight: 700, color: "var(--ps-dim)", fontFamily: "monospace" }}>
-          <span>
-            {isPlaying ? (
-              <strong style={{ color: "#10b981" }}>
-                BAR {currentPlayingBar + 1} ({String(playStep + 1).padStart(2, "0")}/64)
-              </strong>
-            ) : (
-              `BAR ${activeBar + 1} (EDITING)`
+          <div className="ps-ruler-track" style={{ width: `${totalSteps * STEP_PITCH}px` }}>
+            {Array.from({ length: totalBars }).map((_, barIdx) => (
+              <div key={barIdx} className="ps-ruler-bar-group" style={{ width: `${16 * STEP_PITCH}px` }}>
+                <div className="ps-ruler-bar-label">
+                  <span>BAR {barIdx + 1}</span>
+                  {totalBars > 1 && (
+                    <button
+                      type="button"
+                      className="ps-ruler-bar-del"
+                      title={`删除第 ${barIdx + 1} 小节`}
+                      disabled={busy}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        void perform({ action: "removeBar", barIndex: barIdx });
+                      }}
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+                <div className="ps-ruler-ticks">
+                  <span className="tick primary">{barIdx + 1}.1</span>
+                  <span className="tick">.2</span>
+                  <span className="tick">.3</span>
+                  <span className="tick">.4</span>
+                  <span className="tick primary">2</span>
+                  <span className="tick">.2</span>
+                  <span className="tick">.3</span>
+                  <span className="tick">.4</span>
+                  <span className="tick primary">3</span>
+                  <span className="tick">.2</span>
+                  <span className="tick">.3</span>
+                  <span className="tick">.4</span>
+                  <span className="tick primary">4</span>
+                  <span className="tick">.2</span>
+                  <span className="tick">.3</span>
+                  <span className="tick">.4</span>
+                </div>
+              </div>
+            ))}
+
+            {totalBars < 16 && (
+              <button
+                type="button"
+                className="ps-ruler-add-bar-btn"
+                title="追加小节 (+1)"
+                disabled={busy}
+                onClick={() => void perform({ action: "addBar" })}
+              >
+                +
+              </button>
             )}
-          </span>
-        </div>
-      </div>
-
-      {/* 16 步进矩阵滚动主体 */}
-      <div className="ps-matrix-scroll">
-        <div className="ps-beat-scale">
-          <div />
-          <div className="ps-beat-mark bar-head">1.1</div>
-          <div className="ps-beat-mark">.2</div>
-          <div className="ps-beat-mark">.3</div>
-          <div className="ps-beat-mark">.4</div>
-          <div className="ps-beat-mark bar-head">2.1</div>
-          <div className="ps-beat-mark">.2</div>
-          <div className="ps-beat-mark">.3</div>
-          <div className="ps-beat-mark">.4</div>
-          <div className="ps-beat-mark bar-head">3.1</div>
-          <div className="ps-beat-mark">.2</div>
-          <div className="ps-beat-mark">.3</div>
-          <div className="ps-beat-mark">.4</div>
-          <div className="ps-beat-mark bar-head">4.1</div>
-          <div className="ps-beat-mark">.2</div>
-          <div className="ps-beat-mark">.3</div>
-          <div className="ps-beat-mark">.4</div>
+          </div>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {/* 纵向走带指示线 */}
+        {isPlaying && (
+          <div
+            className="ps-playhead-line"
+            style={{ left: `${HEADER_WIDTH + playStep * STEP_PITCH + STEP_WIDTH / 2}px` }}
+          />
+        )}
+
+        {/* 所有音轨行 */}
+        <div className="ps-timeline-tracks" style={{ width: `${HEADER_WIDTH + totalSteps * STEP_PITCH + 60}px` }}>
           {song.tracks.map((tConfig) => {
             const inst = INSTRUMENT_MAP[tConfig.instId] || INSTRUMENT_MAP["lead"];
-            const currentBarData = song.bars[activeBar];
-            const trackSteps = currentBarData?.steps[tConfig.trackKey] || new Array(16).fill(false);
+
+            // 提取该音轨所有音符
+            const notes: {
+              gStep: number;
+              barIdx: number;
+              stepIdx: number;
+              duration: number;
+              pitch?: number | null;
+            }[] = [];
+
+            song.bars.forEach((bar, bIdx) => {
+              const steps = bar.steps[tConfig.trackKey];
+              if (steps) {
+                steps.forEach((isActive, sIdx) => {
+                  if (isActive) {
+                    const gStep = bIdx * 16 + sIdx;
+                    const dur = bar.durations?.[tConfig.trackKey]?.[sIdx] || 1;
+                    const pitch = bar.pitches?.[tConfig.trackKey]?.[sIdx];
+                    notes.push({ gStep, barIdx: bIdx, stepIdx: sIdx, duration: dur, pitch });
+                  }
+                });
+              }
+            });
 
             return (
-              <div key={tConfig.trackKey} className="ps-matrix-row">
-                {/* 乐器信息卡片 */}
+              <div key={tConfig.trackKey} className="ps-timeline-track-row">
+                {/* 乐器信息卡片 (Sticky Left) */}
                 <div
-                  className="ps-card-info"
+                  className="ps-card-info sticky"
                   onClick={() => {
                     setPickerTarget(tConfig.trackKey);
                     setIsPickerOpen(true);
@@ -451,52 +651,118 @@ export default function App() {
                   )}
                 </div>
 
-                {/* 16 步进打击垫 */}
-                {trackSteps.map((isActive: boolean, stepIdx: number) => {
-                  const isCurrentBeat = isPlaying && currentPlayingBar === activeBar && currentStepInBar === stepIdx;
-                  const isBarBeat = stepIdx % 4 === 0;
+                {/* 时间轴步进区域 */}
+                <div className="ps-track-timeline" style={{ width: `${totalSteps * STEP_PITCH}px` }}>
+                  {/* 底层网格格子：供点击创建新音符 */}
+                  <div className="ps-grid-slots">
+                    {Array.from({ length: totalSteps }).map((_, g) => {
+                      const bIdx = Math.floor(g / 16);
+                      const sIdx = g % 16;
+                      const isBarStart = sIdx === 0 && g > 0;
+                      const isBeat = sIdx % 4 === 0;
+                      const isCurrentBeat = isPlaying && playStep === g;
 
-                  return (
-                    <div
-                      key={stepIdx}
-                      className={`ps-pad-btn ${isBarBeat ? "bar-beat" : ""} ${
-                        isActive ? `active ${inst.colorClass}` : ""
-                      } ${isCurrentBeat ? "playhead" : ""}`}
-                      onClick={() => {
-                        const nextActive = !isActive;
-                        if (nextActive) {
-                          const now = getAudioContext().currentTime;
-                          inst.playSound(now, activeBar * 16 + stepIdx);
-                        }
-                        void perform({
-                          action: "toggleStep",
-                          barIndex: activeBar,
-                          trackKey: tConfig.trackKey,
-                          stepIndex: stepIdx
-                        });
-                      }}
-                    />
-                  );
-                })}
+                      return (
+                        <div
+                          key={g}
+                          className={`ps-pad-btn ${isBarStart ? "bar-start" : ""} ${isBeat ? "bar-beat" : ""} ${
+                            isCurrentBeat ? "playhead" : ""
+                          }`}
+                          style={{ width: `${STEP_WIDTH}px` }}
+                          onClick={() => {
+                            const now = getAudioContext().currentTime;
+                            inst.playSound(now, g);
+                            void perform({
+                              action: "toggleStep",
+                              barIndex: bIdx,
+                              trackKey: tConfig.trackKey,
+                              stepIndex: sIdx,
+                              duration: 1
+                            });
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
+
+                  {/* 上层音符块层：渲染实际音符，支持长音药丸条、拖拽手柄、点击删除 */}
+                  <div className="ps-notes-layer">
+                    {notes.map((note) => {
+                      const isDraggingThis =
+                        draggingNote &&
+                        draggingNote.trackKey === tConfig.trackKey &&
+                        draggingNote.gStep === note.gStep;
+                      const currentDur = isDraggingThis ? draggingNote.duration : note.duration;
+                      const isPlayingThisNote =
+                        isPlaying && playStep >= note.gStep && playStep < note.gStep + currentDur;
+
+                      return (
+                        <div
+                          key={note.gStep}
+                          className={`ps-note-block ${inst.colorClass} ${isPlayingThisNote ? "active-playing" : ""}`}
+                          style={{
+                            left: `${note.gStep * STEP_PITCH}px`,
+                            width: `${currentDur * STEP_PITCH - STEP_GAP}px`
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            void perform({
+                              action: "toggleStep",
+                              barIndex: note.barIdx,
+                              trackKey: tConfig.trackKey,
+                              stepIndex: note.stepIdx
+                            });
+                          }}
+                        >
+                          <div className="ps-note-body">
+                            {currentDur > 1 ? (
+                              <span className="ps-note-len-badge">{currentDur}</span>
+                            ) : null}
+                          </div>
+
+                          <div
+                            className="ps-note-handle"
+                            title="按住向右拖拽放长节拍"
+                            onPointerDown={(e) => {
+                              startDrag(
+                                e,
+                                tConfig.trackKey,
+                                note.barIdx,
+                                note.stepIdx,
+                                note.gStep,
+                                note.duration,
+                                totalSteps
+                              );
+                            }}
+                          >
+                            <div className="ps-handle-grip" />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             );
           })}
-        </div>
 
-        {/* 添加新乐器音轨插槽 */}
-        <div
-          className="ps-add-lane"
-          onClick={() => {
-            if (song.tracks.length >= 8) {
-              alert(t("maxTrackLimit"));
-              return;
-            }
-            setPickerTarget(null);
-            setIsPickerOpen(true);
-          }}
-        >
-          <span style={{ fontSize: 16, fontWeight: 700 }}>＋</span>
-          <span>{t("addTrack")}</span>
+          {/* 添加音轨槽 */}
+          <div className="ps-timeline-add-row">
+            <div
+              className="ps-add-lane"
+              onClick={() => {
+                if (song.tracks.length >= 8) {
+                  alert(t("maxTrackLimit"));
+                  return;
+                }
+                setPickerTarget(null);
+                setIsPickerOpen(true);
+              }}
+            >
+              <span style={{ fontSize: 16, fontWeight: 700 }}>＋</span>
+              <span>{t("addTrack")}</span>
+            </div>
+          </div>
         </div>
       </div>
 

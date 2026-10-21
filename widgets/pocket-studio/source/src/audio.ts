@@ -15,7 +15,7 @@ export function getAudioContext(): AudioContext {
   return audioCtx;
 }
 
-// 1. 8-Bit 方波 (马里奥、大金刚等经典街机/红白机声音)
+// 1. 8-Bit 方波 (马里奥、大金刚等经典街机/红白机声音，支持持续时长)
 export function playSquareWave(freq: number, time: number, duration = 0.12) {
   const ctx = getAudioContext();
   const osc = ctx.createOscillator();
@@ -24,7 +24,14 @@ export function playSquareWave(freq: number, time: number, duration = 0.12) {
   osc.type = "square";
   osc.frequency.setValueAtTime(freq, time);
 
-  gain.gain.setValueAtTime(0.28, time);
+  // ADSR 包络：快速启动 (0.008s)，根据 duration 维持延音，并在末尾平滑释放
+  const attack = 0.008;
+  const release = Math.min(0.04, duration * 0.2);
+  const sustainTime = Math.max(attack, duration - release);
+
+  gain.gain.setValueAtTime(0.001, time);
+  gain.gain.linearRampToValueAtTime(0.28, time + attack);
+  gain.gain.setValueAtTime(0.25, time + sustainTime);
   gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
 
   osc.connect(gain);
@@ -33,7 +40,7 @@ export function playSquareWave(freq: number, time: number, duration = 0.12) {
   osc.stop(time + duration);
 }
 
-// 2. 8-Bit 三角波贝斯 (纯正跳跃低音)
+// 2. 8-Bit 三角波贝斯 (纯正跳跃低音，支持持续时长)
 export function playTriangleBass(freq: number, time: number, duration = 0.18) {
   const ctx = getAudioContext();
   const osc = ctx.createOscillator();
@@ -42,8 +49,14 @@ export function playTriangleBass(freq: number, time: number, duration = 0.18) {
   osc.type = "triangle";
   osc.frequency.setValueAtTime(freq, time);
 
-  gain.gain.setValueAtTime(0.65, time);
-  gain.gain.exponentialRampToValueAtTime(0.01, time + duration);
+  const attack = 0.01;
+  const release = Math.min(0.05, duration * 0.25);
+  const sustainTime = Math.max(attack, duration - release);
+
+  gain.gain.setValueAtTime(0.001, time);
+  gain.gain.linearRampToValueAtTime(0.65, time + attack);
+  gain.gain.setValueAtTime(0.55, time + sustainTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
 
   osc.connect(gain);
   gain.connect(ctx.destination);
@@ -121,8 +134,8 @@ export function playHat(time: number) {
   noise.stop(time + 0.04);
 }
 
-// 6. 模拟低通滤波低音 (Sub Bass)
-export function playAnalogBass(freq: number, time: number) {
+// 6. 模拟低通滤波低音 (Sub Bass，支持持续时长)
+export function playAnalogBass(freq: number, time: number, duration = 0.32) {
   const ctx = getAudioContext();
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
@@ -132,21 +145,27 @@ export function playAnalogBass(freq: number, time: number) {
 
   const filter = ctx.createBiquadFilter();
   filter.type = "lowpass";
-  filter.frequency.setValueAtTime(400, time);
-  filter.frequency.exponentialRampToValueAtTime(80, time + 0.32);
+  filter.frequency.setValueAtTime(450, time);
+  filter.frequency.exponentialRampToValueAtTime(100, time + duration);
 
-  gain.gain.setValueAtTime(0.85, time);
-  gain.gain.exponentialRampToValueAtTime(0.01, time + 0.32);
+  const attack = 0.015;
+  const release = Math.min(0.08, duration * 0.25);
+  const sustainTime = Math.max(attack, duration - release);
+
+  gain.gain.setValueAtTime(0.001, time);
+  gain.gain.linearRampToValueAtTime(0.8, time + attack);
+  gain.gain.setValueAtTime(0.7, time + sustainTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
 
   osc.connect(filter);
   filter.connect(gain);
   gain.connect(ctx.destination);
   osc.start(time);
-  osc.stop(time + 0.32);
+  osc.stop(time + duration);
 }
 
-// 7. 柔和五声音阶琴
-export function playSoftPluck(freq: number, time: number) {
+// 7. 柔和五声音阶琴 (支持持续时长)
+export function playSoftPluck(freq: number, time: number, duration = 0.38) {
   const ctx = getAudioContext();
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
@@ -154,17 +173,23 @@ export function playSoftPluck(freq: number, time: number) {
   osc.type = "triangle";
   osc.frequency.setValueAtTime(freq, time);
 
-  gain.gain.setValueAtTime(0.42, time);
-  gain.gain.exponentialRampToValueAtTime(0.001, time + 0.38);
+  const attack = 0.01;
+  const release = Math.min(0.06, duration * 0.25);
+  const sustainTime = Math.max(attack, duration - release);
+
+  gain.gain.setValueAtTime(0.001, time);
+  gain.gain.linearRampToValueAtTime(0.42, time + attack);
+  gain.gain.setValueAtTime(0.35, time + sustainTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
 
   osc.connect(gain);
   gain.connect(ctx.destination);
   osc.start(time);
-  osc.stop(time + 0.38);
+  osc.stop(time + duration);
 }
 
-// 8. 电钢琴 Rhodes: 正弦波
-export function playRhodes(freq: number, time: number) {
+// 8. 电钢琴 Rhodes (支持持续时长)
+export function playRhodes(freq: number, time: number, duration = 0.5) {
   const ctx = getAudioContext();
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
@@ -172,17 +197,23 @@ export function playRhodes(freq: number, time: number) {
   osc.type = "sine";
   osc.frequency.setValueAtTime(freq, time);
 
-  gain.gain.setValueAtTime(0.5, time);
-  gain.gain.exponentialRampToValueAtTime(0.001, time + 0.5);
+  const attack = 0.015;
+  const release = Math.min(0.1, duration * 0.25);
+  const sustainTime = Math.max(attack, duration - release);
+
+  gain.gain.setValueAtTime(0.001, time);
+  gain.gain.linearRampToValueAtTime(0.5, time + attack);
+  gain.gain.setValueAtTime(0.4, time + sustainTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
 
   osc.connect(gain);
   gain.connect(ctx.destination);
   osc.start(time);
-  osc.stop(time + 0.5);
+  osc.stop(time + duration);
 }
 
-// 9. 木琴 Marimba
-export function playMarimba(freq: number, time: number) {
+// 9. 木琴 Marimba (支持持续时长)
+export function playMarimba(freq: number, time: number, duration = 0.22) {
   const ctx = getAudioContext();
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
@@ -191,10 +222,10 @@ export function playMarimba(freq: number, time: number) {
   osc.frequency.setValueAtTime(freq, time);
 
   gain.gain.setValueAtTime(0.65, time);
-  gain.gain.exponentialRampToValueAtTime(0.001, time + 0.22);
+  gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
 
   osc.connect(gain);
   gain.connect(ctx.destination);
   osc.start(time);
-  osc.stop(time + 0.22);
+  osc.stop(time + duration);
 }

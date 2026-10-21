@@ -67,11 +67,12 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #ef4444, #f59e0b);
+  background: transparent;
   display: grid;
   place-items: center;
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+  flex-shrink: 0;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
 }
 .ps-brand-title {
   font-size: 15px;
@@ -108,7 +109,7 @@ body {
 .ps-tempo-pill {
   background: var(--ps-well);
   border: 1px solid var(--ps-edge);
-  padding: 5px 12px;
+  padding: 4px 8px;
   border-radius: 20px;
   display: flex;
   align-items: center;
@@ -121,95 +122,212 @@ body {
   color: #f59e0b;
   font-size: 13px;
   font-weight: 800;
+  min-width: 28px;
+  text-align: center;
+}
+.ps-tempo-step-btn {
+  background: transparent;
+  border: none;
+  color: var(--ps-muted);
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 0 4px;
+  line-height: 1;
+  border-radius: 4px;
+  display: grid;
+  place-items: center;
+  transition: all 0.15s;
+}
+.ps-tempo-step-btn:hover:not(:disabled) {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+.ps-tempo-step-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
-/* 4 小节翻页条 */
-.ps-structure-bar {
+/* 连续横向滚动时间轴主体 (不分页) */
+.ps-timeline-viewport {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+  background: var(--ps-bg);
+  border-radius: 12px;
+  border: 1px solid var(--ps-edge);
+  scrollbar-width: thin;
+}
+.ps-timeline-viewport::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.ps-timeline-viewport::-webkit-scrollbar-thumb {
+  background: var(--ps-edge);
+  border-radius: 3px;
+}
+
+/* 时间标尺行 (Sticky Top) */
+.ps-timeline-ruler-row {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  background: #111520;
+  border-bottom: 2px solid var(--ps-edge);
+  z-index: 20;
+  height: 38px;
+}
+
+/* 左上角交叉头 (Sticky Top & Left) */
+.ps-ruler-corner {
+  position: sticky;
+  left: 0;
+  width: 154px;
+  min-width: 154px;
+  height: 100%;
+  background: #111520;
+  border-right: 2px solid var(--ps-edge);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--ps-well);
-  border: 1px solid var(--ps-edge);
-  border-radius: 12px;
-  padding: 6px 12px;
-  flex-shrink: 0;
-}
-
-.ps-bars-selector {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.ps-bar-btn {
-  padding: 5px 14px;
-  border-radius: 8px;
+  padding: 0 10px;
   font-size: 11px;
-  font-weight: 800;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-weight: 700;
   color: var(--ps-muted);
-  cursor: pointer;
+  box-sizing: border-box;
+  z-index: 25;
+}
+.ps-total-bars-pill {
+  font-size: 9px;
+  font-weight: 800;
+  color: #818cf8;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+/* 标尺刻度轨道 */
+.ps-ruler-track {
   display: flex;
   align-items: center;
-  gap: 6px;
-  transition: all 0.15s;
+  height: 100%;
+  position: relative;
 }
-.ps-bar-btn:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
-.ps-bar-btn.active {
-  background: #252b3b;
-  border-color: #6366f1;
-  color: #fff;
-  box-shadow: 0 0 10px rgba(99, 102, 241, 0.35);
-}
-.ps-bar-btn.playing-now {
-  border-color: #10b981;
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
-}
-.ps-bar-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-}
-.ps-bar-btn.active .ps-bar-dot { background: #6366f1; }
-.ps-bar-btn.playing-now .ps-bar-dot { background: #10b981; box-shadow: 0 0 6px #10b981; }
 
-/* 矩阵滚动区 */
-.ps-matrix-scroll {
-  flex: 1;
-  overflow-y: auto;
-  padding-right: 4px;
+/* 标尺小节组 */
+.ps-ruler-bar-group {
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  justify-content: center;
+  border-right: 2px solid rgba(255, 255, 255, 0.12);
+  box-sizing: border-box;
+  padding: 2px 4px;
+  background: rgba(255, 255, 255, 0.015);
 }
-
-.ps-beat-scale {
-  display: grid;
-  grid-template-columns: 154px repeat(16, 1fr);
-  gap: 8px;
-  padding: 0 4px;
-  flex-shrink: 0;
-}
-.ps-beat-mark {
-  text-align: center;
+.ps-ruler-bar-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-size: 10px;
-  font-family: ui-monospace, monospace;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #818cf8;
+  padding: 0 4px;
+}
+.ps-ruler-bar-del {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 13px;
   font-weight: 700;
+  padding: 0 3px;
+  border-radius: 3px;
+  line-height: 1;
+  opacity: 0.5;
+  transition: all 0.15s;
+}
+.ps-ruler-bar-del:hover {
+  opacity: 1;
+  background: rgba(239, 68, 68, 0.2);
+}
+.ps-ruler-ticks {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+.ps-ruler-ticks .tick {
+  font-size: 9px;
+  font-family: ui-monospace, monospace;
   color: var(--ps-dim);
 }
-.ps-beat-mark.bar-head { color: var(--ps-muted); font-weight: 800; }
-
-/* 动态音轨行 */
-.ps-matrix-row {
+.ps-ruler-ticks .tick.primary {
+  color: var(--ps-muted);
+  font-weight: 700;
+}
+.ps-ruler-add-bar-btn {
+  height: 26px;
+  padding: 0 8px;
+  margin-left: 8px;
+  border-radius: 6px;
+  border: 1px dashed rgba(99, 102, 241, 0.4);
+  background: rgba(99, 102, 241, 0.12);
+  color: #818cf8;
+  font-weight: 800;
+  cursor: pointer;
   display: grid;
-  grid-template-columns: 154px repeat(16, 1fr);
+  place-items: center;
+  transition: all 0.15s;
+}
+.ps-ruler-add-bar-btn:hover {
+  background: rgba(99, 102, 241, 0.25);
+  color: #fff;
+}
+
+/* 纵向走带指示线 (Playhead Line) */
+.ps-playhead-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981, 0 0 4px #10b981;
+  z-index: 15;
+  pointer-events: none;
+  transition: left 0.05s linear;
+}
+
+/* 音轨列表容器 */
+.ps-timeline-tracks {
+  display: flex;
+  flex-direction: column;
   gap: 8px;
+  padding: 10px 0;
+}
+
+/* 单条音轨时间轴行 */
+.ps-timeline-track-row {
+  display: flex;
   align-items: center;
-  background: rgba(0, 0, 0, 0.25);
-  padding: 5px 8px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  position: relative;
+  height: 44px;
+}
+
+/* 乐器卡片 (Sticky Left) */
+.ps-card-info.sticky {
+  position: sticky;
+  left: 0;
+  width: 154px;
+  min-width: 154px;
+  z-index: 10;
+  background: #141720;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.4);
+  border-right: 2px solid var(--ps-edge);
+  height: 100%;
+  box-sizing: border-box;
 }
 
 /* 乐器卡 */
@@ -229,7 +347,6 @@ body {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.2);
 }
-
 .ps-card-main {
   display: flex;
   align-items: center;
@@ -265,7 +382,6 @@ body {
   color: var(--ps-dim);
   font-family: ui-monospace, monospace;
 }
-
 .ps-btn-del {
   opacity: 0;
   background: transparent;
@@ -277,45 +393,152 @@ body {
   border-radius: 4px;
   transition: all 0.15s;
 }
-.ps-matrix-row:hover .ps-btn-del { opacity: 1; }
+.ps-timeline-track-row:hover .ps-btn-del { opacity: 1; }
 .ps-btn-del:hover {
   color: #ef4444;
   background: rgba(239, 68, 68, 0.15);
 }
 
-/* 物理发光打击垫 */
-.ps-pad-btn {
-  height: 46px;
-  border-radius: 7px;
-  background: linear-gradient(180deg, #1c212c 0%, #141720 100%);
-  border: 1.5px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.08);
-  cursor: pointer;
+/* 时间轴步进区域 */
+.ps-track-timeline {
   position: relative;
-  transition: all 0.12s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.ps-pad-btn.bar-beat {
-  background: linear-gradient(180deg, #242a38 0%, #181c26 100%);
-  border-color: rgba(255, 255, 255, 0.09);
-}
-.ps-pad-btn:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px);
-}
-.ps-pad-btn.playhead {
-  border-color: #ffffff !important;
-  box-shadow: 0 0 14px rgba(255, 255, 255, 0.7);
-  filter: brightness(1.35);
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 
-/* 点亮色彩状态 */
-.ps-pad-btn.active.is-kick { background: linear-gradient(180deg, #ff3366, #be123c); border-color: #fda4af; box-shadow: 0 0 16px rgba(255, 51, 102, 0.7); }
-.ps-pad-btn.active.is-snare { background: linear-gradient(180deg, #00d2ff, #0369a1); border-color: #bae6fd; box-shadow: 0 0 16px rgba(0, 210, 255, 0.7); }
-.ps-pad-btn.active.is-hat { background: linear-gradient(180deg, #ffb703, #b45309); border-color: #fde68a; box-shadow: 0 0 16px rgba(255, 183, 3, 0.7); }
-.ps-pad-btn.active.is-bass { background: linear-gradient(180deg, #a855f7, #6b21a8); border-color: #e9d5ff; box-shadow: 0 0 16px rgba(168, 85, 247, 0.7); }
-.ps-pad-btn.active.is-lead { background: linear-gradient(180deg, #10b981, #047857); border-color: #a7f3d0; box-shadow: 0 0 16px rgba(168, 85, 247, 0.7); }
-.ps-pad-btn.active.is-mario { background: linear-gradient(180deg, #ef4444, #991b1b); border-color: #fca5a5; box-shadow: 0 0 16px rgba(239, 68, 68, 0.75); }
-.ps-pad-btn.active.is-kong { background: linear-gradient(180deg, #f59e0b, #b45309); border-color: #fde68a; box-shadow: 0 0 16px rgba(245, 158, 11, 0.75); }
+/* 底层网格格子 */
+.ps-grid-slots {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.ps-grid-slots .ps-pad-btn {
+  height: 38px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #181d28 0%, #12151e 100%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: all 0.1s ease;
+  box-sizing: border-box;
+}
+.ps-grid-slots .ps-pad-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+.ps-grid-slots .ps-pad-btn.bar-beat {
+  background: linear-gradient(180deg, #1e2432 0%, #151922 100%);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.ps-grid-slots .ps-pad-btn.bar-start {
+  border-left: 2px solid rgba(99, 102, 241, 0.5) !important;
+}
+.ps-grid-slots .ps-pad-btn.playhead {
+  border-color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+  filter: brightness(1.25);
+}
+
+/* 上层音符块层 */
+.ps-notes-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  pointer-events: none;
+}
+
+/* 现代 DAW 风格音符块 (支持拖拽放长) */
+.ps-note-block {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  border-radius: 6px;
+  pointer-events: auto;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.35);
+  transition: box-shadow 0.15s, filter 0.1s;
+  overflow: hidden;
+  user-select: none;
+  z-index: 5;
+}
+.ps-note-block:hover {
+  filter: brightness(1.15);
+}
+.ps-note-block.active-playing {
+  filter: brightness(1.4) !important;
+  box-shadow: 0 0 16px currentColor;
+}
+.ps-note-body {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  pointer-events: none;
+}
+.ps-note-len-badge {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 9px;
+  font-family: ui-monospace, monospace;
+}
+
+/* 方案 A：右侧拖拽手柄 */
+.ps-note-handle {
+  width: 12px;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.25);
+  cursor: ew-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  transition: background 0.15s;
+}
+.ps-note-handle:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+.ps-handle-grip {
+  width: 2px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 1px;
+}
+
+/* 音符块色彩主题 */
+.ps-note-block.is-kick { background: linear-gradient(135deg, #ff3366, #be123c); color: #ff3366; }
+.ps-note-block.is-snare { background: linear-gradient(135deg, #00d2ff, #0284c7); color: #00d2ff; }
+.ps-note-block.is-hat { background: linear-gradient(135deg, #ffb703, #b45309); color: #ffb703; }
+.ps-note-block.is-bass { background: linear-gradient(135deg, #a855f7, #6b21a8); color: #a855f7; }
+.ps-note-block.is-lead { background: linear-gradient(135deg, #10b981, #047857); color: #10b981; }
+.ps-note-block.is-mario { background: linear-gradient(135deg, #ef4444, #991b1b); color: #ef4444; }
+.ps-note-block.is-kong { background: linear-gradient(135deg, #f59e0b, #b45309); color: #f59e0b; }
+
+/* 追加音轨行 */
+.ps-timeline-add-row {
+  margin-top: 4px;
+  padding-left: 0;
+  width: 154px;
+}
 
 /* 添加乐器槽 */
 .ps-add-lane {

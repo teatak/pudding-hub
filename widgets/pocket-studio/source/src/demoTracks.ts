@@ -14,11 +14,13 @@ function emptySong(bpm: number, trackKeys: { trackKey: string; instId: string }[
   const bars = [0, 1, 2, 3].map(() => {
     const steps: Record<string, boolean[]> = {};
     const pitches: Record<string, (number | null)[]> = {};
+    const durations: Record<string, (number | null)[]> = {};
     trackKeys.forEach((t) => {
       steps[t.trackKey] = new Array(16).fill(false);
       pitches[t.trackKey] = new Array(16).fill(null);
+      durations[t.trackKey] = new Array(16).fill(null);
     });
-    return { steps, pitches };
+    return { steps, pitches, durations };
   });
 
   return {
@@ -41,29 +43,32 @@ export function createMarioSong(): SongState {
   ];
 
   const song = emptySong(128, tracks);
-  const setNote = (bar: number, track: string, step: number, freq: number | null) => {
+  const setNote = (bar: number, track: string, step: number, freq: number | null, duration = 1) => {
     song.bars[bar].steps[track][step] = true;
     if (song.bars[bar].pitches) {
       song.bars[bar].pitches![track][step] = freq;
     }
+    if (song.bars[bar].durations) {
+      song.bars[bar].durations![track][step] = duration;
+    }
   };
 
   // 小节 1: 开头三连音前奏 (E5 E5 _ E5 _ C5 E5 _ G5 ___ G4 ___)
-  setNote(0, "t_lead", 0, NOTES.E5);
-  setNote(0, "t_lead", 1, NOTES.E5);
-  setNote(0, "t_lead", 3, NOTES.E5);
-  setNote(0, "t_lead", 5, NOTES.C5);
-  setNote(0, "t_lead", 6, NOTES.E5);
-  setNote(0, "t_lead", 8, NOTES.G5);
-  setNote(0, "t_lead", 12, NOTES.G4);
+  setNote(0, "t_lead", 0, NOTES.E5, 1);
+  setNote(0, "t_lead", 1, NOTES.E5, 1);
+  setNote(0, "t_lead", 3, NOTES.E5, 1);
+  setNote(0, "t_lead", 5, NOTES.C5, 1);
+  setNote(0, "t_lead", 6, NOTES.E5, 1);
+  setNote(0, "t_lead", 8, NOTES.G5, 3);
+  setNote(0, "t_lead", 12, NOTES.G4, 4);
 
-  setNote(0, "t_bass", 0, NOTES.D3);
-  setNote(0, "t_bass", 1, NOTES.D3);
-  setNote(0, "t_bass", 3, NOTES.D3);
-  setNote(0, "t_bass", 5, NOTES.D3);
-  setNote(0, "t_bass", 6, NOTES.D3);
-  setNote(0, "t_bass", 8, NOTES.G3);
-  setNote(0, "t_bass", 12, NOTES.G3);
+  setNote(0, "t_bass", 0, NOTES.D3, 1);
+  setNote(0, "t_bass", 1, NOTES.D3, 1);
+  setNote(0, "t_bass", 3, NOTES.D3, 1);
+  setNote(0, "t_bass", 5, NOTES.D3, 1);
+  setNote(0, "t_bass", 6, NOTES.D3, 1);
+  setNote(0, "t_bass", 8, NOTES.G3, 3);
+  setNote(0, "t_bass", 12, NOTES.G3, 4);
 
   setNote(0, "t_kick", 0, null);
   setNote(0, "t_kick", 8, null);

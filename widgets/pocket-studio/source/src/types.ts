@@ -7,6 +7,7 @@ export type TrackConfig = {
 export type BarData = {
   steps: Record<string, boolean[]>;
   pitches?: Record<string, (number | null)[]>;
+  durations?: Record<string, (number | null)[]>; // 音符持续步数 (默认 1，可放长为 2, 3, 4...)
 };
 
 export type SongState = {
@@ -25,12 +26,15 @@ export type Instrument = {
 };
 
 export type EditAction =
-  | { action: "toggleStep"; barIndex: number; trackKey: string; stepIndex: number; pitch?: number }
-  | { action: "setTrackPattern"; barIndex: number; trackKey: string; steps: boolean[]; pitches?: (number | null)[] }
+  | { action: "toggleStep"; barIndex: number; trackKey: string; stepIndex: number; pitch?: number; duration?: number }
+  | { action: "setNoteDuration"; barIndex: number; trackKey: string; stepIndex: number; duration: number }
+  | { action: "setTrackPattern"; barIndex: number; trackKey: string; steps: boolean[]; pitches?: (number | null)[]; durations?: (number | null)[] }
   | { action: "setBpm"; bpm: number }
   | { action: "changeInstrument"; trackKey: string; instId: string }
   | { action: "addTrack"; instId: string }
   | { action: "removeTrack"; trackKey: string }
+  | { action: "addBar"; copyFrom?: number }
+  | { action: "removeBar"; barIndex?: number }
   | { action: "copyBar"; fromBar: number; toBar: number }
   | { action: "clearBar"; barIndex: number }
   | { action: "loadPreset"; presetName: "mario" | "donkeyKong" | "oriental" | "lofi" };
