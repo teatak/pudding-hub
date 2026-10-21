@@ -194,8 +194,8 @@ body {
 .ps-ruler-corner {
   position: sticky;
   left: 0;
-  width: 154px;
-  min-width: 154px;
+  width: 168px;
+  min-width: 168px;
   height: 100%;
   background: #111520;
   border-right: 2px solid var(--ps-edge);
@@ -341,59 +341,58 @@ body {
   box-sizing: border-box;
 }
 
-/* 单条音轨时间轴行 (带全长深色背景) */
+/* 单条音轨时间轴行 */
 .ps-timeline-track-row {
   display: flex;
   align-items: center;
   position: relative;
   height: 48px;
-  background: rgba(0, 0, 0, 0.25);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.03);
   box-sizing: border-box;
   width: 100%;
 }
 
-/* 乐器卡片 (Sticky Left) */
-.ps-card-info.sticky {
+/* 左侧固定乐器头容器 (Sticky Left) */
+.ps-track-header-cell.sticky {
   position: sticky;
   left: 0;
-  width: 154px;
-  min-width: 154px;
-  z-index: 10;
-  background: #141720;
-  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.4);
-  border-right: 2px solid var(--ps-edge);
+  width: 168px;
+  min-width: 168px;
   height: 100%;
+  z-index: 10;
+  background: #111520;
+  border-right: 2px solid var(--ps-edge);
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
   box-sizing: border-box;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-.ps-card-info.sticky:hover {
-  background: #1e2433;
-  border-color: rgba(255, 255, 255, 0.22);
+  flex-shrink: 0;
 }
 
 /* 底部添加音轨行 (Sticky Left 固定在左侧列) */
-.ps-timeline-add-row {
+.ps-timeline-add-row.sticky {
   position: sticky;
   left: 0;
-  width: 154px;
-  min-width: 154px;
+  width: 168px;
+  min-width: 168px;
+  height: 44px;
   z-index: 10;
+  background: #111520;
+  border-right: 2px solid var(--ps-edge);
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
   box-sizing: border-box;
 }
 .ps-add-lane {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 40px;
+  width: 100%;
+  height: 38px;
   padding: 0 10px;
   border: 1px dashed rgba(255, 255, 255, 0.15);
   border-radius: 8px;
-  background: #141720;
-  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.4);
-  border-right: 2px solid var(--ps-edge);
+  background: rgba(255, 255, 255, 0.03);
   cursor: pointer;
   color: var(--ps-muted);
   font-size: 11px;
@@ -404,30 +403,33 @@ body {
   white-space: nowrap;
 }
 .ps-add-lane:hover {
-  background: #1e2433;
+  background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.3);
   color: #fff;
 }
 .ps-add-lane:active {
-  background: #252d40;
   transform: scale(0.97);
 }
 
-/* 乐器卡 */
+/* 乐器卡片本体 (四周对称完整圆角) */
 .ps-card-info {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 6px;
-  background: #141720;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-  padding: 6px 8px;
+  width: 100%;
+  height: 38px;
+  background: #181d2a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px; /* 左右两端完全对称的圆弧 */
+  padding: 0 8px;
   cursor: pointer;
   transition: all 0.15s;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 .ps-card-info:hover {
-  background: #1e2433;
+  background: #222a3a;
   border-color: rgba(255, 255, 255, 0.22);
 }
 .ps-card-main {
@@ -435,6 +437,7 @@ body {
   align-items: center;
   gap: 8px;
   min-width: 0;
+  flex: 1;
 }
 .ps-card-icon {
   width: 26px;
@@ -488,6 +491,10 @@ body {
   height: 100%;
   display: flex;
   align-items: center;
+  background: rgba(0, 0, 0, 0.25);
+  border-top: 1px solid rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  box-sizing: border-box;
 }
 
 /* 底层网格格子 */

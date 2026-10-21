@@ -309,7 +309,7 @@ export default function App() {
   const songRef = useRef(song);
   songRef.current = song;
 
-  const HEADER_WIDTH = 154;
+  const HEADER_WIDTH = 168;
   const STEP_WIDTH = 34;
   const STEP_GAP = 4;
   const STEP_PITCH = STEP_WIDTH + STEP_GAP;
@@ -726,43 +726,45 @@ export default function App() {
 
               return (
                 <div key={tConfig.trackKey} className="ps-timeline-track-row">
-                  {/* 乐器信息卡片 (Sticky Left) */}
-                  <div
-                    className="ps-card-info sticky"
-                    onClick={() => {
-                      setPickerTarget(tConfig.trackKey);
-                      setIsPickerOpen(true);
-                    }}
-                    title={t("pickerTitle")}
-                  >
-                    <div className="ps-card-main">
-                      <div
-                        className="ps-card-icon"
-                        style={{ color: `var(--ps-${inst.colorClass.replace("is-", "")})` }}
-                      >
-                        <InstrumentSvgIcon type={inst.iconType} />
-                      </div>
-                      <div className="ps-title-box">
-                        <div className="ps-row-name">
-                          <span>{inst.name}</span>
-                          <span style={{ fontSize: 8, color: "var(--ps-dim)" }}>▾</span>
+                  {/* 左侧固定乐器头容器 (Sticky Left) */}
+                  <div className="ps-track-header-cell sticky">
+                    <div
+                      className="ps-card-info"
+                      onClick={() => {
+                        setPickerTarget(tConfig.trackKey);
+                        setIsPickerOpen(true);
+                      }}
+                      title={t("pickerTitle")}
+                    >
+                      <div className="ps-card-main">
+                        <div
+                          className="ps-card-icon"
+                          style={{ color: `var(--ps-${inst.colorClass.replace("is-", "")})` }}
+                        >
+                          <InstrumentSvgIcon type={inst.iconType} />
                         </div>
-                        <div className="ps-row-desc">{inst.desc}</div>
+                        <div className="ps-title-box">
+                          <div className="ps-row-name">
+                            <span>{inst.name}</span>
+                            <span style={{ fontSize: 8, color: "var(--ps-dim)" }}>▾</span>
+                          </div>
+                          <div className="ps-row-desc">{inst.desc}</div>
+                        </div>
                       </div>
+                      {song.tracks.length > 1 && (
+                        <button
+                          type="button"
+                          className="ps-btn-del"
+                          disabled={busy}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            void perform({ action: "removeTrack", trackKey: tConfig.trackKey });
+                          }}
+                        >
+                          ✕
+                        </button>
+                      )}
                     </div>
-                    {song.tracks.length > 1 && (
-                      <button
-                        type="button"
-                        className="ps-btn-del"
-                        disabled={busy}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          void perform({ action: "removeTrack", trackKey: tConfig.trackKey });
-                        }}
-                      >
-                        ✕
-                      </button>
-                    )}
                   </div>
 
                   {/* 时间轴步进区域 */}
@@ -886,7 +888,7 @@ export default function App() {
             })}
 
             {/* 添加音轨槽 (固定在左侧列) */}
-            <div className="ps-timeline-add-row">
+            <div className="ps-timeline-add-row sticky">
               <div
                 className="ps-add-lane"
                 onClick={() => {

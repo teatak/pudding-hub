@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import {
   pudding,
   useWidgetInteraction,
@@ -162,7 +162,7 @@ function DoudizhuEmblemIcon({ size = 28 }: { size?: number }) {
 /**
  * Renders the participant's actual avatar (AI model icon `info.model?.icon`, Human icon, or Bot icon).
  * When `isLandlord` is true, surrounds the avatar with a golden polygonal star-burst frame and a crown badge
- * while keeping the model's own icon clearly visible in the center!
+ * while keeping the model's own icon clearly visible in the center.
  */
 function PlayerAvatar({
   info,
@@ -173,6 +173,7 @@ function PlayerAvatar({
   isLandlord: boolean;
   compact?: boolean;
 }) {
+  const gradId = useId();
   const iconSize = compact ? 16 : 18;
   const innerContent = info.model?.icon ? (
     <img src={info.model.icon} alt="" className="ddz-avatar-img" />
@@ -200,13 +201,20 @@ function PlayerAvatar({
         >
           <polygon
             points="50,2 61,15 78,9 81,26 96,33 90,50 96,67 81,74 78,91 61,85 50,98 39,85 22,91 19,74 4,67 10,50 4,33 19,26 22,9 39,15"
-            fill="url(#ddzGoldGrad)"
+            fill={`url(#${gradId})`}
             stroke="#FEF08A"
             strokeWidth="3"
             strokeLinejoin="round"
           />
           <defs>
-            <linearGradient id="ddzGoldGrad" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+            <linearGradient
+              id={gradId}
+              x1="0"
+              y1="0"
+              x2="100"
+              y2="100"
+              gradientUnits="userSpaceOnUse"
+            >
               <stop offset="0%" stopColor="#FDE047" />
               <stop offset="50%" stopColor="#F59E0B" />
               <stop offset="100%" stopColor="#B45309" />
@@ -248,6 +256,10 @@ function displayRankText(rank: Card["rank"]): string {
   return rank;
 }
 
+/**
+ * Renders a poker card using CSS `attr(data-label)` pseudo-elements and `aria-hidden="true"`
+ * so card ranks/suits are crisp to human eyes but never leak into DOM `innerText` if `widget_observe` is called.
+ */
 function PokerCardFace({
   card,
   size = "table",
@@ -267,23 +279,23 @@ function PokerCardFace({
   const rankText = displayRankText(card.rank);
   const sym = suitSymbol(card.suit);
   const isJoker = card.rank === "BJ" || card.rank === "RJ";
+  const suitLabel = isJoker ? (card.rank === "RJ" ? "大" : "小") : sym;
+  const pipLabel = isJoker ? (card.rank === "RJ" ? "👑" : "🃏") : sym;
 
   const content = (
     <>
-      <span className="ddz-card-corner is-top">
-        <strong className="ddz-card-rank">{rankText}</strong>
-        <small className="ddz-card-suit">
-          {isJoker ? (card.rank === "RJ" ? "大" : "小") : sym}
-        </small>
+      <span className="ddz-card-corner is-top" aria-hidden="true">
+        <strong className="ddz-card-rank" data-label={rankText} />
+        <small className="ddz-card-suit" data-label={suitLabel} />
       </span>
-      <span className="ddz-card-pip" aria-hidden="true">
-        {isJoker ? (card.rank === "RJ" ? "👑" : "🃏") : sym}
-      </span>
+      <span
+        className="ddz-card-pip"
+        data-label={pipLabel}
+        aria-hidden="true"
+      />
       <span className="ddz-card-corner is-bottom" aria-hidden="true">
-        <strong className="ddz-card-rank">{rankText}</strong>
-        <small className="ddz-card-suit">
-          {isJoker ? (card.rank === "RJ" ? "大" : "小") : sym}
-        </small>
+        <strong className="ddz-card-rank" data-label={rankText} />
+        <small className="ddz-card-suit" data-label={suitLabel} />
       </span>
     </>
   );
@@ -318,7 +330,7 @@ function PokerCardFace({
  * - When `reveal` is false: curved vertical stack of blue diamond card backs.
  * - When `reveal` is true (God View or Round Finished): tightly stacked overlapping poker cards
  *   (2 overlapping rows where each card overlaps the previous one by `-26px` horizontally),
- *   keeping the exact same compact footprint without ever stretching the layout!
+ *   keeping the exact same compact footprint without ever stretching the layout.
  */
 function SideCardFan({
   cards,
@@ -400,7 +412,8 @@ function SideCardFan({
 }
 
 /**
- * Custom Seat Selector Dropdown with Model Icons (`sess.model?.icon`), Bot Avatar, and Human Avatar.
+ * Custom Seat Selector Dropdown with Model Icons (`sess.model?.icon`), Bot Avatar, and Human Avatar,
+ * plus click-outside auto-close.
  */
 function SeatSelectorDropdown({
   seat,
@@ -414,6 +427,19 @@ function SeatSelectorDropdown({
   sessions: SessionCandidate[];
 }) {
   const [open, setOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDocDown = (e: MouseEvent) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onDocDown);
+    return () => document.removeEventListener("mousedown", onDocDown);
+  }, [open]);
+
   const isMe = value === "@me";
   const isBot = value === "@bot" || value.startsWith("@bot");
   const currentSession = sessions.find(
@@ -421,7 +447,7 @@ function SeatSelectorDropdown({
   );
 
   return (
-    <div className="ddz-select-wrap">
+    <div className="ddz-select-wrap" ref={wrapRef}>
       <button
         type="button"
         className="ddz-select-trigger"
@@ -849,10 +875,11 @@ export default function App() {
       (l.phase === "bidding" || l.phase === "playing") &&
       !p.winner &&
       p.turn === seat;
+    const isCurrentReigningPlay = p.currentPlay?.seat === seat;
 
     if (isTurn) {
       return (
-        <div className={`ddz-table-spot is-${posClass}`}>
+        <div className={`ddz-table-spot is-${posClass} is-active-spot`}>
           <div className="ddz-spot-chip is-thinking">
             <span className="ddz-pulse-dot" />
             <span>{t("thinking")}</span>
@@ -899,11 +926,18 @@ export default function App() {
       );
     }
     if (act.kind === "play" && act.cards && act.cards.length > 0) {
+      const count = act.cards.length;
       return (
-        <div className={`ddz-table-spot is-${posClass}`}>
-          <div className="ddz-table-played-fan">
+        <div
+          className={`ddz-table-spot is-${posClass} ${
+            isCurrentReigningPlay ? "is-reigning" : "is-previous"
+          }`}
+        >
+          <div
+            className={`ddz-table-played-fan ${count > 6 ? "is-dense" : ""}`}
+          >
             {act.cards.map((c, idx) => {
-              const mid = (act.cards!.length - 1) / 2;
+              const mid = (count - 1) / 2;
               const offset = idx - mid;
               return (
                 <PokerCardFace
@@ -911,8 +945,8 @@ export default function App() {
                   card={c}
                   size="table"
                   style={{
-                    transform: `rotate(${offset * 3}deg) translateY(${
-                      Math.abs(offset) * 1.5
+                    transform: `rotate(${offset * 2.4}deg) translateY(${
+                      Math.abs(offset) * 1.2
                     }px)`,
                     zIndex: idx + 1,
                   }}
@@ -1002,8 +1036,30 @@ export default function App() {
 
   const bottomInfo = getPlayerInfo(bottomSeat);
 
+  function submitSelectedCards() {
+    if (busy || !isSelectionPlayable) return;
+    void perform(async () => {
+      await pudding.interaction.handle((c) =>
+        playCards(
+          {
+            cards: selectedCardIds,
+            comment: draftComment.trim() || undefined,
+          },
+          c,
+        ),
+      );
+      setSelectedCardIds([]);
+      setDraftComment("");
+    });
+  }
+
   return (
-    <div className="ddz-app">
+    <div
+      className="ddz-app"
+      onDoubleClick={() => {
+        if (selectedCardIds.length > 0) setSelectedCardIds([]);
+      }}
+    >
       {/* Top Header Bar */}
       <header className="ddz-topbar">
         <div className="ddz-brand">
@@ -1121,7 +1177,7 @@ export default function App() {
 
       {/* Full-Bleed Emerald Felt Table */}
       <main className="ddz-table">
-        {/* Row 1 (90px): Top-Center Floating Hole Cards & Multiplier Capsule */}
+        {/* Row 1 (92px): Top-Center Floating Hole Cards & Multiplier Capsule */}
         <div className="ddz-top-row">
           <div className="ddz-top-capsule">
             <div className="ddz-hole-section">
@@ -1204,7 +1260,7 @@ export default function App() {
           {renderSidePlayer(rightSeat, "right")}
         </div>
 
-        {/* Row 3 (230px): Fixed Control Bar (54px) + Fixed Hand Fan Slot (176px) */}
+        {/* Row 3 (232px): Fixed Control Bar (54px) + Fixed Hand Fan Slot (178px) */}
         <section className="ddz-bottom-zone">
           {l.phase !== "lobby" && (
             <>
@@ -1397,22 +1453,7 @@ export default function App() {
                             type="button"
                             className="ddz-pill-btn is-gold"
                             disabled={busy || !isSelectionPlayable}
-                            onClick={() =>
-                              void perform(async () => {
-                                await pudding.interaction.handle((c) =>
-                                  playCards(
-                                    {
-                                      cards: selectedCardIds,
-                                      comment:
-                                        draftComment.trim() || undefined,
-                                    },
-                                    c,
-                                  ),
-                                );
-                                setSelectedCardIds([]);
-                                setDraftComment("");
-                              })
-                            }
+                            onClick={submitSelectedCards}
                           >
                             <span>
                               {t("actPlay")}
@@ -1434,6 +1475,16 @@ export default function App() {
                         maxLength={40}
                         value={draftComment}
                         onChange={(e) => setDraftComment(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (
+                            e.key === "Enter" &&
+                            l.phase === "playing" &&
+                            isSelectionPlayable
+                          ) {
+                            e.preventDefault();
+                            submitSelectedCards();
+                          }
+                        }}
                       />
                     </div>
                   ) : (

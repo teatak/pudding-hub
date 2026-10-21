@@ -234,7 +234,7 @@ body {
   position: relative;
   z-index: 4;
   display: grid;
-  grid-template-columns: 240px minmax(0, 1fr) 240px;
+  grid-template-columns: 248px minmax(0, 1fr) 248px;
   gap: 20px;
   min-height: 360px;
   align-items: center;
@@ -319,14 +319,14 @@ body {
   border: 1.5px solid rgba(255, 255, 255, 0.14);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(8px);
-  min-width: 190px;
+  min-width: 194px;
   flex-shrink: 0;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .ddz-player-pill.is-compact {
   height: 52px;
-  min-width: 178px;
+  min-width: 180px;
   padding: 0 14px 0 10px;
 }
 
@@ -479,7 +479,7 @@ body {
 /* Fixed-Height Side Card Fan Box (220px in both Normal & God View) */
 .ddz-side-fan-box {
   position: relative;
-  width: 220px;
+  width: 244px;
   height: 220px;
   max-height: 220px;
   flex-shrink: 0;
@@ -553,7 +553,11 @@ body {
 }
 
 .ddz-side-stacked-row .ddz-poker-card.is-mini + .ddz-poker-card.is-mini {
-  margin-left: -26px;
+  margin-left: -27px;
+}
+
+.ddz-side-stacked-row .ddz-poker-card.is-mini:not(:last-child) .ddz-card-pip {
+  opacity: 0.14;
 }
 
 /* Center Stage & Absolutely Positioned Three-Directional Table Spots */
@@ -601,22 +605,32 @@ body {
   justify-content: center;
   gap: 6px;
   pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .ddz-table-spot.is-left {
-  top: 22%;
-  left: 10%;
+  top: 16%;
+  left: 5%;
 }
 
 .ddz-table-spot.is-right {
-  top: 22%;
-  right: 10%;
+  top: 16%;
+  right: 5%;
 }
 
 .ddz-table-spot.is-bottom {
-  bottom: 12px;
+  bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.ddz-table-spot.is-reigning {
+  z-index: 8;
+}
+
+.ddz-table-spot.is-previous {
+  z-index: 3;
+  opacity: 0.82;
 }
 
 .ddz-table-played-fan {
@@ -626,7 +640,11 @@ body {
 }
 
 .ddz-table-played-fan .ddz-poker-card + .ddz-poker-card {
-  margin-left: -26px;
+  margin-left: -30px;
+}
+
+.ddz-table-played-fan.is-dense .ddz-poker-card + .ddz-poker-card {
+  margin-left: -38px;
 }
 
 .ddz-combo-badge {
@@ -638,6 +656,11 @@ body {
   background: rgba(0, 0, 0, 0.55);
   border: 1px solid rgba(251, 191, 36, 0.35);
   white-space: nowrap;
+}
+
+.ddz-table-spot.is-reigning .ddz-combo-badge {
+  border-color: #fbbf24;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.35);
 }
 
 .ddz-spot-chip {
@@ -717,7 +740,7 @@ body {
   font-weight: 800;
 }
 
-/* Authentic Dual-Index Poker Card Component */
+/* Authentic Dual-Index Poker Card Component (Rendered via CSS attr(data-label) for DOM text privacy) */
 .ddz-poker-card {
   position: relative;
   border-radius: 9px;
@@ -810,6 +833,18 @@ body {
 .ddz-poker-card.is-mini .ddz-card-corner.is-bottom,
 .ddz-poker-card.is-hole .ddz-card-corner.is-bottom {
   display: none;
+}
+
+.ddz-card-rank::before {
+  content: attr(data-label);
+}
+
+.ddz-card-suit::before {
+  content: attr(data-label);
+}
+
+.ddz-card-pip::before {
+  content: attr(data-label);
 }
 
 .ddz-card-rank {
