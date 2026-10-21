@@ -28,6 +28,7 @@ import {
 import type { Seat, Card } from "./types";
 import {
   seats,
+  prevSeat,
   isBotParticipant,
   classifyCards,
   canBeat,
@@ -56,6 +57,7 @@ import {
   setSoundEnabled,
   playSelectSound,
   playDealSound,
+  playPassSound,
   playBidSound,
   playComboSound,
   playFinishSound,
@@ -609,6 +611,9 @@ export default function App() {
 
   const prevRoundRef = useRef<number>(l.round);
   const prevStepRef = useRef<number>(p.stepCount);
+  const prevTurnRef = useRef<Seat | null>(p.turn);
+  const prevPhaseRef = useRef<string>(l.phase);
+  const prevRobCountRef = useRef<number>(p.bidding.robCount);
 
   const humanPart = run?.participants.find((part) => part.kind === "human");
   const humanSeat =
@@ -631,26 +636,58 @@ export default function App() {
     if (l.round > 0 && l.round !== prevRoundRef.current) {
       prevRoundRef.current = l.round;
       prevStepRef.current = p.stepCount;
+      prevTurnRef.current = p.turn;
+      prevPhaseRef.current = l.phase;
+      prevRobCountRef.current = p.bidding.robCount;
       playDealSound();
       return;
     }
     if (p.stepCount !== prevStepRef.current) {
+      const actorSeat =
+        prevTurnRef.current || (p.turn ? prevSeat(p.turn) : null);
+      const wasBidding = prevPhaseRef.current === "bidding";
+      const prevRobs = prevRobCountRef.current;
+
       prevStepRef.current = p.stepCount;
+      prevTurnRef.current = p.turn;
+      prevPhaseRef.current = l.phase;
+      prevRobCountRef.current = p.bidding.robCount;
+
       if (l.phase === "finished" && p.winner) {
+        if (
+          p.currentPlay &&
+          (p.currentPlay.combo.type === "bomb" ||
+            p.currentPlay.combo.type === "rocket")
+        ) {
+          playComboSound(p.currentPlay.combo.type);
+        }
         playFinishSound();
         return;
       }
-      const actions = Object.values(p.lastActions).filter(Boolean);
-      if (p.currentPlay && p.lastActions[p.currentPlay.seat]?.kind === "play") {
-        playComboSound(p.currentPlay.combo.type);
-      } else {
-        const latestAct = actions.at(-1);
-        if (latestAct && latestAct.kind !== "play") {
-          playBidSound(latestAct.kind);
+
+      if (wasBidding && l.phase === "playing") {
+        if (p.bidding.robCount > prevRobs) {
+          playBidSound("rob");
+        } else if (actorSeat && p.bidding.calledBy === actorSeat) {
+          playBidSound("call");
+        } else {
+          playPassSound();
         }
+        return;
+      }
+
+      const act = actorSeat ? p.lastActions[actorSeat] : null;
+      if (!act) return;
+
+      if (act.kind === "play") {
+        if (act.combo) playComboSound(act.combo.type);
+      } else if (act.kind === "pass") {
+        playPassSound();
+      } else {
+        playBidSound(act.kind);
       }
     }
-  }, [l.round, l.phase, p.stepCount, p.winner]);
+  }, [l.round, l.phase, p.stepCount, p.turn, p.winner, p.bidding.robCount]);
 
   async function perform(fn: () => Promise<unknown>) {
     setBusy(true);

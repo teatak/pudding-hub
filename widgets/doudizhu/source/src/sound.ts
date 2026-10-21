@@ -26,7 +26,7 @@ function getContext(): { ctx: AudioContext; out: AudioNode } | null {
     void audioCtx.resume().catch(() => {});
   }
   if (!masterBus && audioCtx) {
-    // High-shelf presence boost (+5dB above 2.4kHz) + compressor for crisp, bright clarity
+    // High-shelf presence boost (+5.5dB above 2.4kHz) + compressor for crisp, bright clarity
     const shelf = audioCtx.createBiquadFilter();
     shelf.type = "highshelf";
     shelf.frequency.value = 2400;
@@ -182,11 +182,35 @@ export function playDealSound(): void {
 }
 
 /**
- * Sound effect for Call Landlord, Rob Landlord, or No Call / No Rob / Pass.
+ * Dedicated fixed sound effect for "不出 / 要不起" (Pass during card play).
+ * Crisp two-tone downward woodblock table-knock (E5 -> A4) so passing has its own unmistakable signature.
+ */
+export function playPassSound(): void {
+  const audio = getContext();
+  if (!audio) return;
+  const { ctx, out } = audio;
+  const now = ctx.currentTime;
+
+  // First knock (table tap + E5 marimba wood tone)
+  playCrispNoise(ctx, out, 0.022, now, 2600, 1400, 0.14, "bandpass", 1.6);
+  playBrightTone(ctx, out, 659.25, 580, 0.06, now, 0.16, "sine");
+  playBrightTone(ctx, out, 1318.5, 1100, 0.035, now, 0.05, "triangle");
+
+  // Second lower knock (A4 marimba wood tone, "过")
+  playCrispNoise(ctx, out, 0.024, now + 0.065, 2100, 1100, 0.12, "bandpass", 1.6);
+  playBrightTone(ctx, out, 440, 392, 0.085, now + 0.065, 0.15, "sine");
+}
+
+/**
+ * Sound effect for Call Landlord, Rob Landlord, or No Call / No Rob.
  */
 export function playBidSound(
   kind: "call" | "rob" | "no_call" | "no_rob" | "pass",
 ): void {
+  if (kind === "pass") {
+    playPassSound();
+    return;
+  }
   const audio = getContext();
   if (!audio) return;
   const { ctx, out } = audio;
@@ -215,10 +239,8 @@ export function playBidSound(
     return;
   }
 
-  // Pass / No call / No rob: crisp double woodblock pop (clear mid-high percussion)
-  playBrightTone(ctx, out, 760, 480, 0.045, now, 0.14, "triangle");
-  playBrightTone(ctx, out, 580, 360, 0.055, now + 0.048, 0.12, "triangle");
-  playCrispNoise(ctx, out, 0.02, now, 2800, 1600, 0.1, "bandpass", 1.4);
+  // No call / No rob
+  playPassSound();
 }
 
 /**
@@ -270,25 +292,19 @@ export function playComboSound(comboType: ComboType): void {
 
     // Stage 2: Sharp explosive crack + distorted broadband blast (0.08s)
     const bang = now + 0.08;
-    // Ultra-crisp high-frequency snap transient so it never sounds muffled
     playCrispNoise(ctx, out, 0.045, bang, 3600, 1400, 0.5, "highpass", 1.4, true);
-    // Sweeping resonant lowpass from 8000Hz down to 360Hz with waveshaper grit
     playCrispNoise(ctx, out, 0.46, bang, 8200, 360, 0.4, "lowpass", 2.4, true);
-    // Secondary crackle tail
     playCrispNoise(ctx, out, 0.22, bang + 0.08, 4800, 1100, 0.26, "bandpass", 1.3, true);
 
-    // Mid-bass & harmonic punch (180Hz-340Hz down to 50Hz so laptop speakers punch hard)
     playBrightTone(ctx, out, 340, 52, 0.35, bang, 0.34, "sawtooth");
     playBrightTone(ctx, out, 190, 44, 0.38, bang, 0.32, "square");
 
-    // Bright brass impact sting (G5 + D6)
     playBrightTone(ctx, out, 783.99, 783.99, 0.2, bang + 0.02, 0.14, "sawtooth");
     playBrightTone(ctx, out, 1174.66, 1174.66, 0.24, bang + 0.04, 0.14, "triangle");
     return;
   }
 
   if (comboType.startsWith("airplane")) {
-    // Jet/propeller high-clarity sweep + bright ascending chord
     playCrispNoise(ctx, out, 0.24, now, 900, 5400, 0.22, "bandpass", 1.8);
     const notes = [659.25, 830.61, 987.77, 1318.51];
     notes.forEach((f, idx) => {
@@ -300,7 +316,6 @@ export function playComboSound(comboType: ComboType): void {
   }
 
   if (comboType === "straight" || comboType === "pair_straight") {
-    // Sparkling cascading glissando + crisp card riffle
     const scale = [587.33, 659.25, 783.99, 880, 1046.5, 1174.66, 1318.51];
     scale.forEach((f, idx) => {
       const t = now + idx * 0.032;
@@ -311,13 +326,12 @@ export function playComboSound(comboType: ComboType): void {
     return;
   }
 
-  // Crisp casino poker card snap on felt (high-frequency flick + bright slap)
+  // Crisp casino poker card snap on felt
   playCrispNoise(ctx, out, 0.025, now, 4200, 2200, 0.26, "highpass", 1.1);
   playCrispNoise(ctx, out, 0.048, now + 0.008, 2600, 900, 0.24, "bandpass", 1.0);
   playBrightTone(ctx, out, 880, 290, 0.055, now, 0.18, "triangle");
 
   if (comboType !== "single") {
-    // Extra crisp double-snap & harmonic accent for pairs, triples, and four-with-two
     playCrispNoise(
       ctx,
       out,

@@ -71,7 +71,7 @@
         {
           "version": "1.0.0-preview.1",
           "package": "./doudizhu/releases/1.0.0-preview.1/doudizhu.pudding-widget.json",
-          "packageHash": "ed3d51e9fe5e5af2c49a29c639cd03c8dc12d7f73387263fe4f6923099e1865f",
+          "packageHash": "4930d9270a88a208be4f9239c2574c598ad17490eced6a384d148be865a59507",
           "requires": {
             "protocolVersion": 24,
             "sdkVersion": "1"
