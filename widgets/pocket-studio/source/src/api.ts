@@ -1,6 +1,6 @@
 import { pudding } from "@pudding/widget";
 import { z } from "zod";
-import { type SongState, type EditAction } from "./types";
+import { type SongState, type EditAction, type BarData } from "./types";
 import {
   createMarioSong,
   createDonkeyKongSong,
@@ -189,17 +189,25 @@ export function editSong(current: SongState, action: EditAction): SongState {
       const bIdx = Math.max(0, Math.min(maxBarIdx, action.barIndex));
       const newBars = current.bars.map((bar, idx) => {
         if (idx !== bIdx) return bar;
+        const rawSteps = action.steps.slice(0, 16);
         const nextSteps = {
           ...bar.steps,
-          [action.trackKey]: action.steps.slice(0, 16)
+          [action.trackKey]: rawSteps
         };
         const nextPitches = bar.pitches ? { ...bar.pitches } : {};
         if (action.pitches) {
           nextPitches[action.trackKey] = action.pitches.slice(0, 16);
+        } else {
+          const oldP = bar.pitches?.[action.trackKey] || new Array(16).fill(null);
+          nextPitches[action.trackKey] = rawSteps.map((on, i) => (on ? oldP[i] : null));
         }
+
         const nextDurations = bar.durations ? { ...bar.durations } : {};
         if (action.durations) {
           nextDurations[action.trackKey] = action.durations.slice(0, 16);
+        } else {
+          // 未显式指定 durations 时，默认激活音符为 1，非音符为 null，绝不残留旧预设时值
+          nextDurations[action.trackKey] = rawSteps.map((on) => (on ? 1 : null));
         }
         return { steps: nextSteps, pitches: nextPitches, durations: nextDurations };
       });
@@ -242,26 +250,69 @@ export function editSong(current: SongState, action: EditAction): SongState {
       return { ...current, bars: newBars };
     }
 
+    case "clearSong": {
+      const targetCount = action.barsCount ? Math.max(1, Math.min(16, action.barsCount)) : current.bars.length;
+      const newBars: BarData[] = [];
+      for (let i = 0; i < targetCount; i++) {
+        const steps: Record<string, boolean[]> = {};
+        const pitches: Record<string, (number | null)[]> = {};
+        const durations: Record<string, (number | null)[]> = {};
+        current.tracks.forEach((t) => {
+          steps[t.trackKey] = new Array(16).fill(false);
+          pitches[t.trackKey] = new Array(16).fill(null);
+          durations[t.trackKey] = new Array(16).fill(null);
+        });
+        newBars.push({ steps, pitches, durations });
+      }
+      return { ...current, bars: newBars };
+    }
+
     default:
       return current;
   }
 }
 
+// 内部异步互斥队列：严格串行化所有写操作，彻底杜绝并行丢写与版本冲突
+let writeQueue: Promise<any> = Promise.resolve();
+
 export async function edit(action: EditAction, signal?: AbortSignal) {
-  const old = await pudding.storage.read({ signal });
-  const currentSong = readSong(old.data);
-  const updatedSong = editSong(currentSong, action);
+  const execute = async () => {
+    if (signal?.aborted) throw new Error(t("cancelled"));
+    const old = await pudding.storage.read({ signal });
+    const currentSong = readSong(old.data);
+    const updatedSong = editSong(currentSong, action);
 
-  if (signal?.aborted) throw new Error(t("cancelled"));
+    if (signal?.aborted) throw new Error(t("cancelled"));
 
-  const saved = await pudding.storage.write({
-    expectedVersion: old.version,
-    data: { ...(old.data || {}), song: updatedSong }
-  });
+    const saved = await pudding.storage.write({
+      expectedVersion: old.version,
+      data: { ...(old.data || {}), song: updatedSong }
+    });
 
-  return {
-    song: updatedSong,
-    storageVersion: saved.version
+    return {
+      song: updatedSong,
+      storageVersion: saved.version
+    };
+  };
+
+  const nextPromise = writeQueue.then(execute, execute);
+  writeQueue = nextPromise.then(() => {}, () => {});
+  return nextPromise;
+}
+
+export type PlaybackController = {
+  play: () => void;
+  pause: () => void;
+  isPlaying: () => boolean;
+  getStep: () => number;
+};
+
+let playbackController: PlaybackController | null = null;
+
+export function registerPlaybackController(controller: PlaybackController) {
+  playbackController = controller;
+  return () => {
+    if (playbackController === controller) playbackController = null;
   };
 }
 
@@ -292,6 +343,7 @@ function register() {
           totalBars: song.bars.length,
           tracks: song.tracks,
           bars: song.bars,
+          isPlaying: playbackController ? playbackController.isPlaying() : false,
           availableInstruments: INSTRUMENT_IDS,
           storageVersion: old.version
         };
@@ -360,7 +412,13 @@ function register() {
             .min(16)
             .max(16)
             .optional()
-            .describe("16步进音高频率数组 (Hz，选填)")
+            .describe("16步进音高频率数组 (Hz，选填)"),
+          durations: z
+            .array(z.number().int().min(1).max(32).nullable())
+            .min(16)
+            .max(16)
+            .optional()
+            .describe("16步进音符持续时长数组（步数，如 1 为标准单步，2 为两步长音，4 为一拍；非音符处传 null；不传时默认重置为1步，消除旧时值残留）")
         })
         .strict(),
       run: wrap(
@@ -370,6 +428,7 @@ function register() {
             trackKey: string;
             steps: boolean[];
             pitches?: (number | null)[];
+            durations?: (number | null)[];
           },
           signal
         ) =>
@@ -379,7 +438,8 @@ function register() {
               barIndex: input.barIndex,
               trackKey: input.trackKey,
               steps: input.steps,
-              pitches: input.pitches
+              pitches: input.pitches,
+              durations: input.durations
             },
             signal
           )
@@ -521,6 +581,56 @@ function register() {
       run: wrap((input: { barIndex: number }, signal) =>
         edit({ action: "clearBar", barIndex: input.barIndex }, signal)
       )
+    }),
+
+    pudding.defineInterface({
+      name: "clearSong",
+      description: t("descClearSong"),
+      input: z
+        .object({
+          barsCount: z
+            .number()
+            .int()
+            .min(1)
+            .max(16)
+            .optional()
+            .describe("清空后保留的小节数量 (1-16，选填，默认保留当前小节数)")
+        })
+        .strict(),
+      run: wrap((input: { barsCount?: number }, signal) =>
+        edit({ action: "clearSong", barsCount: input.barsCount }, signal)
+      )
+    }),
+
+    pudding.defineInterface({
+      name: "play",
+      description: t("descPlay"),
+      input: z.object({}).strict(),
+      run: wrap(async () => {
+        playbackController?.play();
+        return { isPlaying: true };
+      })
+    }),
+
+    pudding.defineInterface({
+      name: "pause",
+      description: t("descPause"),
+      input: z.object({}).strict(),
+      run: wrap(async () => {
+        playbackController?.pause();
+        return { isPlaying: false };
+      })
+    }),
+
+    pudding.defineInterface({
+      name: "getPlaybackStatus",
+      description: t("descGetPlaybackStatus"),
+      input: z.object({}).strict(),
+      run: wrap(async () => {
+        const isPlaying = playbackController ? playbackController.isPlaying() : false;
+        const playStep = playbackController ? playbackController.getStep() : 0;
+        return { isPlaying, playStep };
+      })
     })
   ];
 }

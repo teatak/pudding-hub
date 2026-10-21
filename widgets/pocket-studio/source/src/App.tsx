@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useStorage, useWidgetLocale } from "@pudding/widget";
 import { type SongState, type Instrument } from "./types";
-import { edit, editSong, readSong, getDefaultSong } from "./api";
+import { edit, editSong, readSong, getDefaultSong, registerPlaybackController } from "./api";
 import "./api";
 import {
   getAudioContext,
@@ -347,6 +347,21 @@ export default function App() {
 
   const playStepRef = useRef(0);
 
+  // 绑定宿主与会话的播放控制接口，支持精准的幂等 play / pause / 状态查询
+  useEffect(() => {
+    return registerPlaybackController({
+      play: () => {
+        getAudioContext();
+        setIsPlaying(true);
+      },
+      pause: () => {
+        setIsPlaying(false);
+      },
+      isPlaying: () => isPlayingRef.current,
+      getStep: () => playStepRef.current
+    });
+  }, []);
+
   // 动态步进跨小节播放循环：支持实时变速，根据每个音符的 duration 持续发音
   useEffect(() => {
     let timer: ReturnType<typeof setInterval> | null = null;
@@ -621,9 +636,7 @@ export default function App() {
             className="ps-btn-pill"
             disabled={busy}
             onClick={() => {
-              for (let i = 0; i < totalBars; i++) {
-                void perform({ action: "clearBar", barIndex: i });
-              }
+              void perform({ action: "clearSong" });
             }}
           >
             {t("clearAll")}

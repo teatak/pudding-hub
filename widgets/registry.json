@@ -215,6 +215,17 @@
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI0IiBmaWxsPSIjNEY0NkU1Ii8+CiAgPGNpcmNsZSBjeD0iNjQiIGN5PSI2NCIgcj0iNDgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLW9wYWNpdHk9IjAuMDgiIHN0cm9rZS13aWR0aD0iMiIvPgogIAogIDwhLS0gMngyIOWPkeWFieefqemYteaJk+WHu+WeqyAtLT4KICA8ZyBmaWx0ZXI9ImRyb3Atc2hhZG93KDAgNHB4IDhweCByZ2JhKDAsMCwwLDAuMjUpKSI+CiAgICA8cmVjdCB4PSIyOCIgeT0iMjgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgcng9IjciIGZpbGw9IiNGRjMzNjYiLz4KICAgIDxyZWN0IHg9IjY4IiB5PSIyOCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzAwRDJGRiIvPgogICAgPHJlY3QgeD0iMjgiIHk9IjY4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHJ4PSI3IiBmaWxsPSIjRkZCNzAzIi8+CiAgICA8cmVjdCB4PSI2OCIgeT0iNjgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgcng9IjciIGZpbGw9IiMxMEI5ODEiLz4KICAgIAogICAgPCEtLSDmjInplK7lvq7pq5jlhYkgLS0+CiAgICA8cmVjdCB4PSIzMyIgeT0iMzMiIHdpZHRoPSIyMiIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+CiAgICA8cmVjdCB4PSI3MyIgeT0iMzMiIHdpZHRoPSIyMiIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+CiAgICA8cmVjdCB4PSIzMyIgeT0iNzMiIHdpZHRoPSIyMiIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+CiAgICA8cmVjdCB4PSI3MyIgeT0iNzMiIHdpZHRoPSIyMiIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+CiAgPC9nPgoKICA8IS0tIOS4reWkrumfs+S5kOi3g+WKqOiEieWGsue6v+adoSAtLT4KICA8cGF0aCBkPSJNMjIgNjQgTDM4IDY0IEw0NiA0OCBMNTYgODAgTDY2IDQwIEw3NiA4OCBMODYgNTQgTDk0IDY0IEwxMDYgNjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K",
       "releases": [
         {
+          "version": "1.0.0-preview.12",
+          "package": "./pocket-studio/releases/1.0.0-preview.12/pocket-studio.pudding-widget.json",
+          "packageHash": "3966bd20a441d5942be70445dace2dfe84e6fe2a810c550c38fc5f961736d59c",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
           "version": "1.0.0-preview.11",
           "package": "./pocket-studio/releases/1.0.0-preview.11/pocket-studio.pudding-widget.json",
           "packageHash": "2be0b2019255022d59e8b1a84fadedb98d73ba3f2b1bf56f4d8e3eb687893bd5",

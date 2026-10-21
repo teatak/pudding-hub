@@ -388,6 +388,26 @@ const DICT: Record<string, Record<Locale, string>> = {
     "zh-TW": "清空指定小節內的所有音符步進",
     en: "Clear all note steps in a specified bar"
   },
+  descClearSong: {
+    "zh-CN": "一键清空整首曲目中的所有音轨音符，可选重置小节数（默认保留当前小节数）",
+    "zh-TW": "一鍵清空整首曲目中的所有音軌音符，可選重置小節數（預設保留當前小節數）",
+    en: "Clear all notes across all tracks in the entire song, with optional bar count reset"
+  },
+  descPlay: {
+    "zh-CN": "启动音乐工坊播放（幂等操作，已在播放时保持播放）",
+    "zh-TW": "啟動音樂工坊播放（冪等操作，已在播放時保持播放）",
+    en: "Start song playback (idempotent)"
+  },
+  descPause: {
+    "zh-CN": "暂停音乐工坊播放（幂等操作，已暂停时保持暂停）",
+    "zh-TW": "暫停音樂工坊播放（冪等操作，已暫停時保持暫停）",
+    en: "Pause song playback (idempotent)"
+  },
+  descGetPlaybackStatus: {
+    "zh-CN": "查询当前播放状态（是否在播 isPlaying、当前步进 playStep 等）",
+    "zh-TW": "查詢當前播放狀態（是否在播 isPlaying、當前步進 playStep 等）",
+    en: "Get current playback status (isPlaying, current playStep, etc.)"
+  },
   descSetBpm: {
     "zh-CN": "设置音乐工坊的播放速度 (BPM 60-180)",
     "zh-TW": "設定音樂工坊的播放速度 (BPM 60-180)",

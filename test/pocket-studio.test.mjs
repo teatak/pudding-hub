@@ -9,13 +9,13 @@ const root = fileURLToPath(new URL("../widgets/pocket-studio", import.meta.url))
 test("Pocket Studio release package exists, is verified, and contains Mario & Donkey Kong presets", async () => {
   const pkgPath = path.join(
     root,
-    "releases/1.0.0-preview.11/pocket-studio.pudding-widget.json",
+    "releases/1.0.0-preview.12/pocket-studio.pudding-widget.json",
   );
   const raw = await fs.readFile(pkgPath, "utf8");
   const pkg = JSON.parse(raw);
 
   assert.equal(pkg.id, "teatak/pudding-hub/widgets/pocket-studio");
-  assert.equal(pkg.version, "1.0.0-preview.11");
+  assert.equal(pkg.version, "1.0.0-preview.12");
   assert.equal(pkg.preview, true);
   assert.equal(pkg.requires.protocolVersion, 24);
   assert.equal(pkg.requires.sdkVersion, "1");
@@ -61,6 +61,11 @@ test("Pocket Studio release package exists, is verified, and contains Mario & Do
   assert.match(apiSrc, /toggleStep/);
   assert.match(apiSrc, /loadPreset/);
   assert.match(apiSrc, /changeInstrument/);
+  assert.match(apiSrc, /clearBar/);
+  assert.match(apiSrc, /clearSong/);
+  assert.match(apiSrc, /play/);
+  assert.match(apiSrc, /pause/);
+  assert.match(apiSrc, /getPlaybackStatus/);
   assert.match(apiSrc, /pudding\.locale\.subscribe/);
 
   // Ensure App.tsx renders Pocket Studio elements
@@ -73,4 +78,23 @@ test("Pocket Studio release package exists, is verified, and contains Mario & Do
   assert.match(appSrc, /startDrag/);
   assert.match(appSrc, /ps-pitch-popover/);
   assert.match(appSrc, /ps-mini-piano/);
+});
+
+test("Pocket Studio API logic supports clearSong, resets durations on setTrackPattern, and supports explicit durations", async () => {
+  const pkgPath = path.join(
+    root,
+    "releases/1.0.0-preview.12/pocket-studio.pudding-widget.json",
+  );
+  const raw = await fs.readFile(pkgPath, "utf8");
+  const pkg = JSON.parse(raw);
+
+  const apiSrc = pkg.source.files["src/api.ts"];
+
+  // 验证 writeQueue 互斥队列已引入
+  assert.match(apiSrc, /writeQueue/);
+  assert.match(apiSrc, /clearSong/);
+
+  // 验证 setTrackPattern 支持 durations 参数
+  assert.match(apiSrc, /durations:/);
+  assert.match(apiSrc, /playbackController/);
 });

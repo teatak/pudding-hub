@@ -38,4 +38,5 @@ export type EditAction =
   | { action: "removeBar"; barIndex?: number }
   | { action: "copyBar"; fromBar: number; toBar: number }
   | { action: "clearBar"; barIndex: number }
+  | { action: "clearSong"; barsCount?: number }
   | { action: "loadPreset"; presetName: "mario" | "donkeyKong" | "oriental" | "lofi" };
