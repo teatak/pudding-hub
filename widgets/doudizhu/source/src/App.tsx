@@ -73,7 +73,10 @@ interface PlayerInfo {
   model?: SessionCandidate["model"];
 }
 
-function DoudizhuEmblemIcon({ size = 24 }: { size?: number }) {
+/**
+ * Matches `widgets/doudizhu/assets/icon.svg` 100% so the in-page emblem is identical to the tab icon.
+ */
+function DoudizhuEmblemIcon({ size = 28 }: { size?: number }) {
   return (
     <svg
       width={size}
@@ -83,37 +86,147 @@ function DoudizhuEmblemIcon({ size = 24 }: { size?: number }) {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      <rect width="128" height="128" rx="28" fill="#D97706" />
+      <rect width="128" height="128" rx="26" fill="#B91C1C" />
       <rect
-        x="28"
-        y="22"
-        width="54"
-        height="76"
-        rx="8"
-        transform="rotate(-8 28 22)"
-        fill="#FFFBEB"
-        stroke="#78350F"
-        strokeWidth="3"
+        x="6"
+        y="6"
+        width="116"
+        height="116"
+        rx="22"
+        stroke="#FCA5A5"
+        strokeOpacity="0.25"
+        strokeWidth="2"
       />
-      <rect
-        x="48"
-        y="24"
-        width="54"
-        height="76"
-        rx="8"
-        transform="rotate(8 48 24)"
-        fill="#FFFFFF"
-        stroke="#B45309"
-        strokeWidth="3"
-      />
-      <path
-        d="M58 72L62 52L73 61L84 52L88 72H58Z"
-        fill="#F59E0B"
-        stroke="#92400E"
-        strokeWidth="2.5"
-        strokeLinejoin="round"
-      />
+      <g transform="rotate(-14 46 68)">
+        <rect
+          x="20"
+          y="26"
+          width="52"
+          height="74"
+          rx="8"
+          fill="#FFFBEB"
+          stroke="#D97706"
+          strokeWidth="2"
+        />
+        <text
+          x="27"
+          y="44"
+          fill="#1E293B"
+          fontFamily="-apple-system, sans-serif"
+          fontSize="15"
+          fontWeight="800"
+        >
+          A
+        </text>
+        <path
+          d="M46 52C46 52 36 62 36 68C36 72 39 75 43 75C45 75 46 74 46 74C46 74 47 75 49 75C53 75 56 72 56 68C56 62 46 52 46 52Z"
+          fill="#1E293B"
+        />
+      </g>
+      <g transform="rotate(10 78 66)">
+        <rect
+          x="52"
+          y="24"
+          width="54"
+          height="76"
+          rx="8"
+          fill="#FFFFFF"
+          stroke="#F59E0B"
+          strokeWidth="2.5"
+        />
+        <text
+          x="59"
+          y="42"
+          fill="#DC2626"
+          fontFamily="-apple-system, sans-serif"
+          fontSize="14"
+          fontWeight="800"
+        >
+          王
+        </text>
+        <path
+          d="M64 74L68 54L79 63L90 54L94 74H64Z"
+          fill="#F59E0B"
+          stroke="#B45309"
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+        <circle cx="68" cy="50" r="2.5" fill="#EF4444" />
+        <circle cx="79" cy="48" r="3" fill="#EF4444" />
+        <circle cx="90" cy="50" r="2.5" fill="#EF4444" />
+      </g>
     </svg>
+  );
+}
+
+/**
+ * Renders the participant's actual avatar (AI model icon `info.model?.icon`, Human icon, or Bot icon).
+ * When `isLandlord` is true, surrounds the avatar with a golden polygonal star-burst frame and a crown badge
+ * while keeping the model's own icon clearly visible in the center!
+ */
+function PlayerAvatar({
+  info,
+  isLandlord,
+  compact = false,
+}: {
+  info: PlayerInfo;
+  isLandlord: boolean;
+  compact?: boolean;
+}) {
+  const iconSize = compact ? 16 : 18;
+  const innerContent = info.model?.icon ? (
+    <img src={info.model.icon} alt="" className="ddz-avatar-img" />
+  ) : info.isHuman ? (
+    <UserRound size={iconSize} />
+  ) : info.isBot ? (
+    <Bot size={iconSize} />
+  ) : (
+    <Sparkles size={iconSize} />
+  );
+
+  return (
+    <div
+      className={`ddz-avatar-wrap ${isLandlord ? "is-landlord" : "is-peasant"} ${
+        compact ? "is-compact" : ""
+      }`}
+    >
+      {isLandlord && (
+        <svg
+          className="ddz-landlord-star-ring"
+          viewBox="0 0 100 100"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <polygon
+            points="50,2 61,15 78,9 81,26 96,33 90,50 96,67 81,74 78,91 61,85 50,98 39,85 22,91 19,74 4,67 10,50 4,33 19,26 22,9 39,15"
+            fill="url(#ddzGoldGrad)"
+            stroke="#FEF08A"
+            strokeWidth="3"
+            strokeLinejoin="round"
+          />
+          <defs>
+            <linearGradient id="ddzGoldGrad" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#FDE047" />
+              <stop offset="50%" stopColor="#F59E0B" />
+              <stop offset="100%" stopColor="#B45309" />
+            </linearGradient>
+          </defs>
+        </svg>
+      )}
+      <div
+        className={`ddz-avatar-circle ${
+          isLandlord ? "is-landlord" : "is-peasant"
+        }`}
+      >
+        {innerContent}
+      </div>
+      {isLandlord && (
+        <span className="ddz-landlord-crown-tag" aria-hidden="true">
+          <Crown size={10} />
+        </span>
+      )}
+    </div>
   );
 }
 
@@ -201,10 +314,10 @@ function PokerCardFace({
 }
 
 /**
- * Renders the side player's hand inside a strictly fixed-height container (`192px`).
+ * Renders the side player's hand inside a strictly fixed-height container (`220px`).
  * - When `reveal` is false: curved vertical stack of blue diamond card backs.
  * - When `reveal` is true (God View or Round Finished): tightly stacked overlapping poker cards
- *   (2 overlapping rows where each card overlaps the previous one by `-28px` horizontally),
+ *   (2 overlapping rows where each card overlaps the previous one by `-26px` horizontally),
  *   keeping the exact same compact footprint without ever stretching the layout!
  */
 function SideCardFan({
@@ -255,7 +368,7 @@ function SideCardFan({
     );
   }
 
-  const visibleBacks = Math.min(count, 10);
+  const visibleBacks = Math.min(count, 11);
   return (
     <div className={`ddz-side-fan-box is-${side}`} aria-hidden="true">
       <div className={`ddz-side-back-fan is-${side}`}>
@@ -273,7 +386,7 @@ function SideCardFan({
               key={i}
               className="ddz-blue-card-back"
               style={{
-                transform: `translate(${shiftX}px, ${i * 13}px) rotate(${rot}deg)`,
+                transform: `translate(${shiftX}px, ${i * 14.5}px) rotate(${rot}deg)`,
                 zIndex: i + 1,
               }}
             >
@@ -468,7 +581,6 @@ export default function App() {
   const [hintIndex, setHintIndex] = useState(0);
   const [draftComment, setDraftComment] = useState("");
 
-  // Track previous round & stepCount to trigger sound effects accurately
   const prevRoundRef = useRef<number>(l.round);
   const prevStepRef = useRef<number>(p.stepCount);
 
@@ -489,7 +601,6 @@ export default function App() {
     setHintIndex(0);
   }, [l.round, p.stepCount, l.phase]);
 
-  // Sound effects trigger on round deal, bid, play, pass, and finish
   useEffect(() => {
     if (l.round > 0 && l.round !== prevRoundRef.current) {
       prevRoundRef.current = l.round;
@@ -503,7 +614,6 @@ export default function App() {
         playFinishSound();
         return;
       }
-      // Find the seat that just acted
       const actions = Object.values(p.lastActions).filter(Boolean);
       if (p.currentPlay && p.lastActions[p.currentPlay.seat]?.kind === "play") {
         playComboSound(p.currentPlay.combo.type);
@@ -599,7 +709,6 @@ export default function App() {
     run?.participants?.map((part) => `${part.id}:${part.name}`).join(","),
   ]);
 
-  // Built-in Bot turn driver
   useEffect(() => {
     if (isPaused) return;
     if (l.phase !== "bidding" && l.phase !== "playing") return;
@@ -835,7 +944,7 @@ export default function App() {
 
     return (
       <aside className={`ddz-wing is-${side}`}>
-        {/* Absolutely positioned speech bubble so it NEVER changes layout height */}
+        {/* Speech bubble directly above the player pill */}
         {danmaku && comment?.text && (
           <div
             key={`${seat}-${comment.step}`}
@@ -846,29 +955,13 @@ export default function App() {
           </div>
         )}
 
-        {/* Player Identity Badge Pill (Fixed height) */}
+        {/* Player Identity Badge Pill */}
         <div
           className={`ddz-player-pill ${isTurn ? "is-turn" : ""} ${
             isLandlord ? "is-landlord" : ""
           }`}
         >
-          <div
-            className={`ddz-avatar-circle ${
-              isLandlord ? "is-landlord" : "is-peasant"
-            }`}
-          >
-            {isLandlord ? (
-              <Crown size={18} />
-            ) : info.isHuman ? (
-              <UserRound size={18} />
-            ) : info.model?.icon ? (
-              <img src={info.model.icon} alt="" className="ddz-avatar-img" />
-            ) : info.isBot ? (
-              <Bot size={18} />
-            ) : (
-              <Sparkles size={18} />
-            )}
-          </div>
+          <PlayerAvatar info={info} isLandlord={isLandlord} />
 
           <div className="ddz-pill-info">
             <div className="ddz-pill-name-row">
@@ -897,7 +990,6 @@ export default function App() {
     );
   }
 
-  // Multiplier breakdown text
   const multParts: string[] = [];
   if (p.bidding.robCount > 0) {
     multParts.push(`${t("robTag")} ×${Math.pow(2, p.bidding.robCount)}`);
@@ -908,29 +1000,17 @@ export default function App() {
   if (p.spring === "spring") multParts.push(t("springBadge"));
   if (p.spring === "anti_spring") multParts.push(t("antiSpringBadge"));
 
-  // Collect active comments sorted by step for the floating Danmaku ticker
-  const recentDanmaku = seats
-    .map((s) => {
-      const c = p.comments[s];
-      return c
-        ? { seat: s, name: getPlayerInfo(s).name, step: c.step, text: c.text }
-        : null;
-    })
-    .filter((item): item is NonNullable<typeof item> => Boolean(item))
-    .sort((a, b) => b.step - a.step);
-
-  const latestBannerDanmaku = recentDanmaku[0] || null;
+  const bottomInfo = getPlayerInfo(bottomSeat);
 
   return (
     <div className="ddz-app">
-      {/* Top Dark Header Bar */}
+      {/* Top Header Bar */}
       <header className="ddz-topbar">
         <div className="ddz-brand">
           <div className="ddz-emblem" aria-hidden="true">
-            <DoudizhuEmblemIcon size={26} />
+            <DoudizhuEmblemIcon size={32} />
           </div>
           <h1>{t("appTitle")}</h1>
-          <span className="ddz-subtitle-pill">{t("appSubtitle")}</span>
         </div>
 
         <div className="ddz-toolbar">
@@ -1039,27 +1119,9 @@ export default function App() {
         </div>
       )}
 
-      {/* Main Emerald Felt Table (Strict Fixed-Height 3-Row Grid — Zero Vertical Shift) */}
+      {/* Full-Bleed Emerald Felt Table */}
       <main className="ddz-table">
-        <div className="ddz-table-track" aria-hidden="true" />
-
-        {/* Live Floating Danmaku Banner Overlay */}
-        {danmaku && latestBannerDanmaku && l.phase !== "lobby" && (
-          <div
-            key={`danmaku-${latestBannerDanmaku.seat}-${latestBannerDanmaku.step}`}
-            className="ddz-danmaku-ticker"
-          >
-            <MessagesSquare size={13} className="ddz-danmaku-icon" />
-            <strong className="ddz-danmaku-speaker">
-              {latestBannerDanmaku.name}:
-            </strong>
-            <span className="ddz-danmaku-text">
-              “{latestBannerDanmaku.text}”
-            </span>
-          </div>
-        )}
-
-        {/* Row 1 (86px): Top-Center Floating Hole Cards & Multiplier Capsule */}
+        {/* Row 1 (90px): Top-Center Floating Hole Cards & Multiplier Capsule */}
         <div className="ddz-top-row">
           <div className="ddz-top-capsule">
             <div className="ddz-hole-section">
@@ -1099,7 +1161,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Row 2 (260px): Left Wing (West) + Absolute 3-Directional Play Stage + Right Wing (East) */}
+        {/* Row 2 (Spacious Middle Arena): Left Wing (West) + 3-Directional Play Stage + Right Wing (East) */}
         <div className="ddz-arena">
           {renderSidePlayer(leftSeat, "left")}
 
@@ -1108,7 +1170,7 @@ export default function App() {
               <div className="ddz-center-overlay">
                 <Crown size={36} className="ddz-gold-crown" />
                 <h2>{t("appTitle")}</h2>
-                <p>{t("pickerSubtitle")}</p>
+                <p>{t("lobbyWelcomeSub")}</p>
                 <button
                   type="button"
                   className="ddz-pill-btn is-gold"
@@ -1142,7 +1204,7 @@ export default function App() {
           {renderSidePlayer(rightSeat, "right")}
         </div>
 
-        {/* Row 3 (218px): Fixed Control Bar (50px) + Fixed Hand Fan Slot (168px) */}
+        {/* Row 3 (230px): Fixed Control Bar (54px) + Fixed Hand Fan Slot (176px) */}
         <section className="ddz-bottom-zone">
           {l.phase !== "lobby" && (
             <>
@@ -1161,29 +1223,15 @@ export default function App() {
                       p.turn === bottomSeat && !p.winner ? "is-turn" : ""
                     }`}
                   >
-                    <div
-                      className={`ddz-avatar-circle ${
-                        p.landlord === bottomSeat ? "is-landlord" : "is-peasant"
-                      }`}
-                    >
-                      {p.landlord === bottomSeat ? (
-                        <Crown size={16} />
-                      ) : getPlayerInfo(bottomSeat).isHuman ? (
-                        <UserRound size={16} />
-                      ) : getPlayerInfo(bottomSeat).model?.icon ? (
-                        <img
-                          src={getPlayerInfo(bottomSeat).model!.icon}
-                          alt=""
-                          className="ddz-avatar-img"
-                        />
-                      ) : (
-                        <Bot size={16} />
-                      )}
-                    </div>
+                    <PlayerAvatar
+                      info={bottomInfo}
+                      isLandlord={p.landlord === bottomSeat}
+                      compact
+                    />
                     <div className="ddz-pill-info">
                       <div className="ddz-pill-name-row">
                         <strong className="ddz-pill-name">
-                          {getPlayerInfo(bottomSeat).name}
+                          {bottomInfo.name}
                         </strong>
                         <span
                           className={`ddz-mini-count ${

@@ -2,19 +2,38 @@
   color-scheme: dark;
 }
 
+html,
 body {
   margin: 0;
   padding: 0;
-  background: #070b09;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at 50% 44%,
+    #1c4d32 0%,
+    #123622 55%,
+    #0a2215 88%,
+    #06160d 100%
+  );
   color: #f8fafc;
+  overflow-x: hidden;
 }
 
 .ddz-app {
   font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 12px 16px 18px;
-  min-width: 0;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 24px 18px;
+  background: radial-gradient(
+    ellipse at 50% 44%,
+    #1c4d32 0%,
+    #123622 55%,
+    #0a2215 88%,
+    #06160d 100%
+  );
+  box-shadow: inset 0 0 110px rgba(0, 0, 0, 0.62);
   user-select: none;
 }
 
@@ -28,36 +47,37 @@ body {
   font: inherit;
 }
 
-/* Top Dark Header Bar */
+/* Top Header Bar */
 .ddz-topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 16px;
-  margin-bottom: 12px;
+  padding: 10px 18px;
+  margin-bottom: 10px;
   border-radius: 14px;
-  background: linear-gradient(180deg, #11161d 0%, #0b0f14 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  background: rgba(9, 15, 12, 0.76);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
   flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
 .ddz-brand {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
 }
 
 .ddz-emblem {
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   display: grid;
   place-items: center;
-  background: #d97706;
-  box-shadow: 0 2px 10px rgba(217, 119, 6, 0.35);
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .ddz-brand h1 {
@@ -66,16 +86,6 @@ body {
   font-weight: 750;
   color: #f8fafc;
   letter-spacing: -0.2px;
-}
-
-.ddz-subtitle-pill {
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #94a3b8;
 }
 
 .ddz-toolbar {
@@ -108,8 +118,8 @@ body {
 }
 
 .ddz-top-btn.is-active {
-  background: rgba(245, 158, 11, 0.16);
-  border-color: rgba(251, 191, 36, 0.48);
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(251, 191, 36, 0.5);
   color: #fde68a;
 }
 
@@ -131,95 +141,25 @@ body {
   margin-bottom: 10px;
   border-radius: 10px;
   font-size: 13px;
-  background: rgba(127, 29, 29, 0.45);
+  background: rgba(127, 29, 29, 0.55);
   color: #fecaca;
   border: 1px solid rgba(248, 113, 113, 0.45);
+  flex-shrink: 0;
 }
 
-/* Main Emerald Casino Felt Table — Strict 3-Row Locked Height Grid (Zero Jump!) */
+/* Full-Bleed Spacious Felt Table — Locked 3-Row Grid (Zero Vertical Jump!) */
 .ddz-table {
   position: relative;
+  flex: 1;
   display: grid;
-  grid-template-rows: 86px 260px 218px;
-  height: 600px;
-  min-height: 600px;
-  max-height: 600px;
-  padding: 14px 22px 22px;
-  border-radius: 30px;
-  background: radial-gradient(
-    ellipse at 50% 45%,
-    #1a472e 0%,
-    #113220 55%,
-    #0a2114 88%,
-    #06160d 100%
-  );
-  border: 2px solid rgba(255, 255, 255, 0.12);
-  box-shadow:
-    inset 0 0 80px rgba(0, 0, 0, 0.65),
-    0 20px 50px rgba(0, 0, 0, 0.6);
-  overflow: hidden;
+  grid-template-rows: 92px minmax(360px, 1fr) 232px;
+  min-height: 684px;
+  padding: 6px 14px 8px;
 }
 
-.ddz-table-track {
-  position: absolute;
-  inset: 20px;
-  border-radius: 32px;
-  border: 1.5px dashed rgba(255, 255, 255, 0.09);
-  pointer-events: none;
-}
-
-/* Floating Danmaku Ticker Overlay */
-.ddz-danmaku-ticker {
-  position: absolute;
-  top: 22px;
-  left: 34px;
-  z-index: 12;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 14px;
-  border-radius: 999px;
-  background: rgba(15, 23, 38, 0.88);
-  border: 1px solid rgba(251, 191, 36, 0.42);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
-  font-size: 12px;
-  max-width: 300px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  animation: ddz-slide-in 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-@keyframes ddz-slide-in {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.ddz-danmaku-icon {
-  color: #fbbf24;
-  flex-shrink: 0;
-}
-
-.ddz-danmaku-speaker {
-  color: #fde68a;
-  flex-shrink: 0;
-}
-
-.ddz-danmaku-text {
-  color: #f8fafc;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Row 1 (86px): Top-Center Floating Hole Cards & Score Capsule */
+/* Row 1 (92px): Top-Center Floating Hole Cards & Score Capsule */
 .ddz-top-row {
-  height: 86px;
+  height: 92px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -230,13 +170,13 @@ body {
 .ddz-top-capsule {
   display: flex;
   align-items: center;
-  gap: 20px;
-  height: 82px;
-  padding: 0 24px;
+  gap: 22px;
+  height: 84px;
+  padding: 0 26px;
   border-radius: 16px;
-  background: rgba(7, 14, 10, 0.82);
+  background: rgba(7, 14, 10, 0.78);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(10px);
 }
 
@@ -259,8 +199,8 @@ body {
 }
 
 .ddz-hole-back {
-  width: 46px;
-  height: 64px;
+  width: 48px;
+  height: 66px;
   border-radius: 7px;
   background: linear-gradient(145deg, #1d4ed8 0%, #1e3a8a 100%);
   border: 1.5px solid rgba(147, 197, 253, 0.55);
@@ -271,7 +211,7 @@ body {
 
 .ddz-capsule-divider {
   width: 1px;
-  height: 40px;
+  height: 42px;
   background: rgba(255, 255, 255, 0.14);
 }
 
@@ -289,25 +229,25 @@ body {
   white-space: nowrap;
 }
 
-/* Row 2 (260px): Middle Arena (Left Wing + Center Stage + Right Wing) */
+/* Row 2 (Spacious Middle Arena): Left Wing + Center Stage + Right Wing */
 .ddz-arena {
   position: relative;
   z-index: 4;
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr) 220px;
-  gap: 12px;
-  height: 260px;
-  max-height: 260px;
-  align-items: start;
+  grid-template-columns: 240px minmax(0, 1fr) 240px;
+  gap: 20px;
+  min-height: 360px;
+  align-items: center;
 }
 
 .ddz-wing {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  height: 260px;
-  padding-top: 6px;
+  gap: 12px;
+  height: 310px;
+  justify-content: flex-start;
+  padding-top: 18px;
 }
 
 .ddz-wing.is-left {
@@ -318,28 +258,39 @@ body {
   align-items: flex-end;
 }
 
-/* Speech Bubbles — Strictly Absolute Positioned so they NEVER shift layout */
+/* Speech Bubbles — Directly Above Each Player Pill (Strictly Absolute Positioned) */
 .ddz-quote-bubble {
-  padding: 5px 13px;
+  padding: 6px 14px;
   border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 12.5px;
+  font-weight: 650;
   color: #fef3c7;
   background: rgba(15, 23, 38, 0.92);
-  border: 1px solid rgba(251, 191, 36, 0.45);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
-  max-width: 230px;
+  border: 1px solid rgba(251, 191, 36, 0.48);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  max-width: 260px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   pointer-events: none;
   z-index: 15;
-  animation: ddz-slide-in 0.2s ease;
+  animation: ddz-bubble-pop 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes ddz-bubble-pop {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .ddz-quote-bubble.is-floating {
   position: absolute;
-  top: -28px;
+  top: -22px;
 }
 
 .ddz-quote-bubble.is-floating.is-left {
@@ -352,7 +303,7 @@ body {
 
 .ddz-quote-bubble.is-bottom-float {
   position: absolute;
-  bottom: calc(100% + 6px);
+  bottom: calc(100% + 8px);
   left: 0;
 }
 
@@ -360,33 +311,59 @@ body {
 .ddz-player-pill {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  height: 54px;
-  padding: 0 14px 0 10px;
-  border-radius: 14px;
-  background: rgba(15, 23, 36, 0.88);
+  gap: 12px;
+  height: 58px;
+  padding: 0 16px 0 10px;
+  border-radius: 15px;
+  background: rgba(15, 23, 36, 0.86);
   border: 1.5px solid rgba(255, 255, 255, 0.14);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(8px);
-  min-width: 178px;
+  min-width: 190px;
   flex-shrink: 0;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .ddz-player-pill.is-compact {
-  height: 48px;
-  min-width: 168px;
-  padding: 0 12px 0 8px;
+  height: 52px;
+  min-width: 178px;
+  padding: 0 14px 0 10px;
 }
 
 .ddz-player-pill.is-turn {
   border-color: #fbbf24;
   box-shadow:
-    0 0 0 2px rgba(251, 191, 36, 0.32),
+    0 0 0 2px rgba(251, 191, 36, 0.35),
     0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
+/* Avatar with Golden Polygonal Star-Burst Frame for Landlord */
+.ddz-avatar-wrap {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.ddz-avatar-wrap.is-compact {
+  width: 38px;
+  height: 38px;
+}
+
+.ddz-landlord-star-ring {
+  position: absolute;
+  inset: -4px;
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
+  filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.55));
+  pointer-events: none;
+}
+
 .ddz-avatar-circle {
+  position: relative;
+  z-index: 2;
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -396,6 +373,11 @@ body {
   flex-shrink: 0;
 }
 
+.ddz-avatar-wrap.is-compact .ddz-avatar-circle {
+  width: 32px;
+  height: 32px;
+}
+
 .ddz-avatar-circle.is-peasant {
   background: radial-gradient(circle at 30% 30%, #3b82f6, #1d4ed8);
   border: 2px solid #93c5fd;
@@ -403,9 +385,9 @@ body {
 }
 
 .ddz-avatar-circle.is-landlord {
-  background: radial-gradient(circle at 30% 30%, #fbbf24, #b45309);
-  border: 2px solid #fde68a;
-  color: #1e293b;
+  background: #1e293b;
+  border: 2px solid #fde047;
+  color: #fde047;
 }
 
 .ddz-avatar-img {
@@ -414,10 +396,26 @@ body {
   object-fit: cover;
 }
 
+.ddz-landlord-crown-tag {
+  position: absolute;
+  top: -5px;
+  right: -4px;
+  z-index: 4;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fde047 0%, #d97706 100%);
+  border: 1.5px solid #78350f;
+  color: #451a03;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
 .ddz-pill-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   min-width: 0;
 }
 
@@ -432,7 +430,7 @@ body {
   font-size: 13px;
   font-weight: 700;
   color: #f8fafc;
-  max-width: 106px;
+  max-width: 112px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -478,36 +476,36 @@ body {
   color: #cbd5e1;
 }
 
-/* Fixed-Height Side Card Fan Box (192px in both Normal & God View) */
+/* Fixed-Height Side Card Fan Box (220px in both Normal & God View) */
 .ddz-side-fan-box {
   position: relative;
-  width: 210px;
-  height: 192px;
-  max-height: 192px;
+  width: 220px;
+  height: 220px;
+  max-height: 220px;
   flex-shrink: 0;
 }
 
 .ddz-side-back-fan {
   position: relative;
-  width: 132px;
-  height: 190px;
+  width: 140px;
+  height: 215px;
 }
 
 .ddz-side-back-fan.is-left {
-  margin-left: 14px;
+  margin-left: 16px;
 }
 
 .ddz-side-back-fan.is-right {
   margin-left: auto;
-  margin-right: 14px;
+  margin-right: 16px;
 }
 
 .ddz-blue-card-back {
   position: absolute;
   top: 0;
   left: 12px;
-  width: 92px;
-  height: 60px;
+  width: 96px;
+  height: 64px;
   border-radius: 8px;
   background:
     radial-gradient(
@@ -534,7 +532,7 @@ body {
 .ddz-side-stacked-rows {
   display: flex;
   flex-direction: column;
-  padding-top: 6px;
+  padding-top: 8px;
 }
 
 .ddz-side-stacked-rows.is-left {
@@ -551,19 +549,19 @@ body {
 }
 
 .ddz-side-stacked-row.is-second {
-  margin-top: -16px;
+  margin-top: -14px;
 }
 
 .ddz-side-stacked-row .ddz-poker-card.is-mini + .ddz-poker-card.is-mini {
   margin-left: -26px;
 }
 
-/* Center Stage & Absolutely Positioned Three-Directional Table Spots (Zero Layout Shift!) */
+/* Center Stage & Absolutely Positioned Three-Directional Table Spots */
 .ddz-center-felt {
   position: relative;
   width: 100%;
-  height: 260px;
-  max-height: 260px;
+  height: 100%;
+  min-height: 320px;
 }
 
 .ddz-center-overlay {
@@ -573,10 +571,11 @@ body {
   transform: translate(-50%, -50%);
   text-align: center;
   width: 340px;
-  padding: 20px;
+  padding: 24px 22px;
   border-radius: 18px;
   background: rgba(7, 14, 10, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
 }
 
 .ddz-gold-crown {
@@ -585,12 +584,12 @@ body {
 
 .ddz-center-overlay h2 {
   margin: 8px 0 6px;
-  font-size: 18px;
+  font-size: 19px;
 }
 
 .ddz-center-overlay p {
-  margin: 0 0 14px;
-  font-size: 12px;
+  margin: 0 0 16px;
+  font-size: 13px;
   color: #cbd5e1;
 }
 
@@ -600,22 +599,22 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 6px;
   pointer-events: none;
 }
 
 .ddz-table-spot.is-left {
-  top: 14px;
-  left: 8%;
+  top: 22%;
+  left: 10%;
 }
 
 .ddz-table-spot.is-right {
-  top: 14px;
-  right: 8%;
+  top: 22%;
+  right: 10%;
 }
 
 .ddz-table-spot.is-bottom {
-  bottom: 8px;
+  bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
 }
@@ -645,7 +644,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 18px;
+  padding: 8px 20px;
   border-radius: 11px;
   font-size: 14px;
   font-weight: 700;
@@ -665,7 +664,7 @@ body {
 }
 
 .ddz-spot-chip.is-thinking {
-  font-size: 12.5px;
+  font-size: 13px;
   background: rgba(245, 158, 11, 0.2);
   border: 1px solid rgba(251, 191, 36, 0.45);
   color: #fde68a;
@@ -700,7 +699,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 22px;
+  padding: 10px 24px;
   border-radius: 999px;
   background: rgba(15, 23, 36, 0.94);
   border: 1.5px solid #fbbf24;
@@ -741,7 +740,6 @@ body {
   color: #0f172a;
 }
 
-/* Card Sizes */
 .ddz-poker-card.is-hole {
   width: 48px;
   height: 66px;
@@ -750,16 +748,16 @@ body {
 }
 
 .ddz-poker-card.is-table {
-  width: 64px;
-  height: 90px;
-  padding: 5px 6px;
+  width: 68px;
+  height: 96px;
+  padding: 6px 7px;
   border-radius: 8px;
 }
 
 .ddz-poker-card.is-hand {
-  width: 74px;
-  height: 106px;
-  padding: 6px 7px;
+  width: 78px;
+  height: 112px;
+  padding: 7px 8px;
   border-radius: 10px;
   transform: translateY(var(--fan-y, 0px)) rotate(var(--fan-angle, 0deg));
   transform-origin: 50% 180%;
@@ -770,8 +768,8 @@ body {
 }
 
 .ddz-poker-card.is-mini {
-  width: 44px;
-  height: 62px;
+  width: 46px;
+  height: 64px;
   padding: 3px 4px;
   border-radius: 6px;
 }
@@ -787,7 +785,7 @@ body {
 }
 
 .ddz-poker-card.is-hand.is-selected {
-  transform: translateY(calc(var(--fan-y, 0px) - 20px))
+  transform: translateY(calc(var(--fan-y, 0px) - 22px))
     rotate(var(--fan-angle, 0deg)) !important;
   background: #fffbeb;
   border: 2px solid #f59e0b;
@@ -848,7 +846,7 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 26px;
+  font-size: 27px;
   line-height: 1;
   opacity: 0.92;
   pointer-events: none;
@@ -864,20 +862,20 @@ body {
   top: 62%;
 }
 
-/* Row 3 (218px): Locked 50px Control Bar + Locked 168px Hand Fan Slot (No Clipping!) */
+/* Row 3 (232px): Locked 54px Control Bar + Locked 178px Hand Fan Slot */
 .ddz-bottom-zone {
   position: relative;
   z-index: 6;
   display: grid;
-  grid-template-rows: 50px 168px;
-  height: 218px;
-  max-height: 218px;
+  grid-template-rows: 54px 178px;
+  height: 232px;
+  max-height: 232px;
 }
 
 .ddz-bottom-hud {
   width: 100%;
-  height: 50px;
-  max-height: 50px;
+  height: 54px;
+  max-height: 54px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -891,7 +889,7 @@ body {
 }
 
 .ddz-action-slot {
-  height: 50px;
+  height: 54px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -989,8 +987,8 @@ body {
 /* Hand Fan Slot — Overflow Visible & Generous Padding so Cards Are NEVER Clipped */
 .ddz-arch-fan-slot {
   position: relative;
-  height: 168px;
-  max-height: 168px;
+  height: 178px;
+  max-height: 178px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1001,7 +999,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 20px 18px;
+  padding: 26px 24px 20px;
   overflow: visible;
 }
 
