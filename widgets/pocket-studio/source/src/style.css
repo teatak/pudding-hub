@@ -369,6 +369,10 @@ body {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
+.ps-card-info.sticky:hover {
+  background: #1e2433;
+  border-color: rgba(255, 255, 255, 0.22);
+}
 
 /* 底部添加音轨行 (Sticky Left 固定在左侧列) */
 .ps-timeline-add-row {
@@ -400,11 +404,12 @@ body {
   white-space: nowrap;
 }
 .ps-add-lane:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: #1e2433;
   border-color: rgba(255, 255, 255, 0.3);
   color: #fff;
 }
 .ps-add-lane:active {
+  background: #252d40;
   transform: scale(0.97);
 }
 
@@ -414,7 +419,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 6px;
-  background: rgba(255, 255, 255, 0.03);
+  background: #141720;
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 8px;
   padding: 6px 8px;
@@ -422,8 +427,8 @@ body {
   transition: all 0.15s;
 }
 .ps-card-info:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: #1e2433;
+  border-color: rgba(255, 255, 255, 0.22);
 }
 .ps-card-main {
   display: flex;
