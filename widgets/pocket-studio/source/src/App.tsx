@@ -98,20 +98,20 @@ function InstrumentSvgIcon({ type }: { type: string }) {
 const INSTRUMENT_MAP: Record<string, Instrument & { playSound: (time: number, step: number, pitch?: number | null, duration?: number) => void }> = {
   marioLead: {
     id: "marioLead",
-    name: "Mario 8-Bit 方波",
+    name: "8-Bit 经典方波",
     category: "Melodic",
     iconType: "mario",
     colorClass: "is-mario",
-    desc: "经典红白机方波",
+    desc: "经典复古脉冲方波",
     playSound: (time, _s, pitch, dur) => playSquareWave(pitch || 659.25, time, dur || 0.12)
   },
   kongLead: {
     id: "kongLead",
-    name: "大金刚 1981 街机",
+    name: "街机 8-Bit 方波",
     category: "Melodic",
     iconType: "kong",
     colorClass: "is-kong",
-    desc: "街机跳跃方波",
+    desc: "街机跳跃脉冲波",
     playSound: (time, _s, pitch, dur) => playSquareWave(pitch || 349.23, time, dur || 0.16)
   },
   marioBass: {
@@ -120,7 +120,7 @@ const INSTRUMENT_MAP: Record<string, Instrument & { playSound: (time: number, st
     category: "Bass",
     iconType: "bass",
     colorClass: "is-bass",
-    desc: "弹性跳跃贝斯",
+    desc: "弹性复古芯片低音",
     playSound: (time, _s, pitch, dur) => playTriangleBass(pitch || 130.81, time, dur || 0.18)
   },
   kick: {
@@ -198,6 +198,20 @@ const INSTRUMENT_MAP: Record<string, Instrument & { playSound: (time: number, st
     }
   }
 };
+
+function getInstName(instId: string): string {
+  const key = `inst_${instId}_name`;
+  const translated = t(key);
+  if (translated !== key) return translated;
+  return INSTRUMENT_MAP[instId]?.name || instId;
+}
+
+function getInstDesc(instId: string): string {
+  const key = `inst_${instId}_desc`;
+  const translated = t(key);
+  if (translated !== key) return translated;
+  return INSTRUMENT_MAP[instId]?.desc || "";
+}
 
 // 音乐理论与 MIDI 转换实用函数
 const NOTE_LABELS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"] as const;
@@ -381,18 +395,32 @@ export default function App() {
     };
   }, [isPlaying, song.bpm, song.bars.length]);
 
-  // 播放时时间轴自动跟随指针平滑向右滚动
+  const lastStepRef = useRef(playStep);
+
+  // 播放时时间轴自动跟随指针平滑向右滚动；循环重绕时即刻跳回开头，消除回滚延迟
   useEffect(() => {
     if (isPlaying && timelineScrollRef.current) {
       const container = timelineScrollRef.current;
+      const prevStep = lastStepRef.current;
+      lastStepRef.current = playStep;
+
+      // 循环重绕：步数回跳或回到第 0 步时，瞬间跳回开头（0 延迟即刻就绪）
+      if (playStep < prevStep || playStep === 0) {
+        container.scrollTo({ left: 0, behavior: "auto" });
+        return;
+      }
+
+      // 正常向前播放：指针即将超出可视区域右边界时平滑向右跟随
       const playheadX = HEADER_WIDTH + playStep * STEP_PITCH;
       const viewLeft = container.scrollLeft;
       const viewRight = viewLeft + container.clientWidth;
 
-      if (playheadX > viewRight - 100 || playheadX < viewLeft + HEADER_WIDTH) {
+      if (playheadX > viewRight - 100) {
         const targetScroll = Math.max(0, playheadX - HEADER_WIDTH - 60);
         container.scrollTo({ left: targetScroll, behavior: "smooth" });
       }
+    } else if (!isPlaying) {
+      lastStepRef.current = 0;
     }
   }, [isPlaying, playStep]);
 
@@ -517,7 +545,7 @@ export default function App() {
               className="ps-tempo-step-btn"
               disabled={busy || song.bpm <= 60}
               onClick={() => void perform({ action: "setBpm", bpm: song.bpm - 5 })}
-              title="减速 (-5)"
+              title={t("tempoDown")}
             >
               −
             </button>
@@ -528,7 +556,7 @@ export default function App() {
               className="ps-tempo-step-btn"
               disabled={busy || song.bpm >= 180}
               onClick={() => void perform({ action: "setBpm", bpm: song.bpm + 5 })}
-              title="加速 (+5)"
+              title={t("tempoUp")}
             >
               +
             </button>
@@ -542,7 +570,7 @@ export default function App() {
             disabled={busy}
             onClick={() => void perform({ action: "loadPreset", presetName: "mario" })}
           >
-            🍄 {t("presetMario")}
+            🕹️ {t("presetMario")}
           </button>
           <button
             type="button"
@@ -550,7 +578,7 @@ export default function App() {
             disabled={busy}
             onClick={() => void perform({ action: "loadPreset", presetName: "donkeyKong" })}
           >
-            🦍 {t("presetDonkeyKong")}
+            👾 {t("presetDonkeyKong")}
           </button>
           <button
             type="button"
@@ -573,7 +601,7 @@ export default function App() {
             className="ps-btn-pill"
             disabled={busy || totalBars >= 16}
             onClick={() => void perform({ action: "addBar" })}
-            title="追加小节"
+            title={t("addBarTooltip")}
           >
             + {t("addBar")}
           </button>
@@ -583,7 +611,7 @@ export default function App() {
               className="ps-btn-pill"
               disabled={busy}
               onClick={() => void perform({ action: "removeBar" })}
-              title="删除最后一节"
+              title={t("deleteBarTooltip")}
             >
               - {t("removeBar")}
             </button>
@@ -633,7 +661,7 @@ export default function App() {
                       <button
                         type="button"
                         className="ps-ruler-bar-del"
-                        title={`删除第 ${barIdx + 1} 小节`}
+                        title={`${t("deleteThisBar")} (${barIdx + 1})`}
                         disabled={busy}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -650,7 +678,7 @@ export default function App() {
                   <button
                     type="button"
                     className="ps-ruler-add-bar-btn"
-                    title="追加小节 (+1)"
+                    title={t("addBarTooltip")}
                     disabled={busy}
                     onClick={() => void perform({ action: "addBar" })}
                   >
@@ -745,16 +773,17 @@ export default function App() {
                         </div>
                         <div className="ps-title-box">
                           <div className="ps-row-name">
-                            <span>{inst.name}</span>
+                            <span>{getInstName(tConfig.instId)}</span>
                             <span style={{ fontSize: 8, color: "var(--ps-dim)" }}>▾</span>
                           </div>
-                          <div className="ps-row-desc">{inst.desc}</div>
+                          <div className="ps-row-desc">{getInstDesc(tConfig.instId)}</div>
                         </div>
                       </div>
                       {song.tracks.length > 1 && (
                         <button
                           type="button"
                           className="ps-btn-del"
+                          title={t("deleteTrackTooltip")}
                           disabled={busy}
                           onClick={(e) => {
                             e.stopPropagation();
@@ -833,7 +862,7 @@ export default function App() {
                               inst.playSound(now, note.stepIdx, effectivePitch, 0.25);
 
                               const noteX = HEADER_WIDTH + note.gStep * STEP_PITCH;
-                              const noteY = 48 + 10 + trackIdx * 56;
+                              const noteY = 48 + trackIdx * 52;
                               const showBelow = trackIdx <= 1;
 
                               setActivePopover({
@@ -848,7 +877,7 @@ export default function App() {
                                   x: noteX,
                                   y: noteY,
                                   width: currentDur * STEP_PITCH - STEP_GAP,
-                                  height: 48,
+                                  height: 52,
                                   showBelow
                                 }
                               });
@@ -863,7 +892,7 @@ export default function App() {
 
                             <div
                               className="ps-note-handle"
-                              title="按住向右拖拽放长节拍"
+                              title={t("dragToExtend")}
                               onPointerDown={(e) => {
                                 startDrag(
                                   e,
@@ -958,7 +987,7 @@ export default function App() {
                   <div className="ps-popover-header">
                     <div className="ps-popover-title-row">
                       {isPercussion ? (
-                        <span style={{ fontSize: 13, fontWeight: 700, color: "#e2e8f0" }}>{inst.name}</span>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: "#e2e8f0" }}>{getInstName(inst.id)}</span>
                       ) : (
                         <>
                           <span className="ps-popover-note-name">{curName}</span>
@@ -969,7 +998,7 @@ export default function App() {
                     <button
                       type="button"
                       className="ps-popover-close-btn"
-                      title="关闭"
+                      title={t("close")}
                       onClick={() => setActivePopover(null)}
                     >
                       ✕
@@ -987,7 +1016,7 @@ export default function App() {
                           <button
                             type="button"
                             className="ps-btn-micro"
-                            title="降半音"
+                            title={t("semitoneDown")}
                             onClick={() => updatePitch(curMidi - 1)}
                           >
                             {t("semitoneDown")}
@@ -995,7 +1024,7 @@ export default function App() {
                           <button
                             type="button"
                             className="ps-btn-micro"
-                            title="升半音"
+                            title={t("semitoneUp")}
                             onClick={() => updatePitch(curMidi + 1)}
                           >
                             {t("semitoneUp")}
@@ -1006,7 +1035,7 @@ export default function App() {
                           <button
                             type="button"
                             className="ps-btn-micro"
-                            title="降八度"
+                            title={t("octaveDown")}
                             disabled={curOctave <= 1}
                             onClick={() => updatePitch(curMidi - 12)}
                           >
@@ -1018,7 +1047,7 @@ export default function App() {
                           <button
                             type="button"
                             className="ps-btn-micro"
-                            title="升八度"
+                            title={t("octaveUp")}
                             disabled={curOctave >= 7}
                             onClick={() => updatePitch(curMidi + 12)}
                           >
@@ -1064,7 +1093,7 @@ export default function App() {
                     <button
                       type="button"
                       className="ps-btn-note-del"
-                      title="从曲谱中删除此音符"
+                      title={t("deleteNote")}
                       onClick={deleteCurrentNote}
                     >
                       <span>🗑</span>
@@ -1089,7 +1118,7 @@ export default function App() {
                         className="ps-btn-note-done"
                         onClick={() => setActivePopover(null)}
                       >
-                        完成
+                        {t("done")}
                       </button>
                     </div>
                   </div>
@@ -1133,9 +1162,9 @@ export default function App() {
                   <InstrumentSvgIcon type={inst.iconType} />
                 </div>
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 700 }}>{inst.name}</div>
+                  <div style={{ fontSize: 13, fontWeight: 700 }}>{getInstName(inst.id)}</div>
                   <div style={{ fontSize: 10, color: "var(--ps-dim)" }}>
-                    {inst.desc} · [{inst.category}]
+                    {getInstDesc(inst.id)} · [{t(`category${inst.category}`)}]
                   </div>
                 </div>
               </div>

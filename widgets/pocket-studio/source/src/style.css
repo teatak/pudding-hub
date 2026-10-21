@@ -331,12 +331,12 @@ body {
   transition: left 0.05s linear;
 }
 
-/* 音轨列表容器 */
+/* 音轨列表容器 (0 gap，保证左侧控制列背景完整上下贯穿) */
 .ps-timeline-tracks {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 10px 0;
+  gap: 0;
+  padding: 0;
   width: 100%;
   box-sizing: border-box;
 }
@@ -346,18 +346,18 @@ body {
   display: flex;
   align-items: center;
   position: relative;
-  height: 48px;
+  height: 52px;
   box-sizing: border-box;
   width: 100%;
 }
 
-/* 左侧固定乐器头容器 (Sticky Left) */
+/* 左侧固定乐器头容器 (Sticky Left - 整个背景连续上下贯穿) */
 .ps-track-header-cell.sticky {
   position: sticky;
   left: 0;
   width: 168px;
   min-width: 168px;
-  height: 100%;
+  height: 52px;
   z-index: 10;
   background: #111520;
   border-right: 2px solid var(--ps-edge);
@@ -368,13 +368,13 @@ body {
   flex-shrink: 0;
 }
 
-/* 底部添加音轨行 (Sticky Left 固定在左侧列) */
+/* 底部添加音轨行 (Sticky Left - 连续贯穿左侧列底座) */
 .ps-timeline-add-row.sticky {
   position: sticky;
   left: 0;
   width: 168px;
   min-width: 168px;
-  height: 44px;
+  height: 52px;
   z-index: 10;
   background: #111520;
   border-right: 2px solid var(--ps-edge);
@@ -488,11 +488,10 @@ body {
 /* 时间轴步进区域 */
 .ps-track-timeline {
   position: relative;
-  height: 100%;
+  height: 52px;
   display: flex;
   align-items: center;
-  background: rgba(0, 0, 0, 0.25);
-  border-top: 1px solid rgba(255, 255, 255, 0.03);
+  background: rgba(0, 0, 0, 0.22);
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   box-sizing: border-box;
 }
@@ -658,8 +657,13 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  max-height: 320px;
+  max-height: 330px;
   overflow-y: auto;
+  padding: 6px 4px;
+  margin: -6px -4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  box-sizing: border-box;
 }
 .ps-inst-card {
   background: #1a202d;
@@ -671,10 +675,12 @@ body {
   align-items: center;
   gap: 10px;
   transition: all 0.15s;
+  box-sizing: border-box;
 }
 .ps-inst-card:hover {
   background: #252e42;
   border-color: #6366f1;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.22);
   transform: translateY(-1px);
 }
 

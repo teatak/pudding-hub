@@ -282,7 +282,7 @@ function register() {
   return [
     pudding.defineInterface({
       name: "getSong",
-      description: "【首选查询接口】读取音乐工坊的完整状态：包含速度 BPM、小节总数、所有音轨列表（trackKey、instId）以及所有小节的当前音符步进矩阵。无需调用 widget_observe。",
+      description: t("descGetSong"),
       input: z.object({}).strict(),
       run: wrap(async (_input: Record<string, never>, signal) => {
         const old = await pudding.storage.read({ signal });
@@ -309,7 +309,7 @@ function register() {
 
     pudding.defineInterface({
       name: "loadPreset",
-      description: "加载经典预设曲目：mario (超级马里奥主题曲), donkeyKong (1981街机大金刚主题曲), oriental (国风五声), lofi (Lo-Fi慢摇)",
+      description: t("descLoadPreset"),
       input: z
         .object({
           presetName: z.enum(["mario", "donkeyKong", "oriental", "lofi"])
@@ -323,10 +323,10 @@ function register() {
 
     pudding.defineInterface({
       name: "addBar",
-      description: "添加一个新的小节（最多支持 16 小节，可选复制已有小节）",
+      description: t("descAddBar"),
       input: z
         .object({
-          copyFrom: z.number().int().min(0).max(15).optional().describe("可选：从指定小节复制节奏")
+          copyFrom: z.number().int().min(0).max(15).optional().describe("copyFrom bar index")
         })
         .strict(),
       run: wrap((input: { copyFrom?: number }, signal) =>
@@ -336,10 +336,10 @@ function register() {
 
     pudding.defineInterface({
       name: "removeBar",
-      description: "删除指定小节（至少保留 1 小节，默认删除最后一小节）",
+      description: t("descRemoveBar"),
       input: z
         .object({
-          barIndex: z.number().int().min(0).max(15).optional().describe("要删除的小节索引，默认最后一节")
+          barIndex: z.number().int().min(0).max(15).optional().describe("barIndex")
         })
         .strict(),
       run: wrap((input: { barIndex?: number }, signal) =>
@@ -349,7 +349,7 @@ function register() {
 
     pudding.defineInterface({
       name: "setTrackPattern",
-      description: "批量设置指定小节内某音轨的 16 步进节奏（16位布尔数组）及可选音高频率",
+      description: t("descSetTrackPattern"),
       input: z
         .object({
           barIndex: z.number().int().min(0).max(15).describe("小节索引 (0起)"),
@@ -516,8 +516,8 @@ function register() {
 
     pudding.defineInterface({
       name: "clearBar",
-      description: "清空指定小节内的所有音符步进",
-      input: z.object({ barIndex: z.number().int().min(0).max(15).describe("小节索引 (0起)") }).strict(),
+      description: t("descClearBar"),
+      input: z.object({ barIndex: z.number().int().min(0).max(15).describe("barIndex") }).strict(),
       run: wrap((input: { barIndex: number }, signal) =>
         edit({ action: "clearBar", barIndex: input.barIndex }, signal)
       )

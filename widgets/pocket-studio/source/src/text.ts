@@ -82,14 +82,14 @@ const DICT: Record<string, Record<Locale, string>> = {
     en: "BPM"
   },
   presetMario: {
-    "zh-CN": "超级马里奥",
-    "zh-TW": "超級瑪利歐",
-    en: "Super Mario"
+    "zh-CN": "像素冒险",
+    "zh-TW": "像素冒險",
+    en: "Pixel Quest"
   },
   presetDonkeyKong: {
-    "zh-CN": "大金刚 1981",
-    "zh-TW": "大金剛 1981",
-    en: "Donkey Kong"
+    "zh-CN": "街机 1981",
+    "zh-TW": "街機 1981",
+    en: "Arcade 1981"
   },
   presetOriental: {
     "zh-CN": "国风五声",
@@ -201,7 +201,193 @@ const DICT: Record<string, Record<Locale, string>> = {
     "zh-TW": "試聽",
     en: "Preview"
   },
+  done: {
+    "zh-CN": "完成",
+    "zh-TW": "完成",
+    en: "Done"
+  },
+  close: {
+    "zh-CN": "关闭",
+    "zh-TW": "關閉",
+    en: "Close"
+  },
+  tempoDown: {
+    "zh-CN": "减速 (-5)",
+    "zh-TW": "減速 (-5)",
+    en: "Slow down (-5)"
+  },
+  tempoUp: {
+    "zh-CN": "加速 (+5)",
+    "zh-TW": "加速 (+5)",
+    en: "Speed up (+5)"
+  },
+  deleteBarTooltip: {
+    "zh-CN": "删除最后一节",
+    "zh-TW": "刪除最後一節",
+    en: "Delete last bar"
+  },
+  addBarTooltip: {
+    "zh-CN": "追加小节 (+1)",
+    "zh-TW": "追加小節 (+1)",
+    en: "Add bar (+1)"
+  },
+  deleteThisBar: {
+    "zh-CN": "删除此小节",
+    "zh-TW": "刪除此小節",
+    en: "Delete this bar"
+  },
+  dragToExtend: {
+    "zh-CN": "按住向右拖拽放长节拍",
+    "zh-TW": "按住向右拖拽放長節拍",
+    en: "Drag right to extend note duration"
+  },
+  deleteTrackTooltip: {
+    "zh-CN": "删除音轨",
+    "zh-TW": "刪除音軌",
+    en: "Delete track"
+  },
+  categoryMelodic: {
+    "zh-CN": "旋律",
+    "zh-TW": "旋律",
+    en: "Melodic"
+  },
+  categoryBass: {
+    "zh-CN": "低音",
+    "zh-TW": "低音",
+    en: "Bass"
+  },
+  categoryDrums: {
+    "zh-CN": "打击乐",
+    "zh-TW": "打擊樂",
+    en: "Drums"
+  },
+  // 乐器音色库名称与描述多语言
+  inst_marioLead_name: {
+    "zh-CN": "8-Bit 经典方波",
+    "zh-TW": "8-Bit 經典方波",
+    en: "8-Bit Pulse Lead"
+  },
+  inst_marioLead_desc: {
+    "zh-CN": "经典复古脉冲方波",
+    "zh-TW": "經典復古脈衝方波",
+    en: "Classic 8-bit pulse wave"
+  },
+  inst_kongLead_name: {
+    "zh-CN": "街机 8-Bit 方波",
+    "zh-TW": "街機 8-Bit 方波",
+    en: "Arcade Pulse Lead"
+  },
+  inst_kongLead_desc: {
+    "zh-CN": "街机跳跃脉冲波",
+    "zh-TW": "街機跳躍脈衝波",
+    en: "Arcade jump pulse wave"
+  },
+  inst_marioBass_name: {
+    "zh-CN": "8-Bit 三角波低音",
+    "zh-TW": "8-Bit 三角波低音",
+    en: "8-Bit Triangle Bass"
+  },
+  inst_marioBass_desc: {
+    "zh-CN": "弹性复古芯片低音",
+    "zh-TW": "彈性復古晶片低音",
+    en: "Punchy retro chip bass"
+  },
+  inst_kick_name: {
+    "zh-CN": "808 底鼓 (Kick)",
+    "zh-TW": "808 底鼓 (Kick)",
+    en: "808 Kick"
+  },
+  inst_kick_desc: {
+    "zh-CN": "下潜重低音",
+    "zh-TW": "下潛重低音",
+    en: "Deep sub punch"
+  },
+  inst_snare_name: {
+    "zh-CN": "8-Bit 军鼓 (Snare)",
+    "zh-TW": "8-Bit 軍鼓 (Snare)",
+    en: "8-Bit Snare"
+  },
+  inst_snare_desc: {
+    "zh-CN": "清脆切分敲击",
+    "zh-TW": "清脆切分敲擊",
+    en: "Crisp snappy noise"
+  },
+  inst_hat_name: {
+    "zh-CN": "闭镲 (Hi-Hat)",
+    "zh-TW": "閉鈸 (Hi-Hat)",
+    en: "Closed Hi-Hat"
+  },
+  inst_hat_desc: {
+    "zh-CN": "金属碎拍律动",
+    "zh-TW": "金屬碎拍律動",
+    en: "Metallic sizzle groove"
+  },
+  inst_lead_name: {
+    "zh-CN": "五声音阶琴",
+    "zh-TW": "五聲音階琴",
+    en: "Pentatonic Synth"
+  },
+  inst_lead_desc: {
+    "zh-CN": "空灵自然音色",
+    "zh-TW": "空靈自然音色",
+    en: "Ethereal oriental pluck"
+  },
+  inst_bass_name: {
+    "zh-CN": "模拟低音 Bass",
+    "zh-TW": "模擬低音 Bass",
+    en: "Analog Synth Bass"
+  },
+  inst_bass_desc: {
+    "zh-CN": "温暖低通贝斯",
+    "zh-TW": "溫暖低通貝斯",
+    en: "Warm low-pass bass"
+  },
+  inst_epiano_name: {
+    "zh-CN": "电钢琴 Rhodes",
+    "zh-TW": "電鋼琴 Rhodes",
+    en: "Rhodes EPiano"
+  },
+  inst_epiano_desc: {
+    "zh-CN": "温润爵士和弦",
+    "zh-TW": "溫潤爵士和弦",
+    en: "Mellow jazz chime"
+  },
+  inst_marimba_name: {
+    "zh-CN": "木琴 Marimba",
+    "zh-TW": "木琴 Marimba",
+    en: "Marimba"
+  },
+  inst_marimba_desc: {
+    "zh-CN": "清脆热带木质",
+    "zh-TW": "清脆熱帶木質",
+    en: "Bright wooden mallet"
+  },
   // Tool 接口描述
+  descGetSong: {
+    "zh-CN": "读取音乐工坊的完整状态：包含速度 BPM、小节总数、所有音轨列表以及音符步进矩阵",
+    "zh-TW": "讀取音樂工坊的完整狀態：包含速度 BPM、小節總數、所有音軌列表以及音符步進矩陣",
+    en: "Get full studio state: BPM, bar count, track list, and note matrix"
+  },
+  descAddBar: {
+    "zh-CN": "添加一个新的小节（最多支持 16 小节，可选复制已有小节）",
+    "zh-TW": "添加一個新的小節（最多支援 16 小節，可選複製已有小節）",
+    en: "Add a new bar to the song (up to 16 bars)"
+  },
+  descRemoveBar: {
+    "zh-CN": "删除指定小节（至少保留 1 小节，默认删除最后一小节）",
+    "zh-TW": "刪除指定小節（至少保留 1 小節，預設刪除最後一小節）",
+    en: "Remove a bar from the song (at least 1 bar preserved)"
+  },
+  descSetTrackPattern: {
+    "zh-CN": "批量设置指定小节内某音轨的 16 步进节奏开关及音高频率",
+    "zh-TW": "批量設定指定小節內某音軌的 16 步進節奏開關及音高頻率",
+    en: "Batch set 16-step pattern and pitches for a track in a bar"
+  },
+  descClearBar: {
+    "zh-CN": "清空指定小节内的所有音符步进",
+    "zh-TW": "清空指定小節內的所有音符步進",
+    en: "Clear all note steps in a specified bar"
+  },
   descSetBpm: {
     "zh-CN": "设置音乐工坊的播放速度 (BPM 60-180)",
     "zh-TW": "設定音樂工坊的播放速度 (BPM 60-180)",
