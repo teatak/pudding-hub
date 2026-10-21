@@ -192,7 +192,8 @@ export function normalizeCardToken(raw: string): {
     token === "BJ" ||
     token === "小王" ||
     token === "BLACK_JOKER" ||
-    token === "SJ"
+    token === "SMALL_JOKER" ||
+    token === "JOKER_S"
   ) {
     return { exactId: "BJ", rank: "BJ" };
   }
@@ -200,7 +201,8 @@ export function normalizeCardToken(raw: string): {
     token === "RJ" ||
     token === "大王" ||
     token === "RED_JOKER" ||
-    token === "BG"
+    token === "BIG_JOKER" ||
+    token === "JOKER_B"
   ) {
     return { exactId: "RJ", rank: "RJ" };
   }
@@ -217,7 +219,11 @@ export function normalizeCardToken(raw: string): {
   if (token.length >= 2 && suitMap[token[0]]) {
     const s = suitMap[token[0]];
     const rPart = token.slice(1) === "T" ? "10" : token.slice(1);
-    if ((ranks as string[]).includes(rPart)) {
+    if (
+      rPart !== "BJ" &&
+      rPart !== "RJ" &&
+      (ranks as string[]).includes(rPart)
+    ) {
       return { exactId: `${s}${rPart}`, rank: rPart as Rank };
     }
   }
@@ -277,7 +283,6 @@ export function classifyCards(cards: Card[]): Combo | null {
   }
   const uniqueValues = [...counts.keys()].sort((a, b) => a - b);
 
-  // 1. Single
   if (n === 1) {
     const val = cards[0].value;
     return {
@@ -289,7 +294,6 @@ export function classifyCards(cards: Card[]): Combo | null {
     };
   }
 
-  // 2. Rocket or Pair
   if (n === 2) {
     if (counts.has(16) && counts.has(17)) {
       return {
@@ -313,7 +317,6 @@ export function classifyCards(cards: Card[]): Combo | null {
     return null;
   }
 
-  // 3. Triple
   if (n === 3) {
     if (uniqueValues.length === 1) {
       const val = uniqueValues[0];
@@ -328,7 +331,6 @@ export function classifyCards(cards: Card[]): Combo | null {
     return null;
   }
 
-  // 4. Bomb or Triple + Single
   if (n === 4) {
     if (uniqueValues.length === 1) {
       const val = uniqueValues[0];
@@ -354,7 +356,6 @@ export function classifyCards(cards: Card[]): Combo | null {
     return null;
   }
 
-  // 5. Triple + Pair (5 cards)
   if (n === 5) {
     let tripleVal: number | null = null;
     let hasPair = false;
@@ -373,7 +374,6 @@ export function classifyCards(cards: Card[]): Combo | null {
     }
   }
 
-  // 6. Straight (n >= 5, all count === 1, all values <= 14)
   if (
     n >= 5 &&
     uniqueValues.length === n &&
@@ -390,7 +390,6 @@ export function classifyCards(cards: Card[]): Combo | null {
     };
   }
 
-  // 7. Pair Straight (n >= 6, even, all count === 2, all values <= 14)
   if (n >= 6 && n % 2 === 0) {
     const chainLen = n / 2;
     if (
@@ -409,7 +408,6 @@ export function classifyCards(cards: Card[]): Combo | null {
     }
   }
 
-  // 8. Airplane without wings (n >= 6, multiple of 3, all count === 3, all values <= 14)
   if (n >= 6 && n % 3 === 0) {
     const chainLen = n / 3;
     if (
@@ -428,7 +426,6 @@ export function classifyCards(cards: Card[]): Combo | null {
     }
   }
 
-  // 9. Four + Two Singles (n === 6)
   if (n === 6) {
     for (const [val, cnt] of counts.entries()) {
       if (cnt === 4) {
@@ -445,7 +442,6 @@ export function classifyCards(cards: Card[]): Combo | null {
     }
   }
 
-  // 10. Four + Two Pairs (n === 8)
   if (n === 8) {
     const quads = uniqueValues.filter((v) => counts.get(v) === 4);
     if (quads.length === 2) {
@@ -473,7 +469,6 @@ export function classifyCards(cards: Card[]): Combo | null {
     }
   }
 
-  // 11. Airplane with Single Wings (n >= 8, n % 4 === 0)
   if (n >= 8 && n % 4 === 0) {
     const chainLen = n / 4;
     const tripleCandidates = uniqueValues.filter(
@@ -505,7 +500,6 @@ export function classifyCards(cards: Card[]): Combo | null {
     }
   }
 
-  // 12. Airplane with Pair Wings (n >= 10, n % 5 === 0)
   if (n >= 10 && n % 5 === 0) {
     const chainLen = n / 5;
     const tripleCandidates = uniqueValues.filter(
@@ -563,7 +557,7 @@ export function canBeat(challenger: Combo, target: Combo | null): boolean {
 }
 
 function groupHandByValue(hand: Card[]): Map<number, Card[]> {
-  const map = new Map<number, Card[]> ();
+  const map = new Map<number, Card[]>();
   for (const c of hand) {
     const list = map.get(c.value) || [];
     list.push(c);
@@ -795,7 +789,6 @@ export function applyBid(
 
   const b = pos.bidding;
 
-  // Sub-phase 1: Nobody has called Landlord yet
   if (!b.calledBy) {
     const wantsLandlord = decision === "call" || decision === "rob";
     if (wantsLandlord) {
@@ -870,7 +863,6 @@ export function applyBid(
     }
   }
 
-  // Sub-phase 2: Someone already called Landlord (Robbing phase)
   const wantsRob = decision === "rob" || decision === "call";
   const robCount = wantsRob ? b.robCount + 1 : b.robCount;
   const multiplier = wantsRob ? pos.multiplier * 2 : pos.multiplier;
@@ -1149,6 +1141,34 @@ export function chooseBotBid(pos: DoudizhuPosition, seat: Seat): BidDecision {
   return score >= 7 ? "rob" : "pass";
 }
 
+export function chooseBotBidWithComment(
+  pos: DoudizhuPosition,
+  seat: Seat,
+): { decision: BidDecision; comment: string } {
+  const decision = chooseBotBid(pos, seat);
+  const idx = (pos.stepCount + seat.length) % 3;
+  if (decision === "call") {
+    const lines = [
+      "这把牌顺，地主我叫了！",
+      "看我手牌不错，叫地主试试水！",
+      "今天手气旺，我来当地主！",
+    ];
+    return { decision, comment: lines[idx] };
+  }
+  if (decision === "rob") {
+    const lines = [
+      "想当地主？问过我没！抢！",
+      "好牌不让人，抢地主翻倍！",
+      "这底牌我要定了，抢地主！",
+    ];
+    return { decision, comment: lines[idx] };
+  }
+  const passLines = pos.bidding.calledBy
+    ? ["你们抢吧，我安心当农民。", "不抢，留着实力打配合！", "稳一手，不抢。"]
+    : ["牌太散了，不叫。", "先观望一下，不叫。", "这牌还是当农民稳妥。"];
+  return { decision, comment: passLines[idx] };
+}
+
 export function chooseBotPlay(
   pos: DoudizhuPosition,
   seat: Seat,
@@ -1218,4 +1238,64 @@ export function chooseBotPlay(
   }
 
   return { action: "pass" };
+}
+
+export function chooseBotPlayWithComment(
+  pos: DoudizhuPosition,
+  seat: Seat,
+):
+  | { action: "play"; cards: string[]; comment: string }
+  | { action: "pass"; comment: string } {
+  const res = chooseBotPlay(pos, seat);
+  const idx = (pos.stepCount + seat.length) % 3;
+  if (res.action === "pass") {
+    const currentSeat = pos.currentPlay?.seat;
+    const isTeammate =
+      currentSeat &&
+      seat !== pos.landlord &&
+      currentSeat !== pos.landlord &&
+      pos.landlord !== null;
+    const passComments = isTeammate
+      ? ["队友尽管走，我不压你！", "好牌，队友继续出！", "配合一手，过！"]
+      : ["这牌太大，要不起！", "先忍一手，过！", "让给你了，不出。"];
+    return { action: "pass", comment: passComments[idx] };
+  }
+
+  const hand = pos.hands[seat];
+  const matched = matchCardsFromHand(hand, res.cards);
+  const combo = classifyCards(matched);
+  const rem = hand.length - matched.length;
+
+  if (rem === 0) {
+    return { ...res, comment: "最后一手牌，直接拿下比赛！" };
+  }
+  if (combo?.type === "rocket") {
+    return { ...res, comment: "王炸出击！全场安静！" };
+  }
+  if (combo?.type === "bomb") {
+    return { ...res, comment: "炸弹翻倍！看谁接得住！" };
+  }
+  if (combo?.type === "straight" || combo?.type === "pair_straight") {
+    return { ...res, comment: "长龙顺走，手牌清爽多了！" };
+  }
+  if (combo?.type?.startsWith("airplane")) {
+    return { ...res, comment: "飞机起飞，请系好安全带！" };
+  }
+  if (rem <= 2) {
+    return { ...res, comment: `报单警报！我就剩 ${rem} 张牌啦！` };
+  }
+  if (!pos.currentPlay || pos.currentPlay.seat === seat) {
+    const leadLines = [
+      "先出个小牌探探路～",
+      "看谁能接住我这一手！",
+      "掌控牌权，稳步推进！",
+    ];
+    return { ...res, comment: leadLines[idx] };
+  }
+  const followLines = [
+    "正好管上！牌权归我！",
+    "压死！下家别想轻易走牌！",
+    "顶住这手大牌！",
+  ];
+  return { ...res, comment: followLines[idx] };
 }

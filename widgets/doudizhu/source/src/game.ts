@@ -19,8 +19,8 @@ import {
   applyPlayCards,
   applyPass,
   findLegalPlays,
-  chooseBotBid,
-  chooseBotPlay,
+  chooseBotBidWithComment,
+  chooseBotPlayWithComment,
 } from "./rules";
 import { t, seatLabel, botNameForSeat, comboLabel } from "./text";
 
@@ -551,14 +551,33 @@ export const stepBotTurn = () =>
 
     let res: { lobby: DoudizhuLobby; position: DoudizhuPosition };
     if (l.phase === "bidding") {
-      const decision = chooseBotBid(p, p.turn);
-      res = applyBid(l, p, p.turn, decision);
+      const { decision, comment } = chooseBotBidWithComment(p, p.turn);
+      res = applyBid(l, p, p.turn, decision, comment);
     } else {
-      const choice = chooseBotPlay(p, p.turn);
-      if (choice.action === "play") {
-        res = applyPlayCards(l, p, p.turn, choice.cards);
-      } else {
-        res = applyPass(l, p, p.turn);
+      try {
+        const choice = chooseBotPlayWithComment(p, p.turn);
+        if (choice.action === "play") {
+          res = applyPlayCards(l, p, p.turn, choice.cards, choice.comment);
+        } else {
+          res = applyPass(l, p, p.turn, choice.comment);
+        }
+      } catch {
+        // Fallback so built-in Bot can never get stuck on an edge case
+        const canPassNow = Boolean(
+          p.currentPlay && p.currentPlay.seat !== p.turn,
+        );
+        if (canPassNow) {
+          res = applyPass(l, p, p.turn, "过一手！");
+        } else {
+          const lowestCard = p.hands[p.turn].at(-1);
+          res = applyPlayCards(
+            l,
+            p,
+            p.turn,
+            [lowestCard ? lowestCard.id : p.hands[p.turn][0].id],
+            "先出一张！",
+          );
+        }
       }
     }
 

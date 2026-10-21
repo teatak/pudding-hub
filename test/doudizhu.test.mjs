@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import {
   createDeck,
   dealDeck,
+  normalizeCardToken,
   matchCardsFromHand,
   classifyCards,
   canBeat,
@@ -15,8 +16,8 @@ import {
   applyBid,
   applyPlayCards,
   applyPass,
-  chooseBotBid,
-  chooseBotPlay,
+  chooseBotBidWithComment,
+  chooseBotPlayWithComment,
 } from "../widgets/doudizhu/source/src/rules.ts";
 
 const root = fileURLToPath(new URL("../widgets/doudizhu", import.meta.url));
@@ -69,6 +70,7 @@ test("Dou Dizhu 1.0.0-preview.1 release package exists and contains verified sou
     "src/App.tsx",
     "src/game.ts",
     "src/rules.ts",
+    "src/sound.ts",
     "src/types.ts",
     "src/text.ts",
     "src/style.css",
@@ -86,9 +88,22 @@ test("Dou Dizhu 1.0.0-preview.1 release package exists and contains verified sou
   assert.doesNotMatch(gameSrc, /playedHistory|discardPile|cardTracker/);
 });
 
-test("Dou Dizhu deck, card combinations, and comparison rules work accurately", () => {
+test("Dou Dizhu deck, Spade Jack (SJ) disambiguation, card combinations, and comparison rules work accurately", () => {
   const deck = createDeck();
   assert.equal(deck.length, 54);
+
+  // Regression test: "SJ" is Spade Jack (♠J), NEVER Black Joker ("BJ")
+  assert.deepEqual(normalizeCardToken("SJ"), { exactId: "SJ", rank: "J" });
+  assert.deepEqual(normalizeCardToken("BJ"), { exactId: "BJ", rank: "BJ" });
+  assert.deepEqual(normalizeCardToken("RJ"), { exactId: "RJ", rank: "RJ" });
+
+  // Every single card in the 54-card deck must match by its own card.id without error
+  for (const card of deck) {
+    const matched = matchCardsFromHand([card], [card.id]);
+    assert.equal(matched.length, 1);
+    assert.equal(matched[0].id, card.id);
+  }
+
   const dealt = dealDeck();
   assert.equal(dealt.hands.South.length, 17);
   assert.equal(dealt.hands.East.length, 17);
@@ -133,7 +148,7 @@ test("Dou Dizhu deck, card combinations, and comparison rules work accurately", 
   assert.equal(canBeat(bomb3, fourTwoSingle), true);
 });
 
-test("Call / Rob Landlord multiplier doubling, built-in Bot, strict jsonValue compliance, and no played-card history exposure", () => {
+test("Call / Rob Landlord multiplier doubling, Bot table-talk comments, strict jsonValue compliance, and no played-card history exposure", () => {
   let l = {
     ...initialLobby(),
     round: 1,
@@ -180,13 +195,21 @@ test("Call / Rob Landlord multiplier doubling, built-in Bot, strict jsonValue co
   assert.equal("history" in p, false);
   assert.equal("playedCards" in p, false);
 
-  const leadPlay = chooseBotPlay(p, "South");
+  const leadPlay = chooseBotPlayWithComment(p, "South");
   assert.equal(leadPlay.action, "play");
   assert.ok(leadPlay.cards.length >= 1);
+  assert.ok(leadPlay.comment.length > 0);
 
-  ({ lobby: l, position: p } = applyPlayCards(l, p, "South", leadPlay.cards));
+  ({ lobby: l, position: p } = applyPlayCards(
+    l,
+    p,
+    "South",
+    leadPlay.cards,
+    leadPlay.comment,
+  ));
   assertStrictJsonValue(p, "position.afterPlay");
   assert.equal(p.currentPlay?.seat, "South");
+  assert.equal(p.comments.South?.text, leadPlay.comment);
   assert.equal(p.turn, "East");
 
   // East and West pass -> trick resets cleanly
@@ -197,9 +220,8 @@ test("Call / Rob Landlord multiplier doubling, built-in Bot, strict jsonValue co
   assert.equal(p.currentPlay, null);
   assert.equal(p.turn, "South");
   assert.ok(findLegalPlays(p.hands.South, null).length > 0);
-  assert.ok(
-    ["call", "rob", "pass"].includes(
-      chooseBotBid(initialPosition("South"), "South"),
-    ),
-  );
+
+  const botBid = chooseBotBidWithComment(initialPosition("South"), "South");
+  assert.ok(["call", "rob", "pass"].includes(botBid.decision));
+  assert.ok(botBid.comment.length > 0);
 });
