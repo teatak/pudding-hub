@@ -26,6 +26,7 @@ export type Instrument = {
 
 export type EditAction =
   | { action: "toggleStep"; barIndex: number; trackKey: string; stepIndex: number; pitch?: number }
+  | { action: "setTrackPattern"; barIndex: number; trackKey: string; steps: boolean[]; pitches?: (number | null)[] }
   | { action: "setBpm"; bpm: number }
   | { action: "changeInstrument"; trackKey: string; instId: string }
   | { action: "addTrack"; instId: string }

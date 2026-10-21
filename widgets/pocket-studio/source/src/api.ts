@@ -9,20 +9,38 @@ import {
 } from "./demoTracks";
 import { t, errorText } from "./text";
 
+export const INSTRUMENT_IDS = [
+  "marioLead",
+  "kongLead",
+  "marioBass",
+  "kick",
+  "snare",
+  "hat",
+  "lead",
+  "bass",
+  "epiano",
+  "marimba"
+] as const;
+
 export function getDefaultSong(): SongState {
   return createMarioSong();
 }
 
 export function readSong(data: unknown): SongState {
   if (!data || typeof data !== "object") return getDefaultSong();
-  const raw = data as Partial<SongState>;
-  if (!raw.tracks || !Array.isArray(raw.tracks) || raw.tracks.length === 0) {
+  const raw =
+    (data as { data?: { song?: unknown } }).data?.song ??
+    (data as { song?: unknown }).song ??
+    data;
+  if (!raw || typeof raw !== "object") return getDefaultSong();
+  const songData = raw as Partial<SongState>;
+  if (!songData.tracks || !Array.isArray(songData.tracks) || songData.tracks.length === 0) {
     return getDefaultSong();
   }
   return {
-    bpm: typeof raw.bpm === "number" && raw.bpm >= 60 && raw.bpm <= 180 ? raw.bpm : 120,
-    tracks: raw.tracks,
-    bars: Array.isArray(raw.bars) && raw.bars.length === 4 ? raw.bars : getDefaultSong().bars
+    bpm: typeof songData.bpm === "number" && songData.bpm >= 60 && songData.bpm <= 180 ? songData.bpm : 120,
+    tracks: songData.tracks,
+    bars: Array.isArray(songData.bars) && songData.bars.length === 4 ? songData.bars : getDefaultSong().bars
   };
 }
 
@@ -93,6 +111,23 @@ export function editSong(current: SongState, action: EditAction): SongState {
       return { ...current, bars: newBars };
     }
 
+    case "setTrackPattern": {
+      const bIdx = Math.max(0, Math.min(3, action.barIndex));
+      const newBars = current.bars.map((bar, idx) => {
+        if (idx !== bIdx) return bar;
+        const nextSteps = {
+          ...bar.steps,
+          [action.trackKey]: action.steps.slice(0, 16)
+        };
+        const nextPitches = bar.pitches ? { ...bar.pitches } : {};
+        if (action.pitches) {
+          nextPitches[action.trackKey] = action.pitches.slice(0, 16);
+        }
+        return { steps: nextSteps, pitches: nextPitches };
+      });
+      return { ...current, bars: newBars };
+    }
+
     case "copyBar": {
       const from = Math.max(0, Math.min(3, action.fromBar));
       const to = Math.max(0, Math.min(3, action.toBar));
@@ -131,14 +166,14 @@ export function editSong(current: SongState, action: EditAction): SongState {
 
 export async function edit(action: EditAction, signal?: AbortSignal) {
   const old = await pudding.storage.read({ signal });
-  const currentSong = readSong(old.data?.song);
+  const currentSong = readSong(old.data);
   const updatedSong = editSong(currentSong, action);
 
   if (signal?.aborted) throw new Error(t("cancelled"));
 
   const saved = await pudding.storage.write({
     expectedVersion: old.version,
-    data: { ...old.data, song: updatedSong }
+    data: { ...(old.data || {}), song: updatedSong }
   });
 
   return {
@@ -150,20 +185,39 @@ export async function edit(action: EditAction, signal?: AbortSignal) {
 // 注册向外部宿主 AI 会话暴露的工具接口
 function register() {
   const wrap =
-    <T, R>(run: (input: T, signal: AbortSignal) => Promise<R>) =>
-    async (input: T, c: { signal: AbortSignal }) => {
+    <T, R>(run: (input: T, signal?: AbortSignal) => Promise<R>) =>
+    async (input: T, c?: { signal?: AbortSignal }) => {
       try {
-        return await run(input, c.signal);
+        return await run(input, c?.signal);
       } catch (error) {
         throw new Error(errorText(error));
       }
     };
 
+  const instEnum = z.enum(INSTRUMENT_IDS);
+
   return [
+    pudding.defineInterface({
+      name: "getSong",
+      description: "获取当前曲目状态：包含速度 BPM、所有音轨列表（trackKey、instId）及 4 小节音符矩阵",
+      input: z.object({}).strict(),
+      run: wrap(async (_input: Record<string, never>, signal) => {
+        const old = await pudding.storage.read({ signal });
+        const song = readSong(old.data);
+        return {
+          bpm: song.bpm,
+          tracks: song.tracks,
+          bars: song.bars,
+          availableInstruments: INSTRUMENT_IDS,
+          storageVersion: old.version
+        };
+      })
+    }),
+
     pudding.defineInterface({
       name: "setBpm",
       description: t("descSetBpm"),
-      input: z.object({ bpm: z.number().min(60).max(180) }).strict(),
+      input: z.object({ bpm: z.number().int().min(60).max(180) }).strict(),
       run: wrap((input: { bpm: number }, signal) =>
         edit({ action: "setBpm", bpm: input.bpm }, signal)
       )
@@ -171,7 +225,7 @@ function register() {
 
     pudding.defineInterface({
       name: "loadPreset",
-      description: t("descLoadPreset"),
+      description: "加载经典预设曲目：mario (超级马里奥主题曲), donkeyKong (1981街机大金刚主题曲), oriental (国风五声), lofi (Lo-Fi慢摇)",
       input: z
         .object({
           presetName: z.enum(["mario", "donkeyKong", "oriental", "lofi"])
@@ -184,13 +238,52 @@ function register() {
     }),
 
     pudding.defineInterface({
+      name: "setTrackPattern",
+      description: "批量设置指定小节内某音轨的 16 步进节奏（16位布尔数组）及可选音高频率",
+      input: z
+        .object({
+          barIndex: z.number().int().min(0).max(3).describe("小节索引 (0-3)"),
+          trackKey: z.string().describe("音轨键 (如 t_lead, t_bass 等，通过 getSong 获取)"),
+          steps: z.array(z.boolean()).min(16).max(16).describe("16步进开关布尔值数组"),
+          pitches: z
+            .array(z.number().nullable())
+            .min(16)
+            .max(16)
+            .optional()
+            .describe("16步进音高频率数组 (Hz，选填)")
+        })
+        .strict(),
+      run: wrap(
+        (
+          input: {
+            barIndex: number;
+            trackKey: string;
+            steps: boolean[];
+            pitches?: (number | null)[];
+          },
+          signal
+        ) =>
+          edit(
+            {
+              action: "setTrackPattern",
+              barIndex: input.barIndex,
+              trackKey: input.trackKey,
+              steps: input.steps,
+              pitches: input.pitches
+            },
+            signal
+          )
+      )
+    }),
+
+    pudding.defineInterface({
       name: "toggleStep",
       description: t("descToggleStep"),
       input: z
         .object({
-          barIndex: z.number().min(0).max(3),
+          barIndex: z.number().int().min(0).max(3),
           trackKey: z.string(),
-          stepIndex: z.number().min(0).max(15),
+          stepIndex: z.number().int().min(0).max(15),
           pitch: z.number().optional()
         })
         .strict(),
@@ -214,11 +307,11 @@ function register() {
 
     pudding.defineInterface({
       name: "changeInstrument",
-      description: t("descChangeInstrument"),
+      description: "更换指定音轨的乐器音色",
       input: z
         .object({
           trackKey: z.string(),
-          instId: z.string()
+          instId: instEnum
         })
         .strict(),
       run: wrap((input: { trackKey: string; instId: string }, signal) =>
@@ -235,8 +328,8 @@ function register() {
 
     pudding.defineInterface({
       name: "addTrack",
-      description: t("descAddTrack"),
-      input: z.object({ instId: z.string() }).strict(),
+      description: "向音乐工坊添加新的乐器音轨 (最多 8 条)",
+      input: z.object({ instId: instEnum }).strict(),
       run: wrap((input: { instId: string }, signal) =>
         edit({ action: "addTrack", instId: input.instId }, signal)
       )
@@ -249,8 +342,21 @@ function register() {
       run: wrap((input: { trackKey: string }, signal) =>
         edit({ action: "removeTrack", trackKey: input.trackKey }, signal)
       )
+    }),
+
+    pudding.defineInterface({
+      name: "clearBar",
+      description: "清空指定小节内的所有音符步进",
+      input: z.object({ barIndex: z.number().int().min(0).max(3) }).strict(),
+      run: wrap((input: { barIndex: number }, signal) =>
+        edit({ action: "clearBar", barIndex: input.barIndex }, signal)
+      )
     })
   ];
 }
 
-export const interfaces = register();
+let interfaces = register();
+pudding.locale.subscribe(() => {
+  interfaces.forEach((remove) => remove());
+  interfaces = register();
+});

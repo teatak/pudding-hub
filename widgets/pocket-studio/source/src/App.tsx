@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useStorage, useWidgetLocale } from "@pudding/widget";
 import { type SongState, type Instrument } from "./types";
-import { edit, readSong, getDefaultSong } from "./api";
+import { edit, editSong, readSong, getDefaultSong } from "./api";
+import "./api";
 import {
   getAudioContext,
   playSquareWave,
@@ -176,8 +177,12 @@ export default function App() {
   if (locale) setLocale(locale);
 
   const storage = useStorage();
-  const rawSong = (storage.data as { song?: unknown } | undefined)?.song;
-  const song: SongState = readSong(rawSong);
+  const songFromStorage = useMemo(() => readSong(storage.data), [storage.data]);
+  const [song, setSong] = useState<SongState>(songFromStorage);
+
+  useEffect(() => {
+    setSong(songFromStorage);
+  }, [songFromStorage]);
 
   const [activeBar, setActiveBar] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -195,10 +200,13 @@ export default function App() {
 
   async function perform(action: Parameters<typeof edit>[0]) {
     setBusy(true);
+    // 乐观更新：点击即时生效
+    setSong((prev) => editSong(prev, action));
     try {
       await edit(action);
     } catch (e) {
       console.error(errorText(e));
+      await storage.refetch?.();
     } finally {
       setBusy(false);
     }
@@ -315,7 +323,7 @@ export default function App() {
           </button>
           <button
             type="button"
-            className="ps-btn-pill"
+            className="ps-btn-pill oriental"
             disabled={busy}
             onClick={() => void perform({ action: "loadPreset", presetName: "oriental" })}
           >
@@ -487,16 +495,10 @@ export default function App() {
             setIsPickerOpen(true);
           }}
         >
-          <span>＋</span>
+          <span style={{ fontSize: 16, fontWeight: 700 }}>＋</span>
           <span>{t("addTrack")}</span>
         </div>
       </div>
-
-      {/* 底部说明 */}
-      <footer className="ps-bottom-bar">
-        <div style={{ color: "var(--ps-dim)" }}>💡 {t("hintText")}</div>
-        <div style={{ color: "var(--ps-muted)" }}>{t("sessionTip")}</div>
-      </footer>
 
       {/* 乐器库选择弹窗 */}
       <div

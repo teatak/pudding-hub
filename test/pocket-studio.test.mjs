@@ -9,13 +9,13 @@ const root = fileURLToPath(new URL("../widgets/pocket-studio", import.meta.url))
 test("Pocket Studio release package exists, is verified, and contains Mario & Donkey Kong presets", async () => {
   const pkgPath = path.join(
     root,
-    "releases/1.0.0-preview.1/pocket-studio.pudding-widget.json",
+    "releases/1.0.0-preview.2/pocket-studio.pudding-widget.json",
   );
   const raw = await fs.readFile(pkgPath, "utf8");
   const pkg = JSON.parse(raw);
 
   assert.equal(pkg.id, "teatak/pudding-hub/widgets/pocket-studio");
-  assert.equal(pkg.version, "1.0.0-preview.1");
+  assert.equal(pkg.version, "1.0.0-preview.2");
   assert.equal(pkg.preview, true);
   assert.equal(pkg.requires.protocolVersion, 24);
   assert.equal(pkg.requires.sdkVersion, "1");
@@ -49,12 +49,15 @@ test("Pocket Studio release package exists, is verified, and contains Mario & Do
   assert.match(audioSrc, /playHat/);
   assert.match(audioSrc, /playMarimba/);
 
-  // Ensure API definitions exist
+  // Ensure API definitions exist and are subscribed
   const apiSrc = pkg.source.files["src/api.ts"];
   assert.match(apiSrc, /pudding\.defineInterface/);
+  assert.match(apiSrc, /getSong/);
+  assert.match(apiSrc, /setTrackPattern/);
   assert.match(apiSrc, /toggleStep/);
   assert.match(apiSrc, /loadPreset/);
   assert.match(apiSrc, /changeInstrument/);
+  assert.match(apiSrc, /pudding\.locale\.subscribe/);
 
   // Ensure App.tsx renders Pocket Studio elements
   const appSrc = pkg.source.files["src/App.tsx"];

@@ -31,26 +31,21 @@ body {
   color: var(--ps-text);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
   height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  width: 100vw;
+  box-sizing: border-box;
   overflow: hidden;
-  padding: 16px;
 }
 
 .ps-console {
   width: 100%;
-  max-width: 1040px;
-  background: var(--ps-chassis);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.15);
-  padding: 18px 22px;
+  height: 100%;
+  box-sizing: border-box;
+  background: var(--ps-bg);
+  padding: 16px 20px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  max-height: 94vh;
+  gap: 12px;
+  overflow: hidden;
 }
 
 /* 顶部控制栏 */
@@ -399,16 +394,6 @@ body {
   transform: translateY(-1px);
 }
 
-/* 底部状态 */
-.ps-bottom-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 10px;
-  border-top: 1px solid var(--ps-edge);
-  font-size: 11px;
-  flex-shrink: 0;
-}
 .ps-btn-pill {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--ps-edge);
@@ -430,4 +415,9 @@ body {
   background: rgba(245, 158, 11, 0.2);
   border-color: #f59e0b;
   color: #fde68a;
+}
+.ps-btn-pill.oriental {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: #10b981;
+  color: #a7f3d0;
 }

@@ -87,9 +87,9 @@ const DICT: Record<string, Record<Locale, string>> = {
     en: "Clear Bar"
   },
   addTrack: {
-    "zh-CN": "＋ 添加新乐器音轨 (从音色库中自由挑选)",
-    "zh-TW": "＋ 添加新樂器音軌 (從音色庫中自由挑選)",
-    en: "+ Add Instrument Track"
+    "zh-CN": "添加新乐器音轨 (从音色库中自由挑选)",
+    "zh-TW": "添加新樂器音軌 (從音色庫中自由挑選)",
+    en: "Add Instrument Track"
   },
   pickerTitle: {
     "zh-CN": "选择音色与乐器",
