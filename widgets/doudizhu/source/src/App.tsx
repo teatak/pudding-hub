@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import {
   pudding,
   useWidgetInteraction,
@@ -23,10 +23,7 @@ import {
   UsersRound,
   X,
 } from "lucide-react";
-import {
-  type Seat,
-  type Card,
-} from "./types";
+import type { Seat, Card } from "./types";
 import {
   seats,
   isBotParticipant,
@@ -75,39 +72,36 @@ function DoudizhuEmblemIcon({ size = 24 }: { size?: number }) {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      <rect width="128" height="128" rx="26" fill="#B91C1C" />
-      <g transform="rotate(-12 48 66)">
-        <rect
-          x="22"
-          y="26"
-          width="50"
-          height="72"
-          rx="8"
-          fill="#FFFBEB"
-          stroke="#D97706"
-          strokeWidth="2.5"
-        />
-        <circle cx="47" cy="62" r="11" fill="#1E293B" />
-      </g>
-      <g transform="rotate(10 78 64)">
-        <rect
-          x="52"
-          y="24"
-          width="52"
-          height="74"
-          rx="8"
-          fill="#FFFFFF"
-          stroke="#F59E0B"
-          strokeWidth="2.5"
-        />
-        <path
-          d="M64 72L68 52L78 61L88 52L92 72H64Z"
-          fill="#F59E0B"
-          stroke="#B45309"
-          strokeWidth="2"
-          strokeLinejoin="round"
-        />
-      </g>
+      <rect width="128" height="128" rx="28" fill="#D97706" />
+      <rect
+        x="28"
+        y="22"
+        width="54"
+        height="76"
+        rx="8"
+        transform="rotate(-8 28 22)"
+        fill="#FFFBEB"
+        stroke="#78350F"
+        strokeWidth="3"
+      />
+      <rect
+        x="48"
+        y="24"
+        width="54"
+        height="76"
+        rx="8"
+        transform="rotate(8 48 24)"
+        fill="#FFFFFF"
+        stroke="#B45309"
+        strokeWidth="3"
+      />
+      <path
+        d="M58 72L62 52L73 61L84 52L88 72H58Z"
+        fill="#F59E0B"
+        stroke="#92400E"
+        strokeWidth="2.5"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -125,63 +119,143 @@ function isRedCard(card: Card): boolean {
 }
 
 function displayRankText(rank: Card["rank"]): string {
-  if (rank === "BJ") return "小王";
-  if (rank === "RJ") return "大王";
+  if (rank === "BJ") return "JOKER";
+  if (rank === "RJ") return "JOKER";
   return rank;
 }
 
-function PokerCardView({
+function PokerCardFace({
   card,
-  small = false,
+  size = "table",
   selected = false,
   onClick,
   disabled = false,
+  style,
 }: {
   card: Card;
-  small?: boolean;
+  size?: "hole" | "table" | "hand" | "mini";
   selected?: boolean;
   onClick?: () => void;
   disabled?: boolean;
+  style?: CSSProperties;
 }) {
   const red = isRedCard(card);
   const rankText = displayRankText(card.rank);
   const sym = suitSymbol(card.suit);
   const isJoker = card.rank === "BJ" || card.rank === "RJ";
 
+  const content = (
+    <>
+      <span className="ddz-card-corner is-top">
+        <strong className="ddz-card-rank">{rankText}</strong>
+        <small className="ddz-card-suit">
+          {isJoker ? (card.rank === "RJ" ? "大" : "小") : sym}
+        </small>
+      </span>
+      <span className="ddz-card-pip" aria-hidden="true">
+        {isJoker ? (card.rank === "RJ" ? "👑" : "🃏") : sym}
+      </span>
+      <span className="ddz-card-corner is-bottom" aria-hidden="true">
+        <strong className="ddz-card-rank">{rankText}</strong>
+        <small className="ddz-card-suit">
+          {isJoker ? (card.rank === "RJ" ? "大" : "小") : sym}
+        </small>
+      </span>
+    </>
+  );
+
+  const cls = `ddz-poker-card is-${size} ${red ? "is-red" : "is-black"} ${
+    isJoker ? "is-joker" : ""
+  } ${selected ? "is-selected" : ""} ${onClick ? "is-interactive" : ""}`;
+
   if (onClick) {
     return (
       <button
         type="button"
-        className={`ddz-card is-interactive ${small ? "is-small" : ""} ${
-          red ? "is-red" : "is-black"
-        } ${isJoker ? "is-joker" : ""} ${selected ? "is-selected" : ""}`}
+        className={cls}
+        style={style}
         onClick={onClick}
         disabled={disabled}
       >
-        <span className="ddz-card-corner">
-          <strong className="ddz-card-rank">{rankText}</strong>
-          <small className="ddz-card-suit">{sym}</small>
-        </span>
-        <span className="ddz-card-center" aria-hidden="true">
-          {isJoker ? (card.rank === "RJ" ? "👑" : "🃏") : sym}
-        </span>
+        {content}
       </button>
     );
   }
 
   return (
-    <div
-      className={`ddz-card ${small ? "is-small" : ""} ${
-        red ? "is-red" : "is-black"
-      } ${isJoker ? "is-joker" : ""}`}
-    >
-      <span className="ddz-card-corner">
-        <strong className="ddz-card-rank">{rankText}</strong>
-        <small className="ddz-card-suit">{sym}</small>
-      </span>
-      <span className="ddz-card-center" aria-hidden="true">
-        {isJoker ? (card.rank === "RJ" ? "👑" : "🃏") : sym}
-      </span>
+    <div className={cls} style={style}>
+      {content}
+    </div>
+  );
+}
+
+/**
+ * Renders the curved vertical fan of blue poker card backs (or revealed mini cards in God View)
+ * along the Left (`West`) and Right (`East`) edges of the table.
+ */
+function SideCardFan({
+  cards,
+  side,
+  reveal,
+}: {
+  cards: Card[];
+  side: "left" | "right";
+  reveal: boolean;
+}) {
+  const count = cards.length;
+  if (count === 0) return null;
+
+  if (reveal) {
+    return (
+      <div className={`ddz-side-open-fan is-${side}`}>
+        {cards.map((c, idx) => {
+          const mid = (count - 1) / 2;
+          const offset = idx - mid;
+          const deg =
+            side === "left" ? offset * 2.4 - 6 : -offset * 2.4 + 6;
+          return (
+            <PokerCardFace
+              key={c.id}
+              card={c}
+              size="mini"
+              style={
+                {
+                  "--side-idx": idx,
+                  "--side-rot": `${deg}deg`,
+                } as CSSProperties
+              }
+            />
+          );
+        })}
+      </div>
+    );
+  }
+
+  // Render up to 12 overlapping blue card backs in a curved vertical fan
+  const visibleBacks = Math.min(count, 11);
+  return (
+    <div className={`ddz-side-back-fan is-${side}`} aria-hidden="true">
+      {Array.from({ length: visibleBacks }).map((_, i) => {
+        const progress = visibleBacks > 1 ? i / (visibleBacks - 1) - 0.5 : 0;
+        const rot =
+          side === "left" ? -24 + progress * 26 : 24 - progress * 26;
+        const shiftX =
+          side === "left"
+            ? Math.abs(progress) * -14
+            : Math.abs(progress) * 14;
+        return (
+          <div
+            key={i}
+            className="ddz-blue-card-back"
+            style={{
+              transform: `translate(${shiftX}px, ${i * 15}px) rotate(${rot}deg)`,
+              zIndex: i + 1,
+            }}
+          >
+            <span className="ddz-back-diamond" />
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -205,12 +279,11 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [danmaku, setDanmaku] = useState(true);
+  const [godView, setGodView] = useState(false);
 
-  // Human card selection & privacy toggle
   const [selectedCardIds, setSelectedCardIds] = useState<string[]>([]);
   const [hintIndex, setHintIndex] = useState(0);
   const [draftComment, setDraftComment] = useState("");
-  const [manualPeek, setManualPeek] = useState(false);
 
   const humanPart = run?.participants.find((part) => part.kind === "human");
   const humanSeat =
@@ -224,7 +297,6 @@ export default function App() {
     !p.winner &&
     p.turn === humanSeat;
 
-  // Clear selection when round or turn changes
   useEffect(() => {
     setSelectedCardIds([]);
     setHintIndex(0);
@@ -358,7 +430,7 @@ export default function App() {
     };
   }
 
-  // Perspective mapping: if human is seated, put human at bottom; otherwise South at bottom
+  // Perspective mapping: Bottom = humanSeat || South, Right = nextSeat(bottom), Left = prevSeat(bottom)
   const bottomSeat: Seat = humanSeat || "South";
   const rightSeat: Seat =
     bottomSeat === "South"
@@ -373,7 +445,8 @@ export default function App() {
         ? "South"
         : "East";
 
-  const holeRevealed = l.phase === "playing" || l.phase === "finished";
+  const holeRevealed =
+    godView || l.phase === "playing" || l.phase === "finished";
   const bottomHand = p.hands[bottomSeat] || [];
   const targetCombo =
     p.currentPlay && p.currentPlay.seat !== bottomSeat
@@ -399,12 +472,10 @@ export default function App() {
       p.currentPlay.seat !== bottomSeat,
   );
 
-  // Show bottom seat's hand face-up ONLY when:
-  // 1) Round is finished (reveal all), OR
-  // 2) Bottom seat is Human AND (it is Human's turn OR Human toggled manualPeek)
+  // Bottom hand is visible if:
+  // 1) Human is seated at bottom (or God View is enabled or game finished)
   const showBottomHandFaceUp =
-    l.phase === "finished" ||
-    (Boolean(humanSeat) && (myTurn || manualPeek));
+    Boolean(humanSeat) || godView || l.phase === "finished";
 
   function toggleCardSelection(cardId: string) {
     setSelectedCardIds((prev) =>
@@ -421,22 +492,29 @@ export default function App() {
     setHintIndex((prev) => prev + 1);
   }
 
-  function renderRoleBadge(seat: Seat) {
-    if (!p.landlord) return null;
+  function roleBadgeFor(seat: Seat, relLabel: string) {
     const isLandlord = p.landlord === seat;
+    const roleText = p.landlord
+      ? isLandlord
+        ? t("roleLandlord")
+        : t("rolePeasant")
+      : seatLabel(seat);
     return (
       <span
-        className={`ddz-role-badge ${
-          isLandlord ? "is-landlord" : "is-peasant"
+        className={`ddz-role-pill ${
+          p.landlord
+            ? isLandlord
+              ? "is-landlord"
+              : "is-peasant"
+            : "is-undecided"
         }`}
       >
-        {isLandlord ? <Crown size={12} /> : <Shield size={12} />}
-        <span>{isLandlord ? t("roleLandlord") : t("rolePeasant")}</span>
+        {roleText} ({relLabel})
       </span>
     );
   }
 
-  function renderActionSpot(seat: Seat) {
+  function renderTableSpot(seat: Seat, posClass: "left" | "right" | "bottom") {
     const act = p.lastActions[seat];
     const isTurn =
       (l.phase === "bidding" || l.phase === "playing") &&
@@ -445,158 +523,211 @@ export default function App() {
 
     if (isTurn) {
       return (
-        <div className="ddz-spot-status is-thinking">
-          <span className="ddz-pulse-dot" />
-          <span>{t("thinking")}</span>
+        <div className={`ddz-table-spot is-${posClass}`}>
+          <div className="ddz-spot-chip is-thinking">
+            <span className="ddz-pulse-dot" />
+            <span>{t("thinking")}</span>
+          </div>
         </div>
       );
     }
 
-    if (!act) return null;
+    if (!act) return <div className={`ddz-table-spot is-${posClass}`} />;
 
     if (act.kind === "call") {
-      return <span className="ddz-action-tag is-call">{t("tagCalled")}</span>;
+      return (
+        <div className={`ddz-table-spot is-${posClass}`}>
+          <span className="ddz-spot-chip is-gold">{t("tagCalled")}</span>
+        </div>
+      );
     }
     if (act.kind === "rob") {
-      return <span className="ddz-action-tag is-rob">{t("tagRobbed")}</span>;
+      return (
+        <div className={`ddz-table-spot is-${posClass}`}>
+          <span className="ddz-spot-chip is-gold">{t("tagRobbed")}</span>
+        </div>
+      );
     }
     if (act.kind === "no_call") {
-      return <span className="ddz-action-tag is-pass">{t("tagNoCall")}</span>;
+      return (
+        <div className={`ddz-table-spot is-${posClass}`}>
+          <span className="ddz-spot-chip is-pass">{t("tagNoCall")}</span>
+        </div>
+      );
     }
     if (act.kind === "no_rob") {
-      return <span className="ddz-action-tag is-pass">{t("tagNoRob")}</span>;
+      return (
+        <div className={`ddz-table-spot is-${posClass}`}>
+          <span className="ddz-spot-chip is-pass">{t("tagNoRob")}</span>
+        </div>
+      );
     }
     if (act.kind === "pass") {
-      return <span className="ddz-action-tag is-pass">{t("tagPassed")}</span>;
-    }
-    if (act.kind === "play" && act.cards) {
       return (
-        <div className="ddz-played-group">
-          <div className="ddz-played-cards">
-            {act.cards.map((c) => (
-              <PokerCardView key={c.id} card={c} small />
-            ))}
+        <div className={`ddz-table-spot is-${posClass}`}>
+          <span className="ddz-spot-chip is-pass">{t("tagPassed")}</span>
+        </div>
+      );
+    }
+    if (act.kind === "play" && act.cards && act.cards.length > 0) {
+      return (
+        <div className={`ddz-table-spot is-${posClass}`}>
+          <div className="ddz-table-played-fan">
+            {act.cards.map((c, idx) => {
+              const mid = (act.cards!.length - 1) / 2;
+              const offset = idx - mid;
+              return (
+                <PokerCardFace
+                  key={c.id}
+                  card={c}
+                  size="table"
+                  style={{
+                    transform: `rotate(${offset * 3.5}deg) translateY(${
+                      Math.abs(offset) * 2
+                    }px)`,
+                    zIndex: idx + 1,
+                  }}
+                />
+              );
+            })}
           </div>
           {act.combo && (
-            <span className="ddz-combo-pill">
+            <span className="ddz-combo-badge">
               {comboLabel(act.combo.type, act.combo.mainRank)}
             </span>
           )}
         </div>
       );
     }
-    return null;
+    return <div className={`ddz-table-spot is-${posClass}`} />;
   }
 
-  function renderSideSeat(seat: Seat, side: "left" | "right") {
+  function renderSidePlayer(seat: Seat, side: "left" | "right") {
     const info = getPlayerInfo(seat);
     const hand = p.hands[seat] || [];
     const isTurn =
       (l.phase === "bidding" || l.phase === "playing") &&
       !p.winner &&
       p.turn === seat;
+    const isLandlord = p.landlord === seat;
     const comment = p.comments[seat];
+    const relLabel = side === "left" ? t("relUpper") : t("relLower");
 
     return (
-      <aside
-        className={`ddz-side-seat is-${side} ${isTurn ? "is-turn" : ""}`}
-      >
-        <div className="ddz-seat-card">
-          <div className="ddz-seat-top">
-            <span className="ddz-seat-pos">{seatLabel(seat)}</span>
-            {renderRoleBadge(seat)}
-          </div>
-
-          <div className="ddz-seat-profile">
-            <div className="ddz-avatar">
-              {info.isHuman ? (
-                <UserRound size={18} />
-              ) : info.model?.icon ? (
-                <img src={info.model.icon} alt="" className="ddz-avatar-img" />
-              ) : info.isBot ? (
-                <Bot size={18} />
-              ) : (
-                <Sparkles size={18} />
-              )}
-            </div>
-            <div className="ddz-seat-meta">
-              <strong className="ddz-seat-name">{info.name}</strong>
-              <small className="ddz-seat-sub">
-                {info.model?.name ||
-                  (info.isBot ? t("botTag") : t("playerYou"))}
-              </small>
-            </div>
-          </div>
-
-          {/* Remaining Card Back Counter */}
-          {l.phase !== "lobby" && (
-            <div className="ddz-card-counter">
-              <div className="ddz-card-back-mini" aria-hidden="true" />
-              <strong
-                className={`ddz-count-num ${
-                  hand.length <= 2 ? "is-alarm" : ""
-                }`}
-              >
-                {t("cardsLeft", { count: hand.length })}
-              </strong>
-            </div>
-          )}
-
-          {/* Danmaku speech bubble */}
+      <aside className={`ddz-wing is-${side}`}>
+        {/* Floating Speech Bubble */}
+        <div className="ddz-wing-bubble-slot">
           {danmaku && comment?.text && (
-            <div className="ddz-speech" title={comment.text}>
+            <div className="ddz-quote-bubble" title={comment.text}>
               “{comment.text}”
-            </div>
-          )}
-
-          {/* End-of-game hand reveal ONLY when finished */}
-          {l.phase === "finished" && hand.length > 0 && (
-            <div className="ddz-finished-reveal">
-              {hand.map((c) => (
-                <PokerCardView key={c.id} card={c} small />
-              ))}
             </div>
           )}
         </div>
 
-        {/* Action spot on the felt next to this player */}
-        <div className="ddz-side-action-zone">{renderActionSpot(seat)}</div>
+        {/* Player Identity Badge Pill */}
+        <div
+          className={`ddz-player-pill ${isTurn ? "is-turn" : ""} ${
+            isLandlord ? "is-landlord" : ""
+          }`}
+        >
+          <div
+            className={`ddz-avatar-circle ${
+              isLandlord ? "is-landlord" : "is-peasant"
+            }`}
+          >
+            {isLandlord ? (
+              <Crown size={18} />
+            ) : info.isHuman ? (
+              <UserRound size={18} />
+            ) : info.model?.icon ? (
+              <img src={info.model.icon} alt="" className="ddz-avatar-img" />
+            ) : info.isBot ? (
+              <Bot size={18} />
+            ) : (
+              <Sparkles size={18} />
+            )}
+          </div>
+
+          <div className="ddz-pill-info">
+            <div className="ddz-pill-name-row">
+              <strong className="ddz-pill-name">{info.name}</strong>
+              {l.phase !== "lobby" && (
+                <span
+                  className={`ddz-mini-count ${
+                    hand.length <= 2 ? "is-alarm" : ""
+                  }`}
+                >
+                  {hand.length}
+                </span>
+              )}
+            </div>
+            {roleBadgeFor(seat, relLabel)}
+          </div>
+        </div>
+
+        {/* Curved Vertical Fan of Cards */}
+        {l.phase !== "lobby" && (
+          <SideCardFan
+            cards={hand}
+            side={side}
+            reveal={godView || l.phase === "finished"}
+          />
+        )}
       </aside>
     );
   }
 
+  // Multiplier breakdown text
+  const multParts: string[] = [];
+  if (p.bidding.robCount > 0) {
+    multParts.push(`${t("robTag")} ×${Math.pow(2, p.bidding.robCount)}`);
+  }
+  if (p.bombCount > 0) {
+    multParts.push(`${t("bombCountLabel")} ×${Math.pow(2, p.bombCount)}`);
+  }
+  if (p.spring === "spring") multParts.push(t("springBadge"));
+  if (p.spring === "anti_spring") multParts.push(t("antiSpringBadge"));
+
   return (
     <div className="ddz-app">
-      {/* Header */}
-      <header className="ddz-header">
-        <div className="ddz-heading">
+      {/* Top Dark Header Bar */}
+      <header className="ddz-topbar">
+        <div className="ddz-brand">
           <div className="ddz-emblem" aria-hidden="true">
-            <DoudizhuEmblemIcon size={24} />
+            <DoudizhuEmblemIcon size={26} />
           </div>
-          <div>
-            <h1>{t("appTitle")}</h1>
-          </div>
+          <h1>{t("appTitle")}</h1>
+          <span className="ddz-subtitle-pill">{t("appSubtitle")}</span>
         </div>
 
-        <div className="ddz-header-actions">
+        <div className="ddz-toolbar">
           <button
             type="button"
-            className={`ddz-btn ddz-icon-btn ${danmaku ? "is-active" : ""}`}
+            className={`ddz-top-btn ${godView ? "is-active" : ""}`}
+            onClick={() => setGodView(!godView)}
+          >
+            {godView ? <EyeOff size={15} /> : <Eye size={15} />}
+            <span>{godView ? t("godViewOff") : t("godViewOn")}</span>
+          </button>
+
+          <button
+            type="button"
+            className={`ddz-top-btn is-icon ${danmaku ? "is-active" : ""}`}
             title={t("toggleDanmaku")}
             aria-label={t("toggleDanmaku")}
             onClick={() => setDanmaku(!danmaku)}
           >
             {danmaku ? (
-              <MessagesSquare size={16} />
+              <MessagesSquare size={15} />
             ) : (
-              <MessageSquareOff size={16} />
+              <MessageSquareOff size={15} />
             )}
           </button>
 
           {l.phase !== "lobby" && !p.winner && !isPaused && (
             <button
               type="button"
-              className="ddz-btn"
+              className="ddz-top-btn"
               disabled={busy}
               onClick={() => void perform(pause)}
             >
@@ -608,7 +739,7 @@ export default function App() {
           {l.phase !== "lobby" && !p.winner && isPaused && (
             <button
               type="button"
-              className="ddz-btn is-primary"
+              className="ddz-top-btn is-active"
               disabled={busy}
               onClick={() => void perform(resume)}
             >
@@ -617,21 +748,19 @@ export default function App() {
             </button>
           )}
 
-          {l.round > 0 && (
-            <button
-              type="button"
-              className="ddz-btn"
-              disabled={busy}
-              onClick={openPickerModal}
-            >
-              <UsersRound size={14} />
-              <span>{t("changeSeats")}</span>
-            </button>
-          )}
+          <button
+            type="button"
+            className="ddz-top-btn"
+            disabled={busy}
+            onClick={openPickerModal}
+          >
+            <UsersRound size={14} />
+            <span>{t("changeSeats")}</span>
+          </button>
 
           <button
             type="button"
-            className="ddz-btn is-primary"
+            className="ddz-top-btn"
             disabled={busy}
             onClick={() => {
               if (l.round > 0) {
@@ -658,7 +787,7 @@ export default function App() {
           <span>{error}</span>
           <button
             type="button"
-            className="ddz-btn ddz-icon-btn"
+            className="ddz-top-btn is-icon"
             onClick={() => setError(null)}
             aria-label="Dismiss"
           >
@@ -667,153 +796,171 @@ export default function App() {
         </div>
       )}
 
-      {/* Main Felt Poker Table */}
+      {/* Main Emerald Felt Table */}
       <main className="ddz-table">
-        {/* Top Table Bar: 3 Hole Cards + Multiplier + Bombs */}
-        <div className="ddz-table-topbar">
-          <div className="ddz-hole-box">
-            <span className="ddz-top-label">{t("holeCardsLabel")}</span>
-            {holeRevealed ? (
-              <div className="ddz-hole-cards">
-                {p.bottomCards.map((c) => (
-                  <PokerCardView key={c.id} card={c} small />
-                ))}
-              </div>
-            ) : (
-              <div className="ddz-hole-cards">
-                <div className="ddz-card-back-hole" />
-                <div className="ddz-card-back-hole" />
-                <div className="ddz-card-back-hole" />
-                <span className="ddz-hole-hidden-tag">{t("holeHidden")}</span>
-              </div>
-            )}
+        <div className="ddz-table-track" aria-hidden="true" />
+
+        {/* Top-Center Floating Hole Cards & Multiplier Capsule */}
+        <div className="ddz-top-capsule">
+          <div className="ddz-hole-section">
+            <span className="ddz-capsule-label">{t("holeCardsLabel")}</span>
+            <div className="ddz-hole-row">
+              {holeRevealed && l.phase !== "lobby" ? (
+                p.bottomCards.map((c) => (
+                  <PokerCardFace key={c.id} card={c} size="hole" />
+                ))
+              ) : (
+                <>
+                  <div className="ddz-hole-back">
+                    <span className="ddz-back-diamond" />
+                  </div>
+                  <div className="ddz-hole-back">
+                    <span className="ddz-back-diamond" />
+                  </div>
+                  <div className="ddz-hole-back">
+                    <span className="ddz-back-diamond" />
+                  </div>
+                </>
+              )}
+            </div>
           </div>
 
-          <div className="ddz-phase-pill">
-            {l.phase === "lobby"
-              ? t("phaseLobby")
-              : l.phase === "bidding"
-                ? t("phaseBidding")
-                : l.phase === "playing"
-                  ? t("phasePlaying")
-                  : t("phaseFinished")}
-          </div>
+          <div className="ddz-capsule-divider" />
 
-          <div className="ddz-stats-box">
-            <span className="ddz-stat-chip is-mult">
-              <Flame size={13} />
-              <span>
-                {t("multiplierLabel")} ×{p.multiplier}
-              </span>
+          <div className="ddz-score-section">
+            <span className="ddz-gold-stat">
+              {t("baseScoreLabel")}: {p.baseScore ?? 3}
             </span>
-            {p.bombCount > 0 && (
-              <span className="ddz-stat-chip is-bomb">
-                <span>
-                  {t("bombCountLabel")} {p.bombCount}
-                </span>
-              </span>
-            )}
+            <span className="ddz-gold-stat">
+              {t("multiplierLabel")}: × {p.multiplier}
+              {multParts.length > 0 ? ` (${multParts.join(" · ")})` : ""}
+            </span>
           </div>
         </div>
 
-        {/* Upper Arena: West Seat (Left) + Center Felt + East Seat (Right) */}
-        <div className="ddz-upper-arena">
-          {renderSideSeat(leftSeat, "left")}
+        {/* Middle Arena: Left Wing (West) + 3-Directional Play Stage + Right Wing (East) */}
+        <div className="ddz-arena">
+          {renderSidePlayer(leftSeat, "left")}
 
-          <div className="ddz-center-stage">
+          <div className="ddz-center-felt">
             {l.phase === "lobby" ? (
-              <div className="ddz-lobby-welcome">
-                <Crown size={36} className="ddz-welcome-icon" />
+              <div className="ddz-center-overlay">
+                <Crown size={38} className="ddz-gold-crown" />
                 <h2>{t("appTitle")}</h2>
                 <p>{t("pickerSubtitle")}</p>
                 <button
                   type="button"
-                  className="ddz-btn is-primary"
+                  className="ddz-pill-btn is-gold"
                   onClick={openPickerModal}
                 >
                   <Play size={15} />
                   <span>{t("startMatch")}</span>
                 </button>
               </div>
-            ) : l.phase === "finished" && p.winner ? (
-              <div className="ddz-result-banner">
-                <Crown size={32} className="ddz-winner-crown" />
-                <h3>
-                  {p.winner === "Landlord"
-                    ? t("winnerLandlord")
-                    : t("winnerPeasant")}
-                </h3>
-                <div className="ddz-result-tags">
-                  <span className="ddz-stat-chip is-mult">
-                    {t("multiplierLabel")} ×{p.multiplier}
-                  </span>
-                  {p.spring === "spring" && (
-                    <span className="ddz-stat-chip is-bomb">
-                      {t("springBadge")}
-                    </span>
-                  )}
-                  {p.spring === "anti_spring" && (
-                    <span className="ddz-stat-chip is-bomb">
-                      {t("antiSpringBadge")}
-                    </span>
-                  )}
-                </div>
-              </div>
             ) : (
-              <div className="ddz-center-trick">
-                {p.currentPlay ? (
-                  <div className="ddz-active-play-box">
-                    <span className="ddz-active-play-owner">
-                      {seatLabel(p.currentPlay.seat)} ·{" "}
-                      {comboLabel(
-                        p.currentPlay.combo.type,
-                        p.currentPlay.combo.mainRank,
-                      )}
+              <>
+                <div className="ddz-stage-grid">
+                  {renderTableSpot(leftSeat, "left")}
+                  {renderTableSpot(rightSeat, "right")}
+                </div>
+                {renderTableSpot(bottomSeat, "bottom")}
+
+                {l.phase === "finished" && p.winner && (
+                  <div className="ddz-winner-toast">
+                    <Crown size={22} className="ddz-gold-crown" />
+                    <strong>
+                      {p.winner === "Landlord"
+                        ? t("winnerLandlord")
+                        : t("winnerPeasant")}
+                    </strong>
+                    <span className="ddz-winner-mult">
+                      ×{p.multiplier}
                     </span>
-                    <div className="ddz-played-cards">
-                      {p.currentPlay.cards.map((c) => (
-                        <PokerCardView key={c.id} card={c} />
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="ddz-center-watermark">
-                    {l.phase === "bidding"
-                      ? p.bidding.calledBy
-                        ? t("actRob")
-                        : t("actCall")
-                      : t("phasePlaying")}
                   </div>
                 )}
-              </div>
+              </>
             )}
           </div>
 
-          {renderSideSeat(rightSeat, "right")}
+          {renderSidePlayer(rightSeat, "right")}
         </div>
 
-        {/* Bottom Main Seat */}
+        {/* Bottom Player Zone: Action Pill Buttons + Arched Overlapping Hand Fan */}
         {l.phase !== "lobby" && (
-          <section
-            className={`ddz-bottom-seat ${
-              p.turn === bottomSeat && !p.winner ? "is-turn" : ""
-            }`}
-          >
-            {/* Bottom Seat Action Spot (just above hand) */}
-            <div className="ddz-bottom-action-spot">
-              {renderActionSpot(bottomSeat)}
-            </div>
+          <section className="ddz-bottom-zone">
+            {/* Bottom Player Floating Info & Speech Bubble */}
+            <div className="ddz-bottom-hud">
+              <div
+                className={`ddz-player-pill is-compact ${
+                  p.turn === bottomSeat && !p.winner ? "is-turn" : ""
+                }`}
+              >
+                <div
+                  className={`ddz-avatar-circle ${
+                    p.landlord === bottomSeat ? "is-landlord" : "is-peasant"
+                  }`}
+                >
+                  {p.landlord === bottomSeat ? (
+                    <Crown size={16} />
+                  ) : getPlayerInfo(bottomSeat).isHuman ? (
+                    <UserRound size={16} />
+                  ) : (
+                    <Bot size={16} />
+                  )}
+                </div>
+                <div className="ddz-pill-info">
+                  <div className="ddz-pill-name-row">
+                    <strong className="ddz-pill-name">
+                      {getPlayerInfo(bottomSeat).name}
+                    </strong>
+                    <span
+                      className={`ddz-mini-count ${
+                        bottomHand.length <= 2 ? "is-alarm" : ""
+                      }`}
+                    >
+                      {bottomHand.length}
+                    </span>
+                  </div>
+                  {roleBadgeFor(bottomSeat, t("relSelf"))}
+                </div>
+              </div>
 
-            {/* Human Interactive Action Bar */}
-            {myTurn && (
-              <div className="ddz-human-toolbar">
-                {l.phase === "bidding" ? (
-                  <div className="ddz-action-buttons">
-                    {!p.bidding.calledBy ? (
+              {danmaku && p.comments[bottomSeat]?.text && (
+                <div className="ddz-quote-bubble">
+                  “{p.comments[bottomSeat]!.text}”
+                </div>
+              )}
+
+              {/* Action Pill Buttons */}
+              {myTurn && (
+                <div className="ddz-action-row">
+                  {l.phase === "bidding" ? (
+                    !p.bidding.calledBy ? (
                       <>
                         <button
                           type="button"
-                          className="ddz-btn is-gold"
+                          className="ddz-pill-btn is-pass"
+                          disabled={busy}
+                          onClick={() =>
+                            void perform(async () => {
+                              await pudding.interaction.handle((c) =>
+                                callLandlord(
+                                  {
+                                    decision: "pass",
+                                    comment: draftComment.trim() || undefined,
+                                  },
+                                  c,
+                                ),
+                              );
+                              setDraftComment("");
+                            })
+                          }
+                        >
+                          {t("actNoCall")}
+                        </button>
+                        <button
+                          type="button"
+                          className="ddz-pill-btn is-gold"
                           disabled={busy}
                           onClick={() =>
                             void perform(async () => {
@@ -830,12 +977,14 @@ export default function App() {
                             })
                           }
                         >
-                          <Crown size={15} />
-                          <span>{t("actCall")}</span>
+                          {t("actCall")}
                         </button>
+                      </>
+                    ) : (
+                      <>
                         <button
                           type="button"
-                          className="ddz-btn"
+                          className="ddz-pill-btn is-pass"
                           disabled={busy}
                           onClick={() =>
                             void perform(async () => {
@@ -852,14 +1001,11 @@ export default function App() {
                             })
                           }
                         >
-                          <span>{t("actNoCall")}</span>
+                          {t("actNoRob")}
                         </button>
-                      </>
-                    ) : (
-                      <>
                         <button
                           type="button"
-                          className="ddz-btn is-gold"
+                          className="ddz-pill-btn is-gold"
                           disabled={busy}
                           onClick={() =>
                             void perform(async () => {
@@ -876,19 +1022,22 @@ export default function App() {
                             })
                           }
                         >
-                          <Flame size={15} />
-                          <span>{t("actRob")}</span>
+                          {t("actRob")}
                         </button>
+                      </>
+                    )
+                  ) : (
+                    <>
+                      {canHumanPass && (
                         <button
                           type="button"
-                          className="ddz-btn"
+                          className="ddz-pill-btn is-pass"
                           disabled={busy}
                           onClick={() =>
                             void perform(async () => {
                               await pudding.interaction.handle((c) =>
-                                callLandlord(
+                                passTurn(
                                   {
-                                    decision: "pass",
                                     comment: draftComment.trim() || undefined,
                                   },
                                   c,
@@ -898,176 +1047,119 @@ export default function App() {
                             })
                           }
                         >
-                          <span>{t("actNoRob")}</span>
+                          {t("actPass")}
                         </button>
-                      </>
-                    )}
-                  </div>
-                ) : (
-                  <div className="ddz-action-buttons">
-                    {canHumanPass && (
+                      )}
+
                       <button
                         type="button"
-                        className="ddz-btn"
-                        disabled={busy}
+                        className="ddz-pill-btn is-hint"
+                        disabled={busy || legalPlaysForBottom.length === 0}
+                        onClick={cycleHint}
+                      >
+                        <Lightbulb size={14} />
+                        <span>{t("actHint")}</span>
+                      </button>
+
+                      {selectedCardIds.length > 0 && (
+                        <button
+                          type="button"
+                          className="ddz-pill-btn is-hint"
+                          disabled={busy}
+                          onClick={() => setSelectedCardIds([])}
+                        >
+                          {t("actClear")}
+                        </button>
+                      )}
+
+                      <button
+                        type="button"
+                        className="ddz-pill-btn is-gold"
+                        disabled={busy || !isSelectionPlayable}
                         onClick={() =>
                           void perform(async () => {
                             await pudding.interaction.handle((c) =>
-                              passTurn(
+                              playCards(
                                 {
+                                  cards: selectedCardIds,
                                   comment: draftComment.trim() || undefined,
                                 },
                                 c,
                               ),
                             );
+                            setSelectedCardIds([]);
                             setDraftComment("");
                           })
                         }
                       >
-                        <span>{t("actPass")}</span>
+                        <span>
+                          {t("actPlay")}
+                          {selectedCombo && isSelectionPlayable
+                            ? ` · ${comboLabel(
+                                selectedCombo.type,
+                                selectedCombo.mainRank,
+                              )}`
+                            : ""}
+                        </span>
                       </button>
-                    )}
+                    </>
+                  )}
+                </div>
+              )}
 
-                    <button
-                      type="button"
-                      className="ddz-btn"
-                      disabled={busy || legalPlaysForBottom.length === 0}
-                      onClick={cycleHint}
-                    >
-                      <Lightbulb size={14} />
-                      <span>{t("actHint")}</span>
-                    </button>
-
-                    {selectedCardIds.length > 0 && (
-                      <button
-                        type="button"
-                        className="ddz-btn"
-                        disabled={busy}
-                        onClick={() => setSelectedCardIds([])}
-                      >
-                        <span>{t("actClear")}</span>
-                      </button>
-                    )}
-
-                    <button
-                      type="button"
-                      className="ddz-btn is-gold"
-                      disabled={busy || !isSelectionPlayable}
-                      onClick={() =>
-                        void perform(async () => {
-                          await pudding.interaction.handle((c) =>
-                            playCards(
-                              {
-                                cards: selectedCardIds,
-                                comment: draftComment.trim() || undefined,
-                              },
-                              c,
-                            ),
-                          );
-                          setSelectedCardIds([]);
-                          setDraftComment("");
-                        })
-                      }
-                    >
-                      <span>
-                        {t("actPlay")}
-                        {selectedCombo && isSelectionPlayable
-                          ? ` · ${comboLabel(
-                              selectedCombo.type,
-                              selectedCombo.mainRank,
-                            )}`
-                          : ""}
-                      </span>
-                    </button>
-                  </div>
-                )}
-
+              {myTurn && (
                 <input
                   type="text"
-                  className="ddz-comment-input"
+                  className="ddz-talk-input"
                   placeholder={t("commentPlaceholder")}
                   maxLength={40}
                   value={draftComment}
                   onChange={(e) => setDraftComment(e.target.value)}
                 />
-              </div>
-            )}
-
-            {/* Bottom Seat Header Info */}
-            <div className="ddz-bottom-bar">
-              <div className="ddz-bottom-identity">
-                <span className="ddz-seat-pos">{seatLabel(bottomSeat)}</span>
-                {renderRoleBadge(bottomSeat)}
-                <strong className="ddz-seat-name">
-                  {getPlayerInfo(bottomSeat).name}
-                </strong>
-                <span className="ddz-count-pill">
-                  {t("cardsLeft", { count: bottomHand.length })}
-                </span>
-                {danmaku && p.comments[bottomSeat]?.text && (
-                  <span className="ddz-inline-speech">
-                    “{p.comments[bottomSeat]!.text}”
-                  </span>
-                )}
-              </div>
-
-              {humanSeat && l.phase !== "finished" && (
-                <button
-                  type="button"
-                  className="ddz-btn ddz-btn-sm"
-                  onClick={() => setManualPeek(!manualPeek)}
-                >
-                  {showBottomHandFaceUp ? (
-                    <>
-                      <EyeOff size={13} />
-                      <span>{t("hideHandBtn")}</span>
-                    </>
-                  ) : (
-                    <>
-                      <Eye size={13} />
-                      <span>{t("revealHandBtn")}</span>
-                    </>
-                  )}
-                </button>
               )}
             </div>
 
-            {/* Bottom Hand Fan (Strict anti-peek when not human's turn unless revealed) */}
+            {/* Arched Overlapping Hand Fan */}
             {showBottomHandFaceUp ? (
-              <div className="ddz-hand-fan">
-                {bottomHand.map((card) => (
-                  <PokerCardView
-                    key={card.id}
-                    card={card}
-                    selected={selectedCardIds.includes(card.id)}
-                    onClick={
-                      myTurn && l.phase === "playing"
-                        ? () => toggleCardSelection(card.id)
-                        : undefined
-                    }
-                    disabled={busy}
-                  />
-                ))}
+              <div className="ddz-arch-fan">
+                {bottomHand.map((card, idx) => {
+                  const total = bottomHand.length;
+                  const mid = (total - 1) / 2;
+                  const norm = total > 1 ? (idx - mid) / Math.max(mid, 1) : 0;
+                  const angle = norm * 12;
+                  const archY = norm * norm * 16;
+                  return (
+                    <PokerCardFace
+                      key={card.id}
+                      card={card}
+                      size="hand"
+                      selected={selectedCardIds.includes(card.id)}
+                      onClick={
+                        myTurn && l.phase === "playing"
+                          ? () => toggleCardSelection(card.id)
+                          : undefined
+                      }
+                      disabled={busy}
+                      style={
+                        {
+                          "--fan-angle": `${angle.toFixed(2)}deg`,
+                          "--fan-y": `${archY.toFixed(1)}px`,
+                          zIndex: idx + 1,
+                        } as CSSProperties
+                      }
+                    />
+                  );
+                })}
               </div>
             ) : (
-              <div className="ddz-hand-hidden-box">
-                <div className="ddz-card-back-fan" aria-hidden="true">
-                  {Array.from({ length: Math.min(bottomHand.length, 10) }).map(
-                    (_, idx) => (
-                      <div key={idx} className="ddz-card-back-hole" />
-                    ),
-                  )}
-                </div>
-                <span className="ddz-hidden-text">
-                  {humanSeat ? t("handHiddenHint") : t("spectatorHiddenHint")}
-                </span>
+              <div className="ddz-spectator-mask">
+                <span>{t("spectatorHiddenHint")}</span>
               </div>
             )}
           </section>
         )}
       </main>
 
-      {/* Seat Configuration Modal */}
       {picker && renderPickerModal()}
     </div>
   );
@@ -1129,7 +1221,7 @@ export default function App() {
           <div className="ddz-modal-actions">
             <button
               type="button"
-              className="ddz-btn"
+              className="ddz-top-btn"
               disabled={busy}
               onClick={() => setPicker(false)}
             >
@@ -1137,7 +1229,7 @@ export default function App() {
             </button>
             <button
               type="button"
-              className="ddz-btn is-primary"
+              className="ddz-pill-btn is-gold"
               disabled={busy || hasConflict}
               onClick={() =>
                 void perform(async () => {

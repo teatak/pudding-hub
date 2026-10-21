@@ -21,6 +21,34 @@ import {
 
 const root = fileURLToPath(new URL("../widgets/doudizhu", import.meta.url));
 
+function assertStrictJsonValue(val, pathPrefix = "root") {
+  assert.notEqual(
+    val,
+    undefined,
+    `Value at ${pathPrefix} must not be undefined (violates jsonValue schema)`,
+  );
+  if (val === null || typeof val === "string" || typeof val === "boolean") {
+    return;
+  }
+  if (typeof val === "number") {
+    assert.equal(Number.isFinite(val), true, `Non-finite number at ${pathPrefix}`);
+    return;
+  }
+  if (Array.isArray(val)) {
+    val.forEach((item, idx) =>
+      assertStrictJsonValue(item, `${pathPrefix}[${idx}]`),
+    );
+    return;
+  }
+  if (typeof val === "object") {
+    for (const [k, v] of Object.entries(val)) {
+      assertStrictJsonValue(v, `${pathPrefix}.${k}`);
+    }
+    return;
+  }
+  assert.fail(`Unsupported type ${typeof val} at ${pathPrefix}`);
+}
+
 test("Dou Dizhu 1.0.0-preview.1 release package exists and contains verified source files", async () => {
   const pkgPath = path.join(
     root,
@@ -49,8 +77,8 @@ test("Dou Dizhu 1.0.0-preview.1 release package exists and contains verified sou
     assert.ok(pkg.source.files[file], `missing file in package: ${file}`);
   }
 
-  // Ensure interfaces and privacy rules are present and played-card history is not exposed
   const gameSrc = pkg.source.files["src/game.ts"];
+  assert.match(gameSrc, /sanitizeJsonValue/);
   assert.match(gameSrc, /callLandlord/);
   assert.match(gameSrc, /playCards/);
   assert.match(gameSrc, /readTable/);
@@ -83,7 +111,6 @@ test("Dou Dizhu deck, card combinations, and comparison rules work accurately", 
   assert.equal(straight5?.type, "straight");
   assert.equal(straight5?.mainRank, "A");
 
-  // 2 cannot be in a straight
   assert.equal(classifyCards(pick(["J", "Q", "K", "A", "2"])), null);
 
   const pairStraight = classifyCards(pick(["3", "3", "4", "4", "5", "5"]));
@@ -106,7 +133,7 @@ test("Dou Dizhu deck, card combinations, and comparison rules work accurately", 
   assert.equal(canBeat(bomb3, fourTwoSingle), true);
 });
 
-test("Call / Rob Landlord multiplier doubling, built-in Bot, and no played-card history exposure", () => {
+test("Call / Rob Landlord multiplier doubling, built-in Bot, strict jsonValue compliance, and no played-card history exposure", () => {
   let l = {
     ...initialLobby(),
     round: 1,
@@ -118,51 +145,61 @@ test("Call / Rob Landlord multiplier doubling, built-in Bot, and no played-card 
     },
   };
   let p = initialPosition("South");
+  assertStrictJsonValue(l, "lobby.initial");
+  assertStrictJsonValue(p, "position.initial");
 
-  // South calls Landlord (1x)
-  ({ lobby: l, position: p } = applyBid(l, p, "South", "call", "这牌我叫了"));
-  assert.equal(l.phase, "bidding");
-  assert.equal(p.bidding.calledBy, "South");
-  assert.equal(p.turn, "East");
-  assert.equal(p.multiplier, 1);
+  // South calls Landlord without comment (ensures comment is null, never undefined)
+  ({ lobby: l, position: p } = applyBid(l, p, "South", "call"));
+  assertStrictJsonValue(p, "position.afterCall");
+  assert.equal(p.lastActions.South?.comment, null);
+  assert.equal(p.lastActions.South?.cards, null);
+  assert.equal(p.lastActions.South?.combo, null);
 
   // East robs Landlord (multiplier -> 2x)
-  ({ lobby: l, position: p } = applyBid(l, p, "East", "rob"));
+  ({ lobby: l, position: p } = applyBid(l, p, "East", "rob", "我抢！"));
+  assertStrictJsonValue(p, "position.afterRob");
   assert.equal(p.multiplier, 2);
   assert.equal(p.bidding.highestBidder, "East");
   assert.equal(p.turn, "West");
 
-  // West passes rob (multiplier stays 2x), South (original caller) gets 1 final rob chance!
+  // West passes rob (multiplier stays 2x), South gets 1 final rob chance
   ({ lobby: l, position: p } = applyBid(l, p, "West", "pass"));
+  assertStrictJsonValue(p, "position.afterNoRob");
   assert.equal(l.phase, "bidding");
   assert.equal(p.turn, "South");
 
   // South robs back! (multiplier -> 4x, South immediately becomes Landlord with 20 cards)
   ({ lobby: l, position: p } = applyBid(l, p, "South", "rob"));
+  assertStrictJsonValue(p, "position.afterFinalRob");
   assert.equal(l.phase, "playing");
   assert.equal(p.landlord, "South");
   assert.equal(p.multiplier, 4);
   assert.equal(p.hands.South.length, 20);
   assert.equal(p.turn, "South");
 
-  // Verify no played-card history field exists on position state
   assert.equal("history" in p, false);
   assert.equal("playedCards" in p, false);
 
-  // Built-in bot decision helper works on current state
   const leadPlay = chooseBotPlay(p, "South");
   assert.equal(leadPlay.action, "play");
   assert.ok(leadPlay.cards.length >= 1);
 
   ({ lobby: l, position: p } = applyPlayCards(l, p, "South", leadPlay.cards));
+  assertStrictJsonValue(p, "position.afterPlay");
   assert.equal(p.currentPlay?.seat, "South");
   assert.equal(p.turn, "East");
 
-  // East and West pass -> trick resets cleanly so South leads again and previous trick is cleared
+  // East and West pass -> trick resets cleanly
   ({ lobby: l, position: p } = applyPass(l, p, "East"));
+  assertStrictJsonValue(p, "position.afterPass1");
   ({ lobby: l, position: p } = applyPass(l, p, "West"));
+  assertStrictJsonValue(p, "position.afterPass2");
   assert.equal(p.currentPlay, null);
   assert.equal(p.turn, "South");
   assert.ok(findLegalPlays(p.hands.South, null).length > 0);
-  assert.ok(["call", "rob", "pass"].includes(chooseBotBid(initialPosition("South"), "South")));
+  assert.ok(
+    ["call", "rob", "pass"].includes(
+      chooseBotBid(initialPosition("South"), "South"),
+    ),
+  );
 });

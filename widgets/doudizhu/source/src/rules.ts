@@ -168,6 +168,7 @@ export function initialPosition(firstBidder: Seat = "South"): DoudizhuPosition {
       actedAfterCallSeats: [],
       finalCallerPending: false,
     },
+    baseScore: 3,
     multiplier: 1,
     bombCount: 0,
     spring: null,
@@ -187,10 +188,20 @@ export function normalizeCardToken(raw: string): {
   rank: Rank;
 } {
   const token = raw.trim().toUpperCase();
-  if (token === "BJ" || token === "小王" || token === "BLACK_JOKER" || token === "SJ") {
+  if (
+    token === "BJ" ||
+    token === "小王" ||
+    token === "BLACK_JOKER" ||
+    token === "SJ"
+  ) {
     return { exactId: "BJ", rank: "BJ" };
   }
-  if (token === "RJ" || token === "大王" || token === "RED_JOKER" || token === "BG") {
+  if (
+    token === "RJ" ||
+    token === "大王" ||
+    token === "RED_JOKER" ||
+    token === "BG"
+  ) {
     return { exactId: "RJ", rank: "RJ" };
   }
   const suitMap: Record<string, Suit> = {
@@ -223,7 +234,6 @@ export function matchCardsFromHand(hand: Card[], requested: string[]): Card[] {
   const usedIndices = new Set<number>();
   const matched: Card[] = [];
 
-  // Pass 1: exact ID matches
   const pendingRanks: Rank[] = [];
   for (const item of parsed) {
     if (item.exactId) {
@@ -241,7 +251,6 @@ export function matchCardsFromHand(hand: Card[], requested: string[]): Card[] {
     }
   }
 
-  // Pass 2: rank matches (pick lowest suit first to preserve higher visual suits if any)
   for (const r of pendingRanks) {
     const idx = hand.findIndex((c, i) => !usedIndices.has(i) && c.rank === r);
     if (idx < 0) {
@@ -423,7 +432,6 @@ export function classifyCards(cards: Card[]): Combo | null {
   if (n === 6) {
     for (const [val, cnt] of counts.entries()) {
       if (cnt === 4) {
-        // Remaining 2 cards cannot be both BJ and RJ
         if (!(counts.has(16) && counts.has(17))) {
           return {
             type: "four_two_single",
@@ -475,7 +483,6 @@ export function classifyCards(cards: Card[]): Combo | null {
     for (let i = 0; i + chainLen <= tripleCandidates.length; i++) {
       const slice = tripleCandidates.slice(i, i + chainLen);
       if (slice[chainLen - 1] - slice[0] === chainLen - 1) {
-        // Check remaining cards don't contain both jokers
         const remCounts = new Map(counts);
         for (const v of slice) {
           remCounts.set(v, (remCounts.get(v) || 0) - 3);
@@ -556,7 +563,7 @@ export function canBeat(challenger: Combo, target: Combo | null): boolean {
 }
 
 function groupHandByValue(hand: Card[]): Map<number, Card[]> {
-  const map = new Map<number, Card[]>();
+  const map = new Map<number, Card[]> ();
   for (const c of hand) {
     const list = map.get(c.value) || [];
     list.push(c);
@@ -565,10 +572,6 @@ function groupHandByValue(hand: Card[]): Map<number, Card[]> {
   return map;
 }
 
-/**
- * Generates candidate legal plays from `hand` that beat `target` (or lead if `target === null`),
- * ordered from lowest/most natural plays to bombs/rocket.
- */
 export function findLegalPlays(hand: Card[], target: Combo | null): Card[][] {
   const byVal = groupHandByValue(hand);
   const valuesAsc = [...byVal.keys()].sort((a, b) => a - b);
@@ -581,13 +584,17 @@ export function findLegalPlays(hand: Card[], target: Combo | null): Card[][] {
     }
   };
 
-  // Helper: non-bomb single/pair kickers sorted ascending (prefer pure singles/pairs over breaking triples/bombs)
   const singleKickers = (excludeVals: Set<number>): Card[] => {
     const pureSingles = valuesAsc
       .filter((v) => !excludeVals.has(v) && byVal.get(v)!.length === 1)
       .map((v) => byVal.get(v)![0]);
     const otherSingles = valuesAsc
-      .filter((v) => !excludeVals.has(v) && byVal.get(v)!.length > 1 && byVal.get(v)!.length < 4)
+      .filter(
+        (v) =>
+          !excludeVals.has(v) &&
+          byVal.get(v)!.length > 1 &&
+          byVal.get(v)!.length < 4,
+      )
       .map((v) => byVal.get(v)![0]);
     return [...pureSingles, ...otherSingles];
   };
@@ -604,14 +611,12 @@ export function findLegalPlays(hand: Card[], target: Combo | null): Card[][] {
 
   const wantType = target?.type;
 
-  // 1. Singles (prefer non-bomb singles first)
   if (!wantType || wantType === "single") {
     for (const v of valuesAsc) {
       if (byVal.get(v)!.length < 4) addIfBeats([byVal.get(v)![0]]);
     }
   }
 
-  // 2. Pairs
   if (!wantType || wantType === "pair") {
     for (const v of valuesAsc) {
       const grp = byVal.get(v)!;
@@ -619,7 +624,6 @@ export function findLegalPlays(hand: Card[], target: Combo | null): Card[][] {
     }
   }
 
-  // 3. Triples, Triple + Single, Triple + Pair
   const triples = valuesAsc.filter((v) => byVal.get(v)!.length === 3);
   if (!wantType || wantType === "triple") {
     for (const v of triples) addIfBeats(byVal.get(v)!.slice(0, 3));
@@ -641,7 +645,6 @@ export function findLegalPlays(hand: Card[], target: Combo | null): Card[][] {
     }
   }
 
-  // 4. Straights
   if (!wantType || wantType === "straight") {
     const seqVals = valuesAsc.filter((v) => v <= 14);
     const minLen = target?.type === "straight" ? target.length : 5;
@@ -656,9 +659,10 @@ export function findLegalPlays(hand: Card[], target: Combo | null): Card[][] {
     }
   }
 
-  // 5. Pair Straights
   if (!wantType || wantType === "pair_straight") {
-    const pairVals = valuesAsc.filter((v) => v <= 14 && byVal.get(v)!.length >= 2);
+    const pairVals = valuesAsc.filter(
+      (v) => v <= 14 && byVal.get(v)!.length >= 2,
+    );
     const minChain = target?.type === "pair_straight" ? target.chainLength : 3;
     const maxChain = target?.type === "pair_straight" ? target.chainLength : 10;
     for (let cl = minChain; cl <= maxChain; cl++) {
@@ -671,14 +675,15 @@ export function findLegalPlays(hand: Card[], target: Combo | null): Card[][] {
     }
   }
 
-  // 6. Airplanes (without wings, with single wings, with pair wings)
   if (
     !wantType ||
     wantType === "airplane" ||
     wantType === "airplane_single" ||
     wantType === "airplane_pair"
   ) {
-    const tripVals = valuesAsc.filter((v) => v <= 14 && byVal.get(v)!.length >= 3);
+    const tripVals = valuesAsc.filter(
+      (v) => v <= 14 && byVal.get(v)!.length >= 3,
+    );
     const minChain =
       target && target.type.startsWith("airplane") ? target.chainLength : 2;
     const maxChain =
@@ -713,7 +718,6 @@ export function findLegalPlays(hand: Card[], target: Combo | null): Card[][] {
     }
   }
 
-  // 7. Four + Two
   const bombs = valuesAsc.filter((v) => byVal.get(v)!.length === 4);
   if (wantType === "four_two_single") {
     for (const v of bombs) {
@@ -732,7 +736,6 @@ export function findLegalPlays(hand: Card[], target: Combo | null): Card[][] {
     }
   }
 
-  // 8. Bombs & Rocket (always valid against non-rocket or smaller bomb)
   for (const v of bombs) {
     addIfBeats(byVal.get(v)!);
   }
@@ -743,9 +746,6 @@ export function findLegalPlays(hand: Card[], target: Combo | null): Card[][] {
   return results;
 }
 
-/**
- * Finalizes Landlord assignment, reveals the 3 hole cards into Landlord's hand, and starts play.
- */
 export function finalizeLandlord(
   lobby: DoudizhuLobby,
   pos: DoudizhuPosition,
@@ -773,9 +773,6 @@ export function finalizeLandlord(
   };
 }
 
-/**
- * Applies a Call / Rob Landlord decision during `phase === "bidding"`.
- */
 export function applyBid(
   lobby: DoudizhuLobby,
   pos: DoudizhuPosition,
@@ -791,7 +788,7 @@ export function applyBid(
   }
 
   const stepCount = pos.stepCount + 1;
-  const trimmedComment = comment?.trim() || undefined;
+  const trimmedComment: string | null = comment?.trim() || null;
   const comments = trimmedComment
     ? { ...pos.comments, [seat]: { step: stepCount, text: trimmedComment } }
     : pos.comments;
@@ -809,9 +806,13 @@ export function applyBid(
       };
       const lastActions = {
         ...pos.lastActions,
-        [seat]: { kind: "call" as const, comment: trimmedComment },
+        [seat]: {
+          kind: "call" as const,
+          cards: null,
+          combo: null,
+          comment: trimmedComment,
+        },
       };
-      // Find eligible seats after `seat` that haven't passed yet
       const orderAfter: Seat[] = [nextSeat(seat), nextSeat(nextSeat(seat))];
       const eligible = orderAfter.filter(
         (s) => !b.passedCallSeats.includes(s),
@@ -835,11 +836,15 @@ export function applyBid(
         },
       };
     } else {
-      // Player chose "不叫"
       const passedCallSeats = [...b.passedCallSeats, seat];
       const lastActions = {
         ...pos.lastActions,
-        [seat]: { kind: "no_call" as const, comment: trimmedComment },
+        [seat]: {
+          kind: "no_call" as const,
+          cards: null,
+          combo: null,
+          comment: trimmedComment,
+        },
       };
       const nextPos: DoudizhuPosition = {
         ...pos,
@@ -853,7 +858,6 @@ export function applyBid(
         turnStartedAt: Date.now(),
       };
       if (passedCallSeats.length >= 3) {
-        // All 3 passed -> firstBidder becomes Landlord at 1x multiplier
         return finalizeLandlord(lobby, nextPos, b.firstBidder);
       }
       return {
@@ -875,11 +879,12 @@ export function applyBid(
     ...pos.lastActions,
     [seat]: {
       kind: (wantsRob ? "rob" : "no_rob") as "rob" | "no_rob",
+      cards: null,
+      combo: null,
       comment: trimmedComment,
     },
   };
 
-  // If this is the original caller's final rob decision, bidding finishes now!
   if (seat === b.calledBy) {
     const nextPos: DoudizhuPosition = {
       ...pos,
@@ -934,8 +939,6 @@ export function applyBid(
     };
   }
 
-  // All non-caller eligible seats have acted:
-  // If anyone robbed, the original caller gets 1 final chance to rob back!
   if (robCount > 0) {
     return {
       lobby,
@@ -946,13 +949,9 @@ export function applyBid(
     };
   }
 
-  // Nobody robbed -> original caller is Landlord!
   return finalizeLandlord(lobby, nextPos, b.calledBy);
 }
 
-/**
- * Applies playing cards during `phase === "playing"`.
- */
 export function applyPlayCards(
   lobby: DoudizhuLobby,
   pos: DoudizhuPosition,
@@ -990,7 +989,7 @@ export function applyPlayCards(
   let multiplier = isBomb ? pos.multiplier * 2 : pos.multiplier;
   const bombCount = isBomb ? pos.bombCount + 1 : pos.bombCount;
   const stepCount = pos.stepCount + 1;
-  const trimmedComment = comment?.trim() || undefined;
+  const trimmedComment: string | null = comment?.trim() || null;
   const comments = trimmedComment
     ? { ...pos.comments, [seat]: { step: stepCount, text: trimmedComment } }
     : pos.comments;
@@ -1000,7 +999,6 @@ export function applyPlayCards(
     [seat]: pos.playCounts[seat] + 1,
   };
 
-  // Starting a fresh lead clears previous trick's pass tags on other seats
   const baseLastActions =
     targetCombo === null
       ? { South: null, East: null, West: null }
@@ -1021,7 +1019,6 @@ export function applyPlayCards(
     [seat]: remainingHand,
   };
 
-  // Check if player emptied their hand (Win!)
   if (remainingHand.length === 0) {
     const landlord = pos.landlord!;
     const winner: "Landlord" | "Peasant" =
@@ -1083,9 +1080,6 @@ export function applyPlayCards(
   };
 }
 
-/**
- * Applies passing ("不出" / "要不起") during `phase === "playing"`.
- */
 export function applyPass(
   lobby: DoudizhuLobby,
   pos: DoudizhuPosition,
@@ -1099,12 +1093,14 @@ export function applyPass(
     throw new Error("Not your turn");
   }
   if (!pos.currentPlay || pos.currentPlay.seat === seat) {
-    throw new Error("You are leading this trick and must play cards (cannot pass)");
+    throw new Error(
+      "You are leading this trick and must play cards (cannot pass)",
+    );
   }
 
   const nextPassCount = pos.passCount + 1;
   const stepCount = pos.stepCount + 1;
-  const trimmedComment = comment?.trim() || undefined;
+  const trimmedComment: string | null = comment?.trim() || null;
   const comments = trimmedComment
     ? { ...pos.comments, [seat]: { step: stepCount, text: trimmedComment } }
     : pos.comments;
@@ -1120,7 +1116,12 @@ export function applyPass(
       passCount: trickEnded ? 0 : nextPassCount,
       lastActions: {
         ...pos.lastActions,
-        [seat]: { kind: "pass", comment: trimmedComment },
+        [seat]: {
+          kind: "pass",
+          cards: null,
+          combo: null,
+          comment: trimmedComment,
+        },
       },
       comments,
       stepCount,
@@ -1130,19 +1131,16 @@ export function applyPass(
   };
 }
 
-/**
- * Built-in rule AI decision for Call / Rob Landlord.
- */
 export function chooseBotBid(pos: DoudizhuPosition, seat: Seat): BidDecision {
   const hand = pos.hands[seat];
   const byVal = groupHandByValue(hand);
   let score = 0;
-  if (byVal.has(17)) score += 4; // Red Joker
-  if (byVal.has(16)) score += 3; // Black Joker
-  score += (byVal.get(15)?.length || 0) * 2; // 2s
-  score += (byVal.get(14)?.length || 0) * 1; // Aces
+  if (byVal.has(17)) score += 4;
+  if (byVal.has(16)) score += 3;
+  score += (byVal.get(15)?.length || 0) * 2;
+  score += (byVal.get(14)?.length || 0) * 1;
   for (const grp of byVal.values()) {
-    if (grp.length === 4) score += 5; // Bomb
+    if (grp.length === 4) score += 5;
   }
 
   if (!pos.bidding.calledBy) {
@@ -1151,9 +1149,6 @@ export function chooseBotBid(pos: DoudizhuPosition, seat: Seat): BidDecision {
   return score >= 7 ? "rob" : "pass";
 }
 
-/**
- * Built-in rule AI decision for Playing / Passing.
- */
 export function chooseBotPlay(
   pos: DoudizhuPosition,
   seat: Seat,
@@ -1169,14 +1164,11 @@ export function chooseBotPlay(
     return { action: "pass" };
   }
 
-  // Leading a trick
   if (!target) {
-    // If we can play the entire hand in 1 move, do it immediately!
     const fullCombo = classifyCards(hand);
     if (fullCombo) {
       return { action: "play", cards: hand.map((c) => c.id) };
     }
-    // Prefer multi-card non-bomb combos first (airplane, straight, pair_straight, triple_*)
     const nonBombs = legal.filter((cards) => {
       const c = classifyCards(cards)!;
       return c.type !== "bomb" && c.type !== "rocket";
@@ -1189,14 +1181,12 @@ export function chooseBotPlay(
     return { action: "play", cards: chosen.map((c) => c.id) };
   }
 
-  // Following a trick
   const currentSeat = pos.currentPlay!.seat;
   const isTeammate =
     seat !== pos.landlord &&
     currentSeat !== pos.landlord &&
     pos.landlord !== null;
 
-  // If we can finish our hand in one play, always win immediately!
   const winningPlay = legal.find((cards) => cards.length === hand.length);
   if (winningPlay) {
     return { action: "play", cards: winningPlay.map((c) => c.id) };
@@ -1209,8 +1199,11 @@ export function chooseBotPlay(
 
   if (isTeammate) {
     const teammateRemaining = pos.hands[currentSeat].length;
-    // Let peasant teammate keep the lead if they have few cards or played a high card
-    if (teammateRemaining <= 5 || target.mainValue >= 13 || nonBombs.length === 0) {
+    if (
+      teammateRemaining <= 5 ||
+      target.mainValue >= 13 ||
+      nonBombs.length === 0
+    ) {
       return { action: "pass" };
     }
   }
@@ -1219,7 +1212,6 @@ export function chooseBotPlay(
     return { action: "play", cards: nonBombs[0].map((c) => c.id) };
   }
 
-  // Only use a bomb/rocket if enemy has <= 6 cards left or we have <= 6 cards left
   const enemyRemaining = pos.hands[currentSeat].length;
   if (!isTeammate && (enemyRemaining <= 6 || hand.length <= 6)) {
     return { action: "play", cards: legal[0].map((c) => c.id) };

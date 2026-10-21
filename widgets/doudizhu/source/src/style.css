@@ -1,37 +1,21 @@
 :root {
-  color-scheme: light dark;
+  color-scheme: dark;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background: light-dark(#f8fafc, oklch(0.17 0 0));
+  background: #070b09;
+  color: #f8fafc;
 }
 
 .ddz-app {
-  --ddz-text: light-dark(#1e293b, #f1f5f9);
-  --ddz-muted: light-dark(#64748b, #94a3b8);
-  --ddz-panel: light-dark(#ffffff, #ffffff0a);
-  --ddz-edge: light-dark(#e2e8f0, #ffffff18);
-  --ddz-edge-hover: light-dark(#cbd5e1, #ffffff32);
-  --ddz-primary: light-dark(#b91c1c, #ef4444);
-  --ddz-primary-hover: light-dark(#991b1b, #dc2626);
-  --ddz-gold: #f59e0b;
-  --ddz-gold-dark: #b45309;
-  --ddz-felt-bg: radial-gradient(
-    ellipse at 50% 42%,
-    light-dark(#1e6b43, #175234) 0%,
-    light-dark(#144b2f, #0f3822) 72%,
-    light-dark(#0e3621, #092617) 100%
-  );
-  --ddz-felt-border: light-dark(#5c3418, #3f2310);
-
-  color: var(--ddz-text);
-  font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  max-width: 1080px;
-  padding: 20px 18px;
+  font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  max-width: 1180px;
   margin: 0 auto;
+  padding: 12px 16px 18px;
   min-width: 0;
+  user-select: none;
 }
 
 .ddz-app * {
@@ -44,109 +28,99 @@ body {
   font: inherit;
 }
 
-/* Header */
-.ddz-header {
+/* Top Dark Header Bar */
+.ddz-topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  margin-bottom: 16px;
+  gap: 12px;
+  padding: 10px 16px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #11161d 0%, #0b0f14 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  flex-wrap: wrap;
 }
 
-.ddz-heading {
+.ddz-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .ddz-emblem {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
   display: grid;
   place-items: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: #b91c1c;
-  flex-shrink: 0;
+  background: #d97706;
+  box-shadow: 0 2px 10px rgba(217, 119, 6, 0.35);
 }
 
-.ddz-heading h1 {
+.ddz-brand h1 {
   margin: 0;
-  font-size: 20px;
-  font-weight: 650;
-  letter-spacing: -0.3px;
+  font-size: 17px;
+  font-weight: 750;
+  color: #f8fafc;
+  letter-spacing: -0.2px;
 }
 
-.ddz-header-actions {
+.ddz-subtitle-pill {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+}
+
+.ddz-toolbar {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-/* Buttons */
-.ddz-btn {
+.ddz-top-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  height: 32px;
-  padding: 0 12px;
-  font-size: 13px;
-  font-weight: 500;
-  border-radius: 7px;
-  border: 1px solid var(--ddz-edge);
-  background: var(--ddz-panel);
-  color: var(--ddz-text);
+  height: 34px;
+  padding: 0 13px;
+  border-radius: 9px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.16s ease;
 }
 
-.ddz-btn:hover:not(:disabled) {
-  border-color: var(--ddz-edge-hover);
-  background: light-dark(#f1f5f9, #ffffff14);
+.ddz-top-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.24);
 }
 
-.ddz-btn:disabled {
+.ddz-top-btn.is-active {
+  background: rgba(245, 158, 11, 0.16);
+  border-color: rgba(251, 191, 36, 0.48);
+  color: #fde68a;
+}
+
+.ddz-top-btn.is-icon {
+  width: 34px;
+  padding: 0;
+}
+
+.ddz-top-btn:disabled {
   opacity: 0.45;
   cursor: default;
-}
-
-.ddz-btn.is-primary {
-  background: var(--ddz-primary);
-  border-color: var(--ddz-primary);
-  color: #ffffff;
-}
-
-.ddz-btn.is-primary:hover:not(:disabled) {
-  background: var(--ddz-primary-hover);
-}
-
-.ddz-btn.is-gold {
-  background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
-  border-color: #b45309;
-  color: #1e293b;
-  font-weight: 700;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
-}
-
-.ddz-btn.is-gold:hover:not(:disabled) {
-  filter: brightness(1.06);
-}
-
-.ddz-btn.is-active {
-  border-color: var(--ddz-primary);
-  color: var(--ddz-primary);
-}
-
-.ddz-btn-sm {
-  height: 26px;
-  padding: 0 9px;
-  font-size: 12px;
-}
-
-.ddz-icon-btn {
-  width: 32px;
-  padding: 0;
 }
 
 .ddz-error-banner {
@@ -154,207 +128,212 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 8px 14px;
-  margin-bottom: 14px;
-  border-radius: 8px;
+  margin-bottom: 10px;
+  border-radius: 10px;
   font-size: 13px;
-  background: light-dark(#fef2f2, #7f1d1d44);
-  color: light-dark(#991b1b, #fca5a5);
-  border: 1px solid light-dark(#fecaca, #7f1d1d);
+  background: rgba(127, 29, 29, 0.45);
+  color: #fecaca;
+  border: 1px solid rgba(248, 113, 113, 0.45);
 }
 
-/* Main Poker Felt Table */
+/* Main Emerald Casino Felt Table */
 .ddz-table {
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 540px;
-  padding: 16px;
-  border-radius: 18px;
-  background: var(--ddz-felt-bg);
-  border: 6px solid var(--ddz-felt-border);
+  min-height: 620px;
+  padding: 16px 22px 24px;
+  border-radius: 30px;
+  background:
+    radial-gradient(
+      ellipse at 50% 45%,
+      #1a472e 0%,
+      #113220 55%,
+      #0a2114 88%,
+      #06160d 100%
+    );
+  border: 2px solid rgba(255, 255, 255, 0.12);
   box-shadow:
-    inset 0 0 40px rgba(0, 0, 0, 0.38),
-    0 12px 32px rgba(0, 0, 0, 0.24);
-  color: #f8fafc;
+    inset 0 0 80px rgba(0, 0, 0, 0.65),
+    0 20px 50px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
 }
 
-/* Top Bar: Hole Cards + Multiplier */
-.ddz-table-topbar {
+.ddz-table-track {
+  position: absolute;
+  inset: 22px;
+  border-radius: 32px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.09);
+  pointer-events: none;
+}
+
+/* Top-Center Floating Hole Cards & Score Capsule */
+.ddz-top-capsule {
+  position: relative;
+  z-index: 5;
+  align-self: center;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 8px 14px;
-  border-radius: 12px;
-  background: rgba(15, 23, 42, 0.42);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  gap: 20px;
+  padding: 10px 24px;
+  border-radius: 16px;
+  background: rgba(7, 14, 10, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
   flex-wrap: wrap;
 }
 
-.ddz-hole-box {
+.ddz-hole-section {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
-.ddz-top-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.8);
+.ddz-capsule-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #94a3b8;
 }
 
-.ddz-hole-cards {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.ddz-card-back-hole {
-  width: 30px;
-  height: 42px;
-  border-radius: 5px;
-  background: repeating-linear-gradient(
-    45deg,
-    #991b1b,
-    #991b1b 4px,
-    #b91c1c 4px,
-    #b91c1c 8px
-  );
-  border: 1.5px solid #fde68a;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
-}
-
-.ddz-hole-hidden-tag {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.72);
-  margin-left: 4px;
-}
-
-.ddz-phase-pill {
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.12);
-  color: #fef3c7;
-}
-
-.ddz-stats-box {
+.ddz-hole-row {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.ddz-stat-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.ddz-stat-chip.is-mult {
-  background: rgba(245, 158, 11, 0.22);
-  border: 1px solid rgba(251, 191, 36, 0.5);
-  color: #fde68a;
-}
-
-.ddz-stat-chip.is-bomb {
-  background: rgba(239, 68, 68, 0.28);
-  border: 1px solid rgba(248, 113, 113, 0.55);
-  color: #fecaca;
-}
-
-/* Upper Arena: Left Seat + Center Stage + Right Seat */
-.ddz-upper-arena {
+.ddz-hole-back {
+  width: 48px;
+  height: 68px;
+  border-radius: 7px;
+  background: linear-gradient(145deg, #1d4ed8 0%, #1e3a8a 100%);
+  border: 1.5px solid rgba(147, 197, 253, 0.55);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr) 220px;
-  gap: 14px;
-  align-items: center;
-  margin: 16px 0;
-  min-height: 220px;
+  place-items: center;
 }
 
-@media (max-width: 780px) {
-  .ddz-upper-arena {
+.ddz-capsule-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.ddz-score-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.ddz-gold-stat {
+  font-size: 14px;
+  font-weight: 800;
+  color: #fbbf24;
+  letter-spacing: 0.2px;
+}
+
+/* Middle Arena: Left Wing + Center Stage + Right Wing */
+.ddz-arena {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: 215px minmax(0, 1fr) 215px;
+  gap: 12px;
+  align-items: start;
+  margin-top: 8px;
+  min-height: 310px;
+}
+
+@media (max-width: 820px) {
+  .ddz-arena {
     grid-template-columns: 1fr;
   }
 }
 
-.ddz-side-seat {
+.ddz-wing {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.ddz-seat-card {
-  padding: 12px;
-  border-radius: 12px;
-  background: rgba(15, 23, 42, 0.55);
-  border: 1.5px solid rgba(255, 255, 255, 0.16);
-  backdrop-filter: blur(6px);
+.ddz-wing.is-left {
+  align-items: flex-start;
+}
+
+.ddz-wing.is-right {
+  align-items: flex-end;
+}
+
+.ddz-wing-bubble-slot {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+}
+
+.ddz-quote-bubble {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #e2e8f0;
+  background: rgba(15, 23, 38, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Player Identity Badge Pill */
+.ddz-player-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px 8px 10px;
+  border-radius: 14px;
+  background: rgba(15, 23, 36, 0.86);
+  border: 1.5px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  min-width: 176px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.ddz-side-seat.is-turn .ddz-seat-card,
-.ddz-bottom-seat.is-turn {
+.ddz-player-pill.is-compact {
+  min-width: 162px;
+  padding: 6px 12px 6px 8px;
+}
+
+.ddz-player-pill.is-turn {
   border-color: #fbbf24;
-  box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.35);
+  box-shadow:
+    0 0 0 2px rgba(251, 191, 36, 0.32),
+    0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
-.ddz-seat-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  margin-bottom: 8px;
-}
-
-.ddz-seat-pos {
-  font-size: 11px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.72);
-}
-
-.ddz-role-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.ddz-role-badge.is-landlord {
-  background: linear-gradient(135deg, #f59e0b, #b45309);
-  color: #fffbeb;
-}
-
-.ddz-role-badge.is-peasant {
-  background: rgba(34, 197, 94, 0.28);
-  border: 1px solid rgba(74, 222, 128, 0.45);
-  color: #bbf7d0;
-}
-
-.ddz-seat-profile {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.ddz-avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.14);
+.ddz-avatar-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
   display: grid;
   place-items: center;
   overflow: hidden;
   flex-shrink: 0;
+}
+
+.ddz-avatar-circle.is-peasant {
+  background: radial-gradient(circle at 30% 30%, #3b82f6, #1d4ed8);
+  border: 2px solid #93c5fd;
+  color: #ffffff;
+}
+
+.ddz-avatar-circle.is-landlord {
+  background: radial-gradient(circle at 30% 30%, #fbbf24, #b45309);
+  border: 2px solid #fde68a;
+  color: #1e293b;
 }
 
 .ddz-avatar-img {
@@ -363,176 +342,233 @@ body {
   object-fit: cover;
 }
 
-.ddz-seat-meta {
+.ddz-pill-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
   min-width: 0;
 }
 
-.ddz-seat-name {
-  display: block;
+.ddz-pill-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.ddz-pill-name {
   font-size: 13px;
-  font-weight: 600;
-  color: #ffffff;
+  font-weight: 700;
+  color: #f8fafc;
+  max-width: 108px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.ddz-seat-sub {
-  display: block;
+.ddz-mini-count {
+  padding: 1px 6px;
+  border-radius: 6px;
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.65);
-}
-
-.ddz-card-counter {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 10px;
-  padding-top: 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.ddz-card-back-mini {
-  width: 18px;
-  height: 24px;
-  border-radius: 3px;
-  background: #b91c1c;
-  border: 1px solid #fde68a;
-}
-
-.ddz-count-num {
-  font-size: 14px;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.12);
   color: #fde68a;
 }
 
-.ddz-count-num.is-alarm {
-  color: #f87171;
+.ddz-mini-count.is-alarm {
+  background: rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
 }
 
-.ddz-speech {
-  margin-top: 8px;
-  padding: 5px 8px;
+.ddz-role-pill {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 1px 8px;
   border-radius: 6px;
-  background: rgba(0, 0, 0, 0.35);
   font-size: 11px;
-  color: #fef3c7;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-weight: 700;
 }
 
-.ddz-finished-reveal {
+.ddz-role-pill.is-peasant {
+  background: rgba(37, 99, 235, 0.32);
+  border: 1px solid rgba(96, 165, 250, 0.55);
+  color: #93c5fd;
+}
+
+.ddz-role-pill.is-landlord {
+  background: rgba(217, 119, 6, 0.35);
+  border: 1px solid rgba(251, 191, 36, 0.65);
+  color: #fcd34d;
+}
+
+.ddz-role-pill.is-undecided {
+  background: rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+}
+
+/* Curved 3D Vertical Side Card Back Fan */
+.ddz-side-back-fan {
+  position: relative;
+  width: 132px;
+  height: 230px;
+  margin-top: 8px;
+}
+
+.ddz-side-back-fan.is-left {
+  margin-left: 14px;
+}
+
+.ddz-side-back-fan.is-right {
+  margin-right: 14px;
+}
+
+.ddz-blue-card-back {
+  position: absolute;
+  top: 0;
+  left: 12px;
+  width: 96px;
+  height: 64px;
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(96, 165, 250, 0.22), transparent 70%),
+    linear-gradient(135deg, #1e40af 0%, #172554 100%);
+  border: 1.5px solid rgba(96, 165, 250, 0.6);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.55);
+  display: grid;
+  place-items: center;
+}
+
+.ddz-back-diamond {
+  width: 12px;
+  height: 12px;
+  background: rgba(147, 197, 253, 0.32);
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+
+/* Open Fan when God View is active on side players */
+.ddz-side-open-fan {
   display: flex;
   flex-wrap: wrap;
-  gap: 3px;
-  margin-top: 8px;
+  gap: 4px;
+  max-width: 195px;
+  margin-top: 6px;
 }
 
-.ddz-side-action-zone {
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Center Felt Stage */
-.ddz-center-stage {
+/* Center Stage & Three-Directional Table Spots */
+.ddz-center-felt {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  min-height: 190px;
-  padding: 12px;
-  border-radius: 14px;
-  background: rgba(0, 0, 0, 0.16);
-  border: 1px dashed rgba(255, 255, 255, 0.15);
+  min-height: 280px;
+  padding: 14px 8px;
 }
 
-.ddz-lobby-welcome,
-.ddz-result-banner {
+.ddz-center-overlay {
+  margin: auto;
   text-align: center;
   max-width: 360px;
+  padding: 20px;
+  border-radius: 18px;
+  background: rgba(7, 14, 10, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.ddz-welcome-icon,
-.ddz-winner-crown {
+.ddz-gold-crown {
   color: #fbbf24;
-  margin-bottom: 6px;
 }
 
-.ddz-lobby-welcome h2,
-.ddz-result-banner h3 {
-  margin: 0 0 6px;
-  font-size: 18px;
+.ddz-center-overlay h2 {
+  margin: 8px 0 6px;
+  font-size: 19px;
 }
 
-.ddz-lobby-welcome p {
-  margin: 0 0 14px;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.78);
+.ddz-center-overlay p {
+  margin: 0 0 16px;
+  font-size: 12.5px;
+  color: #cbd5e1;
 }
 
-.ddz-result-tags {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 8px;
+.ddz-stage-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: center;
+  min-height: 160px;
 }
 
-.ddz-active-play-box {
+.ddz-table-spot {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 6px;
+  min-height: 82px;
 }
 
-.ddz-active-play-owner {
-  font-size: 12px;
+.ddz-table-spot.is-left {
+  justify-self: end;
+  padding-right: 12px;
+}
+
+.ddz-table-spot.is-right {
+  justify-self: start;
+  padding-left: 12px;
+}
+
+.ddz-table-spot.is-bottom {
+  margin-top: 6px;
+}
+
+.ddz-table-played-fan {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ddz-table-played-fan .ddz-poker-card + .ddz-poker-card {
+  margin-left: -22px;
+}
+
+.ddz-combo-badge {
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11px;
   font-weight: 700;
   color: #fde68a;
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.48);
+  border: 1px solid rgba(251, 191, 36, 0.35);
 }
 
-.ddz-center-watermark {
-  font-size: 15px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.45);
-  letter-spacing: 1px;
-}
-
-/* Action Tags & Played Cards */
-.ddz-action-tag {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.ddz-action-tag.is-call,
-.ddz-action-tag.is-rob {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: #1e293b;
-}
-
-.ddz-action-tag.is-pass {
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.ddz-spot-status.is-thinking {
+.ddz-spot-chip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: rgba(251, 191, 36, 0.2);
+  padding: 8px 20px;
+  border-radius: 11px;
+  font-size: 15px;
+  font-weight: 700;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.ddz-spot-chip.is-pass {
+  background: rgba(8, 16, 12, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+}
+
+.ddz-spot-chip.is-gold {
+  background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+  color: #1e293b;
+}
+
+.ddz-spot-chip.is-thinking {
+  font-size: 13px;
+  background: rgba(245, 158, 11, 0.18);
+  border: 1px solid rgba(251, 191, 36, 0.45);
   color: #fde68a;
-  font-size: 12px;
-  font-weight: 600;
 }
 
 .ddz-pulse-dot {
@@ -546,7 +582,7 @@ body {
 @keyframes ddz-pulse {
   0%,
   100% {
-    opacity: 0.4;
+    opacity: 0.35;
     transform: scale(0.85);
   }
   50% {
@@ -555,226 +591,296 @@ body {
   }
 }
 
-.ddz-played-group {
-  display: flex;
-  flex-direction: column;
+.ddz-winner-toast {
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 10px;
+  padding: 8px 20px;
+  margin-top: 8px;
+  border-radius: 999px;
+  background: rgba(15, 23, 36, 0.9);
+  border: 1.5px solid #fbbf24;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+  font-size: 15px;
+  color: #fef3c7;
 }
 
-.ddz-played-cards {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 4px;
+.ddz-winner-mult {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(245, 158, 11, 0.25);
+  color: #fbbf24;
+  font-weight: 800;
 }
 
-.ddz-combo-pill {
-  font-size: 11px;
-  color: #fde68a;
-}
-
-/* Poker Card Component */
-.ddz-card {
+/* Authentic Dual-Index Poker Card Component */
+.ddz-poker-card {
   position: relative;
-  width: 50px;
-  height: 72px;
-  padding: 5px 6px;
-  border-radius: 7px;
-  background: #ffffff;
-  border: 1.5px solid #cbd5e1;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.28);
+  border-radius: 9px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #cbd5e1;
+  box-shadow: -3px 6px 14px rgba(0, 0, 0, 0.42);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  padding: 6px 7px;
   user-select: none;
-  transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
+  flex-shrink: 0;
 }
 
-.ddz-card.is-small {
-  width: 36px;
-  height: 50px;
-  padding: 3px 4px;
-  border-radius: 5px;
-}
-
-.ddz-card.is-red {
+.ddz-poker-card.is-red {
   color: #dc2626;
 }
 
-.ddz-card.is-black {
+.ddz-poker-card.is-black {
   color: #0f172a;
 }
 
-.ddz-card.is-interactive {
+/* Card Sizes */
+.ddz-poker-card.is-hole {
+  width: 50px;
+  height: 70px;
+  padding: 4px 5px;
+  border-radius: 7px;
+}
+
+.ddz-poker-card.is-table {
+  width: 68px;
+  height: 96px;
+  padding: 6px 7px;
+  border-radius: 9px;
+}
+
+.ddz-poker-card.is-hand {
+  width: 76px;
+  height: 110px;
+  padding: 7px 8px;
+  border-radius: 10px;
+  transform: translateY(var(--fan-y, 0px)) rotate(var(--fan-angle, 0deg));
+  transform-origin: 50% 125%;
+  transition: transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.ddz-poker-card.is-mini {
+  width: 40px;
+  height: 56px;
+  padding: 3px 4px;
+  border-radius: 6px;
+}
+
+.ddz-poker-card.is-interactive {
   cursor: pointer;
 }
 
-.ddz-card.is-interactive:hover:not(:disabled) {
-  transform: translateY(-6px);
+.ddz-poker-card.is-hand.is-interactive:hover:not(:disabled) {
+  transform: translateY(calc(var(--fan-y, 0px) - 12px))
+    rotate(var(--fan-angle, 0deg));
   border-color: #f59e0b;
 }
 
-.ddz-card.is-selected {
-  transform: translateY(-14px) !important;
-  border-color: #f59e0b;
+.ddz-poker-card.is-hand.is-selected {
+  transform: translateY(calc(var(--fan-y, 0px) - 24px))
+    rotate(var(--fan-angle, 0deg)) !important;
   background: #fffbeb;
-  box-shadow: 0 8px 16px rgba(245, 158, 11, 0.4);
+  border: 2px solid #f59e0b;
+  box-shadow:
+    0 0 0 3px rgba(245, 158, 11, 0.32),
+    -4px 14px 24px rgba(0, 0, 0, 0.55);
 }
 
 .ddz-card-corner {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  line-height: 1;
+  align-items: center;
+  line-height: 0.95;
+  width: fit-content;
+}
+
+.ddz-card-corner.is-bottom {
+  align-self: flex-end;
+  transform: rotate(180deg);
+}
+
+.ddz-poker-card.is-mini .ddz-card-corner.is-bottom,
+.ddz-poker-card.is-hole .ddz-card-corner.is-bottom {
+  display: none;
 }
 
 .ddz-card-rank {
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: -0.4px;
+  font-size: 17px;
+  font-weight: 850;
+  letter-spacing: -0.6px;
 }
 
-.ddz-card.is-joker .ddz-card-rank {
-  font-size: 11px;
+.ddz-poker-card.is-joker .ddz-card-rank {
+  font-size: 9px;
+  letter-spacing: 0px;
 }
 
-.ddz-card.is-small .ddz-card-rank {
+.ddz-poker-card.is-hole .ddz-card-rank {
+  font-size: 13px;
+}
+
+.ddz-poker-card.is-mini .ddz-card-rank {
   font-size: 11px;
 }
 
 .ddz-card-suit {
-  font-size: 11px;
-  margin-top: 1px;
+  font-size: 12px;
+  margin-top: 2px;
 }
 
-.ddz-card.is-small .ddz-card-suit {
-  font-size: 9px;
+.ddz-poker-card.is-hole .ddz-card-suit,
+.ddz-poker-card.is-mini .ddz-card-suit {
+  font-size: 10px;
 }
 
-.ddz-card-center {
-  align-self: center;
-  font-size: 20px;
+.ddz-card-pip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 28px;
   line-height: 1;
-  opacity: 0.85;
+  opacity: 0.92;
+  pointer-events: none;
 }
 
-.ddz-card.is-small .ddz-card-center {
-  font-size: 13px;
+.ddz-poker-card.is-hole .ddz-card-pip {
+  font-size: 20px;
+  top: 58%;
 }
 
-/* Bottom Main Seat */
-.ddz-bottom-seat {
-  padding: 14px;
-  border-radius: 14px;
-  background: rgba(15, 23, 42, 0.58);
-  border: 1.5px solid rgba(255, 255, 255, 0.16);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.ddz-poker-card.is-mini .ddz-card-pip {
+  font-size: 15px;
+  top: 60%;
 }
 
-.ddz-bottom-action-spot {
-  min-height: 28px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.ddz-human-toolbar {
+/* Bottom Zone: Action Pill Bar + Arched Overlapping Poker Hand Fan */
+.ddz-bottom-zone {
+  position: relative;
+  z-index: 6;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 14px;
+  margin-top: 4px;
 }
 
-.ddz-action-buttons {
+.ddz-bottom-hud {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
-.ddz-comment-input {
-  width: 100%;
-  max-width: 340px;
-  height: 28px;
-  padding: 0 10px;
+.ddz-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ddz-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 22px;
+  border-radius: 11px;
+  font-size: 14px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.ddz-pill-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.ddz-pill-btn.is-pass {
+  background: linear-gradient(180deg, #5c2824 0%, #431c19 100%);
+  border: 1.5px solid #991b1b;
+  color: #fca5a5;
+}
+
+.ddz-pill-btn.is-pass:hover:not(:disabled) {
+  filter: brightness(1.12);
+}
+
+.ddz-pill-btn.is-hint {
+  background: linear-gradient(180deg, #27473c 0%, #1b332b 100%);
+  border: 1.5px solid #4ade80;
+  color: #ecfdf5;
+}
+
+.ddz-pill-btn.is-hint:hover:not(:disabled) {
+  filter: brightness(1.12);
+}
+
+.ddz-pill-btn.is-gold {
+  background: linear-gradient(180deg, #fbbf24 0%, #b45309 100%);
+  border: 1.5px solid #fde68a;
+  color: #1e293b;
+}
+
+.ddz-pill-btn.is-gold:disabled {
+  background: rgba(120, 83, 24, 0.55);
+  border-color: rgba(217, 119, 6, 0.35);
+  color: rgba(254, 243, 199, 0.55);
+}
+
+.ddz-pill-btn.is-gold:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.ddz-talk-input {
+  width: 210px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
   font-size: 12px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  background: rgba(0, 0, 0, 0.35);
-  color: #ffffff;
+  background: rgba(7, 14, 10, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #f8fafc;
   outline: none;
 }
 
-.ddz-bottom-bar {
+.ddz-arch-fan {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.ddz-bottom-identity {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.ddz-count-pill {
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.12);
-  color: #fde68a;
-}
-
-.ddz-inline-speech {
-  font-size: 12px;
-  color: #fef3c7;
-  font-style: italic;
-}
-
-.ddz-hand-fan {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px;
-  padding-top: 14px;
-  min-height: 88px;
-}
-
-.ddz-hand-hidden-box {
-  display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  min-height: 76px;
-  padding: 10px;
-  border-radius: 10px;
-  background: rgba(0, 0, 0, 0.25);
+  padding: 26px 24px 12px;
+  min-height: 148px;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
-.ddz-card-back-fan {
-  display: flex;
-  gap: 4px;
+.ddz-arch-fan .ddz-poker-card + .ddz-poker-card {
+  margin-left: -30px;
 }
 
-.ddz-hidden-text {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.72);
+.ddz-spectator-mask {
+  padding: 20px 28px;
+  border-radius: 14px;
+  background: rgba(7, 14, 10, 0.65);
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  color: #94a3b8;
+  font-size: 13px;
 }
 
 /* Modal */
 .ddz-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.68);
   display: grid;
   place-items: center;
   z-index: 60;
@@ -784,11 +890,12 @@ body {
 .ddz-modal {
   width: 100%;
   max-width: 440px;
-  padding: 20px;
-  border-radius: 14px;
-  background: light-dark(#ffffff, #1e293b);
-  border: 1px solid var(--ddz-edge);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  padding: 22px;
+  border-radius: 16px;
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.6);
+  color: #f8fafc;
 }
 
 .ddz-modal-head h3 {
@@ -798,8 +905,8 @@ body {
 
 .ddz-modal-head p {
   margin: 0 0 16px;
-  font-size: 12px;
-  color: var(--ddz-muted);
+  font-size: 12.5px;
+  color: #94a3b8;
 }
 
 .ddz-slot-list {
@@ -818,15 +925,16 @@ body {
 .ddz-slot-label {
   font-size: 12px;
   font-weight: 600;
+  color: #cbd5e1;
 }
 
 .ddz-slot-select {
-  height: 36px;
+  height: 38px;
   padding: 0 10px;
-  border-radius: 8px;
-  border: 1px solid var(--ddz-edge);
-  background: var(--ddz-panel);
-  color: var(--ddz-text);
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: #1e293b;
+  color: #f8fafc;
 }
 
 .ddz-slot-alert {
@@ -834,8 +942,8 @@ body {
   margin-bottom: 14px;
   border-radius: 8px;
   font-size: 12px;
-  background: light-dark(#fef2f2, #7f1d1d44);
-  color: light-dark(#991b1b, #fca5a5);
+  background: rgba(127, 29, 29, 0.45);
+  color: #fca5a5;
 }
 
 .ddz-modal-actions {

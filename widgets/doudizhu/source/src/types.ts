@@ -56,9 +56,9 @@ export type BidDecision = "call" | "rob" | "pass";
 
 export interface SeatLastAction {
   kind: "call" | "rob" | "no_call" | "no_rob" | "play" | "pass";
-  cards?: Card[];
-  combo?: Combo;
-  comment?: string;
+  cards: Card[] | null;
+  combo: Combo | null;
+  comment: string | null;
 }
 
 export interface BiddingState {
@@ -92,6 +92,7 @@ export interface DoudizhuPosition {
   hands: Record<Seat, Card[]>;
   bottomCards: Card[];
   bidding: BiddingState;
+  baseScore: number;
   multiplier: number;
   bombCount: number;
   spring: "spring" | "anti_spring" | null;

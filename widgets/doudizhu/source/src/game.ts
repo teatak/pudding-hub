@@ -4,11 +4,11 @@ import {
   type JSONValue,
 } from "@pudding/widget";
 import { z } from "zod";
-import {
-  type Seat,
-  type BidDecision,
-  type DoudizhuLobby,
-  type DoudizhuPosition,
+import type {
+  Seat,
+  BidDecision,
+  DoudizhuLobby,
+  DoudizhuPosition,
 } from "./types";
 import {
   seats,
@@ -23,6 +23,27 @@ import {
   chooseBotPlay,
 } from "./rules";
 import { t, seatLabel, botNameForSeat, comboLabel } from "./text";
+
+/**
+ * Recursively converts any `undefined` values to `null` so objects strictly conform
+ * to `@pudding/widget` host's `jsonValue` Zod schema.
+ */
+export function sanitizeJsonValue<T>(value: T): JSONValue {
+  if (value === undefined || value === null) return null;
+  if (typeof value === "string" || typeof value === "boolean") return value;
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizeJsonValue(item));
+  }
+  if (typeof value === "object") {
+    const out: Record<string, JSONValue> = {};
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      out[k] = sanitizeJsonValue(v);
+    }
+    return out;
+  }
+  return null;
+}
 
 export const position = (): DoudizhuPosition => {
   const saved = pudding.state.read().data.position as unknown as
@@ -74,8 +95,8 @@ async function save(l: DoudizhuLobby, p: DoudizhuPosition) {
   await pudding.state.write({
     expectedVersion: pudding.state.read().version,
     data: {
-      lobby: l as unknown as JSONValue,
-      position: p as unknown as JSONValue,
+      lobby: sanitizeJsonValue(l),
+      position: sanitizeJsonValue(p),
     },
   });
 }
@@ -85,6 +106,7 @@ async function save(l: DoudizhuLobby, p: DoudizhuPosition) {
  * - Never exposes other players' unplayed hands during bidding/playing.
  * - Never exposes unrevealed hole cards (`bottomCards`) during bidding.
  * - Never exposes historical played-card records (no card tracker / 记牌器).
+ * - Guarantees zero `undefined` values for strict `jsonValue` compatibility.
  */
 export function describeTableFor(
   l: DoudizhuLobby,
@@ -107,35 +129,34 @@ export function describeTableFor(
     ? findLegalPlays(p.hands[mySeat], targetCombo)
         .slice(0, 16)
         .map((cards) => cards.map((c) => c.rank))
-    : undefined;
+    : null;
 
-  return {
+  const snapshot = {
     round: l.round,
     phase: l.phase,
-    turn: p.turn,
-    yourSeat: mySeat,
+    turn: p.turn ?? null,
+    yourSeat: mySeat ?? null,
     yourTurn: Boolean(mySeat && p.turn === mySeat && !p.winner),
-    landlord: p.landlord,
+    landlord: p.landlord ?? null,
+    baseScore: p.baseScore ?? 3,
     multiplier: p.multiplier,
     bombCount: p.bombCount,
-    spring: p.spring,
-    winner: p.winner,
-    winningSeat: p.winningSeat,
-    // Hole cards are strictly hidden during bidding, revealed once Landlord is decided
+    spring: p.spring ?? null,
+    winner: p.winner ?? null,
+    winningSeat: p.winningSeat ?? null,
     bottomCards: holeRevealed ? p.bottomCards.map((c) => c.rank) : null,
     bidding:
       l.phase === "bidding"
         ? {
             mode: p.bidding.calledBy ? ("rob" as const) : ("call" as const),
-            calledBy: p.bidding.calledBy,
-            highestBidder: p.bidding.highestBidder,
+            calledBy: p.bidding.calledBy ?? null,
+            highestBidder: p.bidding.highestBidder ?? null,
             robCount: p.bidding.robCount,
             allowedDecisions: p.bidding.calledBy
               ? ["rob", "pass"]
               : ["call", "pass"],
           }
         : null,
-    // Only the current active play on the table (never full played-card history)
     currentPlay: p.currentPlay
       ? {
           seat: p.currentPlay.seat,
@@ -168,16 +189,17 @@ export function describeTableFor(
             lastAction: lastAct
               ? {
                   kind: lastAct.kind,
-                  cards: lastAct.cards?.map((c) => c.rank),
-                  comboType: lastAct.combo?.type,
-                  comment: lastAct.comment,
+                  cards: lastAct.cards
+                    ? lastAct.cards.map((c) => c.rank)
+                    : null,
+                  comboType: lastAct.combo ? lastAct.combo.type : null,
+                  comment: lastAct.comment ?? null,
                 }
               : null,
           },
         ];
       }),
     ),
-    // Caller's private hand ONLY
     myHand: mySeat
       ? {
           seat: mySeat,
@@ -189,15 +211,15 @@ export function describeTableFor(
           cardCount: p.hands[mySeat].length,
           cards: p.hands[mySeat].map((c) => c.rank),
           cardIds: p.hands[mySeat].map((c) => c.id),
-          ...(isMyPlayTurn
-            ? {
-                canPass: Boolean(p.currentPlay && p.currentPlay.seat !== mySeat),
-                legalPlays: legalHints,
-              }
-            : {}),
+          canPass: isMyPlayTurn
+            ? Boolean(p.currentPlay && p.currentPlay.seat !== mySeat)
+            : false,
+          legalPlays: legalHints,
         }
       : null,
   };
+
+  return sanitizeJsonValue(snapshot);
 }
 
 export function readTable(context: InteractionContext) {
@@ -221,8 +243,11 @@ export async function publish(retry = false) {
   const activeSeat = p.turn;
   const activeParticipantID = activeSeat ? l.seats[activeSeat] : null;
 
-  // If it's a built-in Bot's turn, clear pending session requests and let the Bot timer execute locally
-  if (!isFinished && l.phase !== "lobby" && isBotParticipant(activeParticipantID)) {
+  if (
+    !isFinished &&
+    l.phase !== "lobby" &&
+    isBotParticipant(activeParticipantID)
+  ) {
     try {
       await pudding.interaction.setRequests([]);
     } catch {
@@ -352,7 +377,6 @@ export async function publish(retry = false) {
                   tableDesc,
                 });
 
-      // Public snapshot ONLY — never put private hands or played-card history in notify.data
       const publicData = describeTableFor(l, p, null);
 
       await pudding.interaction.notify({
@@ -364,7 +388,7 @@ export async function publish(retry = false) {
         topic,
         summary,
         message,
-        data: publicData as unknown as JSONValue,
+        data: publicData,
       });
     }
   } catch (error) {
@@ -513,9 +537,6 @@ export const passTurn = (
     return describeTableFor(res.lobby, res.position, who.id);
   });
 
-/**
- * Executes a single built-in Bot turn if the active turn belongs to a `@bot:*` seat.
- */
 export const stepBotTurn = () =>
   change(async () => {
     const run = pudding.interaction.read();
