@@ -1,8 +1,6 @@
 {
   "id": "teatak/pudding-hub/widgets/doudizhu",
-  "version": "1.0.0-preview.1",
-  "preview": true,
-  "channel": "preview",
+  "version": "1.0.0",
   "title": {
     "zh-CN": "斗地主",
     "zh-TW": "鬥地主",
