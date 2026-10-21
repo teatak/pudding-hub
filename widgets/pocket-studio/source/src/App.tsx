@@ -199,6 +199,83 @@ const INSTRUMENT_MAP: Record<string, Instrument & { playSound: (time: number, st
   }
 };
 
+// 音乐理论与 MIDI 转换实用函数
+const NOTE_LABELS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"] as const;
+
+const WHITE_KEYS = [
+  { note: "C", offset: 0 },
+  { note: "D", offset: 2 },
+  { note: "E", offset: 4 },
+  { note: "F", offset: 5 },
+  { note: "G", offset: 7 },
+  { note: "A", offset: 9 },
+  { note: "B", offset: 11 }
+];
+
+const BLACK_KEYS = [
+  { note: "C#", offset: 1, leftStyle: "calc(14.28% - 7.5px)" },
+  { note: "D#", offset: 3, leftStyle: "calc(28.57% - 7.5px)" },
+  { note: "F#", offset: 6, leftStyle: "calc(57.14% - 7.5px)" },
+  { note: "G#", offset: 8, leftStyle: "calc(71.43% - 7.5px)" },
+  { note: "A#", offset: 10, leftStyle: "calc(85.71% - 7.5px)" }
+];
+
+function midiToFreq(midi: number): number {
+  return Number((440 * Math.pow(2, (midi - 69) / 12)).toFixed(2));
+}
+
+function freqToMidi(freq: number): number {
+  if (!freq || freq <= 0) return 60;
+  return Math.round(69 + 12 * Math.log2(freq / 440));
+}
+
+function midiToNoteName(midi: number): string {
+  const semitone = ((midi % 12) + 12) % 12;
+  const octave = Math.floor(midi / 12) - 1;
+  return `${NOTE_LABELS[semitone]}${octave}`;
+}
+
+function getResolvedPitch(instId: string, stepIndex: number, rawPitch?: number | null): number | null {
+  const inst = INSTRUMENT_MAP[instId];
+  if (!inst || inst.category === "Drums") return null;
+  if (typeof rawPitch === "number" && rawPitch > 0) return rawPitch;
+
+  if (instId === "marioLead") return 659.25;
+  if (instId === "kongLead") return 349.23;
+  if (instId === "marioBass") return 130.81;
+  if (instId === "lead") {
+    const scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
+    return scale[stepIndex % scale.length];
+  }
+  if (instId === "bass") {
+    const progression = [65.41, 87.31, 98.00, 110.00];
+    return progression[Math.floor(stepIndex / 16) % 4] || 65.41;
+  }
+  if (instId === "epiano") {
+    const scale = [261.63, 329.63, 392.00, 493.88, 523.25];
+    return scale[stepIndex % scale.length];
+  }
+  if (instId === "marimba") return 440.00;
+  return 440.00;
+}
+
+interface ActivePopoverState {
+  trackKey: string;
+  instId: string;
+  barIdx: number;
+  stepIdx: number;
+  gStep: number;
+  duration: number;
+  pitch: number | null;
+  anchor: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    showBelow: boolean;
+  };
+}
+
 export default function App() {
   const locale = useWidgetLocale();
   if (locale) setLocale(locale);
@@ -216,6 +293,7 @@ export default function App() {
   const [pickerTarget, setPickerTarget] = useState<string | null>(null);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [activePopover, setActivePopover] = useState<ActivePopoverState | null>(null);
 
   const [draggingNote, setDraggingNote] = useState<{
     trackKey: string;
@@ -323,17 +401,35 @@ export default function App() {
     setIsPlaying((prev) => !prev);
   }
 
-  // 空格快捷键
+  // 键盘快捷键：空格播放/暂停；Escape 关闭气泡；Delete/Backspace 删除当前选中的音符
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.code === "Space" && e.target instanceof HTMLElement && e.target.tagName !== "INPUT") {
+      if (e.target instanceof HTMLElement && e.target.tagName === "INPUT") return;
+
+      if (e.code === "Space") {
         e.preventDefault();
         togglePlay();
+      } else if (e.code === "Escape") {
+        if (activePopover) {
+          e.preventDefault();
+          setActivePopover(null);
+        }
+      } else if (e.code === "Delete" || e.code === "Backspace") {
+        if (activePopover) {
+          e.preventDefault();
+          void perform({
+            action: "toggleStep",
+            barIndex: activePopover.barIdx,
+            trackKey: activePopover.trackKey,
+            stepIndex: activePopover.stepIdx
+          });
+          setActivePopover(null);
+        }
       }
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, []);
+  }, [activePopover]);
 
   // 方案 A：右侧拖拽手柄放长音符
   function startDrag(
@@ -442,7 +538,7 @@ export default function App() {
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <button
             type="button"
-            className="ps-btn-pill mario"
+            className="ps-btn-pill"
             disabled={busy}
             onClick={() => void perform({ action: "loadPreset", presetName: "mario" })}
           >
@@ -450,7 +546,7 @@ export default function App() {
           </button>
           <button
             type="button"
-            className="ps-btn-pill kong"
+            className="ps-btn-pill"
             disabled={busy}
             onClick={() => void perform({ action: "loadPreset", presetName: "donkeyKong" })}
           >
@@ -458,7 +554,7 @@ export default function App() {
           </button>
           <button
             type="button"
-            className="ps-btn-pill oriental"
+            className="ps-btn-pill"
             disabled={busy}
             onClick={() => void perform({ action: "loadPreset", presetName: "oriental" })}
           >
@@ -475,7 +571,6 @@ export default function App() {
           <button
             type="button"
             className="ps-btn-pill"
-            style={{ color: "#818cf8" }}
             disabled={busy || totalBars >= 16}
             onClick={() => void perform({ action: "addBar" })}
             title="追加小节"
@@ -486,7 +581,6 @@ export default function App() {
             <button
               type="button"
               className="ps-btn-pill"
-              style={{ color: "#f87171" }}
               disabled={busy}
               onClick={() => void perform({ action: "removeBar" })}
               title="删除最后一节"
@@ -497,7 +591,6 @@ export default function App() {
           <button
             type="button"
             className="ps-btn-pill"
-            style={{ color: "#94a3b8" }}
             disabled={busy}
             onClick={() => {
               for (let i = 0; i < totalBars; i++) {
@@ -512,257 +605,496 @@ export default function App() {
 
       {/* 连续横向滚动时间轴主体 (不分页) */}
       <div className="ps-timeline-viewport" ref={timelineScrollRef}>
-        {/* 时间标尺行 (Sticky Top) */}
-        <div className="ps-timeline-ruler-row">
-          <div className="ps-ruler-corner">
-            <span>{t("tracks")} ({song.tracks.length})</span>
-            <span className="ps-total-bars-pill">{totalBars} BARS</span>
-          </div>
+        <div
+          className="ps-timeline-canvas"
+          style={{ width: `${HEADER_WIDTH + totalSteps * STEP_PITCH + 48}px` }}
+        >
+          {/* 时间标尺行 (Sticky Top) */}
+          <div className="ps-timeline-ruler-row">
+            <div className="ps-ruler-corner">
+              <span>{t("tracks")} ({song.tracks.length})</span>
+              <span className="ps-total-bars-pill">{totalBars} BARS</span>
+            </div>
 
-          <div className="ps-ruler-track" style={{ width: `${totalSteps * STEP_PITCH}px` }}>
-            {Array.from({ length: totalBars }).map((_, barIdx) => (
-              <div key={barIdx} className="ps-ruler-bar-group" style={{ width: `${16 * STEP_PITCH}px` }}>
-                <div className="ps-ruler-bar-label">
-                  <span>BAR {barIdx + 1}</span>
-                  {totalBars > 1 && (
-                    <button
-                      type="button"
-                      className="ps-ruler-bar-del"
-                      title={`删除第 ${barIdx + 1} 小节`}
-                      disabled={busy}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        void perform({ action: "removeBar", barIndex: barIdx });
-                      }}
-                    >
-                      ×
-                    </button>
-                  )}
-                </div>
-                <div className="ps-ruler-ticks">
-                  <span className="tick primary">{barIdx + 1}.1</span>
-                  <span className="tick">.2</span>
-                  <span className="tick">.3</span>
-                  <span className="tick">.4</span>
-                  <span className="tick primary">2</span>
-                  <span className="tick">.2</span>
-                  <span className="tick">.3</span>
-                  <span className="tick">.4</span>
-                  <span className="tick primary">3</span>
-                  <span className="tick">.2</span>
-                  <span className="tick">.3</span>
-                  <span className="tick">.4</span>
-                  <span className="tick primary">4</span>
-                  <span className="tick">.2</span>
-                  <span className="tick">.3</span>
-                  <span className="tick">.4</span>
-                </div>
+            <div className="ps-ruler-content" style={{ width: `${totalSteps * STEP_PITCH}px` }}>
+              {/* 小节横幅条 (BAR 1, BAR 2...) */}
+              <div className="ps-ruler-bars-banner">
+                {Array.from({ length: totalBars }).map((_, barIdx) => (
+                  <div
+                    key={barIdx}
+                    className="ps-ruler-bar-badge"
+                    style={{
+                      width: `${16 * STEP_PITCH - STEP_GAP}px`,
+                      marginRight: `${STEP_GAP}px`
+                    }}
+                  >
+                    <span>BAR {barIdx + 1}</span>
+                    {totalBars > 1 && (
+                      <button
+                        type="button"
+                        className="ps-ruler-bar-del"
+                        title={`删除第 ${barIdx + 1} 小节`}
+                        disabled={busy}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          void perform({ action: "removeBar", barIndex: barIdx });
+                        }}
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
+                ))}
+
+                {totalBars < 16 && (
+                  <button
+                    type="button"
+                    className="ps-ruler-add-bar-btn"
+                    title="追加小节 (+1)"
+                    disabled={busy}
+                    onClick={() => void perform({ action: "addBar" })}
+                  >
+                    +
+                  </button>
+                )}
               </div>
-            ))}
 
-            {totalBars < 16 && (
-              <button
-                type="button"
-                className="ps-ruler-add-bar-btn"
-                title="追加小节 (+1)"
-                disabled={busy}
-                onClick={() => void perform({ action: "addBar" })}
-              >
-                +
-              </button>
-            )}
-          </div>
-        </div>
+              {/* 1:1 精确对应的步进刻度条 */}
+              <div className="ps-ruler-ticks-strip">
+                {Array.from({ length: totalSteps }).map((_, g) => {
+                  const sIdx = g % 16;
+                  const bIdx = Math.floor(g / 16);
+                  const isBarStart = sIdx === 0;
+                  const isBeat = sIdx % 4 === 0;
 
-        {/* 纵向走带指示线 */}
-        {isPlaying && (
-          <div
-            className="ps-playhead-line"
-            style={{ left: `${HEADER_WIDTH + playStep * STEP_PITCH + STEP_WIDTH / 2}px` }}
-          />
-        )}
-
-        {/* 所有音轨行 */}
-        <div className="ps-timeline-tracks" style={{ width: `${HEADER_WIDTH + totalSteps * STEP_PITCH + 60}px` }}>
-          {song.tracks.map((tConfig) => {
-            const inst = INSTRUMENT_MAP[tConfig.instId] || INSTRUMENT_MAP["lead"];
-
-            // 提取该音轨所有音符
-            const notes: {
-              gStep: number;
-              barIdx: number;
-              stepIdx: number;
-              duration: number;
-              pitch?: number | null;
-            }[] = [];
-
-            song.bars.forEach((bar, bIdx) => {
-              const steps = bar.steps[tConfig.trackKey];
-              if (steps) {
-                steps.forEach((isActive, sIdx) => {
-                  if (isActive) {
-                    const gStep = bIdx * 16 + sIdx;
-                    const dur = bar.durations?.[tConfig.trackKey]?.[sIdx] || 1;
-                    const pitch = bar.pitches?.[tConfig.trackKey]?.[sIdx];
-                    notes.push({ gStep, barIdx: bIdx, stepIdx: sIdx, duration: dur, pitch });
+                  let text = `.${(sIdx % 4) + 1}`;
+                  if (isBarStart) {
+                    text = `${bIdx + 1}.1`;
+                  } else if (isBeat) {
+                    text = `${Math.floor(sIdx / 4) + 1}`;
                   }
-                });
-              }
-            });
 
-            return (
-              <div key={tConfig.trackKey} className="ps-timeline-track-row">
-                {/* 乐器信息卡片 (Sticky Left) */}
-                <div
-                  className="ps-card-info sticky"
-                  onClick={() => {
-                    setPickerTarget(tConfig.trackKey);
-                    setIsPickerOpen(true);
-                  }}
-                  title={t("pickerTitle")}
-                >
-                  <div className="ps-card-main">
+                  return (
                     <div
-                      className="ps-card-icon"
-                      style={{ color: `var(--ps-${inst.colorClass.replace("is-", "")})` }}
+                      key={g}
+                      className={`ps-ruler-tick-cell ${isBarStart ? "bar-head" : ""} ${isBeat ? "beat-head" : ""}`}
+                      style={{ width: `${STEP_WIDTH}px` }}
                     >
-                      <InstrumentSvgIcon type={inst.iconType} />
+                      {text}
                     </div>
-                    <div className="ps-title-box">
-                      <div className="ps-row-name">
-                        <span>{inst.name}</span>
-                        <span style={{ fontSize: 8, color: "var(--ps-dim)" }}>▾</span>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* 纵向走带指示线 */}
+          {isPlaying && (
+            <div
+              className="ps-playhead-line"
+              style={{ left: `${HEADER_WIDTH + playStep * STEP_PITCH + STEP_WIDTH / 2}px` }}
+            />
+          )}
+
+          {/* 所有音轨行 */}
+          <div className="ps-timeline-tracks">
+            {song.tracks.map((tConfig, trackIdx) => {
+              const inst = INSTRUMENT_MAP[tConfig.instId] || INSTRUMENT_MAP["lead"];
+
+              // 提取该音轨所有音符
+              const notes: {
+                gStep: number;
+                barIdx: number;
+                stepIdx: number;
+                duration: number;
+                pitch?: number | null;
+              }[] = [];
+
+              song.bars.forEach((bar, bIdx) => {
+                const steps = bar.steps[tConfig.trackKey];
+                if (steps) {
+                  steps.forEach((isActive, sIdx) => {
+                    if (isActive) {
+                      const gStep = bIdx * 16 + sIdx;
+                      const dur = bar.durations?.[tConfig.trackKey]?.[sIdx] || 1;
+                      const pitch = bar.pitches?.[tConfig.trackKey]?.[sIdx];
+                      notes.push({ gStep, barIdx: bIdx, stepIdx: sIdx, duration: dur, pitch });
+                    }
+                  });
+                }
+              });
+
+              return (
+                <div key={tConfig.trackKey} className="ps-timeline-track-row">
+                  {/* 乐器信息卡片 (Sticky Left) */}
+                  <div
+                    className="ps-card-info sticky"
+                    onClick={() => {
+                      setPickerTarget(tConfig.trackKey);
+                      setIsPickerOpen(true);
+                    }}
+                    title={t("pickerTitle")}
+                  >
+                    <div className="ps-card-main">
+                      <div
+                        className="ps-card-icon"
+                        style={{ color: `var(--ps-${inst.colorClass.replace("is-", "")})` }}
+                      >
+                        <InstrumentSvgIcon type={inst.iconType} />
                       </div>
-                      <div className="ps-row-desc">{inst.desc}</div>
+                      <div className="ps-title-box">
+                        <div className="ps-row-name">
+                          <span>{inst.name}</span>
+                          <span style={{ fontSize: 8, color: "var(--ps-dim)" }}>▾</span>
+                        </div>
+                        <div className="ps-row-desc">{inst.desc}</div>
+                      </div>
+                    </div>
+                    {song.tracks.length > 1 && (
+                      <button
+                        type="button"
+                        className="ps-btn-del"
+                        disabled={busy}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          void perform({ action: "removeTrack", trackKey: tConfig.trackKey });
+                        }}
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+
+                  {/* 时间轴步进区域 */}
+                  <div className="ps-track-timeline" style={{ width: `${totalSteps * STEP_PITCH}px` }}>
+                    {/* 底层网格格子：供点击创建新音符 */}
+                    <div className="ps-grid-slots">
+                      {Array.from({ length: totalSteps }).map((_, g) => {
+                        const bIdx = Math.floor(g / 16);
+                        const sIdx = g % 16;
+                        const isBarStart = sIdx === 0 && g > 0;
+                        const isBeat = sIdx % 4 === 0;
+                        const isCurrentBeat = isPlaying && playStep === g;
+
+                        return (
+                          <div
+                            key={g}
+                            className={`ps-pad-btn ${isBarStart ? "bar-start" : ""} ${isBeat ? "bar-beat" : ""} ${
+                              isCurrentBeat ? "playhead" : ""
+                            }`}
+                            style={{ width: `${STEP_WIDTH}px` }}
+                            onClick={() => {
+                              if (activePopover) setActivePopover(null);
+                              const defaultPitch = getResolvedPitch(tConfig.instId, sIdx, null);
+                              const now = getAudioContext().currentTime;
+                              inst.playSound(now, g, defaultPitch, 0.2);
+                              void perform({
+                                action: "toggleStep",
+                                barIndex: bIdx,
+                                trackKey: tConfig.trackKey,
+                                stepIndex: sIdx,
+                                pitch: defaultPitch || undefined,
+                                duration: 1
+                              });
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
+
+                    {/* 上层音符块层：渲染实际音符，支持长音药丸条、拖拽手柄、点击弹出音调气泡 */}
+                    <div className="ps-notes-layer">
+                      {notes.map((note) => {
+                        const isDraggingThis =
+                          draggingNote &&
+                          draggingNote.trackKey === tConfig.trackKey &&
+                          draggingNote.gStep === note.gStep;
+                        const currentDur = isDraggingThis ? draggingNote.duration : note.duration;
+                        const isPlayingThisNote =
+                          isPlaying && playStep >= note.gStep && playStep < note.gStep + currentDur;
+
+                        const effectivePitch = getResolvedPitch(tConfig.instId, note.stepIdx, note.pitch);
+                        const noteMidi = effectivePitch ? freqToMidi(effectivePitch) : null;
+                        const noteName = noteMidi !== null ? midiToNoteName(noteMidi) : null;
+
+                        return (
+                          <div
+                            key={note.gStep}
+                            className={`ps-note-block ${inst.colorClass} ${isPlayingThisNote ? "active-playing" : ""}`}
+                            style={{
+                              left: `${note.gStep * STEP_PITCH}px`,
+                              width: `${currentDur * STEP_PITCH - STEP_GAP}px`
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const now = getAudioContext().currentTime;
+                              inst.playSound(now, note.stepIdx, effectivePitch, 0.25);
+
+                              const noteX = HEADER_WIDTH + note.gStep * STEP_PITCH;
+                              const noteY = 48 + 10 + trackIdx * 56;
+                              const showBelow = trackIdx <= 1;
+
+                              setActivePopover({
+                                trackKey: tConfig.trackKey,
+                                instId: tConfig.instId,
+                                barIdx: note.barIdx,
+                                stepIdx: note.stepIdx,
+                                gStep: note.gStep,
+                                duration: currentDur,
+                                pitch: effectivePitch,
+                                anchor: {
+                                  x: noteX,
+                                  y: noteY,
+                                  width: currentDur * STEP_PITCH - STEP_GAP,
+                                  height: 48,
+                                  showBelow
+                                }
+                              });
+                            }}
+                          >
+                            <div className="ps-note-body">
+                              {noteName && <span className="ps-note-pitch-tag">{noteName}</span>}
+                              {currentDur > 1 ? (
+                                <span className="ps-note-len-badge">{currentDur}</span>
+                              ) : null}
+                            </div>
+
+                            <div
+                              className="ps-note-handle"
+                              title="按住向右拖拽放长节拍"
+                              onPointerDown={(e) => {
+                                startDrag(
+                                  e,
+                                  tConfig.trackKey,
+                                  note.barIdx,
+                                  note.stepIdx,
+                                  note.gStep,
+                                  note.duration,
+                                  totalSteps
+                                );
+                              }}
+                            >
+                              <div className="ps-handle-grip" />
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
-                  {song.tracks.length > 1 && (
+                </div>
+              );
+            })}
+
+            {/* 添加音轨槽 (固定在左侧列) */}
+            <div className="ps-timeline-add-row">
+              <div
+                className="ps-add-lane"
+                onClick={() => {
+                  if (song.tracks.length >= 8) {
+                    alert(t("maxTrackLimit"));
+                    return;
+                  }
+                  setPickerTarget(null);
+                  setIsPickerOpen(true);
+                }}
+              >
+                <span style={{ fontSize: 16, fontWeight: 700 }}>＋</span>
+                <span>{t("addTrackShort")}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 音调与防误删气泡悬浮窗 */}
+          {activePopover && (() => {
+            const popoverWidth = 270;
+            let popoverLeft = activePopover.anchor.x + activePopover.anchor.width / 2 - popoverWidth / 2;
+            popoverLeft = Math.max(HEADER_WIDTH + 8, Math.min(totalSteps * STEP_PITCH + HEADER_WIDTH - popoverWidth - 8, popoverLeft));
+            const popoverTop = activePopover.anchor.showBelow
+              ? activePopover.anchor.y + activePopover.anchor.height + 8
+              : Math.max(52, activePopover.anchor.y - 170);
+
+            const inst = INSTRUMENT_MAP[activePopover.instId] || INSTRUMENT_MAP["lead"];
+            const isPercussion = inst.category === "Drums";
+            const curMidi = activePopover.pitch ? freqToMidi(activePopover.pitch) : 60;
+            const curName = midiToNoteName(curMidi);
+            const curOctave = Math.floor(curMidi / 12) - 1;
+            const curSemitone = ((curMidi % 12) + 12) % 12;
+
+            const updatePitch = (targetMidi: number) => {
+              const clampedMidi = Math.max(24, Math.min(96, targetMidi));
+              const newFreq = midiToFreq(clampedMidi);
+              const now = getAudioContext().currentTime;
+              inst.playSound(now, activePopover.stepIdx, newFreq, 0.25);
+              setActivePopover((prev) => (prev ? { ...prev, pitch: newFreq } : null));
+              void perform({
+                action: "setNotePitch",
+                barIndex: activePopover.barIdx,
+                trackKey: activePopover.trackKey,
+                stepIndex: activePopover.stepIdx,
+                pitch: newFreq
+              });
+            };
+
+            const deleteCurrentNote = () => {
+              void perform({
+                action: "toggleStep",
+                barIndex: activePopover.barIdx,
+                trackKey: activePopover.trackKey,
+                stepIndex: activePopover.stepIdx
+              });
+              setActivePopover(null);
+            };
+
+            return (
+              <>
+                <div className="ps-popover-backdrop" onClick={() => setActivePopover(null)} />
+                <div
+                  className="ps-pitch-popover"
+                  style={{ left: `${popoverLeft}px`, top: `${popoverTop}px` }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="ps-popover-header">
+                    <div className="ps-popover-title-row">
+                      {isPercussion ? (
+                        <span style={{ fontSize: 13, fontWeight: 700, color: "#e2e8f0" }}>{inst.name}</span>
+                      ) : (
+                        <>
+                          <span className="ps-popover-note-name">{curName}</span>
+                          <span className="ps-popover-note-freq">({activePopover.pitch?.toFixed(1) || "440.0"} Hz)</span>
+                        </>
+                      )}
+                    </div>
                     <button
                       type="button"
-                      className="ps-btn-del"
-                      disabled={busy}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        void perform({ action: "removeTrack", trackKey: tConfig.trackKey });
-                      }}
+                      className="ps-popover-close-btn"
+                      title="关闭"
+                      onClick={() => setActivePopover(null)}
                     >
                       ✕
                     </button>
+                  </div>
+
+                  {isPercussion ? (
+                    <div style={{ fontSize: 11, color: "var(--ps-dim)", padding: "4px 0" }}>
+                      {t("percussionNote")}
+                    </div>
+                  ) : (
+                    <>
+                      <div className="ps-popover-quick-row">
+                        <div className="ps-popover-btn-group">
+                          <button
+                            type="button"
+                            className="ps-btn-micro"
+                            title="降半音"
+                            onClick={() => updatePitch(curMidi - 1)}
+                          >
+                            {t("semitoneDown")}
+                          </button>
+                          <button
+                            type="button"
+                            className="ps-btn-micro"
+                            title="升半音"
+                            onClick={() => updatePitch(curMidi + 1)}
+                          >
+                            {t("semitoneUp")}
+                          </button>
+                        </div>
+
+                        <div className="ps-popover-btn-group">
+                          <button
+                            type="button"
+                            className="ps-btn-micro"
+                            title="降八度"
+                            disabled={curOctave <= 1}
+                            onClick={() => updatePitch(curMidi - 12)}
+                          >
+                            {t("octaveDown")}
+                          </button>
+                          <span style={{ fontSize: 10, fontFamily: "ui-monospace, monospace", color: "var(--ps-muted)" }}>
+                            Oct {curOctave}
+                          </span>
+                          <button
+                            type="button"
+                            className="ps-btn-micro"
+                            title="升八度"
+                            disabled={curOctave >= 7}
+                            onClick={() => updatePitch(curMidi + 12)}
+                          >
+                            {t("octaveUp")}
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* 单八度钢琴键 */}
+                      <div className="ps-mini-piano">
+                        {WHITE_KEYS.map((wk) => {
+                          const isActive = curSemitone === wk.offset;
+                          return (
+                            <div
+                              key={wk.note}
+                              className={`ps-piano-white-key ${isActive ? "is-active" : ""}`}
+                              onClick={() => updatePitch((curOctave + 1) * 12 + wk.offset)}
+                            >
+                              {wk.note}
+                            </div>
+                          );
+                        })}
+
+                        {BLACK_KEYS.map((bk) => {
+                          const isActive = curSemitone === bk.offset;
+                          return (
+                            <div
+                              key={bk.note}
+                              className={`ps-piano-black-key ${isActive ? "is-active" : ""}`}
+                              style={{ left: bk.leftStyle }}
+                              onClick={() => updatePitch((curOctave + 1) * 12 + bk.offset)}
+                            >
+                              {bk.note.replace("#", "♯")}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </>
                   )}
-                </div>
 
-                {/* 时间轴步进区域 */}
-                <div className="ps-track-timeline" style={{ width: `${totalSteps * STEP_PITCH}px` }}>
-                  {/* 底层网格格子：供点击创建新音符 */}
-                  <div className="ps-grid-slots">
-                    {Array.from({ length: totalSteps }).map((_, g) => {
-                      const bIdx = Math.floor(g / 16);
-                      const sIdx = g % 16;
-                      const isBarStart = sIdx === 0 && g > 0;
-                      const isBeat = sIdx % 4 === 0;
-                      const isCurrentBeat = isPlaying && playStep === g;
+                  {/* 底部操作区：安全删除与完成 */}
+                  <div className="ps-popover-actions">
+                    <button
+                      type="button"
+                      className="ps-btn-note-del"
+                      title="从曲谱中删除此音符"
+                      onClick={deleteCurrentNote}
+                    >
+                      <span>🗑</span>
+                      <span>{t("deleteNote")}</span>
+                    </button>
 
-                      return (
-                        <div
-                          key={g}
-                          className={`ps-pad-btn ${isBarStart ? "bar-start" : ""} ${isBeat ? "bar-beat" : ""} ${
-                            isCurrentBeat ? "playhead" : ""
-                          }`}
-                          style={{ width: `${STEP_WIDTH}px` }}
+                    <div style={{ display: "flex", gap: 6 }}>
+                      {isPercussion && (
+                        <button
+                          type="button"
+                          className="ps-btn-micro"
                           onClick={() => {
                             const now = getAudioContext().currentTime;
-                            inst.playSound(now, g);
-                            void perform({
-                              action: "toggleStep",
-                              barIndex: bIdx,
-                              trackKey: tConfig.trackKey,
-                              stepIndex: sIdx,
-                              duration: 1
-                            });
-                          }}
-                        />
-                      );
-                    })}
-                  </div>
-
-                  {/* 上层音符块层：渲染实际音符，支持长音药丸条、拖拽手柄、点击删除 */}
-                  <div className="ps-notes-layer">
-                    {notes.map((note) => {
-                      const isDraggingThis =
-                        draggingNote &&
-                        draggingNote.trackKey === tConfig.trackKey &&
-                        draggingNote.gStep === note.gStep;
-                      const currentDur = isDraggingThis ? draggingNote.duration : note.duration;
-                      const isPlayingThisNote =
-                        isPlaying && playStep >= note.gStep && playStep < note.gStep + currentDur;
-
-                      return (
-                        <div
-                          key={note.gStep}
-                          className={`ps-note-block ${inst.colorClass} ${isPlayingThisNote ? "active-playing" : ""}`}
-                          style={{
-                            left: `${note.gStep * STEP_PITCH}px`,
-                            width: `${currentDur * STEP_PITCH - STEP_GAP}px`
-                          }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            void perform({
-                              action: "toggleStep",
-                              barIndex: note.barIdx,
-                              trackKey: tConfig.trackKey,
-                              stepIndex: note.stepIdx
-                            });
+                            inst.playSound(now, 0);
                           }}
                         >
-                          <div className="ps-note-body">
-                            {currentDur > 1 ? (
-                              <span className="ps-note-len-badge">{currentDur}</span>
-                            ) : null}
-                          </div>
-
-                          <div
-                            className="ps-note-handle"
-                            title="按住向右拖拽放长节拍"
-                            onPointerDown={(e) => {
-                              startDrag(
-                                e,
-                                tConfig.trackKey,
-                                note.barIdx,
-                                note.stepIdx,
-                                note.gStep,
-                                note.duration,
-                                totalSteps
-                              );
-                            }}
-                          >
-                            <div className="ps-handle-grip" />
-                          </div>
-                        </div>
-                      );
-                    })}
+                          {t("audition")}
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        className="ps-btn-note-done"
+                        onClick={() => setActivePopover(null)}
+                      >
+                        完成
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </>
             );
-          })}
-
-          {/* 添加音轨槽 */}
-          <div className="ps-timeline-add-row">
-            <div
-              className="ps-add-lane"
-              onClick={() => {
-                if (song.tracks.length >= 8) {
-                  alert(t("maxTrackLimit"));
-                  return;
-                }
-                setPickerTarget(null);
-                setIsPickerOpen(true);
-              }}
-            >
-              <span style={{ fontSize: 16, fontWeight: 700 }}>＋</span>
-              <span>{t("addTrack")}</span>
-            </div>
-          </div>
+          })()}
         </div>
       </div>
 

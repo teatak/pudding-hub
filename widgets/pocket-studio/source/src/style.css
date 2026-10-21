@@ -167,16 +167,27 @@ body {
   border-radius: 3px;
 }
 
+/* 时间轴内部画布 (全长包裹层，保证背景贯穿所有小节) */
+.ps-timeline-canvas {
+  min-width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--ps-bg);
+  position: relative;
+  box-sizing: border-box;
+}
+
 /* 时间标尺行 (Sticky Top) */
 .ps-timeline-ruler-row {
   position: sticky;
   top: 0;
   display: flex;
-  align-items: center;
   background: #111520;
   border-bottom: 2px solid var(--ps-edge);
   z-index: 20;
-  height: 38px;
+  height: 48px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 /* 左上角交叉头 (Sticky Top & Left) */
@@ -189,9 +200,10 @@ body {
   background: #111520;
   border-right: 2px solid var(--ps-edge);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
   padding: 0 10px;
+  gap: 4px;
   font-size: 11px;
   font-weight: 700;
   color: var(--ps-muted);
@@ -206,36 +218,40 @@ body {
   border: 1px solid rgba(99, 102, 241, 0.3);
   padding: 2px 6px;
   border-radius: 6px;
+  width: fit-content;
 }
 
-/* 标尺刻度轨道 */
-.ps-ruler-track {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  position: relative;
-}
-
-/* 标尺小节组 */
-.ps-ruler-bar-group {
-  height: 100%;
+/* 标尺内容区 */
+.ps-ruler-content {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  border-right: 2px solid rgba(255, 255, 255, 0.12);
+  gap: 3px;
+  height: 100%;
   box-sizing: border-box;
-  padding: 2px 4px;
-  background: rgba(255, 255, 255, 0.015);
 }
-.ps-ruler-bar-label {
+
+/* 标尺小节横幅 (BAR 1, BAR 2...) */
+.ps-ruler-bars-banner {
+  display: flex;
+  align-items: center;
+  height: 20px;
+}
+.ps-ruler-bar-badge {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 100%;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 4px;
+  padding: 0 8px;
+  box-sizing: border-box;
   font-size: 10px;
   font-weight: 800;
-  letter-spacing: 0.5px;
   color: #818cf8;
-  padding: 0 4px;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
 }
 .ps-ruler-bar-del {
   background: transparent;
@@ -244,47 +260,62 @@ body {
   cursor: pointer;
   font-size: 13px;
   font-weight: 700;
-  padding: 0 3px;
+  padding: 0 4px;
   border-radius: 3px;
   line-height: 1;
-  opacity: 0.5;
+  opacity: 0.6;
   transition: all 0.15s;
 }
 .ps-ruler-bar-del:hover {
   opacity: 1;
-  background: rgba(239, 68, 68, 0.2);
-}
-.ps-ruler-ticks {
-  display: flex;
-  justify-content: space-between;
-  padding: 0 4px;
-}
-.ps-ruler-ticks .tick {
-  font-size: 9px;
-  font-family: ui-monospace, monospace;
-  color: var(--ps-dim);
-}
-.ps-ruler-ticks .tick.primary {
-  color: var(--ps-muted);
-  font-weight: 700;
+  background: rgba(239, 68, 68, 0.25);
 }
 .ps-ruler-add-bar-btn {
-  height: 26px;
+  height: 20px;
   padding: 0 8px;
-  margin-left: 8px;
-  border-radius: 6px;
+  border-radius: 4px;
   border: 1px dashed rgba(99, 102, 241, 0.4);
   background: rgba(99, 102, 241, 0.12);
   color: #818cf8;
   font-weight: 800;
+  font-size: 12px;
   cursor: pointer;
   display: grid;
   place-items: center;
   transition: all 0.15s;
+  flex-shrink: 0;
 }
 .ps-ruler-add-bar-btn:hover {
   background: rgba(99, 102, 241, 0.25);
   color: #fff;
+}
+
+/* 1:1 步进刻度条 */
+.ps-ruler-ticks-strip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 16px;
+}
+.ps-ruler-tick-cell {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-family: ui-monospace, monospace;
+  color: var(--ps-dim);
+  box-sizing: border-box;
+  user-select: none;
+  flex-shrink: 0;
+}
+.ps-ruler-tick-cell.beat-head {
+  color: #e2e8f0;
+  font-weight: 700;
+}
+.ps-ruler-tick-cell.bar-head {
+  color: #10b981;
+  font-weight: 800;
 }
 
 /* 纵向走带指示线 (Playhead Line) */
@@ -306,14 +337,21 @@ body {
   flex-direction: column;
   gap: 8px;
   padding: 10px 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* 单条音轨时间轴行 */
+/* 单条音轨时间轴行 (带全长深色背景) */
 .ps-timeline-track-row {
   display: flex;
   align-items: center;
   position: relative;
-  height: 44px;
+  height: 48px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  box-sizing: border-box;
+  width: 100%;
 }
 
 /* 乐器卡片 (Sticky Left) */
@@ -328,6 +366,46 @@ body {
   border-right: 2px solid var(--ps-edge);
   height: 100%;
   box-sizing: border-box;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* 底部添加音轨行 (Sticky Left 固定在左侧列) */
+.ps-timeline-add-row {
+  position: sticky;
+  left: 0;
+  width: 154px;
+  min-width: 154px;
+  z-index: 10;
+  box-sizing: border-box;
+}
+.ps-add-lane {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  background: #141720;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.4);
+  border-right: 2px solid var(--ps-edge);
+  cursor: pointer;
+  color: var(--ps-muted);
+  font-size: 11px;
+  font-weight: 700;
+  gap: 6px;
+  transition: all 0.15s;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+.ps-add-lane:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
+.ps-add-lane:active {
+  transform: scale(0.97);
 }
 
 /* 乐器卡 */
@@ -533,35 +611,6 @@ body {
 .ps-note-block.is-mario { background: linear-gradient(135deg, #ef4444, #991b1b); color: #ef4444; }
 .ps-note-block.is-kong { background: linear-gradient(135deg, #f59e0b, #b45309); color: #f59e0b; }
 
-/* 追加音轨行 */
-.ps-timeline-add-row {
-  margin-top: 4px;
-  padding-left: 0;
-  width: 154px;
-}
-
-/* 添加乐器槽 */
-.ps-add-lane {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  border: 1px dashed rgba(255, 255, 255, 0.12);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.02);
-  cursor: pointer;
-  color: var(--ps-muted);
-  font-size: 12px;
-  font-weight: 700;
-  gap: 6px;
-  transition: all 0.15s;
-}
-.ps-add-lane:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.25);
-  color: #fff;
-}
-
 /* 弹窗 */
 .ps-modal-overlay {
   position: fixed;
@@ -619,28 +668,290 @@ body {
 
 .ps-btn-pill {
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--ps-edge);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: #cbd5e1;
   padding: 5px 12px;
   border-radius: 6px;
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.1s ease;
+  user-select: none;
+}
+.ps-btn-pill:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+.ps-btn-pill:active:not(:disabled) {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.18);
+  border-color: #818cf8;
+}
+.ps-btn-pill:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* 音符块上的音名标签 */
+.ps-note-pitch-tag {
+  font-size: 10px;
+  font-weight: 800;
+  font-family: ui-monospace, monospace;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  margin-right: 4px;
+  letter-spacing: -0.5px;
+}
+
+/* 音调与防误删气泡悬浮窗 */
+.ps-popover-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 80;
+  background: transparent;
+}
+
+.ps-pitch-popover {
+  position: absolute;
+  width: 270px;
+  background: #181d2a;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65), 0 0 1px rgba(255, 255, 255, 0.2);
+  z-index: 90;
+  color: #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+  animation: psPopoverIn 0.12s ease-out;
+}
+
+@keyframes psPopoverIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.ps-popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ps-popover-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.ps-popover-note-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: #818cf8;
+  font-family: ui-monospace, monospace;
+}
+
+.ps-popover-note-freq {
+  font-size: 10px;
+  color: var(--ps-dim);
+  font-family: ui-monospace, monospace;
+}
+
+.ps-popover-close-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 4px;
+  line-height: 1;
+  border-radius: 4px;
+  transition: all 0.1s;
+}
+.ps-popover-close-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ps-popover-quick-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  padding: 4px 6px;
+}
+
+.ps-popover-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ps-btn-micro {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.1s;
+  user-select: none;
+}
+.ps-btn-micro:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+.ps-btn-micro:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+/* 迷你单八度钢琴键盘 */
+.ps-mini-piano {
+  position: relative;
+  width: 100%;
+  height: 48px;
+  background: #0d1017;
+  border-radius: 6px;
+  padding: 2px;
+  box-sizing: border-box;
+  display: flex;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ps-piano-white-key {
+  flex: 1;
+  height: 100%;
+  background: #cbd5e1;
+  border-radius: 0 0 3px 3px;
+  margin: 0 1px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 2px;
+  font-size: 8px;
+  font-family: ui-monospace, monospace;
+  color: #475569;
+  font-weight: 800;
+  user-select: none;
+  transition: background 0.1s, transform 0.05s;
+  box-sizing: border-box;
+}
+.ps-piano-white-key:hover {
+  background: #f1f5f9;
+}
+.ps-piano-white-key:active {
+  background: #e2e8f0;
+  transform: translateY(1px);
+}
+.ps-piano-white-key.is-active {
+  background: #6366f1 !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 -3px 0 #4338ca;
+}
+
+.ps-piano-black-key {
+  position: absolute;
+  top: 2px;
+  height: 30px;
+  width: 15px;
+  background: #1e293b;
+  border-radius: 0 0 3px 3px;
+  cursor: pointer;
+  z-index: 2;
+  border: 1px solid #0f172a;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 2px;
+  font-size: 7px;
+  font-family: ui-monospace, monospace;
+  color: #94a3b8;
+  font-weight: 700;
+  user-select: none;
+  transition: background 0.1s, transform 0.05s;
+  box-sizing: border-box;
+}
+.ps-piano-black-key:hover {
+  background: #334155;
+  color: #fff;
+}
+.ps-piano-black-key:active {
+  background: #0f172a;
+  transform: translateY(1px);
+}
+.ps-piano-black-key.is-active {
+  background: #818cf8 !important;
+  color: #ffffff !important;
+  border-color: #6366f1 !important;
+}
+
+/* 底部操作区 (防误删与确认) */
+.ps-popover-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 6px;
+  margin-top: 2px;
+}
+
+.ps-btn-note-del {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
   transition: all 0.15s;
 }
-.ps-btn-pill:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
-.ps-btn-pill.mario {
-  background: rgba(239, 68, 68, 0.2);
+.ps-btn-note-del:hover {
+  background: rgba(239, 68, 68, 0.25);
   border-color: #ef4444;
-  color: #fca5a5;
+  color: #ffffff;
 }
-.ps-btn-pill.kong {
-  background: rgba(245, 158, 11, 0.2);
-  border-color: #f59e0b;
-  color: #fde68a;
+.ps-btn-note-del:active {
+  transform: scale(0.96);
 }
-.ps-btn-pill.oriental {
-  background: rgba(16, 185, 129, 0.2);
-  border-color: #10b981;
-  color: #a7f3d0;
+
+.ps-btn-note-done {
+  background: #242b3b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
 }
+.ps-btn-note-done:hover {
+  background: #323b50;
+  color: #fff;
+}
+

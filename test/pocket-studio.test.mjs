@@ -9,13 +9,13 @@ const root = fileURLToPath(new URL("../widgets/pocket-studio", import.meta.url))
 test("Pocket Studio release package exists, is verified, and contains Mario & Donkey Kong presets", async () => {
   const pkgPath = path.join(
     root,
-    "releases/1.0.0-preview.5/pocket-studio.pudding-widget.json",
+    "releases/1.0.0-preview.7/pocket-studio.pudding-widget.json",
   );
   const raw = await fs.readFile(pkgPath, "utf8");
   const pkg = JSON.parse(raw);
 
   assert.equal(pkg.id, "teatak/pudding-hub/widgets/pocket-studio");
-  assert.equal(pkg.version, "1.0.0-preview.5");
+  assert.equal(pkg.version, "1.0.0-preview.7");
   assert.equal(pkg.preview, true);
   assert.equal(pkg.requires.protocolVersion, 24);
   assert.equal(pkg.requires.sdkVersion, "1");
@@ -56,6 +56,7 @@ test("Pocket Studio release package exists, is verified, and contains Mario & Do
   assert.match(apiSrc, /addBar/);
   assert.match(apiSrc, /removeBar/);
   assert.match(apiSrc, /setNoteDuration/);
+  assert.match(apiSrc, /setNotePitch/);
   assert.match(apiSrc, /setTrackPattern/);
   assert.match(apiSrc, /toggleStep/);
   assert.match(apiSrc, /loadPreset/);
@@ -70,4 +71,6 @@ test("Pocket Studio release package exists, is verified, and contains Mario & Do
   assert.match(appSrc, /ps-timeline-viewport/);
   assert.match(appSrc, /ps-note-handle/);
   assert.match(appSrc, /startDrag/);
+  assert.match(appSrc, /ps-pitch-popover/);
+  assert.match(appSrc, /ps-mini-piano/);
 });

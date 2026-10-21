@@ -172,6 +172,19 @@ export function editSong(current: SongState, action: EditAction): SongState {
       return { ...current, bars: newBars };
     }
 
+    case "setNotePitch": {
+      const bIdx = Math.max(0, Math.min(maxBarIdx, action.barIndex));
+      const sIdx = Math.max(0, Math.min(15, action.stepIndex));
+      const newBars = current.bars.map((bar, idx) => {
+        if (idx !== bIdx) return bar;
+        const trackPitches = [...(bar.pitches?.[action.trackKey] || new Array(16).fill(null))];
+        trackPitches[sIdx] = Math.max(20, Math.min(10000, Number(action.pitch.toFixed(2))));
+        const nextPitches = { ...(bar.pitches || {}), [action.trackKey]: trackPitches };
+        return { ...bar, pitches: nextPitches };
+      });
+      return { ...current, bars: newBars };
+    }
+
     case "setTrackPattern": {
       const bIdx = Math.max(0, Math.min(maxBarIdx, action.barIndex));
       const newBars = current.bars.map((bar, idx) => {
@@ -427,6 +440,35 @@ function register() {
               trackKey: input.trackKey,
               stepIndex: input.stepIndex,
               duration: input.duration
+            },
+            signal
+          )
+      )
+    }),
+
+    pudding.defineInterface({
+      name: "setNotePitch",
+      description: t("descSetNotePitch"),
+      input: z
+        .object({
+          barIndex: z.number().int().min(0).max(15).describe("小节索引 (0起)"),
+          trackKey: z.string().describe("音轨键"),
+          stepIndex: z.number().int().min(0).max(15).describe("步进索引 (0-15)"),
+          pitch: z.number().min(20).max(10000).describe("音符频率 (Hz，如 440、523.25 等)")
+        })
+        .strict(),
+      run: wrap(
+        (
+          input: { barIndex: number; trackKey: string; stepIndex: number; pitch: number },
+          signal
+        ) =>
+          edit(
+            {
+              action: "setNotePitch",
+              barIndex: input.barIndex,
+              trackKey: input.trackKey,
+              stepIndex: input.stepIndex,
+              pitch: input.pitch
             },
             signal
           )

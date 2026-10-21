@@ -126,6 +126,11 @@ const DICT: Record<string, Record<Locale, string>> = {
     "zh-TW": "添加新樂器音軌 (從音色庫中自由挑選)",
     en: "Add Instrument Track"
   },
+  addTrackShort: {
+    "zh-CN": "添加音轨",
+    "zh-TW": "添加音軌",
+    en: "Add Track"
+  },
   pickerTitle: {
     "zh-CN": "选择音色与乐器",
     "zh-TW": "選擇音色與樂器",
@@ -151,6 +156,51 @@ const DICT: Record<string, Record<Locale, string>> = {
     "zh-TW": "操作已取消",
     en: "Operation cancelled"
   },
+  deleteNote: {
+    "zh-CN": "删除音符",
+    "zh-TW": "刪除音符",
+    en: "Delete Note"
+  },
+  pitchSettings: {
+    "zh-CN": "音调音高",
+    "zh-TW": "音調音高",
+    en: "Note Pitch"
+  },
+  percussionNote: {
+    "zh-CN": "打击乐音符（固定音高）",
+    "zh-TW": "打擊樂音符（固定音高）",
+    en: "Percussion (Fixed Pitch)"
+  },
+  semitoneDown: {
+    "zh-CN": "-半音",
+    "zh-TW": "-半音",
+    en: "-Semi"
+  },
+  semitoneUp: {
+    "zh-CN": "+半音",
+    "zh-TW": "+半音",
+    en: "+Semi"
+  },
+  octaveDown: {
+    "zh-CN": "-八度",
+    "zh-TW": "-八度",
+    en: "-Oct"
+  },
+  octaveUp: {
+    "zh-CN": "+八度",
+    "zh-TW": "+八度",
+    en: "+Oct"
+  },
+  octave: {
+    "zh-CN": "八度",
+    "zh-TW": "八度",
+    en: "Octave"
+  },
+  audition: {
+    "zh-CN": "试听",
+    "zh-TW": "試聽",
+    en: "Preview"
+  },
   // Tool 接口描述
   descSetBpm: {
     "zh-CN": "设置音乐工坊的播放速度 (BPM 60-180)",
@@ -171,6 +221,11 @@ const DICT: Record<string, Record<Locale, string>> = {
     "zh-CN": "调整指定音符的持续时长（持续步数，如 2 格、3 格、4 格）",
     "zh-TW": "調整指定音符的持續時長（持續步數，如 2 格、3 格、4 格）",
     en: "Set duration (steps) for a note in a track"
+  },
+  descSetNotePitch: {
+    "zh-CN": "调整指定音符的音调音高 (频率 Hz)",
+    "zh-TW": "調整指定音符的音調音高 (頻率 Hz)",
+    en: "Set pitch (frequency Hz) for a note in a track"
   },
   descChangeInstrument: {
     "zh-CN": "更换指定音轨的乐器音色",
