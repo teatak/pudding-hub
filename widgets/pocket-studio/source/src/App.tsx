@@ -688,7 +688,7 @@ export default function App() {
             const file = event.currentTarget.files?.[0]; event.currentTarget.value = "";
             if (file) void prepareImport(file);
           }} />
-          <button type="button" className="ps-btn-pill" data-music-action="import" disabled={busy || fileBusy} title={t("importReplacesSong")} onClick={() => fileInput.current?.click()}>{t("importProject")}</button>
+          <button type="button" className="ps-btn-pill" data-music-action="import" disabled={busy || fileBusy} onClick={() => fileInput.current?.click()}>{t("importProject")}</button>
           <button type="button" className="ps-btn-pill ps-file-export" data-music-action="project" disabled={fileBusy} aria-busy={exporting === "project"} aria-label={t(exporting === "project" ? "savingProject" : "exportProject")} title={exporting === "project" ? t("savingProject") : undefined} onClick={() => void saveSong("project")}>
             <span className="ps-file-label">{t("exportProject")}</span>
             {exporting === "project" && <span className="ps-file-spinner" aria-hidden="true" />}

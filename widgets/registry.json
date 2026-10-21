@@ -149,7 +149,7 @@
         {
           "version": "1.0.0",
           "package": "./pocket-studio/releases/1.0.0/pocket-studio.pudding-widget.json",
-          "packageHash": "a0c7cfe17da68b3c693011cc4fc0f452ab5728a12e824257e1854add675efb9b",
+          "packageHash": "b77a0e80cca7902f875f4895e4c2aed99d4ae397376621c0ed3f6f1380b9e235",
           "requires": {
             "protocolVersion": 24,
             "sdkVersion": "1"
