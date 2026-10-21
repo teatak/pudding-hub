@@ -1,0 +1,21 @@
+{
+  "id": "teatak/pudding-hub/widgets/pocket-studio",
+  "version": "1.0.0-preview.1",
+  "preview": true,
+  "channel": "preview",
+  "title": {
+    "zh-CN": "音乐工坊",
+    "zh-TW": "音樂工坊",
+    "en": "Pocket Studio"
+  },
+  "description": {
+    "zh-CN": "发光矩阵音乐创作小组件，支持乐器自由编辑与 AI 智能编曲。",
+    "zh-TW": "發光矩陣音樂創作小組件，支援樂器自由編輯與 AI 智慧編曲。",
+    "en": "Step matrix music workstation with customizable instruments and AI composition."
+  },
+  "requires": {
+    "protocolVersion": 24,
+    "sdkVersion": "1"
+  },
+  "icon": "./assets/icon.svg"
+}

@@ -1,0 +1,433 @@
+:root {
+  color-scheme: dark;
+  --ps-bg: #090b10;
+  --ps-chassis: #12151d;
+  --ps-well: #0c0e14;
+  --ps-edge: rgba(255, 255, 255, 0.08);
+
+  --ps-kick: #ff3366;
+  --ps-snare: #00d2ff;
+  --ps-hat: #ffb703;
+  --ps-bass: #a855f7;
+  --ps-lead: #10b981;
+  --ps-mario: #ef4444;
+  --ps-kong: #f59e0b;
+
+  --ps-text: #f8fafc;
+  --ps-muted: #94a3b8;
+  --ps-dim: #475569;
+}
+
+* {
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--ps-bg);
+  color: var(--ps-text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 16px;
+}
+
+.ps-console {
+  width: 100%;
+  max-width: 1040px;
+  background: var(--ps-chassis);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: 94vh;
+}
+
+/* 顶部控制栏 */
+.ps-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--ps-edge);
+  flex-shrink: 0;
+}
+
+.ps-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ps-brand-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #ef4444, #f59e0b);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+}
+.ps-brand-title {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+/* 播放控制 */
+.ps-play-cluster {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ps-btn-play {
+  background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+  color: #fff;
+  border: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+  transition: all 0.15s ease;
+}
+.ps-btn-play.playing {
+  background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+}
+.ps-btn-play:hover { transform: scale(1.05); }
+
+.ps-tempo-pill {
+  background: var(--ps-well);
+  border: 1px solid var(--ps-edge);
+  padding: 5px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.ps-tempo-val {
+  font-family: ui-monospace, monospace;
+  color: #f59e0b;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+/* 4 小节翻页条 */
+.ps-structure-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--ps-well);
+  border: 1px solid var(--ps-edge);
+  border-radius: 12px;
+  padding: 6px 12px;
+  flex-shrink: 0;
+}
+
+.ps-bars-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ps-bar-btn {
+  padding: 5px 14px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--ps-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+.ps-bar-btn:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
+.ps-bar-btn.active {
+  background: #252b3b;
+  border-color: #6366f1;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.35);
+}
+.ps-bar-btn.playing-now {
+  border-color: #10b981;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+}
+.ps-bar-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+}
+.ps-bar-btn.active .ps-bar-dot { background: #6366f1; }
+.ps-bar-btn.playing-now .ps-bar-dot { background: #10b981; box-shadow: 0 0 6px #10b981; }
+
+/* 矩阵滚动区 */
+.ps-matrix-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ps-beat-scale {
+  display: grid;
+  grid-template-columns: 154px repeat(16, 1fr);
+  gap: 8px;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+.ps-beat-mark {
+  text-align: center;
+  font-size: 10px;
+  font-family: ui-monospace, monospace;
+  font-weight: 700;
+  color: var(--ps-dim);
+}
+.ps-beat-mark.bar-head { color: var(--ps-muted); font-weight: 800; }
+
+/* 动态音轨行 */
+.ps-matrix-row {
+  display: grid;
+  grid-template-columns: 154px repeat(16, 1fr);
+  gap: 8px;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 5px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* 乐器卡 */
+.ps-card-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 6px 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.ps-card-info:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.ps-card-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.ps-card-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.ps-title-box {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.ps-row-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.ps-row-desc {
+  font-size: 9px;
+  color: var(--ps-dim);
+  font-family: ui-monospace, monospace;
+}
+
+.ps-btn-del {
+  opacity: 0;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+.ps-matrix-row:hover .ps-btn-del { opacity: 1; }
+.ps-btn-del:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* 物理发光打击垫 */
+.ps-pad-btn {
+  height: 46px;
+  border-radius: 7px;
+  background: linear-gradient(180deg, #1c212c 0%, #141720 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ps-pad-btn.bar-beat {
+  background: linear-gradient(180deg, #242a38 0%, #181c26 100%);
+  border-color: rgba(255, 255, 255, 0.09);
+}
+.ps-pad-btn:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+.ps-pad-btn.playhead {
+  border-color: #ffffff !important;
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.7);
+  filter: brightness(1.35);
+}
+
+/* 点亮色彩状态 */
+.ps-pad-btn.active.is-kick { background: linear-gradient(180deg, #ff3366, #be123c); border-color: #fda4af; box-shadow: 0 0 16px rgba(255, 51, 102, 0.7); }
+.ps-pad-btn.active.is-snare { background: linear-gradient(180deg, #00d2ff, #0369a1); border-color: #bae6fd; box-shadow: 0 0 16px rgba(0, 210, 255, 0.7); }
+.ps-pad-btn.active.is-hat { background: linear-gradient(180deg, #ffb703, #b45309); border-color: #fde68a; box-shadow: 0 0 16px rgba(255, 183, 3, 0.7); }
+.ps-pad-btn.active.is-bass { background: linear-gradient(180deg, #a855f7, #6b21a8); border-color: #e9d5ff; box-shadow: 0 0 16px rgba(168, 85, 247, 0.7); }
+.ps-pad-btn.active.is-lead { background: linear-gradient(180deg, #10b981, #047857); border-color: #a7f3d0; box-shadow: 0 0 16px rgba(168, 85, 247, 0.7); }
+.ps-pad-btn.active.is-mario { background: linear-gradient(180deg, #ef4444, #991b1b); border-color: #fca5a5; box-shadow: 0 0 16px rgba(239, 68, 68, 0.75); }
+.ps-pad-btn.active.is-kong { background: linear-gradient(180deg, #f59e0b, #b45309); border-color: #fde68a; box-shadow: 0 0 16px rgba(245, 158, 11, 0.75); }
+
+/* 添加乐器槽 */
+.ps-add-lane {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  color: var(--ps-muted);
+  font-size: 12px;
+  font-weight: 700;
+  gap: 6px;
+  transition: all 0.15s;
+}
+.ps-add-lane:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+/* 弹窗 */
+.ps-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.ps-modal-overlay.open { display: flex; }
+.ps-picker-modal {
+  width: 480px;
+  background: #141822;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 18px 22px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.ps-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--ps-edge);
+  padding-bottom: 10px;
+}
+.ps-modal-title { font-size: 14px; font-weight: 800; }
+.ps-catalog-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.ps-inst-card {
+  background: #1a202d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.15s;
+}
+.ps-inst-card:hover {
+  background: #252e42;
+  border-color: #6366f1;
+  transform: translateY(-1px);
+}
+
+/* 底部状态 */
+.ps-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--ps-edge);
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.ps-btn-pill {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--ps-edge);
+  color: #cbd5e1;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.ps-btn-pill:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+.ps-btn-pill.mario {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  color: #fca5a5;
+}
+.ps-btn-pill.kong {
+  background: rgba(245, 158, 11, 0.2);
+  border-color: #f59e0b;
+  color: #fde68a;
+}

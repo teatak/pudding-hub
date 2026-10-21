@@ -201,6 +201,33 @@
       ]
     },
     {
+      "id": "teatak/pudding-hub/widgets/pocket-studio",
+      "title": {
+        "zh-CN": "音乐工坊",
+        "zh-TW": "音樂工坊",
+        "en": "Pocket Studio"
+      },
+      "description": {
+        "zh-CN": "发光矩阵音乐创作小组件，支持乐器自由编辑与 AI 智能编曲。",
+        "zh-TW": "發光矩陣音樂創作小組件，支援樂器自由編輯與 AI 智慧編曲。",
+        "en": "Step matrix music workstation with customizable instruments and AI composition."
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI0IiBmaWxsPSIjNEY0NkU1Ii8+CiAgPGNpcmNsZSBjeD0iNjQiIGN5PSI2NCIgcj0iNDgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLW9wYWNpdHk9IjAuMDgiIHN0cm9rZS13aWR0aD0iMiIvPgogIAogIDwhLS0gMngyIOWPkeWFieefqemYteaJk+WHu+WeqyAtLT4KICA8ZyBmaWx0ZXI9ImRyb3Atc2hhZG93KDAgNHB4IDhweCByZ2JhKDAsMCwwLDAuMjUpKSI+CiAgICA8cmVjdCB4PSIyOCIgeT0iMjgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgcng9IjciIGZpbGw9IiNGRjMzNjYiLz4KICAgIDxyZWN0IHg9IjY4IiB5PSIyOCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzAwRDJGRiIvPgogICAgPHJlY3QgeD0iMjgiIHk9IjY4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHJ4PSI3IiBmaWxsPSIjRkZCNzAzIi8+CiAgICA8cmVjdCB4PSI2OCIgeT0iNjgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgcng9IjciIGZpbGw9IiMxMEI5ODEiLz4KICAgIAogICAgPCEtLSDmjInplK7lvq7pq5jlhYkgLS0+CiAgICA8cmVjdCB4PSIzMyIgeT0iMzMiIHdpZHRoPSIyMiIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+CiAgICA8cmVjdCB4PSI3MyIgeT0iMzMiIHdpZHRoPSIyMiIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+CiAgICA8cmVjdCB4PSIzMyIgeT0iNzMiIHdpZHRoPSIyMiIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+CiAgICA8cmVjdCB4PSI3MyIgeT0iNzMiIHdpZHRoPSIyMiIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+CiAgPC9nPgoKICA8IS0tIOS4reWkrumfs+S5kOi3g+WKqOiEieWGsue6v+adoSAtLT4KICA8cGF0aCBkPSJNMjIgNjQgTDM4IDY0IEw0NiA0OCBMNTYgODAgTDY2IDQwIEw3NiA4OCBMODYgNTQgTDk0IDY0IEwxMDYgNjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K",
+      "releases": [
+        {
+          "version": "1.0.0-preview.1",
+          "package": "./pocket-studio/releases/1.0.0-preview.1/pocket-studio.pudding-widget.json",
+          "packageHash": "bd668d314a5e83c74c59febfae08f935ddf6422916111bce760f9f7fe6a830b4",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        }
+      ]
+    },
+    {
       "id": "teatak/pudding-hub/widgets/reversi",
       "title": {
         "zh-CN": "黑白棋",
