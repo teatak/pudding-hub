@@ -332,7 +332,7 @@ export default function App() {
       setSong(importPending.project.song);
       isPlayingRef.current = false; setIsPlaying(false);
       setActivePopover(null); setIsPickerOpen(false);
-      setFileNotice({ error: false, text: t("projectImported") });
+      setFileNotice(null);
     } catch (error) { setFileNotice({ error: true, text: errorText(error) }); }
     finally { setImportPending(null); setFileBusy(false); }
   }

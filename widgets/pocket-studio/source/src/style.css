@@ -91,7 +91,14 @@ body {
 }
 .ps-file-notice[data-error="true"] { color: #fca5a5; }
 .ps-import-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
   width: min(440px, calc(100% - 32px));
+  max-width: calc(100vw - 32px);
+  height: fit-content;
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
   border: 1px solid var(--ps-edge);
   border-radius: 12px;
   padding: 24px;

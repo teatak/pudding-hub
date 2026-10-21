@@ -1,8 +1,6 @@
 {
   "id": "teatak/pudding-hub/widgets/pocket-studio",
-  "version": "1.0.0-preview.20",
-  "preview": true,
-  "channel": "preview",
+  "version": "1.0.0",
   "title": {
     "zh-CN": "音乐工坊",
     "zh-TW": "音樂工坊",

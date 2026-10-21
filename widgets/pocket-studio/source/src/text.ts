@@ -20,7 +20,6 @@ export const DICT: Record<string, Record<Locale, string>> = {
   importSummary: {"zh-CN": "{bars} 小节 · {tracks} 条音轨 · BPM {bpm}", "zh-TW": "{bars} 小節 · {tracks} 條音軌 · BPM {bpm}", "en": "{bars} bars · {tracks} tracks · BPM {bpm}"},
   confirmImport: {"zh-CN": "导入并替换", "zh-TW": "匯入並取代", "en": "Import and replace"},
   cancelImport: {"zh-CN": "取消", "zh-TW": "取消", "en": "Cancel"},
-  projectImported: {"zh-CN": "工程已导入，可继续编辑。", "zh-TW": "工程已匯入，可繼續編輯。", "en": "Project imported. You can continue editing."},
   projectMalformed: {"zh-CN": "无法读取工程文件，请选择有效的音乐工坊 JSON 工程。", "zh-TW": "無法讀取工程檔案，請選擇有效的音樂工坊 JSON 工程。", "en": "Cannot read this project. Select a valid Pocket Studio JSON project."},
   projectVersionError: {"zh-CN": "工程格式应为 pudding.pocket-studio，版本应为 1。", "zh-TW": "工程格式應為 pudding.pocket-studio，版本應為 1。", "en": "Project format must be pudding.pocket-studio, version 1."},
   projectInvalid: {"zh-CN": "工程字段无效：{field}。请检查音轨、16 步数组和音符范围。", "zh-TW": "工程欄位無效：{field}。請檢查音軌、16 步陣列和音符範圍。", "en": "Invalid project fields: {field}. Check track keys, 16-step arrays and note ranges."},
