@@ -586,8 +586,17 @@ export default function App() {
             className={`ps-btn-play ${isPlaying ? "playing" : ""}`}
             onClick={togglePlay}
             title={isPlaying ? t("pause") : t("play")}
+            aria-label={isPlaying ? t("pause") : t("play")}
           >
-            {isPlaying ? "■" : "▶"}
+            {isPlaying ? (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <rect x="5" y="5" width="14" height="14" rx="2.5" />
+              </svg>
+            ) : (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style={{ transform: "translateX(1px)" }}>
+                <path d="M7 4.5v15l12-7.5-12-7.5z" />
+              </svg>
+            )}
           </button>
           <div className="ps-tempo-pill">
             <button

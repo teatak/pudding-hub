@@ -9,13 +9,13 @@ const root = fileURLToPath(new URL("../widgets/pocket-studio", import.meta.url))
 test("Pocket Studio release package exists, is verified, and contains Mario & Donkey Kong presets", async () => {
   const pkgPath = path.join(
     root,
-    "releases/1.0.0/pocket-studio.pudding-widget.json",
+    "releases/1.0.1/pocket-studio.pudding-widget.json",
   );
   const raw = await fs.readFile(pkgPath, "utf8");
   const pkg = JSON.parse(raw);
 
   assert.equal(pkg.id, "teatak/pudding-hub/widgets/pocket-studio");
-  assert.equal(pkg.version, "1.0.0");
+  assert.equal(pkg.version, "1.0.1");
   assert.equal(pkg.preview, undefined);
   assert.equal(pkg.channel, undefined);
   assert.equal(pkg.requires.protocolVersion, 24);
@@ -88,7 +88,7 @@ test("Pocket Studio release package exists, is verified, and contains Mario & Do
 
 test("Pocket Studio release matches the exact shipped source and file hashes", async () => {
   const { createHash } = await import("node:crypto");
-  const pkg = JSON.parse(await fs.readFile(path.join(root, "releases/1.0.0/pocket-studio.pudding-widget.json"), "utf8"));
+  const pkg = JSON.parse(await fs.readFile(path.join(root, "releases/1.0.1/pocket-studio.pudding-widget.json"), "utf8"));
   for (const [file, content] of Object.entries(pkg.source.files)) {
     assert.equal(await fs.readFile(path.join(root, "source", file), "utf8"), content, file);
     assert.equal(createHash("sha256").update(content).digest("hex"), pkg.fileHashes[file]);
