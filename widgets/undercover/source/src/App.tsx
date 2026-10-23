@@ -267,17 +267,53 @@ function SeatSelectorDropdown({
   sessions: SessionCandidate[];
 }) {
   const [open, setOpen] = useState(false);
+  const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
   const wrapRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!open) return;
+    const updatePosition = () => {
+      if (!triggerRef.current) return;
+      const rect = triggerRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const openUpward = spaceBelow < 230 && rect.top > spaceBelow;
+      if (openUpward) {
+        setMenuStyle({
+          position: "fixed",
+          left: `${rect.left}px`,
+          width: `${rect.width}px`,
+          bottom: `${window.innerHeight - rect.top + 5}px`,
+          top: "auto",
+          maxHeight: `${Math.min(240, rect.top - 16)}px`,
+          zIndex: 999,
+        });
+      } else {
+        setMenuStyle({
+          position: "fixed",
+          left: `${rect.left}px`,
+          width: `${rect.width}px`,
+          top: `${rect.bottom + 5}px`,
+          bottom: "auto",
+          maxHeight: `${Math.min(240, spaceBelow - 16)}px`,
+          zIndex: 999,
+        });
+      }
+    };
+    updatePosition();
     const onDocDown = (e: MouseEvent) => {
       if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
         setOpen(false);
       }
     };
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
     document.addEventListener("mousedown", onDocDown);
-    return () => document.removeEventListener("mousedown", onDocDown);
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+      document.removeEventListener("mousedown", onDocDown);
+    };
   }, [open]);
 
   const isMe = value === "@me";
@@ -289,6 +325,7 @@ function SeatSelectorDropdown({
   return (
     <div className="uc-select-wrap" ref={wrapRef}>
       <button
+        ref={triggerRef}
         type="button"
         className="uc-select-trigger"
         onClick={() => setOpen(!open)}
@@ -337,7 +374,7 @@ function SeatSelectorDropdown({
       </button>
 
       {open && (
-        <div className="uc-select-menu">
+        <div className="uc-select-menu" style={menuStyle}>
           <button
             type="button"
             className={`uc-select-option ${isMe ? "is-selected" : ""}`}
@@ -688,7 +725,7 @@ export default function App() {
     rotatedOpponents.push(activeSeats[(bottomIdx + i) % activeSeats.length]);
   }
 
-  // Split opponent seats between Left Wing and Right Wing for symmetrical zero-jump layout
+  // Split opponent seats between Left Wing, Top Center, and Right Wing
   const leftWingSeats: Seat[] =
     activeSeats.length === 4
       ? [rotatedOpponents[0]]
@@ -746,10 +783,8 @@ export default function App() {
       myTurn &&
       l.phase === "voting" &&
       eligibleTargetsForHuman.includes(seat);
-    const isVoteSelected =
-      canClickToVote && selectedVoteTarget === seat;
+    const isVoteSelected = canClickToVote && selectedVoteTarget === seat;
 
-    // Count how many votes currently target this seat in the current voting phase
     const incomingVotes = p.votingOrder.filter(
       (voter) => p.currentVotes[voter]?.target === seat,
     );
@@ -769,14 +804,12 @@ export default function App() {
           }
         }}
       >
-        {/* Target Lock-On Reticle when selected for accusation */}
         {isVoteSelected && (
           <div className="uc-target-reticle" aria-hidden="true">
-            <Crosshair size={22} />
+            <Crosshair size={20} />
           </div>
         )}
 
-        {/* Top Row: Avatar + Name + Role/Word Badges */}
         <div className="uc-agent-header">
           <AgentAvatar
             info={info}
@@ -829,7 +862,6 @@ export default function App() {
           </div>
         </div>
 
-        {/* Fixed-Height Testimony & Vote Bubble Slot (Zero Vertical Jump) */}
         <div className="uc-agent-testimony-slot">
           {isTurn ? (
             <div className="uc-thinking-bar">
@@ -841,7 +873,10 @@ export default function App() {
           ) : l.phase === "voting" && currentVote ? (
             <div className="uc-vote-action-box">
               <span className="uc-vote-arrow-tag">
-                🎯 {t("voteTargetBadge", { seat: seatShortLabel(currentVote.target) })}
+                🎯{" "}
+                {t("voteTargetBadge", {
+                  seat: seatShortLabel(currentVote.target),
+                })}
               </span>
               {currentVote.reason && (
                 <p className="uc-vote-reason-text" title={currentVote.reason}>
@@ -855,7 +890,9 @@ export default function App() {
               className="uc-speech-bubble"
               title={latestSpeechInCycle.text}
             >
-              <span className="uc-speech-quote">“{latestSpeechInCycle.text}”</span>
+              <span className="uc-speech-quote">
+                “{latestSpeechInCycle.text}”
+              </span>
             </div>
           ) : lastAct?.kind === "speak" && lastAct.text ? (
             <div className="uc-speech-bubble is-muted" title={lastAct.text}>
@@ -868,7 +905,6 @@ export default function App() {
           )}
         </div>
 
-        {/* Dramatic Iron Stamp Slam Overlay when Eliminated */}
         {!isAlive && elimRecord && (
           <div className="uc-eliminated-stamp" aria-hidden="true">
             <span
@@ -941,6 +977,9 @@ export default function App() {
       : bottomElim
         ? bottomElim.role
         : null;
+  const bottomLatestSpeech = [...p.speeches]
+    .reverse()
+    .find((s) => s.seat === bottomSeat && s.cycle === p.cycle);
 
   const phaseBadgeText =
     l.phase === "lobby"
@@ -967,7 +1006,7 @@ export default function App() {
       <header className="uc-topbar">
         <div className="uc-brand">
           <div className="uc-emblem" aria-hidden="true">
-            <UndercoverEmblemIcon size={32} />
+            <UndercoverEmblemIcon size={30} />
           </div>
           <h1>{t("appTitle")}</h1>
           {l.round > 0 && (
@@ -1066,14 +1105,14 @@ export default function App() {
         </div>
       )}
 
-      {/* Main Round-Table Interrogation Arena (Row 2) */}
+      {/* Main Round-Table Interrogation Arena */}
       <main className="uc-arena">
         {/* Left Wing Agent Seats */}
         <aside className="uc-wing is-left">
           {leftWingSeats.map((s) => renderAgentCard(s, "left"))}
         </aside>
 
-        {/* Center Column: Top Agent Seat + Classified Dossier Timeline */}
+        {/* Center Column: Top Agent Seat + Classified Dossier + Bottom Centered Main Seat (#1) */}
         <section className="uc-center-stage">
           {topCenterSeat && (
             <div className="uc-top-seat-holder">
@@ -1089,7 +1128,6 @@ export default function App() {
                 <span>{t("dossierTitle")}</span>
               </div>
 
-              {/* Revealed Word Pair Strip (Only in God View or Finished) */}
               {(godView || isFinished) && l.round > 0 && (
                 <div className="uc-god-word-bar" aria-hidden="true">
                   <span
@@ -1187,7 +1225,6 @@ export default function App() {
                     );
                   })}
 
-                  {/* Victory Result Banner inside Dossier */}
                   {isFinished && p.winner && (
                     <div
                       className={`uc-victory-banner ${
@@ -1216,6 +1253,205 @@ export default function App() {
               )}
             </div>
           </div>
+
+          {/* Bottom Centered Lead Detective Seat (#1) & Action Hub */}
+          <div className="uc-bottom-seat-holder">
+            <div
+              className={`uc-main-seat-card ${myTurn ? "is-my-turn" : ""} ${
+                !bottomAlive && l.round > 0 ? "is-eliminated" : ""
+              }`}
+            >
+              {/* Left section: Seat #1 Avatar + Name + Classified Word Dossier */}
+              <div className="uc-main-seat-head">
+                <div className="uc-envelope-left">
+                  <AgentAvatar
+                    info={bottomInfo}
+                    seat={bottomSeat}
+                    revealedRole={bottomRevealedRole}
+                    isTurn={myTurn}
+                    isAlive={bottomAlive}
+                  />
+                  <div className="uc-envelope-agent">
+                    <strong>{bottomInfo.name}</strong>
+                    <small>
+                      {bottomRevealedRole
+                        ? bottomRevealedRole === "Undercover"
+                          ? t("roleUndercover")
+                          : t("roleCivilian")
+                        : t("roleSecret")}
+                    </small>
+                  </div>
+                </div>
+
+                {/* Secret Word Badge */}
+                <div className="uc-main-word-badge">
+                  <div className="uc-envelope-label-row">
+                    <span className="uc-wax-seal">密</span>
+                    <span className="uc-envelope-label">
+                      {t("secretCardTitle")}
+                    </span>
+                    {l.round > 0 && (
+                      <button
+                        type="button"
+                        className="uc-mask-toggle"
+                        onClick={() => {
+                          playSelectSound();
+                          setMaskMyWord(!maskMyWord);
+                        }}
+                      >
+                        {maskMyWord ? <Unlock size={11} /> : <Lock size={11} />}
+                        <span>
+                          {maskMyWord ? t("revealWord") : t("holdToHide")}
+                        </span>
+                      </button>
+                    )}
+                  </div>
+                  <div
+                    className={`uc-secret-word-display ${
+                      maskMyWord || l.round === 0 ? "is-masked" : ""
+                    }`}
+                    aria-hidden="true"
+                    data-word={
+                      l.round === 0
+                        ? "待发牌"
+                        : maskMyWord
+                          ? t("wordHiddenMask")
+                          : `「${myWord}」`
+                    }
+                  />
+                </div>
+              </div>
+
+              {/* Right / Bottom section inside Main Seat Card: Interactive Controls or Status */}
+              <div className="uc-main-seat-body">
+                {myTurn && l.phase === "speaking" ? (
+                  <div className="uc-speak-input-row">
+                    <input
+                      type="text"
+                      className="uc-clue-input"
+                      value={draftSpeech}
+                      maxLength={100}
+                      placeholder={t("speakPlaceholder")}
+                      onChange={(e) => setDraftSpeech(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") submitHumanSpeech();
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className="uc-submit-btn is-gold"
+                      disabled={busy || !draftSpeech.trim()}
+                      onClick={submitHumanSpeech}
+                    >
+                      <Mic size={15} />
+                      <span>{t("submitSpeech")}</span>
+                    </button>
+                  </div>
+                ) : myTurn && l.phase === "voting" ? (
+                  <div className="uc-vote-compact-wrap">
+                    <div className="uc-target-pills">
+                      <span className="uc-vote-prompt">{t("votePrompt")}</span>
+                      {eligibleTargetsForHuman.map((tSeat) => {
+                        const tInfo = getPlayerInfo(tSeat);
+                        const active = selectedVoteTarget === tSeat;
+                        return (
+                          <button
+                            key={tSeat}
+                            type="button"
+                            className={`uc-target-pill ${
+                              active ? "is-selected" : ""
+                            }`}
+                            onClick={() => {
+                              playSelectSound();
+                              setSelectedVoteTarget(tSeat);
+                            }}
+                          >
+                            <Crosshair size={12} />
+                            <span>
+                              {seatShortLabel(tSeat)} · {tInfo.name}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <div className="uc-speak-input-row">
+                      <input
+                        type="text"
+                        className="uc-clue-input"
+                        value={draftVoteReason}
+                        maxLength={70}
+                        placeholder={t("voteReasonPlaceholder")}
+                        onChange={(e) => setDraftVoteReason(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") submitHumanVote();
+                        }}
+                      />
+                      <button
+                        type="button"
+                        className="uc-submit-btn is-crimson"
+                        disabled={busy || !selectedVoteTarget}
+                        onClick={submitHumanVote}
+                      >
+                        <Crosshair size={15} />
+                        <span>{t("submitVote")}</span>
+                      </button>
+                    </div>
+                  </div>
+                ) : l.round === 0 || l.phase === "lobby" ? (
+                  <div className="uc-main-idle-hint">
+                    <span>{t("secretCardHint")}</span>
+                  </div>
+                ) : isFinished ? (
+                  <div className="uc-main-idle-hint">
+                    <span>
+                      🏆 {p.winReason}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="uc-main-idle-hint">
+                    {bottomLatestSpeech ? (
+                      <span className="uc-my-last-clue">
+                        本轮已陈述：“{bottomLatestSpeech.text}”
+                      </span>
+                    ) : (
+                      <div className="uc-standby-status">
+                        <div className="uc-waveform" aria-hidden="true">
+                          <span />
+                          <span />
+                          <span />
+                          <span />
+                        </div>
+                        <span>
+                          {p.turn
+                            ? `正在等待 ${seatLabel(p.turn)}（${
+                                getPlayerInfo(p.turn).name
+                              }）${
+                                l.phase === "voting"
+                                  ? "进行锁定指认..."
+                                  : "发表线索证词..."
+                              }`
+                            : "审讯进行中..."}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {!bottomAlive && bottomElim && (
+                <div className="uc-eliminated-stamp" aria-hidden="true">
+                  <span
+                    data-stamp={t("eliminatedStamp", {
+                      role:
+                        bottomElim.role === "Undercover"
+                          ? t("roleUndercover")
+                          : t("roleCivilian"),
+                    })}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
         </section>
 
         {/* Right Wing Agent Seats */}
@@ -1223,208 +1459,6 @@ export default function App() {
           {rightWingSeats.map((s) => renderAgentCard(s, "right"))}
         </aside>
       </main>
-
-      {/* Bottom Lead Detective Console (Row 3, Fixed 174px Height) */}
-      <footer className="uc-bottom-dock">
-        {/* Left: Wax-Seal Classified Word Dossier Card */}
-        <div
-          className={`uc-secret-envelope ${
-            myTurn ? "is-my-turn" : ""
-          } ${!bottomAlive && l.round > 0 ? "is-eliminated" : ""}`}
-        >
-          <div className="uc-envelope-left">
-            <AgentAvatar
-              info={bottomInfo}
-              seat={bottomSeat}
-              revealedRole={bottomRevealedRole}
-              isTurn={myTurn}
-              isAlive={bottomAlive}
-            />
-            <div className="uc-envelope-agent">
-              <strong>{bottomInfo.name}</strong>
-              <small>
-                {bottomRevealedRole
-                  ? bottomRevealedRole === "Undercover"
-                    ? t("roleUndercover")
-                    : t("roleCivilian")
-                  : t("roleSecret")}
-              </small>
-            </div>
-          </div>
-
-          <div className="uc-envelope-word-box">
-            <div className="uc-envelope-label-row">
-              <span className="uc-wax-seal">密</span>
-              <span className="uc-envelope-label">{t("secretCardTitle")}</span>
-              <button
-                type="button"
-                className="uc-mask-toggle"
-                onClick={() => {
-                  playSelectSound();
-                  setMaskMyWord(!maskMyWord);
-                }}
-              >
-                {maskMyWord ? <Unlock size={12} /> : <Lock size={12} />}
-                <span>{maskMyWord ? t("revealWord") : t("holdToHide")}</span>
-              </button>
-            </div>
-
-            {/* Secret word rendered via CSS attr(data-word) so DOM innerText never leaks */}
-            <div
-              className={`uc-secret-word-display ${
-                maskMyWord ? "is-masked" : ""
-              }`}
-              aria-hidden="true"
-              data-word={
-                l.round === 0
-                  ? "待发牌"
-                  : maskMyWord
-                    ? t("wordHiddenMask")
-                    : `「${myWord}」`
-              }
-            />
-            <span className="uc-envelope-subhint">{t("secretCardHint")}</span>
-          </div>
-        </div>
-
-        {/* Right: Interactive Speaking / Voting Controls */}
-        <div className="uc-console-panel">
-          {myTurn && l.phase === "speaking" ? (
-            <div className="uc-speak-console">
-              <div className="uc-console-header">
-                <span className="uc-turn-beacon" />
-                <strong>
-                  轮到你（{seatShortLabel(bottomSeat)}）发表第 {p.cycle} 轮线索证词
-                </strong>
-              </div>
-              <div className="uc-speak-input-row">
-                <input
-                  type="text"
-                  className="uc-clue-input"
-                  value={draftSpeech}
-                  maxLength={100}
-                  placeholder={t("speakPlaceholder")}
-                  onChange={(e) => setDraftSpeech(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") submitHumanSpeech();
-                  }}
-                />
-                <button
-                  type="button"
-                  className="uc-submit-btn is-gold"
-                  disabled={busy || !draftSpeech.trim()}
-                  onClick={submitHumanSpeech}
-                >
-                  <Mic size={16} />
-                  <span>{t("submitSpeech")}</span>
-                </button>
-              </div>
-            </div>
-          ) : myTurn && l.phase === "voting" ? (
-            <div className="uc-vote-console">
-              <div className="uc-vote-targets-row">
-                <span className="uc-vote-prompt">{t("votePrompt")}</span>
-                <div className="uc-target-pills">
-                  {eligibleTargetsForHuman.map((tSeat) => {
-                    const tInfo = getPlayerInfo(tSeat);
-                    const active = selectedVoteTarget === tSeat;
-                    return (
-                      <button
-                        key={tSeat}
-                        type="button"
-                        className={`uc-target-pill ${
-                          active ? "is-selected" : ""
-                        }`}
-                        onClick={() => {
-                          playSelectSound();
-                          setSelectedVoteTarget(tSeat);
-                        }}
-                      >
-                        <Crosshair size={13} />
-                        <span>
-                          {seatShortLabel(tSeat)} · {tInfo.name}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="uc-speak-input-row">
-                <input
-                  type="text"
-                  className="uc-clue-input"
-                  value={draftVoteReason}
-                  maxLength={70}
-                  placeholder={t("voteReasonPlaceholder")}
-                  onChange={(e) => setDraftVoteReason(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") submitHumanVote();
-                  }}
-                />
-                <button
-                  type="button"
-                  className="uc-submit-btn is-crimson"
-                  disabled={busy || !selectedVoteTarget}
-                  onClick={submitHumanVote}
-                >
-                  <Crosshair size={16} />
-                  <span>{t("submitVote")}</span>
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="uc-standby-console">
-              {l.phase === "lobby" || l.round === 0 ? (
-                <div className="uc-standby-row">
-                  <span>{t("dossierEmpty")}</span>
-                  <button
-                    type="button"
-                    className="uc-submit-btn is-gold"
-                    onClick={openPickerModal}
-                  >
-                    <Sparkles size={15} />
-                    <span>{t("startInterrogation")}</span>
-                  </button>
-                </div>
-              ) : isFinished ? (
-                <div className="uc-standby-row">
-                  <span>
-                    🏆 {p.winReason} · 平民词「{p.civilianWord}」 / 卧底词「
-                    {p.undercoverWord}」
-                  </span>
-                  <button
-                    type="button"
-                    className="uc-submit-btn is-gold"
-                    onClick={handleQuickStart}
-                  >
-                    <RotateCcw size={15} />
-                    <span>{t("newRound")}</span>
-                  </button>
-                </div>
-              ) : (
-                <div className="uc-standby-row">
-                  <div className="uc-waveform" aria-hidden="true">
-                    <span />
-                    <span />
-                    <span />
-                    <span />
-                  </div>
-                  <span>
-                    {p.turn
-                      ? `正在等待 ${seatLabel(p.turn)}（${
-                          getPlayerInfo(p.turn).name
-                        }）${
-                          l.phase === "voting" ? "进行锁定指认..." : "发表线索证词..."
-                        }`
-                      : "审讯进行中..."}
-                  </span>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </footer>
 
       {/* Seat & Word Bank Configuration Modal */}
       {picker && (
@@ -1451,7 +1485,6 @@ export default function App() {
             </div>
 
             <div className="uc-modal-body">
-              {/* Mode Selection: 4P vs 6P (1U / 2U) */}
               <div className="uc-config-group">
                 <label className="uc-config-label">{t("playerCountLabel")}</label>
                 <div className="uc-mode-tabs">
@@ -1501,7 +1534,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Word Bank Category Selection */}
               <div className="uc-config-group">
                 <label className="uc-config-label">{t("categoryLabel")}</label>
                 <div className="uc-cat-pills">
@@ -1553,7 +1585,6 @@ export default function App() {
                 )}
               </div>
 
-              {/* Seat Assignments Grid */}
               <div className="uc-seats-grid">
                 {seatsForCount(pickerPlayerCount).map((seat) => (
                   <div key={seat} className="uc-seat-field">

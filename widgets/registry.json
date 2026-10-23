@@ -242,7 +242,7 @@
         {
           "version": "1.0.0-preview.1",
           "package": "./undercover/releases/1.0.0-preview.1/undercover.pudding-widget.json",
-          "packageHash": "255b9c1a0983160c0d580a0452726fbfdb7436eeb725f850f6345dee5b894def",
+          "packageHash": "836ef07c86c36dde94636a9dee7af6434a19a5fdd590b4fab40077556b61fb84",
           "requires": {
             "protocolVersion": 24,
             "sdkVersion": "1"

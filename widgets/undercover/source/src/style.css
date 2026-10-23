@@ -1,4 +1,5 @@
 :root {
+  color-scheme: dark;
   --uc-bg-deep: #070b14;
   --uc-bg-navy: #0f172a;
   --uc-bg-panel: rgba(15, 23, 42, 0.82);
@@ -24,24 +25,30 @@ body,
 #root {
   width: 100%;
   height: 100%;
-  overflow: hidden;
   background: var(--uc-bg-deep);
   color: var(--uc-text-main);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC",
     "Microsoft YaHei", sans-serif;
+  overflow-x: hidden;
   user-select: none;
 }
 
-/* Full-Bleed Noir Detective Round Table Container (Zero Vertical Shift) */
+/* Full-Bleed Responsive Noir Detective Round Table Container (Never uses 100vw so it never overflows sidebar!) */
 .uc-app {
   position: relative;
-  width: 100vw;
-  height: 100vh;
-  min-height: 684px;
-  display: grid;
-  grid-template-rows: 58px minmax(420px, 1fr) 168px;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 18px 16px;
+  gap: 10px;
   background:
-    radial-gradient(circle at 50% 38%, rgba(30, 41, 59, 0.88) 0%, rgba(11, 17, 32, 0.96) 62%, #050811 100%),
+    radial-gradient(
+      circle at 50% 42%,
+      rgba(30, 41, 59, 0.88) 0%,
+      rgba(11, 17, 32, 0.96) 62%,
+      #050811 100%
+    ),
     repeating-linear-gradient(
       45deg,
       rgba(255, 255, 255, 0.012) 0px,
@@ -55,11 +62,11 @@ body,
 /* Volumetric Overhead Spotlight Cone Animation */
 .uc-spotlight-cone {
   position: absolute;
-  top: -120px;
+  top: -110px;
   left: 50%;
-  width: 620px;
-  height: 760px;
-  margin-left: -310px;
+  width: 580px;
+  height: 740px;
+  margin-left: -290px;
   background: radial-gradient(
     ellipse at 50% 0%,
     rgba(251, 191, 36, 0.18) 0%,
@@ -78,11 +85,11 @@ body,
   opacity: 0.65;
 }
 .uc-spotlight-cone.is-left {
-  transform: rotate(24deg) translateX(-80px);
+  transform: rotate(22deg) translateX(-70px);
   opacity: 0.95;
 }
 .uc-spotlight-cone.is-right {
-  transform: rotate(-24deg) translateX(80px);
+  transform: rotate(-22deg) translateX(70px);
   opacity: 0.95;
 }
 .uc-spotlight-cone.is-top {
@@ -90,7 +97,7 @@ body,
   opacity: 0.95;
 }
 .uc-spotlight-cone.is-bottom {
-  transform: rotate(0deg) scaleX(1.18);
+  transform: rotate(0deg) scaleX(1.16);
   opacity: 1;
 }
 
@@ -101,16 +108,22 @@ body,
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
+  gap: 10px;
+  padding: 9px 16px;
+  border-radius: 13px;
   background: rgba(7, 11, 20, 0.84);
-  border-bottom: 1px solid rgba(245, 158, 11, 0.22);
+  border: 1px solid rgba(245, 158, 11, 0.22);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.38);
   backdrop-filter: blur(12px);
+  flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
 .uc-brand {
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .uc-emblem {
@@ -121,7 +134,7 @@ body,
 }
 
 .uc-brand h1 {
-  font-size: 17px;
+  font-size: 16.5px;
   font-weight: 800;
   letter-spacing: 0.03em;
   background: linear-gradient(135deg, #fef08a 0%, #f59e0b 60%, #fbbf24 100%);
@@ -132,17 +145,18 @@ body,
 .uc-status-pills {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-left: 8px;
+  gap: 7px;
+  margin-left: 4px;
 }
 
 .uc-phase-pill,
 .uc-alive-pill,
 .uc-spy-pill {
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
-  padding: 3px 10px;
+  padding: 2px 9px;
   border-radius: 999px;
+  white-space: nowrap;
 }
 
 .uc-phase-pill {
@@ -166,7 +180,8 @@ body,
 .uc-toolbar {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
+  flex-wrap: wrap;
 }
 
 .uc-top-btn {
@@ -174,19 +189,20 @@ body,
   align-items: center;
   gap: 6px;
   height: 32px;
-  padding: 0 12px;
+  padding: 0 11px;
   border-radius: 8px;
   border: 1px solid rgba(148, 163, 184, 0.22);
   background: rgba(30, 41, 59, 0.72);
   color: #e2e8f0;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
+  white-space: nowrap;
   transition: all 0.18s ease;
 }
 
 .uc-top-btn.is-icon {
-  padding: 0 9px;
+  padding: 0 8px;
 }
 
 .uc-top-btn:hover:not(:disabled) {
@@ -214,7 +230,7 @@ body,
 /* Error Toast */
 .uc-error-toast {
   position: absolute;
-  top: 66px;
+  top: 64px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 60;
@@ -238,34 +254,35 @@ body,
   display: flex;
 }
 
-/* Row 2: Main Round-Table Arena */
+/* Main Symmetrical Cross / Round-Table Arena */
 .uc-arena {
   position: relative;
   z-index: 5;
+  flex: 1;
   display: grid;
-  grid-template-columns: 276px minmax(360px, 1fr) 276px;
-  gap: 16px;
-  padding: 14px 20px;
-  height: 100%;
-  overflow: hidden;
+  grid-template-columns: minmax(196px, 236px) minmax(0, 1fr) minmax(196px, 236px);
+  gap: 14px;
+  align-items: center;
+  min-height: 0;
 }
 
 .uc-wing {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 14px;
+  gap: 12px;
   height: 100%;
 }
 
 /* Agent Card (Fixed Height = Zero Vertical Jumping) */
 .uc-agent-card {
   position: relative;
-  height: 158px;
+  width: 100%;
+  height: 144px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 12px 14px;
+  padding: 11px 12px;
   border-radius: 14px;
   background: linear-gradient(
     165deg,
@@ -279,8 +296,9 @@ body,
 }
 
 .uc-agent-card.is-top {
-  width: 320px;
-  height: 142px;
+  width: 300px;
+  max-width: 100%;
+  height: 130px;
 }
 
 .uc-agent-card.is-turn {
@@ -324,8 +342,8 @@ body,
 
 .uc-target-reticle {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 9px;
+  right: 9px;
   color: #f87171;
   animation: ucReticlePulse 1.1s infinite ease-in-out;
 }
@@ -345,14 +363,14 @@ body,
 .uc-agent-header {
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 10px;
 }
 
 /* Avatar with Spy Star Ring & Seat Number */
 .uc-avatar-wrap {
   position: relative;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -362,8 +380,8 @@ body,
 .uc-undercover-star-ring {
   position: absolute;
   inset: -4px;
-  width: 52px;
-  height: 52px;
+  width: 48px;
+  height: 48px;
   animation: ucSlowSpin 14s linear infinite;
 }
 
@@ -379,8 +397,8 @@ body,
 .uc-avatar-circle {
   position: relative;
   z-index: 2;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: #1e293b;
   border: 2px solid rgba(245, 158, 11, 0.5);
@@ -411,7 +429,7 @@ body,
   background: #0f172a;
   border: 1px solid rgba(251, 191, 36, 0.65);
   color: #fde047;
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 800;
 }
 
@@ -428,7 +446,7 @@ body,
 }
 
 .uc-agent-name {
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 700;
   color: #f8fafc;
   white-space: nowrap;
@@ -437,9 +455,9 @@ body,
 }
 
 .uc-incoming-vote-pill {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
-  padding: 1px 7px;
+  padding: 1px 6px;
   border-radius: 999px;
   background: rgba(220, 38, 38, 0.25);
   border: 1px solid #f87171;
@@ -450,16 +468,16 @@ body,
 .uc-agent-tags {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 4px;
+  gap: 5px;
+  margin-top: 3px;
 }
 
 .uc-role-badge {
   display: inline-flex;
   align-items: center;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
-  padding: 1px 7px;
+  padding: 1px 6px;
   border-radius: 5px;
 }
 
@@ -485,7 +503,7 @@ body,
 }
 
 .uc-secret-word-chip {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
   color: #fde047;
   background: rgba(245, 158, 11, 0.14);
@@ -500,12 +518,12 @@ body,
 
 /* Testimony & Vote Bubble Slot inside Agent Card */
 .uc-agent-testimony-slot {
-  height: 72px;
+  height: 62px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 10px;
-  border-radius: 10px;
+  padding: 5px 9px;
+  border-radius: 9px;
   background: rgba(7, 11, 20, 0.58);
   border: 1px solid rgba(148, 163, 184, 0.12);
   overflow: hidden;
@@ -515,14 +533,14 @@ body,
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 600;
   color: #fde047;
 }
 
 .uc-radar-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: #fbbf24;
   box-shadow: 0 0 10px #fbbf24;
@@ -561,8 +579,8 @@ body,
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  font-size: 12.5px;
-  line-height: 1.45;
+  font-size: 12px;
+  line-height: 1.42;
   color: #f1f5f9;
 }
 
@@ -571,7 +589,7 @@ body,
 }
 
 .uc-speech-placeholder {
-  font-size: 12px;
+  font-size: 11.5px;
   color: rgba(148, 163, 184, 0.5);
 }
 
@@ -579,22 +597,22 @@ body,
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .uc-vote-arrow-tag {
   align-self: flex-start;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 800;
   color: #fecaca;
   background: rgba(185, 28, 28, 0.35);
   border: 1px solid rgba(248, 113, 113, 0.5);
-  padding: 1px 8px;
-  border-radius: 6px;
+  padding: 1px 7px;
+  border-radius: 5px;
 }
 
 .uc-vote-reason-text {
-  font-size: 11.5px;
+  font-size: 11px;
   color: #cbd5e1;
   white-space: nowrap;
   overflow: hidden;
@@ -604,17 +622,17 @@ body,
 /* Dramatic Eliminated Iron Stamp Slam Animation */
 .uc-eliminated-stamp {
   position: absolute;
-  top: 14px;
-  right: 12px;
+  top: 12px;
+  right: 10px;
   z-index: 8;
-  padding: 3px 10px;
-  border: 2.5px solid #ef4444;
+  padding: 2px 9px;
+  border: 2px solid #ef4444;
   border-radius: 6px;
-  background: rgba(69, 10, 10, 0.88);
+  background: rgba(69, 10, 10, 0.9);
   color: #fca5a5;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 900;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   transform: rotate(-14deg);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
   animation: ucStampSlam 0.36s cubic-bezier(0.18, 0.89, 0.32, 1.28);
@@ -639,11 +657,12 @@ body,
   }
 }
 
-/* Center Stage: Top Seat + Classified Dossier */
+/* Center Stage: Top Seat (#3) + Classified Dossier + Bottom Centered Main Seat (#1) */
 .uc-center-stage {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   height: 100%;
   min-height: 0;
@@ -651,12 +670,16 @@ body,
 
 .uc-top-seat-holder {
   flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .uc-dossier-panel {
   width: 100%;
   flex: 1;
-  min-height: 0;
+  min-height: 220px;
+  max-height: 340px;
   display: flex;
   flex-direction: column;
   border-radius: 16px;
@@ -673,10 +696,10 @@ body,
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 9px 14px;
+  padding: 8px 14px;
   background: rgba(30, 41, 59, 0.65);
   border-bottom: 1px solid rgba(245, 158, 11, 0.18);
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 700;
   color: #fde047;
 }
@@ -694,9 +717,9 @@ body,
 }
 
 .uc-god-chip {
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 700;
-  padding: 2px 9px;
+  padding: 2px 8px;
   border-radius: 6px;
 }
 
@@ -730,61 +753,65 @@ body,
   align-items: center;
   justify-content: center;
   text-align: center;
-  gap: 10px;
-  padding: 16px 24px;
+  gap: 8px;
+  padding: 10px 20px;
 }
 
 .uc-welcome-seal {
-  font-size: 32px;
+  font-size: 28px;
 }
 
 .uc-welcome-card h2 {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 800;
   color: #fde047;
 }
 
 .uc-welcome-card p {
-  max-width: 440px;
-  font-size: 13px;
-  line-height: 1.55;
+  max-width: 420px;
+  font-size: 12.5px;
+  line-height: 1.5;
   color: #cbd5e1;
 }
 
 .uc-cta-btn {
-  margin-top: 6px;
+  margin-top: 4px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 20px;
+  padding: 8px 20px;
   border-radius: 999px;
   border: 1px solid #fde047;
   background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
   color: #fffbeb;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
+}
+
+.uc-cta-btn:hover {
+  filter: brightness(1.08);
 }
 
 /* Timeline inside Dossier */
 .uc-timeline-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 9px;
 }
 
 .uc-timeline-cycle {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .uc-cycle-divider {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 700;
   color: #fbbf24;
   opacity: 0.9;
@@ -801,8 +828,8 @@ body,
   display: flex;
   align-items: baseline;
   gap: 8px;
-  font-size: 12.5px;
-  line-height: 1.45;
+  font-size: 12px;
+  line-height: 1.42;
   padding: 4px 8px;
   border-radius: 7px;
   background: rgba(30, 41, 59, 0.45);
@@ -810,7 +837,7 @@ body,
 
 .uc-log-badge {
   flex-shrink: 0;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 700;
   color: #93c5fd;
 }
@@ -838,7 +865,7 @@ body,
 .uc-log-elim-banner {
   padding: 5px 10px;
   border-radius: 8px;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
 }
 
@@ -856,22 +883,30 @@ body,
 
 .uc-victory-banner {
   margin-top: 6px;
-  padding: 10px 14px;
+  padding: 9px 12px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
   animation: ucBubblePop 0.35s ease;
 }
 
 .uc-victory-banner.is-civilian-win {
-  background: linear-gradient(135deg, rgba(20, 83, 45, 0.65), rgba(15, 23, 42, 0.9));
+  background: linear-gradient(
+    135deg,
+    rgba(20, 83, 45, 0.65),
+    rgba(15, 23, 42, 0.9)
+  );
   border: 1px solid #4ade80;
   color: #dcfce7;
 }
 
 .uc-victory-banner.is-undercover-win {
-  background: linear-gradient(135deg, rgba(127, 29, 29, 0.65), rgba(15, 23, 42, 0.9));
+  background: linear-gradient(
+    135deg,
+    rgba(127, 29, 29, 0.65),
+    rgba(15, 23, 42, 0.9)
+  );
   border: 1px solid #f87171;
   color: #fee2e2;
 }
@@ -880,49 +915,61 @@ body,
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 14px;
+  font-size: 13.5px;
 }
 
 .uc-victory-words {
   display: flex;
   gap: 16px;
-  font-size: 12.5px;
+  font-size: 12px;
   color: #fde047;
 }
 
-/* Row 3: Bottom Lead Detective Console (Fixed 168px Height) */
-.uc-bottom-dock {
-  position: relative;
-  z-index: 10;
-  display: grid;
-  grid-template-columns: 356px minmax(360px, 1fr);
-  gap: 16px;
-  padding: 12px 20px 16px;
-  background: rgba(7, 11, 20, 0.88);
-  border-top: 1px solid rgba(245, 158, 11, 0.24);
-  backdrop-filter: blur(14px);
+/* Bottom Centered Lead Detective Seat (#1) — Perfectly Symmetric with Top Seat (#3) */
+.uc-bottom-seat-holder {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-/* Wax-Seal Secret Word Dossier Card */
-.uc-secret-envelope {
+.uc-main-seat-card {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  min-height: 132px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: space-between;
-  gap: 12px;
-  padding: 12px 14px;
-  border-radius: 14px;
+  gap: 8px;
+  padding: 11px 16px;
+  border-radius: 15px;
   background: linear-gradient(
     145deg,
     rgba(30, 41, 59, 0.92) 0%,
     rgba(15, 23, 42, 0.98) 100%
   );
   border: 1px solid rgba(245, 158, 11, 0.38);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.42);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
 }
 
-.uc-secret-envelope.is-my-turn {
+.uc-main-seat-card.is-my-turn {
   border-color: #fde047;
-  box-shadow: 0 0 22px rgba(245, 158, 11, 0.28);
+  box-shadow:
+    0 0 0 2px rgba(251, 191, 36, 0.28),
+    0 12px 32px rgba(245, 158, 11, 0.28);
+}
+
+.uc-main-seat-card.is-eliminated {
+  opacity: 0.68;
+}
+
+.uc-main-seat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
 }
 
 .uc-envelope-left {
@@ -938,7 +985,7 @@ body,
 }
 
 .uc-envelope-agent strong {
-  font-size: 13px;
+  font-size: 13.5px;
   color: #f8fafc;
 }
 
@@ -947,12 +994,14 @@ body,
   color: #94a3b8;
 }
 
-.uc-envelope-word-box {
-  flex: 1;
+.uc-main-word-badge {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 12px;
+  border-radius: 10px;
+  background: rgba(7, 11, 20, 0.65);
+  border: 1px solid rgba(245, 158, 11, 0.25);
 }
 
 .uc-envelope-label-row {
@@ -976,7 +1025,7 @@ body,
 }
 
 .uc-envelope-label {
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 700;
   color: #cbd5e1;
 }
@@ -985,21 +1034,21 @@ body,
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 7px;
-  border-radius: 6px;
+  padding: 2px 6px;
+  border-radius: 5px;
   border: 1px solid rgba(148, 163, 184, 0.25);
   background: rgba(15, 23, 42, 0.8);
   color: #cbd5e1;
-  font-size: 11px;
+  font-size: 10.5px;
   cursor: pointer;
 }
 
 .uc-secret-word-display {
-  font-size: 19px;
+  font-size: 16px;
   font-weight: 900;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   color: #fde047;
-  text-shadow: 0 2px 10px rgba(245, 158, 11, 0.35);
+  text-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
 }
 
 .uc-secret-word-display::before {
@@ -1009,62 +1058,56 @@ body,
 .uc-secret-word-display.is-masked {
   color: #64748b;
   text-shadow: none;
+  font-size: 13.5px;
 }
 
-.uc-envelope-subhint {
-  font-size: 10.5px;
-  color: #64748b;
-}
-
-/* Interactive Console Panel */
-.uc-console-panel {
+.uc-main-seat-body {
+  min-height: 54px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 12px 16px;
-  border-radius: 14px;
-  background: rgba(15, 23, 42, 0.82);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(7, 11, 20, 0.58);
+  border: 1px solid rgba(148, 163, 184, 0.12);
 }
 
-.uc-speak-console,
-.uc-vote-console {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.uc-console-header {
+.uc-main-idle-hint {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: #fde047;
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  color: #94a3b8;
 }
 
-.uc-turn-beacon {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: #fde047;
-  box-shadow: 0 0 10px #f59e0b;
+.uc-my-last-clue {
+  color: #f1f5f9;
+  font-weight: 500;
+}
+
+.uc-standby-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #cbd5e1;
 }
 
 .uc-speak-input-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .uc-clue-input {
   flex: 1;
-  height: 40px;
-  padding: 0 14px;
-  border-radius: 10px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 8px;
   border: 1px solid rgba(245, 158, 11, 0.38);
-  background: rgba(7, 11, 20, 0.85);
+  background: rgba(7, 11, 20, 0.88);
   color: #f8fafc;
-  font-size: 13.5px;
+  font-size: 12.5px;
   outline: none;
 }
 
@@ -1076,15 +1119,16 @@ body,
 .uc-submit-btn {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  height: 40px;
-  padding: 0 18px;
-  border-radius: 10px;
-  font-size: 13.5px;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
   font-weight: 700;
   cursor: pointer;
   border: 1px solid transparent;
   flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .uc-submit-btn.is-gold {
@@ -1104,15 +1148,14 @@ body,
   cursor: not-allowed;
 }
 
-.uc-vote-targets-row {
+.uc-vote-compact-wrap {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .uc-vote-prompt {
-  font-size: 12.5px;
+  font-size: 11.5px;
   font-weight: 700;
   color: #fca5a5;
 }
@@ -1127,13 +1170,13 @@ body,
 .uc-target-pill {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 4px 10px;
-  border-radius: 8px;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 7px;
   border: 1px solid rgba(248, 113, 113, 0.35);
   background: rgba(69, 10, 10, 0.45);
   color: #fecaca;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
   cursor: pointer;
 }
@@ -1144,23 +1187,6 @@ body,
   color: #ffffff;
 }
 
-.uc-standby-console {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-}
-
-.uc-standby-row {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 13px;
-  color: #cbd5e1;
-}
-
 .uc-waveform {
   display: inline-flex;
   align-items: center;
@@ -1169,7 +1195,7 @@ body,
 
 .uc-waveform span {
   width: 3px;
-  height: 14px;
+  height: 12px;
   border-radius: 2px;
   background: #fbbf24;
   animation: ucWave 0.8s infinite ease-in-out alternate;
@@ -1209,7 +1235,7 @@ body,
 
 .uc-modal-card {
   width: 100%;
-  max-width: 660px;
+  max-width: 640px;
   border-radius: 18px;
   background: #0f172a;
   border: 1px solid rgba(245, 158, 11, 0.38);
@@ -1423,19 +1449,26 @@ body,
   color: #94a3b8;
 }
 
+.uc-select-chevron {
+  color: #94a3b8;
+  transition: transform 0.15s ease;
+  flex-shrink: 0;
+}
+
+.uc-select-chevron.is-open {
+  transform: rotate(180deg);
+}
+
 .uc-select-menu {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
-  z-index: 40;
-  max-height: 210px;
+  position: fixed;
+  z-index: 999;
+  max-height: 240px;
   overflow-y: auto;
   border-radius: 10px;
   background: #0f172a;
-  border: 1px solid rgba(245, 158, 11, 0.4);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.65);
-  padding: 4px;
+  border: 1px solid rgba(245, 158, 11, 0.55);
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.78);
+  padding: 5px;
 }
 
 .uc-select-option {
