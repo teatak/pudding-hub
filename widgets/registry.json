@@ -240,6 +240,17 @@
       "icon": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIyNiIgZmlsbD0iIzBGMTcyQSIvPgogIDxyZWN0IHg9IjYiIHk9IjYiIHdpZHRoPSIxMTYiIGhlaWdodD0iMTE2IiByeD0iMjIiIHN0cm9rZT0iI0Y1OUUwQiIgc3Ryb2tlLW9wYWNpdHk9IjAuMzUiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxjaXJjbGUgY3g9IjY0IiBjeT0iNjQiIHI9IjQ2IiBmaWxsPSIjMUUyOTNCIiBzdHJva2U9IiNEOTc3MDYiIHN0cm9rZS1vcGFjaXR5PSIwLjQiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPCEtLSBOb2lyIEZlZG9yYSBIYXQgQnJpbSAmIENyb3duIC0tPgogIDxwYXRoIGQ9Ik0yMiA2MEMzNCA1NSA5NCA1NSAxMDYgNjBDOTYgNjYgMzIgNjYgMjIgNjBaIiBmaWxsPSIjRjU5RTBCIi8+CiAgPHBhdGggZD0iTTM2IDU4TDQzIDMyQzQ0IDI4IDUxIDI2IDU3IDI5TDY0IDMzTDcxIDI5Qzc3IDI2IDg0IDI4IDg1IDMyTDkyIDU4SDM2WiIgZmlsbD0iI0ZCQkYyNCIvPgogIDxwYXRoIGQ9Ik0zNyA1Mkg5MVY1N0gzN1Y1MloiIGZpbGw9IiNCNDUzMDkiLz4KICA8IS0tIERldGVjdGl2ZSBTdW5nbGFzc2VzIC8gTWFzayAtLT4KICA8cmVjdCB4PSIzNCIgeT0iNjkiIHdpZHRoPSIyNiIgaGVpZ2h0PSIxNiIgcng9IjYiIGZpbGw9IiMwRjE3MkEiIHN0cm9rZT0iI0ZERTA0NyIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8cmVjdCB4PSI2OCIgeT0iNjkiIHdpZHRoPSIyNiIgaGVpZ2h0PSIxNiIgcng9IjYiIGZpbGw9IiMwRjE3MkEiIHN0cm9rZT0iI0ZERTA0NyIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8cGF0aCBkPSJNNjAgNzVINjgiIHN0cm9rZT0iI0ZERTA0NyIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0zOSA3M0w0NSA4MSIgc3Ryb2tlPSIjMzhCREY4IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik03MyA3M0w3OSA4MSIgc3Ryb2tlPSIjMzhCREY4IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDwhLS0gQ3JpbXNvbiBNYWduaWZ5aW5nIEdsYXNzIC8gVGFyZ2V0IEFjY2VudCAtLT4KICA8Y2lyY2xlIGN4PSI5MiIgY3k9IjkyIiByPSIxMyIgZmlsbD0iI0RDMjYyNiIgc3Ryb2tlPSIjRkVGMDhBIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDxwYXRoIGQ9Ik04OCA5Mkg5Nk05MiA4OFY5NiIgc3Ryb2tlPSIjRkVGMDhBIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K",
       "releases": [
         {
+          "version": "1.0.0-preview.2",
+          "package": "./undercover/releases/1.0.0-preview.2/undercover.pudding-widget.json",
+          "packageHash": "9fd061c48ff392dbae992dd89f81a93d88e4e9a0b43c22892c208a3252115f35",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
           "version": "1.0.0-preview.1",
           "package": "./undercover/releases/1.0.0-preview.1/undercover.pudding-widget.json",
           "packageHash": "836ef07c86c36dde94636a9dee7af6434a19a5fdd590b4fab40077556b61fb84",
