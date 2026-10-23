@@ -1,17 +1,17 @@
 :root {
   color-scheme: dark;
-  --uc-bg-deep: #070b14;
-  --uc-bg-navy: #0f172a;
-  --uc-bg-panel: rgba(15, 23, 42, 0.82);
+  --uc-bg-deep: #0d1527;
+  --uc-bg-navy: #182338;
+  --uc-bg-panel: rgba(30, 41, 59, 0.9);
   --uc-gold: #f59e0b;
-  --uc-gold-bright: #fde047;
-  --uc-gold-soft: rgba(245, 158, 11, 0.24);
-  --uc-crimson: #dc2626;
+  --uc-gold-bright: #fbbf24;
+  --uc-gold-soft: rgba(245, 158, 11, 0.32);
+  --uc-crimson: #ef4444;
   --uc-crimson-bright: #f87171;
   --uc-cyan: #38bdf8;
   --uc-text-main: #f8fafc;
-  --uc-text-muted: #94a3b8;
-  --uc-border-subtle: rgba(148, 163, 184, 0.16);
+  --uc-text-muted: #cbd5e1;
+  --uc-border-subtle: rgba(148, 163, 184, 0.26);
 }
 
 * {
@@ -48,14 +48,14 @@ body,
   background:
     radial-gradient(
       circle at 50% 42%,
-      rgba(30, 41, 59, 0.88) 0%,
-      rgba(11, 17, 32, 0.96) 62%,
-      #050811 100%
+      rgba(45, 65, 102, 0.95) 0%,
+      rgba(26, 38, 62, 0.98) 58%,
+      #111827 100%
     ),
     repeating-linear-gradient(
       45deg,
-      rgba(255, 255, 255, 0.012) 0px,
-      rgba(255, 255, 255, 0.012) 2px,
+      rgba(255, 255, 255, 0.02) 0px,
+      rgba(255, 255, 255, 0.02) 2px,
       transparent 2px,
       transparent 8px
     );
@@ -73,9 +73,9 @@ body,
   margin-left: -290px;
   background: radial-gradient(
     ellipse at 50% 0%,
-    rgba(251, 191, 36, 0.18) 0%,
-    rgba(245, 158, 11, 0.07) 42%,
-    transparent 74%
+    rgba(251, 191, 36, 0.35) 0%,
+    rgba(245, 158, 11, 0.15) 45%,
+    transparent 76%
   );
   clip-path: polygon(44% 0%, 56% 0%, 100% 100%, 0% 100%);
   pointer-events: none;
@@ -86,7 +86,7 @@ body,
 
 .uc-spotlight-cone.is-center {
   transform: rotate(0deg) scaleX(1);
-  opacity: 0.65;
+  opacity: 0.9;
 }
 .uc-spotlight-cone.is-left {
   transform: rotate(22deg) translateX(-70px);
@@ -115,9 +115,9 @@ body,
   gap: 10px;
   padding: 9px 16px;
   border-radius: 13px;
-  background: rgba(7, 11, 20, 0.84);
-  border: 1px solid rgba(245, 158, 11, 0.22);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.38);
+  background: rgba(18, 27, 44, 0.88);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(12px);
   flex-wrap: wrap;
   flex-shrink: 0;
@@ -195,9 +195,9 @@ body,
   height: 32px;
   padding: 0 11px;
   border-radius: 8px;
-  border: 1px solid rgba(148, 163, 184, 0.22);
-  background: rgba(30, 41, 59, 0.72);
-  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.32);
+  background: rgba(36, 50, 76, 0.85);
+  color: #f1f5f9;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -293,11 +293,11 @@ body,
   border-radius: 14px;
   background: linear-gradient(
     165deg,
-    rgba(30, 41, 59, 0.88) 0%,
-    rgba(15, 23, 42, 0.94) 100%
+    rgba(36, 52, 82, 0.95) 0%,
+    rgba(22, 32, 54, 0.98) 100%
   );
-  border: 1px solid rgba(148, 163, 184, 0.22);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.38);
+  border: 1px solid rgba(148, 163, 184, 0.32);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
   overflow: hidden;
   box-sizing: border-box;
@@ -316,8 +316,9 @@ body,
 .uc-agent-card.is-turn {
   border-color: #fbbf24;
   box-shadow:
-    0 0 0 2px rgba(251, 191, 36, 0.28),
-    0 12px 30px rgba(245, 158, 11, 0.25);
+    0 0 0 2px rgba(251, 191, 36, 0.45),
+    0 0 20px rgba(245, 158, 11, 0.4),
+    0 12px 30px rgba(0, 0, 0, 0.45);
 }
 
 .uc-agent-card.is-pk {
@@ -436,6 +437,11 @@ body,
   border-color: #fca5a5;
 }
 
+.uc-avatar-wrap.is-turn .uc-avatar-circle {
+  border-color: #fde047;
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.7);
+}
+
 .uc-avatar-img {
   width: 100%;
   height: 100%;
@@ -449,7 +455,7 @@ body,
   z-index: 3;
   padding: 1px 5px;
   border-radius: 6px;
-  background: #0f172a;
+  background: #182338;
   border: 1px solid rgba(251, 191, 36, 0.65);
   color: #fde047;
   font-size: 9.5px;
@@ -553,8 +559,8 @@ body,
   justify-content: center;
   padding: 4px 8px;
   border-radius: 9px;
-  background: rgba(7, 11, 20, 0.58);
-  border: 1px solid rgba(148, 163, 184, 0.12);
+  background: rgba(13, 20, 36, 0.75);
+  border: 1px solid rgba(148, 163, 184, 0.22);
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -629,7 +635,7 @@ body,
 
 .uc-speech-placeholder {
   font-size: 11.5px;
-  color: rgba(148, 163, 184, 0.5);
+  color: rgba(203, 213, 225, 0.75);
 }
 
 .uc-vote-action-box {
@@ -723,11 +729,11 @@ body,
   display: flex;
   flex-direction: column;
   border-radius: 16px;
-  background: rgba(11, 17, 32, 0.86);
-  border: 1px solid rgba(245, 158, 11, 0.25);
+  background: rgba(20, 30, 50, 0.92);
+  border: 1px solid rgba(251, 191, 36, 0.36);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 12px 34px rgba(0, 0, 0, 0.45);
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 14px 38px rgba(0, 0, 0, 0.38);
   overflow: hidden;
 }
 
@@ -737,8 +743,8 @@ body,
   justify-content: space-between;
   gap: 10px;
   padding: 8px 14px;
-  background: rgba(30, 41, 59, 0.65);
-  border-bottom: 1px solid rgba(245, 158, 11, 0.18);
+  background: rgba(36, 52, 82, 0.85);
+  border-bottom: 1px solid rgba(251, 191, 36, 0.28);
   font-size: 12px;
   font-weight: 700;
   color: #fde047;
@@ -811,7 +817,7 @@ body,
   max-width: 420px;
   font-size: 12.5px;
   line-height: 1.5;
-  color: #cbd5e1;
+  color: #e2e8f0;
 }
 
 .uc-cta-btn {
@@ -872,7 +878,7 @@ body,
   line-height: 1.42;
   padding: 4px 8px;
   border-radius: 7px;
-  background: rgba(30, 41, 59, 0.45);
+  background: rgba(36, 52, 82, 0.65);
 }
 
 .uc-log-badge {
@@ -989,20 +995,22 @@ body,
   border-radius: 15px;
   background: linear-gradient(
     145deg,
-    rgba(30, 41, 59, 0.92) 0%,
-    rgba(15, 23, 42, 0.98) 100%
+    rgba(36, 52, 84, 0.95) 0%,
+    rgba(22, 32, 54, 0.98) 100%
   );
-  border: 1px solid rgba(245, 158, 11, 0.38);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   overflow: hidden;
   box-sizing: border-box;
 }
 
+.uc-main-seat-card.is-turn,
 .uc-main-seat-card.is-my-turn {
-  border-color: #fde047;
+  border-color: #fbbf24;
   box-shadow:
-    0 0 0 2px rgba(251, 191, 36, 0.28),
-    0 12px 32px rgba(245, 158, 11, 0.28);
+    0 0 0 2px rgba(251, 191, 36, 0.45),
+    0 0 24px rgba(245, 158, 11, 0.45),
+    0 12px 34px rgba(0, 0, 0, 0.55);
 }
 
 .uc-main-seat-card.is-eliminated {
@@ -1048,8 +1056,8 @@ body,
   gap: 12px;
   padding: 5px 12px;
   border-radius: 10px;
-  background: rgba(7, 11, 20, 0.65);
-  border: 1px solid rgba(245, 158, 11, 0.25);
+  background: rgba(15, 23, 40, 0.82);
+  border: 1px solid rgba(251, 191, 36, 0.38);
 }
 
 .uc-envelope-label-row {
@@ -1119,8 +1127,8 @@ body,
   justify-content: center;
   padding: 4px 10px;
   border-radius: 10px;
-  background: rgba(7, 11, 20, 0.58);
-  border: 1px solid rgba(148, 163, 184, 0.12);
+  background: rgba(14, 22, 38, 0.78);
+  border: 1px solid rgba(148, 163, 184, 0.22);
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -1177,8 +1185,8 @@ body,
   height: 36px;
   padding: 0 12px;
   border-radius: 8px;
-  border: 1px solid rgba(245, 158, 11, 0.38);
-  background: rgba(7, 11, 20, 0.88);
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  background: rgba(16, 26, 46, 0.92);
   color: #f8fafc;
   font-size: 12.5px;
   outline: none;
@@ -1343,8 +1351,8 @@ body,
   width: 100%;
   max-width: 640px;
   border-radius: 18px;
-  background: #0f172a;
-  border: 1px solid rgba(245, 158, 11, 0.38);
+  background: linear-gradient(165deg, #182338 0%, #111827 100%);
+  border: 1px solid rgba(251, 191, 36, 0.35);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
   display: flex;
   flex-direction: column;
@@ -1455,8 +1463,8 @@ body,
   height: 36px;
   padding: 0 12px;
   border-radius: 8px;
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  background: rgba(7, 11, 20, 0.8);
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  background: rgba(16, 26, 46, 0.92);
   color: #f8fafc;
   font-size: 12.5px;
 }
@@ -1486,15 +1494,20 @@ body,
 
 .uc-select-trigger {
   width: 100%;
+  height: 48px;
+  min-height: 48px;
+  max-height: 48px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 7px 10px;
+  padding: 0 10px;
   border-radius: 10px;
-  border: 1px solid rgba(148, 163, 184, 0.24);
-  background: rgba(30, 41, 59, 0.75);
+  border: 1px solid rgba(148, 163, 184, 0.32);
+  background: rgba(36, 52, 82, 0.85);
   color: #f8fafc;
   cursor: pointer;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .uc-select-item-left {
@@ -1502,11 +1515,12 @@ body,
   align-items: center;
   gap: 9px;
   min-width: 0;
+  flex: 1;
 }
 
 .uc-select-icon {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 7px;
   display: flex;
   align-items: center;
@@ -1528,8 +1542,8 @@ body,
 }
 
 .uc-select-model-img {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 7px;
   object-fit: cover;
   flex-shrink: 0;
@@ -1538,21 +1552,32 @@ body,
 .uc-select-texts {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: flex-start;
+  gap: 2px;
   min-width: 0;
+  flex: 1;
 }
 
 .uc-select-title {
   font-size: 12.5px;
+  font-weight: 700;
+  line-height: 16px;
   color: #f8fafc;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .uc-select-sub {
   font-size: 10.5px;
+  line-height: 14px;
   color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .uc-select-chevron {
@@ -1571,23 +1596,28 @@ body,
   max-height: 240px;
   overflow-y: auto;
   border-radius: 10px;
-  background: #0f172a;
-  border: 1px solid rgba(245, 158, 11, 0.55);
+  background: #182338;
+  border: 1px solid rgba(251, 191, 36, 0.45);
   box-shadow: 0 16px 38px rgba(0, 0, 0, 0.78);
   padding: 5px;
 }
 
 .uc-select-option {
   width: 100%;
+  height: 44px;
+  min-height: 44px;
+  max-height: 44px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 8px;
+  padding: 0 8px;
   border-radius: 7px;
   border: none;
   background: transparent;
   color: #f8fafc;
   cursor: pointer;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .uc-select-option:hover,

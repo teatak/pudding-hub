@@ -718,6 +718,12 @@ export default function App() {
   const bottomSeat: Seat =
     humanSeat && activeSeats.includes(humanSeat) ? humanSeat : activeSeats[0];
 
+  const isBottomTurn =
+    !isPaused &&
+    (l.phase === "speaking" || l.phase === "voting") &&
+    !p.winner &&
+    p.turn === bottomSeat;
+
   // Rotate remaining seats clockwise around the interrogation table
   const bottomIdx = activeSeats.indexOf(bottomSeat);
   const rotatedOpponents: Seat[] = [];
@@ -1257,7 +1263,7 @@ export default function App() {
           {/* Bottom Centered Lead Detective Seat (#1) & Action Hub */}
           <div className="uc-bottom-seat-holder">
             <div
-              className={`uc-main-seat-card ${myTurn ? "is-my-turn" : ""} ${
+              className={`uc-main-seat-card ${isBottomTurn ? "is-turn is-my-turn" : ""} ${
                 !bottomAlive && l.round > 0 ? "is-eliminated" : ""
               }`}
             >
@@ -1268,7 +1274,7 @@ export default function App() {
                     info={bottomInfo}
                     seat={bottomSeat}
                     revealedRole={bottomRevealedRole}
-                    isTurn={myTurn}
+                    isTurn={isBottomTurn}
                     isAlive={bottomAlive}
                   />
                   <div className="uc-envelope-agent">
