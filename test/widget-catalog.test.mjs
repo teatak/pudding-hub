@@ -10,12 +10,22 @@ const root = fileURLToPath(new URL("../widgets/", import.meta.url));
 const read = async (file) => JSON.parse(await fs.readFile(file, "utf8"));
 const hash = (value) => createHash("sha256").update(value).digest("hex");
 
-test("widget catalog contains only Todo and Gomoku with complete, verifiable releases", async () => {
+test("widget catalog contains all registered widgets with complete, verifiable releases", async () => {
   const names = (await fs.readdir(root, { withFileTypes: true }))
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)
     .sort();
-  assert.deepEqual(names, ["debate", "doudizhu", "gomoku", "kanban", "notes", "pocket-studio", "reversi", "shared-todo"]);
+  assert.deepEqual(names, [
+    "debate",
+    "doudizhu",
+    "gomoku",
+    "kanban",
+    "notes",
+    "pocket-studio",
+    "reversi",
+    "shared-todo",
+    "undercover",
+  ]);
   const catalog = await read(path.join(root, "registry.json"));
   assert.equal(catalog.schemaVersion, 2);
   assert.equal(catalog.items.length, names.length);
