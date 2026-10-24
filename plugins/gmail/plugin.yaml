@@ -1,7 +1,7 @@
 id: gmail
 name: Gmail
-version: 1.0.0-preview.1
-description: Access Gmail messages, threads, labels, and mailbox search through configured endpoints.
+version: 1.0.0-preview.2
+description: Search and read Gmail messages, view threads and labels, and send emails and replies through a connected account.
 auth:
   required: true
   methods:

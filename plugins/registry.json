@@ -226,9 +226,9 @@
         "en": "Gmail"
       },
       "description": {
-        "zh-CN": "连接 Gmail API，用于邮件搜索、线程读取、标签查看和收件箱整理。",
-        "zh-TW": "連接 Gmail API，用於郵件搜尋、對話串讀取、標籤查看和收件匣整理。",
-        "en": "Connect Gmail APIs for mail search, thread reading, labels, and inbox triage."
+        "zh-CN": "连接 Gmail，搜索和读取邮件、查看会话和标签，以及发送和回复邮件。",
+        "zh-TW": "連接 Gmail，搜尋和讀取郵件、查看對話串和標籤，以及傳送和回覆郵件。",
+        "en": "Connect Gmail to search and read mail, view threads and labels, and send emails and replies."
       },
       "icon": {
         "svg": "./gmail/assets/icon.svg",
@@ -243,6 +243,18 @@
         "gmail"
       ],
       "releases": [
+        {
+          "version": "1.0.0-preview.2",
+          "manifest": "./gmail/releases/1.0.0-preview.2/manifest.json",
+          "package": "./gmail/releases/1.0.0-preview.2/gmail.pudding-plugin.json",
+          "package_sha256": "643f0238c5108f8213e33560e3d8edef8283e6169f6d44680919866b42693802",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "released_at": "2026-10-24",
+          "channel": "preview",
+          "preview": true
+        },
         {
           "version": "1.0.0-preview.1",
           "manifest": "./gmail/releases/1.0.0-preview.1/manifest.json",

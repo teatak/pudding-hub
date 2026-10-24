@@ -1,0 +1,26 @@
+{
+  "kind": "pudding.plugin.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/plugins/gmail",
+  "name": "gmail",
+  "title": {
+    "zh-CN": "Gmail",
+    "zh-TW": "Gmail",
+    "en": "Gmail"
+  },
+  "version": "1.0.0-preview.2",
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "background": {
+      "light": "#FFFFFF",
+      "dark": "#202124"
+    }
+  },
+  "package": "./gmail.pudding-plugin.json",
+  "package_sha256": "643f0238c5108f8213e33560e3d8edef8283e6169f6d44680919866b42693802",
+  "requires": {
+    "pudding_plugin": "^1.0.0"
+  },
+  "channel": "preview",
+  "preview": true
+}

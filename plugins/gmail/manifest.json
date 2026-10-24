@@ -8,11 +8,11 @@
     "zh-TW": "Gmail",
     "en": "Gmail"
   },
-  "version": "1.0.0-preview.1",
+  "version": "1.0.0-preview.2",
   "description": {
-    "zh-CN": "连接 Gmail API，用于邮件搜索、线程读取、标签查看和收件箱整理。",
-    "zh-TW": "連接 Gmail API，用於郵件搜尋、對話串讀取、標籤查看和收件匣整理。",
-    "en": "Connect Gmail APIs for mail search, thread reading, labels, and inbox triage."
+    "zh-CN": "连接 Gmail，搜索和读取邮件、查看会话和标签，以及发送和回复邮件。",
+    "zh-TW": "連接 Gmail，搜尋和讀取郵件、查看對話串和標籤，以及傳送和回覆郵件。",
+    "en": "Connect Gmail to search and read mail, view threads and labels, and send emails and replies."
   },
   "icon": {
     "svg": "./assets/icon.svg",
@@ -26,9 +26,9 @@
     "skills/mailbox/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.0-preview.1/manifest.json",
-  "package": "./releases/1.0.0-preview.1/gmail.pudding-plugin.json",
-  "package_sha256": "bdfff87d13b90cb12429b963279d391bcd0a4933dd8b613c9e29caed495e2a2f",
+  "manifest": "./releases/1.0.0-preview.2/manifest.json",
+  "package": "./releases/1.0.0-preview.2/gmail.pudding-plugin.json",
+  "package_sha256": "643f0238c5108f8213e33560e3d8edef8283e6169f6d44680919866b42693802",
   "requires": {
     "pudding_plugin": "^1.0.0"
   },
