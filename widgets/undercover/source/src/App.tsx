@@ -732,10 +732,11 @@ export default function App() {
   }
 
   // Split opponent seats between Left Wing, Top Center, and Right Wing
+  // Left wing flows clockwise from bottom to top, so visually top-to-bottom is [top-left, bottom-left].
   const leftWingSeats: Seat[] =
     activeSeats.length === 4
       ? [rotatedOpponents[0]]
-      : [rotatedOpponents[0], rotatedOpponents[1]];
+      : [rotatedOpponents[1], rotatedOpponents[0]];
   const topCenterSeat: Seat | null =
     activeSeats.length === 4 ? rotatedOpponents[1] : rotatedOpponents[2];
   const rightWingSeats: Seat[] =
