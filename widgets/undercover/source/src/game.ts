@@ -376,6 +376,7 @@ export interface StartGameOptions {
   customCivilianWord?: string | null;
   customUndercoverWord?: string | null;
   assignments: Record<Seat, string>;
+  locale?: string;
 }
 
 export const start = (options: StartGameOptions) =>
@@ -484,6 +485,8 @@ export const start = (options: StartGameOptions) =>
       options.category,
       nextLobby.customCivilianWord,
       nextLobby.customUndercoverWord,
+      undefined,
+      options.locale,
     );
 
     await save(nextLobby, nextPos);

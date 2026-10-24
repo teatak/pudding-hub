@@ -24,6 +24,9 @@ export function isBotParticipant(id: string | null | undefined): boolean {
   return !id || id.startsWith("@bot");
 }
 
+/**
+ * Simplified Chinese (zh-CN) Curated Word Bank.
+ */
 export const WORD_PAIRS: WordPair[] = [
   // Tech & Digital (科技数码)
   {
@@ -122,431 +125,343 @@ export const WORD_PAIRS: WordPair[] = [
     civilianClues: [
       "跟电有关的随身实用设备，方方正正像块砖头",
       "出门旅游或者逛街手机快没电时的救命神器",
-      "商场餐厅里经常能看到一排排可以扫码租借的柜机",
-      "上面有电量指示灯和几个不同规格的输出接口",
-      "上飞机的时候对容量有严格规定，不能托运",
-      "平时得先在家里把它充满，出门才能给别的设备续命",
+      "上面有好几个 USB 充电插口，支持快充协议",
+      "容量一般按毫安时计算，坐飞机有严格额定能量限制",
+      "借用共享款的时候最怕找不到空槽位归还",
+      "平时放包里随身带着，能给手机平板应急补电",
     ],
     undercoverClues: [
-      "跟供电安全有关的电子设备，有一定分量",
-      "用来保证输出电压保持恒定，防止电器被烧坏",
-      "在电网波动大或者精密仪器工作的场所特别重要",
-      "通常接在插座和贵重电器之间起到保护作用",
-      "上面一般带有电压表盘或者跳动数字显示屏",
-      "不能随便揣兜里移动供电，必须接通市电才能工作",
-    ],
-  },
-  {
-    id: "tech-6",
-    category: "tech",
-    civilianWord: "指纹锁",
-    undercoverWord: "密码箱",
-    civilianClues: [
-      "用来守护安全、防止别人随便打开的锁具装置",
-      "装在家里入户大门上，出门再也不用带钥匙",
-      "手指轻轻一按就能识别身份自动打开",
-      "除了生物识别，通常还支持输入数字或刷卡开锁",
-      "需要装电池供电，快没电的时候会发声提醒",
-      "智能家居最受欢迎的入门单品之一",
-    ],
-    undercoverClues: [
-      "用来保管重要物品、带锁定机构的容器装置",
-      "靠拨动几组数字转盘对准正确组合才能打开",
-      "出差旅行或者谍战片里装机密文件经常用到",
-      "带有提手或万向轮，外壳坚固抗摔",
-      "不需要通电也不用电池，纯机械结构也很可靠",
-      "如果忘了设定的那串数字就只能找锁匠或者硬撬",
+      "跟用电安全密切相关的电气装置，通常固定放在屋里",
+      "主要用来把不稳定的电网电压稳定在安全范围内",
+      "工厂精密仪器或者老旧小区电压波动大时必备",
+      "金属外壳带散热孔，工作时有时会有轻微电流声",
+      "连接在电源插座和重要电器之间，保护设备不被烧坏",
+      "体积一般比较笨重，不像随身小物件那样容易携带",
     ],
   },
 
-  // Food & Drink (美食饮品)
+  // Food & Drinks (美食与饮品)
   {
     id: "food-1",
     category: "food",
-    civilianWord: "麻辣烫",
-    undercoverWord: "冒菜",
+    civilianWord: "拿铁",
+    undercoverWord: "卡布奇诺",
     civilianClues: [
-      "热气腾腾的川味街头美食，各种食材煮在一起",
-      "拿着夹子和盆在冷柜前自己挑喜欢的丸子蔬菜称重",
-      "一碗里面有荤有素有主食，汤底可以选骨汤或红油",
-      "杨国福和张亮是街头最常见的两大招牌",
-      "适合一个人快速解决午餐，还能加满满一勺麻酱",
-      "食材按重量计费，想吃多少夹多少非常自由",
+      "咖啡馆里点单率极高的一款经典奶咖",
+      "浓缩咖啡里倒入大量细腻温热的蒸奶",
+      "奶味非常浓郁柔和，表面常有一层薄薄的心形拉花",
+      "苦味很淡容易入口，适合刚开始喝咖啡的人",
+      "通常用比较大口的大杯子盛装慢慢品尝",
+      "早晨或者下午茶提神醒脑的惬意陪伴",
     ],
     undercoverClues: [
-      "香辣过瘾的川渝特色美食，十几种食材荟萃一碗",
-      "常被称为一个人的火锅，红油香气特别浓郁",
-      "在竹篓或漏勺里把菜烫熟后盛进调好底料的大碗里",
-      "一般搭配一碗白米饭吃，超级下饭",
-      "点单时常有配好的荤素套餐，上面撒满蒜泥和香菜",
-      "汤底偏重油麻辣，一般只吃菜不直接喝底汤",
+      "意大利发源的传统咖啡饮品，名字很有辨识度",
+      "浓缩咖啡、热牛奶和丰盈奶泡的比例非常讲究",
+      "最上方是一层厚厚绵密的硬质奶泡，像戴了顶帽子",
+      "喝的时候第一口往往是蓬松温热的奶沫",
+      "很多咖啡师喜欢在奶泡顶上撒一层肉桂粉或可可粉",
+      "咖啡风味相比普通的意式奶咖更醇厚浓郁一些",
     ],
   },
   {
     id: "food-2",
     category: "food",
-    civilianWord: "拿铁",
-    undercoverWord: "卡布奇诺",
+    civilianWord: "可口可乐",
+    undercoverWord: "百事可乐",
     civilianClues: [
-      "咖啡馆菜单上点单率极高的意式奶咖",
-      "浓缩咖啡加入大量温热的牛奶，口感丝滑温和",
-      "苦味比较淡，奶香浓郁，上面常有漂亮的拉花图案",
-      "冰饮和热饮都很受欢迎，早上打工人的续命标配",
-      "在意大利语里它本来的意思其实就是牛奶",
-      "牛奶比例明显高于奶泡，喝起来一口顺到底",
+      "风靡全球的碳酸饮料巨头，红白色调深入人心",
+      "经典的玻璃弧形瓶和易拉罐设计极具辨识度",
+      "据说核心原浆配方是世界上最顶级的商业机密之一",
+      "气泡感强劲刺激，吃汉堡炸鸡或者火锅时的绝配",
+      "冷藏加冰块喝第一口时会带来极大的满足感",
+      "在超市饮料货架上占据着最大面积的展位之一",
     ],
     undercoverClues: [
-      "咖啡店里非常经典的意式风味牛奶咖啡",
-      "由浓缩咖啡、蒸汽牛奶和厚厚一层绵密奶泡组成",
-      "顶部奶泡特别丰盈蓬松，有时还会撒一点可可粉或肉桂粉",
-      "咖啡味比普通奶咖更醇厚一点，泡沫感十足",
-      "喝的时候嘴唇上很容易沾上一圈白胡子",
-      "一般做成热饮最能体现它三分之一黄金配比的口感",
+      "家喻户晓的碳酸汽水巨头，经典标志是蓝红白圆球",
+      "口味偏清甜，经常被拿来做盲测挑战的游戏",
+      "历史悠久，代言阵容里常年聚集着顶级巨星和球星",
+      "夏天冰镇以后开罐滋啦一声特别解渴过瘾",
+      "与另一家红色包装的同类汽水展开了长达百年的竞争",
+      "电影院和快餐套餐里经常能喝到的碳酸饮品",
     ],
   },
   {
     id: "food-3",
     category: "food",
-    civilianWord: "小笼包",
-    undercoverWord: "生煎包",
+    civilianWord: "汉堡包",
+    undercoverWord: "肉夹馍",
     civilianClues: [
-      "江南一带极具代表性的传统带馅面点，个头小巧",
-      "皮薄馅大，里面包着鲜美滚烫的肉皮冻汤汁",
-      "放在竹制笼屉里用蒸汽蒸熟，端上来热气腾腾",
-      "吃的时候讲究先咬开一个小口吸汤，再蘸姜丝香醋",
-      "顶上有精致的十几道褶子，半透明能隐约看到汤汁",
-      "心急一口吞下去的话非常容易烫到舌头",
+      "两片圆圆的面包中间夹着肉饼和各种蔬菜酱料",
+      "西方快餐文化的代表符号，麦当劳肯德基主打单品",
+      "常常搭配炸薯条和冰可乐组成经典套餐",
+      "吃的时候双手拿着用防油纸裹着，大口咬下去很满足",
+      "里面的肉饼有牛肉、鸡肉、鳕鱼等多种选择",
+      "上面常常撒着一层香脆的白芝麻粒",
     ],
     undercoverClues: [
-      "上海和江南非常出名的传统特色带汤肉馅面点",
-      "上半部分松软，底部被煎得金黄焦脆",
-      "在平底大铁锅里淋油和水煎熟，出锅前撒满黑芝麻和葱花",
-      "咬开里面也有浓郁滚烫的肉汤，底部嘎嘣脆",
-      "完美结合了软嫩面皮、鲜美汤汁与焦香锅巴三种口感",
-      "刚出锅时油香四溢，配一碗咖哩牛肉粉丝汤绝佳",
+      "中国北方的传统特色面食，两层饼皮夹着满满的肉馅",
+      "外面的白吉馍烤得金黄酥脆，有虎皮纹路",
+      "里面的腊汁肉炖得软烂入味，肥而不腻瘦而不柴",
+      "老师傅挥舞菜刀在案板上把热气腾腾的肉细细剁碎",
+      "常常搭配一碗酸辣凉皮或者冰峰汽水一起吃",
+      "起源于陕西古城，被戏称为东方古老的汉堡",
     ],
   },
   {
     id: "food-4",
     category: "food",
-    civilianWord: "可口可乐",
-    undercoverWord: "百事可乐",
+    civilianWord: "冰淇淋",
+    undercoverWord: "冰棒",
     civilianClues: [
-      "全球知名的深褐色碳酸汽水，加冰块喝超级爽",
-      "标志性的正红色包装和飘逸的白色丝带字体",
-      "吃炸鸡汉堡火锅时的快乐肥宅水首选",
-      "配方高度保密，气泡感比较强劲凌厉",
-      "圣诞老人穿红衣服的经典形象就是它推广开的",
-      "股神巴菲特每天都要喝好几罐的经典饮料",
+      "夏天最受欢迎的奶香冷冻甜品，口感细腻顺滑",
+      "可以用蛋筒蛋卷盛着吃，也可以装在纸杯里用勺子挖",
+      "主要由奶油、牛奶、糖和香精慢速搅拌冷冻制成",
+      "有香草、巧克力、草莓、抹茶等各种丰富口味",
+      "天热的时候如果吃太慢，很容易顺着手流下来",
+      "很多甜品店在上面淋上巧克力酱或者坚果碎",
     ],
     undercoverClues: [
-      "风靡全球的深褐色气泡碳酸饮料，冰镇后口感极佳",
-      "经典包装以皇家蓝为主色调，配红白蓝圆形球标",
-      "味道清甜爽口，带有淡淡的柑橘系香气",
-      "经常邀请顶级流行音乐巨星和足球明星拍酷炫广告",
-      "肯德基餐厅里的长期御用搭档汽水",
-      "定位年轻潮流，口号经常强调新一代的选择",
+      "夏天小卖部冰柜里最常见的降温冷饮，插着一根小木棍",
+      "通常是果汁、水、糖浆直接注模冻硬制成的",
+      "咬起来硬邦邦脆生生的，带有明显的碎冰碴感",
+      "老式绿豆口味或者老冰棍是无数人的童年回忆",
+      "拿着一根长长的木柄慢慢嗦，吃完剩下一根小竹签",
+      "价格通常很接地气，天热口渴时吃起来特别解暑",
     ],
   },
   {
     id: "food-5",
     category: "food",
-    civilianWord: "烤肉",
-    undercoverWord: "火锅",
+    civilianWord: "酸奶",
+    undercoverWord: "纯牛奶",
     civilianClues: [
-      "非常适合朋友聚餐的美食，大家围着桌子边做边吃",
-      "五花肉和牛肉片放在铁盘或炭火架上滋滋冒油",
-      "油脂滴落时香气扑鼻，一般用生菜叶包着蒜片辣酱吃",
-      "吃的时候需要勤快翻面，不然很容易焦黑",
-      "分韩式、日式和东北风味，蘸干料或甜辣酱都很绝",
-      "吃完出来身上和头发上往往会沾上浓浓的油烟香",
+      "由鲜乳发酵制成的乳制品，带有特有的酸甜醇厚风味",
+      "口感比普通奶液更浓稠，富含有益肠道的活性益生菌",
+      "可以用吸管喝，浓稠的也常常用小勺子挖着吃",
+      "早餐配水果坚果麦片非常健康营养",
+      "很多人喜欢舔掉包装封口盖上的那一层精华",
+      "有原味、草莓味、黄桃味等各种果粒添加款式",
     ],
     undercoverClues: [
-      "聚会团建人气最高的餐饮形式，全桌围坐热闹非凡",
-      "一口沸腾翻滚的锅居中，各种肉卷毛肚往里涮",
-      "讲究七上八下控制秒数，还有鸳鸯锅照顾不同口味",
-      "自助调料台是灵魂，香油蒜泥和麻酱各显神通",
-      "从肉类、海鲜到蔬菜宽粉都能一锅搞定",
-      "冬天吃完全身暖洋洋，衣服上也会留下浓郁的牛油香",
-    ],
-  },
-  {
-    id: "food-6",
-    category: "food",
-    civilianWord: "榴莲",
-    undercoverWord: "臭豆腐",
-    civilianClues: [
-      "气味极其独特、让人两极分化非常严重的食物",
-      "喜欢的人觉得香甜软糯，讨厌的人闻到就捂鼻子躲开",
-      "外壳长满坚硬扎手的尖刺，被称为水果之王",
-      "果肉金黄饱满像冰淇淋一样绵密，热量很高",
-      "很多酒店和公共交通工具明确禁止携带它入内",
-      "主产于泰国和马来西亚，金枕和猫山王是最火的品种",
-    ],
-    undercoverClues: [
-      "闻起来气味霸道、爱恨两极分化极其明显的小吃",
-      "闻着味儿冲，但吃起来外焦里嫩满口留香",
-      "夜市小吃街的绝对流量担当，隔着老远就能闻到",
-      "经过独特卤水发酵后下油锅炸至酥脆，再灌入蒜汁辣椒汤",
-      "长沙的黑色经典款式和绍兴的金黄款式都很有名",
-      "用竹签扎着吃，咬破外壳瞬间汤汁在嘴里爆开",
+      "天然营养液体饮品，家家户户常备的白色健康饮品",
+      "富含优质蛋白质和钙质，每天早晚喝一杯对身体好",
+      "利乐砖包装或者玻璃瓶装，保质期有常温也有冷藏",
+      "加热后表面会结出一层薄薄的奶皮",
+      "闻起来是自然的奶香，没有任何人工发酵酸味",
+      "常常用来冲泡燕麦、加入红茶调制奶茶或者烘焙蛋糕",
     ],
   },
 
-  // Culture & Entertainment (文化娱乐)
+  // Pop Culture & Mystery (影视文化与娱乐)
   {
     id: "culture-1",
     category: "culture",
     civilianWord: "福尔摩斯",
     undercoverWord: "柯南",
     civilianClues: [
-      "家喻户晓的传奇名侦探，观察力和逻辑推理无人能及",
-      "住在伦敦贝克街221B，身边有一位姓华生的医生搭档",
-      "标志性装束是猎鹿帽、斗篷风衣和烟斗，还会拉小提琴",
-      "只要看一眼鞋底泥土和袖口磨损就能推算出一个人的职业",
-      "宿敌是被称为犯罪界拿破仑的莫里亚蒂教授",
-      "英国作家笔下的经典人物，被翻拍成无数电影和英剧",
+      "世界侦探文学史上最著名的虚构神探",
+      "住在伦敦贝克街 221B，身边有位老搭档叫华生",
+      "擅长精妙绝伦的演绎法，观察细微痕迹就能还原真相",
+      "叼着烟斗拉小提琴，戴着经典的猎鹿帽披风",
+      "一生最大的宿敌是高智商犯罪大师莫里亚蒂教授",
+      "由英国作家阿瑟·柯南·道尔笔下诞生的传世经典角色",
     ],
     undercoverClues: [
-      "全世界知名度极高的神探角色，走到哪儿都会遇到案件",
-      "外表是个戴眼镜的小学生，真实身份其实是高中生侦探",
-      "随身装备有变声领结、麻醉手表和太阳能滑板",
-      "每次破案时常借用身边糊涂大叔的声音来揭晓真相",
-      "口头禅是真相永远只有一个，主线一直在追查黑衣组织",
-      "连载二十多年的超人气推理动漫主角",
+      "日本动漫里家喻户晓的小学生外表高中生侦探",
+      "原本是知名少年侦探工藤新一，被黑衣组织灌药变小",
+      "随身带着蝴蝶结变声器、麻醉手表和太阳能滑板",
+      "每次破案总会射晕毛利小五郎，站在背后借声推理",
+      "经典名言是：真相永远只有一个！",
+      "寄住在毛利侦探事务所，暗中调查黑暗组织的阴谋",
     ],
   },
   {
     id: "culture-2",
     category: "culture",
-    civilianWord: "狼人杀",
-    undercoverWord: "剧本杀",
+    civilianWord: "孙悟空",
+    undercoverWord: "哪吒",
     civilianClues: [
-      "非常适合多人围坐在一起玩的语言推理社交桌游",
-      "分好人阵营和隐藏阵营，全靠发言逻辑和微表情博弈",
-      "有天黑请闭眼的经典环节，包含预言家、女巫、猎人等角色",
-      "大家轮流发言盘逻辑、跳身份、号票把嫌疑人投出局",
-      "一局节奏比较快，可以反复开好几局",
-      "金水、银水、查杀、焊跳都是这个游戏里的专属黑话",
+      "从东胜神洲傲来国花果山仙石中孕育诞生的神话人物",
+      "手持如意金箍棒，头戴紧箍咒，会七十二般变化",
+      "大闹天宫把各路天兵天将打得落花流水",
+      "被压在五行山下五百年后护送唐僧西天取经",
+      "拥有一双火眼金睛，翻一个筋斗云能行十万八千里",
+      "中国古代四大名著《西游记》里最核心的灵魂主角",
     ],
     undercoverClues: [
-      "年轻人聚会非常火的沉浸式推理社交游戏",
-      "每个人都会分到一本厚厚的角色人物小传和专属秘密任务",
-      "有专门的主持人控场，需要搜集线索卡、还原故事真相",
-      "除了硬核推凶本，还有催泪情感本、欢乐本和恐怖本",
-      "一局通常要玩三四个小时，基本只能玩一次不能剧透",
-      "有些线下店还提供换装和实景搜证房间体验",
+      "中国古代神话里的少年英雄神将，陈塘关总兵李靖之子",
+      "脚踏风火轮，手持火尖枪，臂套乾坤圈，身缠混天绫",
+      "闹海抽龙筋惹祸后削骨还父削肉还母，后以莲花化身重生",
+      "三头六臂神通广大，在封神演义里立下赫赫战功",
+      "国漫电影里一句我命由我不由天让无数人热血沸腾",
+      "额头常常点有一抹标志性的红印，扎着可爱的丸子头",
     ],
   },
   {
     id: "culture-3",
     category: "culture",
-    civilianWord: "钢铁侠",
+    civilianWord: "蜘蛛侠",
     undercoverWord: "蝙蝠侠",
     civilianClues: [
-      "漫威和超级英雄电影里人气极高的亿万富翁英雄",
-      "本身没有天生超能力，全靠顶尖科技装甲和钞能力战斗",
-      "胸口装有发光的能量反应堆，拥有人工智能管家贾维斯",
-      "性格幽默高调，在发布会上直接公开承认自己的英雄身份",
-      "战甲配色以金红为主，手心能发射脉冲炮飞天作战",
-      "复仇者联盟的核心领袖，那句爱你三千遍感动无数影迷",
+      "漫威旗下的平民超级英雄，高中生彼得·帕克变身而成",
+      "因为不小心被放射性蜘蛛咬了一口而获得了超凡能力",
+      "经典格言是：能力越大，责任越大",
+      "在纽约曼哈顿摩天大楼之间发射蛛丝飞荡穿梭",
+      "穿着一身红蓝配色的贴身战衣，喜欢在战斗中讲冷笑话",
+      "自称好邻居超级英雄，平时要打工拍照交房租",
     ],
     undercoverClues: [
-      "美漫电影史上极具魅力的亿万富翁超级英雄",
-      "没有任何超能力，依靠顶级格斗技巧、侦探头脑和高科技装备",
-      "平时是豪门花花公子，夜晚化身守护哥谭市的暗夜骑士",
-      "战衣漆黑带披风和尖耳面具，座驾是一辆酷炫的重装甲战车",
-      "身边有忠心耿耿的管家阿福，一生宿敌是疯狂的小丑",
-      "行事低调冷峻，从不轻易暴露自己的真实身份",
+      "DC 漫画旗下的黑暗骑士，哥谭市黑夜里的守护者",
+      "白天是富可敌国的韦恩企业总裁布鲁斯·韦恩",
+      "本身没有任何超能力，依靠顶级格斗术和高科技战车装备",
+      "童年目睹父母在犯罪巷被枪杀，从此立志扫除罪恶",
+      "在秘密蝙蝠洞里研究装备，身边有忠诚的管家阿尔弗雷德",
+      "宿敌是哥谭市制造混乱与恐怖的小丑",
     ],
   },
   {
     id: "culture-4",
     category: "culture",
-    civilianWord: "脱口秀",
-    undercoverWord: "相声",
+    civilianWord: "哈利波特",
+    undercoverWord: "甘道夫",
     civilianClues: [
-      "靠语言幽默把全场观众逗得捧腹大笑的舞台喜剧表演",
-      "通常是一个人拿着一支麦克风站在台上跟观众互动吐槽",
-      "素材多来自职场、生活痛点和自我调侃，讲究铺垫和爆梗",
-      "线下经常在开放麦小剧场演出，近几年在年轻人中非常火",
-      "节奏明快犀利，每个段子结尾往往有出人意料的谐音或反转",
-      "起源于欧美单口喜剧，演员自己常既是编剧又是表演者",
+      "额头上有一道标志性的闪电形伤疤，大难不死的男孩",
+      "在十一岁生日那天收到了霍格沃茨魔法学校的录取信",
+      "骑着飞天扫帚打魁地奇，分院仪式上被分到了格兰芬多",
+      "手里的魔杖内芯是凤凰羽毛，最擅长的咒语是除你武器",
+      "身边有两个形影不离的铁三角好友罗恩和赫敏",
+      "与伏地魔展开了跨越七个学年的正邪宿命决战",
     ],
     undercoverClues: [
-      "以语言包袱逗乐观众的中国传统曲艺喜剧表演",
-      "最常见的是两个人搭档站在桌子后，一个逗哏一个捧哏",
-      "讲究说学逗唱四门基本功，台上常穿传统长衫大褂",
-      "包袱讲究三翻四抖，还有贯口、柳活等精彩基本功展示",
-      "茶馆剧场和春晚舞台上的常客，德云社是著名代表团体",
-      "有时也有单口或群口形式，历史悠久底蕴深厚",
+      "指环王中土世界最睿智伟大的灰袍与白袍巫师",
+      "头戴尖顶宽檐帽，蓄着雪白的长胡须，手持法杖和宝剑",
+      "在莫瑞亚矿坑深处独战炎魔，大喊经典名言：你休想通过！",
+      "骑着神驹捷影四处奔走，联络精灵、矮人和人类抵抗黑暗",
+      "引导弗罗多和护戒使者跨越万难护送魔戒前往末日火山",
+      "平时神龙见首不见尾，喜欢在霍比特人的夏尔抽烟袋放烟花",
     ],
   },
   {
     id: "culture-5",
     category: "culture",
     civilianWord: "魔术师",
-    undercoverWord: "魔法师",
+    undercoverWord: "催眠师",
     civilianClues: [
-      "能够展现出不可思议奇幻画面的神秘角色，常戴礼帽",
-      "依靠极快的手速、机关道具和心理错觉来完成的舞台艺术",
-      "喜欢用扑克牌、硬币、白鸽和丝巾来表演出人意料的效果",
-      "台下观众明明知道是障眼法，却依然看得目瞪口呆",
-      "刘谦和大卫·科波菲尔是这一行当里家喻户晓的代表人物",
-      "行业铁律是绝不随便向观众公开背后的机关原理",
+      "在舞台上通过精巧手法和道具机关创造神奇视觉奇迹的艺人",
+      "经典表演包括空手变鸽子、大变活人、帽子抓兔子和撕牌还原",
+      "严守行业行规，绝不在外行面前轻易揭秘戏法背后的秘密",
+      "穿着黑色燕尾服，挥舞着魔术棒，伴随着激昂的舞台背景音乐",
+      "依靠转移观众注意力和巧妙的手法盲区来达成不可思议的效果",
+      "春晚舞台上的常客，一句接下来就是见证奇迹的时刻耳熟能详",
     ],
     undercoverClues: [
-      "能够施展超自然奇幻力量的神秘人物，造型很有辨识度",
-      "存在于奇幻小说、电影与游戏世界里，手中常握着魔杖或法杖",
-      "通过吟唱咒语或调动元素能量来释放火球、瞬移或变形术",
-      "哈利·波特和甘道夫是大家最熟悉的经典形象",
-      "有些还戴着尖顶帽、骑着飞天扫帚或在学院里钻研秘术",
-      "在游戏团队里通常是远程高爆发输出的核心职业",
-    ],
-  },
-  {
-    id: "culture-6",
-    category: "culture",
-    civilianWord: "交响乐",
-    undercoverWord: "歌剧",
-    civilianClues: [
-      "在音乐厅里演出的高雅艺术形式，场面庄重宏大",
-      "几十上百位乐手按弦乐、木管、铜管、打击乐分席位落座",
-      "正中央有一位穿燕尾服的指挥家挥舞指挥棒掌控全场节奏",
-      "以纯器乐演奏为主，一般分四个乐章，层次极其丰富",
-      "贝多芬的《命运》和《欢乐颂》是传世经典之作",
-      "观众席保持安静聆听，乐章全部结束时才会报以热烈掌声",
-    ],
-    undercoverClues: [
-      "在大型剧院上演的殿堂级西方经典舞台艺术",
-      "将管弦乐队伴奏、戏剧故事冲突与高难度美声演唱融为一体",
-      "演员身穿华丽的戏剧服装在舞台布景中边演边唱，不戴麦克风",
-      "既有气势恢宏的合唱，也有展现高超唱功的咏叹调独唱",
-      "《卡门》《茶花女》和《图兰朵》是享誉世界的代表剧目",
-      "乐池通常位于舞台前下方，集视觉与听觉震撼于一身",
+      "通过温和语言暗示和诱导带领他人进入深度潜意识专注状态的人",
+      "常常用一块慢慢摇晃的怀表或者轻柔节奏的呼吸引导放松",
+      "在心理治疗或者舞台娱乐表演中引导他人回忆或者做出特殊举动",
+      "打一个响指或者下一句指令就能让受试者逐渐清醒过来",
+      "讲究与受试者建立高度的心理信任感，属于心理学应用范畴",
+      "电影里常被神秘化为能悄悄控制他人思想和行为的幕后高人",
     ],
   },
 
-  // Daily Life (日常生活)
+  // Daily Life (日常百态)
   {
     id: "daily-1",
     category: "daily",
-    civilianWord: "过山车",
-    undercoverWord: "跳楼机",
+    civilianWord: "电梯",
+    undercoverWord: "扶梯",
     civilianClues: [
-      "游乐园里尖叫声最大的大型刺激游乐设施",
-      "一排排座椅连成列车，沿着高低起伏的蜿蜒轨道高速飞驰",
-      "先缓缓爬升到最高点，然后俯冲而下，还有360度大回环翻转",
-      "全程风驰电掣，融合了失重感、超重感和急速转弯",
-      "下来的时候很多人腿软头晕，表情管理完全失控",
-      "有木质轨道、悬挂式和弹射起步等多种刺激玩法",
+      "高层建筑和商场里必不可少的垂直代步封闭轿厢",
+      "靠钢丝绳和配重块上下拉动，几秒钟就能升降十几层",
+      "里面有一排数字楼层按钮，配有关门开门键和紧急呼叫警铃",
+      "写字楼早高峰时等它往往需要排长队",
+      "超载时会发出哔哔警报声而且拒不关门",
+      "遇到故障停电时可能会被困在两层楼之间的井道里",
     ],
     undercoverClues: [
-      "游乐场里让人肾上腺素飙升的极限高空游乐项目",
-      "大家围坐在高耸入云的垂直塔柱四周，系紧安全肩压杠",
-      "把人缓缓升到几十米高空停顿几秒，突然瞬间自由落体急降",
-      "核心体验就是垂直方向上极致强烈的瞬间失重感",
-      "升到最高点时能俯瞰整个乐园，但没人有心思看风景",
-      "还会反复上下弹跳几次才缓缓停回地面",
+      "商场、地铁站和机场里连续运转倾斜运送客流的循环阶梯",
+      "两边有与台阶同步同向缓缓移动的黑色橡胶扶手带",
+      "通常只连接相邻的上下两层楼，全开放视野可以边乘边看商场",
+      "站立时要面向运行方向，踩在黄线安全区域内并握紧扶手",
+      "上下两头配有紧急红色急停按钮以应对夹人意外",
+      "人流量大时源源不断运送，不需要像箱式那样在门外苦等",
     ],
   },
   {
     id: "daily-2",
     category: "daily",
-    civilianWord: "口红",
-    undercoverWord: "润唇膏",
+    civilianWord: "雨伞",
+    undercoverWord: "雨衣",
     civilianClues: [
-      "涂在嘴唇上的小巧管状随身物品，旋转就能拧出来",
-      "化妆包里永远缺下一支的单品，一涂上整个人气色瞬间提升",
-      "有正红、豆沙、烂番茄等无数种色号，还有哑光和镜面质地",
-      "喝水时有时会在杯子边缘留下明显的印记",
-      "送礼物的热门选择，外壳设计往往非常精致高级",
-      "吃完火锅或者大餐后通常需要对镜子补涂一下",
+      "阴雨天或者烈日当空出门时单手撑在头顶的遮蔽工具",
+      "由伞柄、金属骨架和防水伞面组成，有长柄款和折叠便携款",
+      "大风暴雨天气时如果伞骨不够结实很容易被吹翻面",
+      "属于在地铁、出租车和便利店门口最容易被遗忘弄丢的物品之一",
+      "两个人同撑一把在雨中漫步常被当作浪漫的偶像剧桥段",
+      "收拢以后上面残留很多水珠，进室内需要装进塑料保护套",
     ],
     undercoverClues: [
-      "随身携带涂在嘴唇上的小管状护理用品，男女老少都用",
-      "主要功效是保湿滋润、防止秋冬季节嘴唇干裂起皮",
-      "膏体大多是无色透明或者淡淡的浅色，涂上很自然",
-      "有很多薄荷、蜂蜜、凡士林或水果清香口味",
-      "价格亲民实用，睡前厚涂一层第二天嘴唇状态会很好",
-      "不需要专门卸妆，觉得嘴唇干了随时随地都能拿出来涂",
+      "下雨天直接穿在身上的防水防护服饰，带有一顶连体帽子",
+      "能把整个上半身和躯干完全裹住，彻底解放双手不受束缚",
+      "骑电动车、自行车通勤或者雨中徒步时的必备挡雨装备",
+      "通常由轻便耐磨的 PVC、尼龙或者透气防水胶膜制成",
+      "穿上后行动很方便，不怕狂风吹翻也不需要用手时刻握着杆子",
+      "小学生放学或者环卫工人雨天作业时常常穿亮黄色的款式",
     ],
   },
   {
     id: "daily-3",
     category: "daily",
-    civilianWord: "电梯",
-    undercoverWord: "扶梯",
+    civilianWord: "过山车",
+    undercoverWord: "海盗船",
     civilianClues: [
-      "现代高楼大厦里必不可少的代步升降特种设备",
-      "是一个封闭的轿厢空间，进出前需要先按上下按钮等待开门",
-      "进去后按下要去的楼层数字，几秒钟就能直达几十层高楼",
-      "里面一般贴着镜子或广告屏，人多的时候大家会安静抬头看数字",
-      "有严格的限重提示，超载时会发出蜂鸣警报不关门",
-      "写字楼早高峰时等它往往需要排长队",
+      "大型游乐园里最刺激排队最火爆的王牌轨道机动项目",
+      "列车车厢沿着高低起伏翻滚盘旋的钢轨飞速疾驰",
+      "包含近乎垂直的大俯冲、360度大回环和强烈的失重体验",
+      "全程风驰电掣，融合了失重感、超重感和急速转弯",
+      "坐上去必须拉下压肩式或者压腿式安全压杆锁死",
+      "游客往往从头到尾紧闭双眼尖叫不断，下来时腿都在打颤",
     ],
     undercoverClues: [
-      "商场、地铁站和机场里极其常见的电动代步传送设备",
-      "呈斜坡状循环运转，台阶一步步自动往上或往下移动",
-      "不需要按楼层也不用等开门，随到随上连续通行效率很高",
-      "两侧有同步移动的黑色橡胶扶手带，搭乘时讲究站稳扶好",
-      "通常只连接相邻的上下两层楼，全开放视野可以边乘边看商场",
-      "入口和出口处有黄色的梳齿踏板，穿洞洞鞋要格外留神",
+      "游乐园里模拟在惊涛骇浪狂风中剧烈前后摇摆的大船造型设施",
+      "悬挂在四个巨大的立柱钢架下方，像一个巨大的秋千往复摆动",
+      "随着摆动幅度越来越大，最高点几乎与地面垂直接近90度",
+      "坐在船头和船尾两端的人感受到的失重坠落刺激最为强烈",
+      "伴随着风声呼啸，每次摆到顶点再下坠时全船人齐声尖叫",
+      "外观通常彩绘成维京战船或者加勒比大帆船的复古造型",
     ],
   },
   {
     id: "daily-4",
     category: "daily",
-    civilianWord: "太阳镜",
+    civilianWord: "墨镜",
     undercoverWord: "泳镜",
     civilianClues: [
-      "戴在眼睛上的深色或反光镜片护目装备",
-      "夏天出门、海边度假或者开车遇到强光时的必备单品",
-      "既能阻挡紫外线保护眼睛，又是拍照耍帅凹造型的时尚利器",
-      "有飞行员款、猫眼款和偏光镜片等多种款式",
-      "两条镜腿架在耳朵上，不用的时候常随手架在头顶或衣领上",
-      "侦探、保镖和电影明星出场时特别喜欢戴它增强气场",
+      "烈日晴天下戴在眼睛前面的遮光眼镜，镜片颜色比较深",
+      "主要用来阻挡刺眼的强光和紫外线，保护视力不受伤害",
+      "夏天去海边沙滩度假或者开车自驾时的必备时尚单品",
+      "有很多经典的蛤蟆镜、飞行员款或者黑超大框造型",
+      "戴上之后周围的光线瞬间暗下来，拍照凹造型特别酷炫",
+      "架在鼻梁上挂在耳朵两侧，进入室内一般会摘下挂在领口",
     ],
     undercoverClues: [
-      "戴在眼部周围的功能性镜片装备，贴合度非常高",
-      "专门在水下运动时佩戴，防止水花进眼睛并看清水底",
-      "镜框周围有一圈柔软的硅胶密封圈，靠弹力胶带固定在后脑勺",
-      "很多款式带有防雾涂层和镀膜，戴太久眼周会有两圈压痕",
-      "去游泳馆或者海边浮潜时的标准配置",
-      "离开水域走到岸上后一般会把它往上推到额头上",
+      "去水上乐园游泳或者深水潜水时必须紧扣在眼眶上的防水眼镜",
+      "镜圈边缘配有硅胶密封吸盘，能把眼周牢牢吸住防止渗水",
+      "靠一根有弹性的橡胶带紧紧勒在后脑勺上防止滑脱",
+      "镜片内侧通常涂有防雾图层，保证在水下能清晰视物睁开眼睛",
+      "能有效隔绝泳池里的消毒氯水和海里的咸水刺激眼球",
+      "游完上岸摘下来时，眼眶周围经常会被压出一圈明显的红印子",
     ],
   },
   {
     id: "daily-5",
     category: "daily",
-    civilianWord: "枕头",
-    undercoverWord: "抱枕",
-    civilianClues: [
-      "软绵绵的居家织物寝具，里面填充着羽绒、乳胶或棉花",
-      "每天晚上躺在床上睡觉时垫在脖子与脑袋下面的必需品",
-      "高度和软硬程度直接决定了睡眠质量以及第二天会不会落枕",
-      "外面通常会套上一层可换洗的布罩，讲究贴肤透气",
-      "酒店床铺上一般会放一软一硬两个供客人挑选",
-      "形状大多是规整的长方形或贴合颈椎的波浪形",
-    ],
-    undercoverClues: [
-      "蓬松柔软的居家布艺软装靠垫，造型五花八门",
-      "主要放在客厅沙发、办公室座椅或者飘窗上",
-      "看电视聊天时喜欢搂在怀里，或者垫在腰后面缓解疲劳",
-      "有方形、圆形、卡通玩偶形等各种装饰性设计",
-      "既是提升客厅温馨感的装饰品，也是午休趴桌睡的小帮手",
-      "一般不会拿来当整晚正式睡觉的头枕",
-    ],
-  },
-  {
-    id: "daily-6",
-    category: "daily",
     civilianWord: "降落伞",
-    undercoverWord: "雨伞",
+    undercoverWord: "遮阳伞",
     civilianClues: [
-      "打开后呈巨大弧形伞盖状、利用空气阻力的安全装备",
-      "平时折叠收纳在背包里，从高空跃下到一定高度时拉开伞绳",
-      "瞬间展开巨大的伞衣减速，让人能安全平稳地降落到地面",
+      "高空跳伞或者紧急逃生时用来减缓下落速度的巨大织物伞盖",
+      "平时整整齐齐折叠打包在专用的背负伞包里，开伞后迎风张开",
+      "依靠极大的空气阻力使人体或载荷平稳轻柔地降落地面",
       "跳伞极限运动、空降兵和航天返回舱着陆都离不开它",
       "通过双手拉动操纵绳可以控制滑翔方向和落点",
       "使用前必须经过极其严格的折叠检查，性命攸关",
@@ -562,12 +477,769 @@ export const WORD_PAIRS: WordPair[] = [
   },
 ];
 
+/**
+ * Traditional Chinese (zh-TW) Curated Word Bank.
+ */
+export const WORD_PAIRS_ZHTW: WordPair[] = [
+  {
+    id: "tech-1",
+    category: "tech",
+    civilianWord: "ChatGPT",
+    undercoverWord: "DeepSeek",
+    civilianClues: [
+      "經常陪我寫程式碼修文案的對話式大模型助手",
+      "最早掀起全球生成式 AI 浪潮的代表性產品",
+      "背靠矽谷知名實驗室，圖標像一朵旋轉的花朵",
+      "支援語音和視覺多模態，訂閱會員叫 Plus",
+    ],
+    undercoverClues: [
+      "能力很強的對話式大模型助手，寫程式碼推理都很順暢",
+      "因為極致性價比和開源推理模型轟動全球的 AI",
+      "圖標是一隻藍色的鯨魚，近期全球知名度極高",
+      "思考過程會直接展示出來，經常帶著深度思考標籤",
+    ],
+  },
+  {
+    id: "tech-2",
+    category: "tech",
+    civilianWord: "藍牙耳機",
+    undercoverWord: "助聽器",
+    civilianClues: [
+      "平時戴在耳朵上的小巧電子設備，不需要插線",
+      "通勤坐捷運或運動慢跑時幾乎人手一副",
+      "一般配有一個充電盒，支援主動降噪功能",
+      "主要用來聽音樂、講電話或看影片串流",
+    ],
+    undercoverClues: [
+      "戴在耳朵上的精密微型電子裝置，體積非常小",
+      "能把外界的聲音處理放大後清晰地傳進耳道",
+      "主要幫助聽力受損或年長者聽清日常交談",
+      "需要根據每個人的情況進行專業調試驗配",
+    ],
+  },
+  {
+    id: "tech-3",
+    category: "tech",
+    civilianWord: "機械鍵盤",
+    undercoverWord: "打字機",
+    civilianClues: [
+      "用手指敲擊輸入文字的設備，段落感特別明顯",
+      "敲起來劈哩啪啦響，不同軸體手感聲音完全不同",
+      "工程師和電競玩家的最愛，鍵帽可以自己更換客製",
+      "放在電腦桌面上使用，有紅軸、青軸、茶軸之分",
+    ],
+    undercoverClues: [
+      "敲擊按鍵來輸出文字的經典機械裝置，聲音清脆",
+      "每按下一鍵都會帶動金屬字錘敲在色帶和紙張上",
+      "不需要連接螢幕，敲出來的字直接印在實體紙上",
+      "每打完一行需要手動推一下滾筒換行，還會叮一聲",
+    ],
+  },
+  {
+    id: "tech-4",
+    category: "tech",
+    civilianWord: "無人機",
+    undercoverWord: "風箏",
+    civilianClues: [
+      "能在天空中飛行的科技設備，地面有人專門遙控操縱",
+      "靠多組高速旋轉的螺旋槳提供升力，還能穩定懸停",
+      "常拿來航拍風景、地形巡檢或夜間燈光秀表演",
+      "內建電池和相機，沒電或訊號中斷會自動返航",
+    ],
+    undercoverClues: [
+      "飛在半空中的物件，需要地面上的人時刻牽引控制",
+      "必須借助戶外自然風力才能順利升上高空",
+      "有一根長長的線連在手中的線輪上緩緩放線",
+      "春天公園草坪上很常見，有燕子老鷹等各種造型",
+    ],
+  },
+  {
+    id: "tech-5",
+    category: "tech",
+    civilianWord: "行動電源",
+    undercoverWord: "穩壓器",
+    civilianClues: [
+      "跟充電有關的隨身實用設備，方方正正像塊小磚頭",
+      "出門旅遊或逛街手機快沒電時的急救神物",
+      "上面有多個充電插孔，支援各種快充通訊協定",
+      "容量一般按毫安時計算，搭飛機有額定能量攜帶限制",
+    ],
+    undercoverClues: [
+      "跟用電安全密切相關的電氣裝置，通常固定安裝在室內",
+      "主要用來把不穩定的電網電壓穩定在安全標準範圍",
+      "精密儀器設備或電壓波動較大的老舊環境必備",
+      "金屬外殼帶散熱孔，工作時偶爾會有輕微電流嗡嗡聲",
+    ],
+  },
+  {
+    id: "food-1",
+    category: "food",
+    civilianWord: "拿鐵",
+    undercoverWord: "卡布奇諾",
+    civilianClues: [
+      "咖啡店裡點單率極高的一款經典義式奶香咖啡",
+      "濃縮咖啡裡倒入大量溫熱細緻的綿密蒸奶",
+      "奶味非常濃郁滑順，表面常有精美的心形拉花",
+      "苦味淡雅容易入口，深受廣大咖啡愛好者喜愛",
+    ],
+    undercoverClues: [
+      "源自義大利的傳統咖啡飲品，配方比例十分講究",
+      "濃縮咖啡、熱牛奶和豐盈奶泡各佔三分之一",
+      "最上方是一層厚厚綿密的奶泡層，頂部常灑肉桂粉",
+      "咖啡濃醇風味比起普通拿鐵更鮮明強烈一些",
+    ],
+  },
+  {
+    id: "food-2",
+    category: "food",
+    civilianWord: "可口可樂",
+    undercoverWord: "百事可樂",
+    civilianClues: [
+      "風靡全球的碳酸飲料巨頭，紅白色調深入人心",
+      "經典的曲線玻璃瓶與紅色易開罐極具辨識度",
+      "據說原漿配方是世界上最機密的商業機密之一",
+      "氣泡感強勁刺激，吃漢堡炸雞或披薩時的絕配",
+    ],
+    undercoverClues: [
+      "家喻戶曉的碳酸汽水巨頭，經典標誌是藍紅白圓球",
+      "口味偏清甜，歷史上經常發起盲測盲飲挑戰活動",
+      "常年由全球頂級流行樂巨星與體壇名將熱情代言",
+      "與另一家紅色包裝的對手展開了長達百年的飲料大戰",
+    ],
+  },
+  {
+    id: "food-3",
+    category: "food",
+    civilianWord: "漢堡",
+    undercoverWord: "三明治",
+    civilianClues: [
+      "兩片圓圓的麵包中間夾著肉排和生菜起司醬料",
+      "速食文化的代表美食，連鎖速食巨頭的核心單品",
+      "常常搭配香脆薯條和冰涼碳酸飲料組成經典套餐",
+      "吃的時候雙手捧著防油紙大口咬下，非常飽足過癮",
+    ],
+    undercoverClues: [
+      "兩片切片吐司麵包中間夾入火腿、蛋或生菜的美食",
+      "相傳源自十八世紀英國貴族為了玩牌不弄髒手指發明",
+      "常切成三角形對半剖開，擺放整齊方便隨手享用",
+      "野餐郊遊、通勤早餐店不可或缺的方便輕食",
+    ],
+  },
+  {
+    id: "food-4",
+    category: "food",
+    civilianWord: "冰淇淋",
+    undercoverWord: "冰棒",
+    civilianClues: [
+      "夏天極受歡迎的奶香冰品甜點，口感綿密順滑",
+      "可以用脆皮甜筒裝著吃，也可以裝在紙杯用小湯匙舀",
+      "主要由鮮奶油、牛奶和糖慢速攪拌冷凍製成",
+      "天氣炎熱時如果吃太慢，融化時容易流到手上",
+    ],
+    undercoverClues: [
+      "夏天冰櫃裡最常見的消暑冰品，插著一根小木棍棒",
+      "通常是果汁或糖水直接注模凍硬製成的硬脆冰品",
+      "咬起來爽脆清涼，帶有明顯的冰晶碎粒顆粒感",
+      "拿著木柄慢慢品嚐，吃完手上剩下一根扁平小竹籤",
+    ],
+  },
+  {
+    id: "food-5",
+    category: "food",
+    civilianWord: "優格",
+    undercoverWord: "鮮牛奶",
+    civilianClues: [
+      "由乳品經乳酸菌發酵製成的乳製品，帶特有酸甜風味",
+      "口感比普通牛奶濃稠滑潤，富含益生菌幫助消化",
+      "早餐搭配新鮮水果丁或燕麥堅果脆片十分健康營養",
+      "濃稠膏狀質地，常裝在小塑膠杯中用湯匙舀著吃",
+    ],
+    undercoverClues: [
+      "天然營養液態乳品，日常生活中常備的白色健康飲品",
+      "富含優質蛋白質和豐富鈣質，早晨喝一杯補充活力",
+      "利樂紙盒或透明玻璃瓶裝，冷藏或常溫保存皆常見",
+      "聞起來是純粹溫和的天然乳香，完全不帶發酵酸味",
+    ],
+  },
+  {
+    id: "culture-1",
+    category: "culture",
+    civilianWord: "福爾摩斯",
+    undercoverWord: "柯南",
+    civilianClues: [
+      "世界偵探文學史上最著名的傳奇虛構神探",
+      "居住在倫敦貝克街 221B，身旁有位忠實助手華生醫生",
+      "精通縝密的演繹推理法，觀察微小痕跡即可洞悉真相",
+      "叼著煙斗拉奏小提琴，戴著經典的獵鹿帽與風衣",
+    ],
+    undercoverClues: [
+      "日本漫畫裡家喻戶曉的小學生外貌高中生名偵探",
+      "原本是高中生偵探工藤新一，遭神秘黑衣組織灌藥變小",
+      "隨身攜帶蝴蝶結變聲器、麻醉手錶和渦輪滑板",
+      "經典口頭禪是：真相永遠只有一個！",
+    ],
+  },
+  {
+    id: "culture-2",
+    category: "culture",
+    civilianWord: "孫悟空",
+    undercoverWord: "哪吒",
+    civilianClues: [
+      "從花果山仙石中孕育而生的東方神話傳奇齊天大聖",
+      "手持如意金箍棒，頭戴金箍圈，精通七十二種變化",
+      "大鬧天宮戰力無雙，後護送唐三藏西天取經降妖伏魔",
+      "擁有能看破虛實的火眼金睛，翻個筋斗雲可行十萬八千里",
+    ],
+    undercoverClues: [
+      "中國神話中陳塘關李靖總兵的三公子，少年英雄神將",
+      "腳踏風火輪、手持火尖槍、臂套乾坤圈、身纏混天綾",
+      "經歷鬧海削肉還母考驗後，獲太乙真人以蓮花化身重生",
+      "額頭常繪有標誌性紅色印記，綁著俏皮的雙丸子髮髻",
+    ],
+  },
+  {
+    id: "culture-3",
+    category: "culture",
+    civilianWord: "蜘蛛人",
+    undercoverWord: "蝙蝠俠",
+    civilianClues: [
+      "漫威旗下的高中生超級英雄，平民高中生彼得帕克化身",
+      "因意外遭到放射性蜘蛛叮咬而獲得飛簷走壁的神奇能力",
+      "座右銘是名言：能力越大，責任越大",
+      "身穿紅藍相間緊身戰衣，在紐約高樓大廈間發射蛛絲擺盪",
+    ],
+    undercoverClues: [
+      "DC 漫畫旗下的黑暗騎士，高譚市暗夜裡的罪惡剋星",
+      "白天是家財萬貫的布魯斯韋恩，自身沒有任何超能力",
+      "依靠頂尖格鬥體能、高科技戰車裝甲和偵探頭腦作戰",
+      "在秘密蝙蝠洞籌劃行動，身邊有忠誠管家阿福全力支援",
+    ],
+  },
+  {
+    id: "culture-4",
+    category: "culture",
+    civilianWord: "哈利波特",
+    undercoverWord: "甘道夫",
+    civilianClues: [
+      "額頭上有一道傳奇閃電形傷疤的巫師男孩",
+      "十一歲那年收到霍格華茲魔法學校的貓頭鷹錄取信",
+      "騎乘飛天掃帚參加魁地奇賽事，被分類帽分至葛來分多",
+      "與榮恩、妙麗組成鐵三角，歷經七年與黑魔王對決",
+    ],
+    undercoverClues: [
+      "魔戒中土世界裡最睿智強大的灰袍與白袍邁雅巫師",
+      "身穿長袍手持木杖，留著雪白長鬍，戴著藍色尖頂帽",
+      "在地底橋樑面對炎魔時大聲喝斥經典台詞：你休想通過！",
+      "引導佛羅多與魔戒遠征隊翻山越嶺前往末日火山銷毀魔戒",
+    ],
+  },
+  {
+    id: "culture-5",
+    category: "culture",
+    civilianWord: "魔術師",
+    undercoverWord: "催眠師",
+    civilianClues: [
+      "在舞台上透過巧妙手速與機關道具創造奇幻視覺效果的藝人",
+      "招牌表演包含帽子變鴿子、空手變撲克牌與大箱分割術",
+      "恪守嚴格行業保密戒律，絕不在外人面前隨意拆解秘密",
+      "身穿燕尾服揮舞指揮棒，伴隨緊湊背景音樂見證奇蹟時刻",
+    ],
+    undercoverClues: [
+      "透過語言暗示與引導協助他人進入深層潛意識專注狀態的人",
+      "經常藉由有節奏的擺動懷表或柔和呼吸口令幫助對象放鬆",
+      "廣泛應用於心理諮商減壓或舞台娛樂互動演出中",
+      "只要輕輕彈個響指或下達喚醒指令，受試者便隨之回神清醒",
+    ],
+  },
+  {
+    id: "daily-1",
+    category: "daily",
+    civilianWord: "電梯",
+    undercoverWord: "手扶梯",
+    civilianClues: [
+      "高樓建築裡不可或缺的垂直升降密閉代步鋼纜車廂",
+      "幾秒鐘內就能快速攀升十幾層樓，省去爬樓梯辛勞",
+      "內部有數位樓層按鈕面盤，設有緊急呼救求助對講機",
+      "上班尖峰時段在辦公大樓大廳往往大排長龍等待搭乘",
+    ],
+    undercoverClues: [
+      "百貨商場、捷運站與機場裡連續斜向運轉的循環式金屬階梯",
+      "兩側配有同速平移前進的黑色橡膠防滑扶手帶",
+      "通常只跨接相鄰上下兩樓層，開放式視野能一邊搭乘一邊環顧",
+      "搭乘時請緊握扶手站穩踏階，依動線靠邊禮讓他人通行",
+    ],
+  },
+  {
+    id: "daily-2",
+    category: "daily",
+    civilianWord: "雨傘",
+    undercoverWord: "雨衣",
+    civilianClues: [
+      "遇到落雨天或烈日驕陽時單手撐在頭頂上方的遮蔽防護工具",
+      "由手柄、傘骨金屬支架與防水布組成，有長傘也有折疊傘款",
+      "在大風暴雨中如果傘骨強度不夠很容易整把被吹翻開花",
+      "常在捷運車廂、計程車或便利商店傘架被粗心遺忘遺落",
+    ],
+    undercoverClues: [
+      "下雨天直接穿套在身上的連帽防水防護外衣",
+      "能將整個上半身與軀幹完全罩住，徹底解放雙手自由",
+      "騎機車、自行車通勤或雨中登山健行時的標配防濕裝備",
+      "穿上後行動靈活方便，無懼強風吹翻也不用手持握柄支撐",
+    ],
+  },
+  {
+    id: "daily-3",
+    category: "daily",
+    civilianWord: "雲霄飛車",
+    undercoverWord: "海盜船",
+    civilianClues: [
+      "大型主題遊樂園裡最熱門排隊最長的招牌軌道機動設施",
+      "列車沿著起伏盤旋的鋼製軌道以極高速度翻騰狂飆",
+      "包含近乎垂直的大俯衝、螺旋翻滾與極其劇烈的失重體驗",
+      "遊客往往全程尖叫不斷，雙手緊抓安全壓桿下來時雙腿發軟",
+    ],
+    undercoverClues: [
+      "遊樂園裡模擬在巨浪暴風中大幅度前後擺盪的龐大木船設施",
+      "懸掛在四根巨型立柱鋼架下方，如同一座巨大鞦韆前後盪漾",
+      "隨著擺動角度逐漸加劇，最高點幾乎能與地面垂直達到九十度",
+      "坐在船頭與船尾兩端的人所感受到的重力下墜刺激最為劇烈",
+    ],
+  },
+  {
+    id: "daily-4",
+    category: "daily",
+    civilianWord: "太陽眼鏡",
+    undercoverWord: "泳鏡",
+    civilianClues: [
+      "艷陽高照晴天時戴在眼前方的濾光深色鏡片眼鏡",
+      "主要用來阻擋刺眼強光與紫外線侵害，保護雙眼視力舒適",
+      "夏天海灘渡假、開車自駕出遊不可或缺的流行時尚配件",
+      "戴上後周圍光線瞬間柔和暗下，拍照造型極具帥氣個性",
+    ],
+    undercoverClues: [
+      "在游泳池戲水或深水潛泳時緊貼眼窩的防水保護眼罩",
+      "鏡框周邊配有親膚矽膠密封吸盤，緊緊貼合眼圈防止池水滲漏",
+      "靠一條高彈性矽膠扁帶緊扣後腦勺防止跳水時鬆脫滑落",
+      "內側具備防霧塗層，能隔絕池中消毒氯水刺激眼球保持視野清澈",
+    ],
+  },
+  {
+    id: "daily-5",
+    category: "daily",
+    civilianWord: "降落傘",
+    undercoverWord: "遮陽傘",
+    civilianClues: [
+      "高空跳傘或太空艙返回時藉由空氣阻力減緩下墜速度的大型傘布",
+      "平時精密折疊打包在後背包中，拉開導引傘後迎風完全膨脹展開",
+      "藉由巨大空氣阻力使人員或物資輕緩安全地降落在著陸區域",
+      "操作者手拉操縱拉繩可精準微調滑翔航向與最終落地點",
+    ],
+    undercoverClues: [
+      "日常生活中常備的隨身遮陽工具，撐開呈現弧形傘面",
+      "晴空萬里紫外線強烈時推開傘架遮蔽烈日，帶有抗紫外線防曬塗層",
+      "常設計為輕巧好收納的三折或五折款，方便放入隨身包包中攜帶",
+      "漫步林蔭大道或海濱小鎮時撐著散步，優雅防曬阻隔熱氣",
+    ],
+  },
+];
+
+/**
+ * Authentic English (en) Curated Word Bank.
+ */
+export const WORD_PAIRS_EN: WordPair[] = [
+  // Tech & Digital
+  {
+    id: "tech-1",
+    category: "tech",
+    civilianWord: "ChatGPT",
+    undercoverWord: "Claude",
+    civilianClues: [
+      "A conversational AI assistant developed by a well-known lab in San Francisco.",
+      "Pioneered the worldwide generative AI boom with its iconic green spinning logo.",
+      "Widely used by knowledge workers for coding assistance and drafting written copy.",
+      "Offers interactive voice mode, canvas editing, and a premium tier named Plus.",
+    ],
+    undercoverClues: [
+      "A thoughtful and articulate conversational AI assistant crafted by Anthropic.",
+      "Celebrated for its expansive context window and natural, human-like reasoning style.",
+      "Widely trusted by software developers for deep codebase comprehension and coding.",
+      "Its flagship model generation series is distinguished by tiers like Sonnet and Opus.",
+    ],
+  },
+  {
+    id: "tech-2",
+    category: "tech",
+    civilianWord: "Earbuds",
+    undercoverWord: "Hearing Aid",
+    civilianClues: [
+      "Compact wireless audio capsules placed directly inside your ear canals.",
+      "Accompanied by a pocket-sized flip-top battery case with noise cancellation.",
+      "Standard listening companion on the subway, during cardio workouts, or while walking.",
+      "Losing one side of the pair down a train platform gap is a commuter nightmare.",
+    ],
+    undercoverClues: [
+      "A discreet miniature electronic assistive device worn in or behind the ear.",
+      "Captures ambient speech through microphones and amplifies sound frequencies clearly.",
+      "Tailored and programmed by audiologists to help seniors follow conversations.",
+      "Categorized as specialized medical equipment that restores everyday acoustic clarity.",
+    ],
+  },
+  {
+    id: "tech-3",
+    category: "tech",
+    civilianWord: "Keyboard",
+    undercoverWord: "Typewriter",
+    civilianClues: [
+      "A computer desktop peripheral with rows of keys for inputting text and commands.",
+      "Types with distinct tactile clicks, beloved by gamers, writers, and software coders.",
+      "Often customized with colorful keycaps, mechanical switches, and glowing RGB lights.",
+      "Categorized by switch styles like Linear, Clicky, or Tactile variants.",
+    ],
+    undercoverClues: [
+      "A vintage manual writing machine that prints letters directly onto physical paper.",
+      "Each keypress strikes an inked ribbon against paper with an unmistakable clacking noise.",
+      "Does not need a computer monitor or power outlet to type out documents.",
+      "Features a rotating roller platen and a manual carriage return that dings with a bell.",
+    ],
+  },
+  {
+    id: "tech-4",
+    category: "tech",
+    civilianWord: "Drone",
+    undercoverWord: "Kite",
+    civilianClues: [
+      "A remotely piloted multicopter that hovers in mid-air using spinning propellers.",
+      "Equipped with high-definition gimbal cameras to capture sweeping landscape footage.",
+      "Fitted with GPS satellite positioning and an automatic return feature on low battery.",
+      "Regulated by aviation authorities with strictly designated no-fly zones around airports.",
+    ],
+    undercoverClues: [
+      "A tethered aerodynamic craft made of lightweight fabric stretched over a framework.",
+      "Rises into the sky propelled entirely by steady natural outdoor breezes.",
+      "Controlled from the ground using a handheld line reel wound with sturdy string.",
+      "Traditional springtime sight floating over breezy open public park meadows.",
+    ],
+  },
+  {
+    id: "tech-5",
+    category: "tech",
+    civilianWord: "Power Bank",
+    undercoverWord: "Generator",
+    civilianClues: [
+      "A portable rectangular lithium battery pack used to recharge mobile gadgets on the go.",
+      "An essential travel lifesaver when your smartphone battery drains while out and about.",
+      "Equipped with USB-A and USB-C output ports supporting fast charging protocols.",
+      "Must clearly display its milliamp-hour capacity to pass airport security checkpoints.",
+    ],
+    undercoverClues: [
+      "A heavy-duty machine that converts mechanical or fuel energy into electrical current.",
+      "Kicks into action to supply backup electricity when neighborhood power grids fail.",
+      "Commonly fueled by diesel or gasoline, humming loudly outside construction sites.",
+      "Stationary emergency equipment indispensable for hospitals and off-grid remote cabins.",
+    ],
+  },
+
+  // Food & Drinks
+  {
+    id: "food-1",
+    category: "food",
+    civilianWord: "Latte",
+    undercoverWord: "Cappuccino",
+    civilianClues: [
+      "A popular Italian-inspired espresso beverage prepared with plenty of steamed milk.",
+      "Finished with a delicate thin layer of microfoam, often adorned with pretty leaf art.",
+      "Milder, creamier, and smoother than an Americano or concentrated cortado.",
+      "One of the most frequently ordered morning coffee drinks across cafes worldwide.",
+    ],
+    undercoverClues: [
+      "A traditional espresso drink layered with equal thirds of coffee, milk, and thick foam.",
+      "Crowned with a tall, airy dome of frothy foam dusted with cocoa powder.",
+      "Has a distinctly bolder, more pronounced coffee punch beneath its velvety head.",
+      "Customarily enjoyed in Italy exclusively during morning breakfast hours alongside pastries.",
+    ],
+  },
+  {
+    id: "food-2",
+    category: "food",
+    civilianWord: "Coca-Cola",
+    undercoverWord: "Pepsi",
+    civilianClues: [
+      "The iconic dark carbonated soft drink served in famous bright red aluminum cans.",
+      "Features a legendary secret recipe syrup formulated over a century ago in Atlanta.",
+      "Delivers a crisp vanilla-and-spice effervescence that pairs with burgers and popcorn.",
+      "Its holiday advertising historically popularized the modern cheerful Santa Claus imagery.",
+    ],
+    undercoverClues: [
+      "A famous sweet carbonated soda recognizable by its blue, red, and white circular globe logo.",
+      "Characterized by a slightly sweeter, citrus-forward burst of flavor on the initial taste.",
+      "Famously sponsored high-profile musical superstars and stadium halftime entertainment.",
+      "Pioneered blind taste test marketing campaigns comparing rival sodas in supermarket aisles.",
+    ],
+  },
+  {
+    id: "food-3",
+    category: "food",
+    civilianWord: "Burger",
+    undercoverWord: "Sandwich",
+    civilianClues: [
+      "A warm fast-food meal featuring a seasoned patty nestled inside a sliced round bun.",
+      "Topped with melted cheddar cheese, crisp lettuce, tomato slices, pickles, and condiments.",
+      "Universal diner favorite usually served alongside golden French fries and milkshakes.",
+      "Gripped with both hands inside a paper wrapping wrapper at takeout drive-thru windows.",
+    ],
+    undercoverClues: [
+      "A versatile meal prepared by layering deli meats, cheeses, and spreads between sliced bread.",
+      "Named after an 18th-century British earl who wished to eat without pausing his card games.",
+      "Frequently assembled using square bread slices diagonally cut into triangular halves.",
+      "A quintessential brown-bag lunchbox staple for school breaks, picnics, and office desks.",
+    ],
+  },
+  {
+    id: "food-4",
+    category: "food",
+    civilianWord: "Ice Cream",
+    undercoverWord: "Popsicle",
+    civilianClues: [
+      "A rich frozen dairy treat churned with sweetened cream, milk, sugar, and flavorings.",
+      "Served in waffle cones, cups, or sundae bowls with toppings like fudge and sprinkles.",
+      "Whipped during freezing to incorporate air, yielding a smooth and scoopable consistency.",
+      "Summer staple sold in parlors across classic flavors like vanilla and chocolate chip.",
+    ],
+    undercoverClues: [
+      "A refreshing water-based flavored frozen snack mounted on a flat wooden stick.",
+      "Made by freezing fruit juice, syrup, or puree solid inside vertical molds.",
+      "Licked or bitten directly off its wooden handle, often in bright cherry or blue raspberry hues.",
+      "Can drip sticky colorful syrup down your fingers if it melts too quickly under the hot sun.",
+    ],
+  },
+  {
+    id: "food-5",
+    category: "food",
+    civilianWord: "Yogurt",
+    undercoverWord: "Milk",
+    civilianClues: [
+      "A creamy fermented dairy product cultured with live beneficial probiotic bacteria.",
+      "Has a pleasant tangy, slightly tart flavor, often sweetened with honey or berry compote.",
+      "Scooped out of plastic tubs with a spoon or layered into breakfast fruit parfaits.",
+      "Greek-style strained varieties are prized for their thick texture and high protein content.",
+    ],
+    undercoverClues: [
+      "A wholesome white nutrient-dense liquid produced by mammals, primarily dairy cows.",
+      "Poured over breakfast cereals, added into hot tea, or stirred into pancake batter.",
+      "Stored inside cardboard cartons or plastic gallon jugs inside the refrigerator door.",
+      "Classified by butterfat levels such as whole, reduced fat, low-fat, or skim varieties.",
+    ],
+  },
+
+  // Pop Culture & Mystery
+  {
+    id: "culture-1",
+    category: "culture",
+    civilianWord: "Sherlock Holmes",
+    undercoverWord: "Hercule Poirot",
+    civilianClues: [
+      "A legendary Victorian consulting detective operating out of 221B Baker Street in London.",
+      "Solves baffling criminal cases through brilliant forensic deduction, accompanied by Dr. Watson.",
+      "Iconic visual silhouette features a deerstalker cap, an Inverness cape, and a curved pipe.",
+      "Locked in an intellectual duel of wits against the criminal mastermind Professor Moriarty.",
+    ],
+    undercoverClues: [
+      "A renowned Belgian private investigator celebrated for his meticulously waxed mustache.",
+      "Cracks sensational cases like the Orient Express relying on the precision of his little grey cells.",
+      "Obsessed with supreme order, neatness, and symmetry in all daily domestic matters.",
+      "The world-famous detective protagonist created by celebrated mystery author Agatha Christie.",
+    ],
+  },
+  {
+    id: "culture-2",
+    category: "culture",
+    civilianWord: "Spider-Man",
+    undercoverWord: "Batman",
+    civilianClues: [
+      "A witty teenage superhero who swings between Manhattan skyscrapers on synthetic webbing.",
+      "Acquired acrobatic wall-crawling abilities after an accidental radioactive arachnid bite.",
+      "Guided by the immortal moral principle that with great power comes great responsibility.",
+      "Underneath the red and blue masked suit is a brilliant science student named Peter Parker.",
+    ],
+    undercoverClues: [
+      "The grim vigilante protector of Gotham City who fights crime without any superhuman powers.",
+      "By day a wealthy billionaire industrialist, by night striking terror into villainous hearts.",
+      "Operates out of a subterranean cavern command center, assisted by his loyal butler Alfred.",
+      "Equips himself with tactical armor, a bat-themed emblem, specialized gadgets, and a sleek car.",
+    ],
+  },
+  {
+    id: "culture-3",
+    category: "culture",
+    civilianWord: "Harry Potter",
+    undercoverWord: "Percy Jackson",
+    civilianClues: [
+      "The boy wizard who learned of his magical heritage upon receiving an owl letter at age eleven.",
+      "Bears a legendary lightning-bolt-shaped scar on his forehead from surviving the Dark Lord.",
+      "Attends a Scottish boarding castle of witchcraft, sorted into the brave scarlet Gryffindor house.",
+      "Catches the golden snitch during high-speed flying broomstick quidditch matches.",
+    ],
+    undercoverClues: [
+      "A modern high-schooler who discovers he is the mythological demigod son of Poseidon.",
+      "Spends summers training at a secret Long Island camp alongside satyrs and mythological heroes.",
+      "Commands water currents, breathes underwater, and wields a pen that transforms into a sword.",
+      "Embarks on quests across modern America facing mythical Greek monsters and Olympian deities.",
+    ],
+  },
+  {
+    id: "culture-4",
+    category: "culture",
+    civilianWord: "Vampire",
+    undercoverWord: "Werewolf",
+    civilianClues: [
+      "An immortal nocturnal gothic monster of European myth that subsists on human blood.",
+      "Casts no reflection in glass mirrors and suffers fatal burns when touched by direct sunlight.",
+      "Tradition holds they can be repelled with pungent garlic cloves, wooden stakes, and holy relics.",
+      "Often portrayed in velvet capes inside Transylvanian castles, shapeshifting into flying bats.",
+    ],
+    undercoverClues: [
+      "A cursed human who involuntarily transforms into a ravenous canine beast under a full moon.",
+      "Endowed with fearsome physical strength, razor claws, and a chilling mournful midnight howl.",
+      "Folklore insists that their only true mortal vulnerability is being shot with silver ammunition.",
+      "Struggles with tragic loss of humanity while roaming through shadowy forests in primal packs.",
+    ],
+  },
+  {
+    id: "culture-5",
+    category: "culture",
+    civilianWord: "Magician",
+    undercoverWord: "Hypnotist",
+    civilianClues: [
+      "An entertainer who performs illusions and sleight of hand to astonish audiences.",
+      "Known for pulling white rabbits from silk top hats, sawing assistants in half, and shuffling cards.",
+      "Never reveals the secret methods behind their baffling parlor tricks and stage deceptions.",
+      "Wears black stage tuxedos and gestures dramatically with a slender tip wand.",
+    ],
+    undercoverClues: [
+      "A practitioner who guides subjects into a relaxed, highly suggestible trance state.",
+      "Often utilizes a swinging pocket watch or rhythmic soothing cadence to induce focus.",
+      "Performs comedic stage demonstrations or clinical therapy sessions to break habits.",
+      "Instructs volunteers to act out humorous suggestions before snapping fingers to awaken them.",
+    ],
+  },
+
+  // Daily Life
+  {
+    id: "daily-1",
+    category: "daily",
+    civilianWord: "Elevator",
+    undercoverWord: "Escalator",
+    civilianClues: [
+      "A vertical passenger car hoisted by cables and counterweights inside a building shaft.",
+      "Transports office workers and residents swiftly between skyscraper stories.",
+      "Equipped with interior button panels, floor indicator chimes, and emergency telephone alarms.",
+      "Experiences packed queues in corporate lobby hallways during early morning rush hours.",
+    ],
+    undercoverClues: [
+      "A motorized moving flight of metal steps that carries pedestrians between adjacent floors.",
+      "Equipped with grooved aluminum steps that cycle continuously alongside rubber handrails.",
+      "Commonly found in bustling shopping malls, airport terminals, and transit stations.",
+      "Etiquette encourages passengers to stand to one side and walk on the other.",
+    ],
+  },
+  {
+    id: "daily-2",
+    category: "daily",
+    civilianWord: "Umbrella",
+    undercoverWord: "Raincoat",
+    civilianClues: [
+      "A collapsible canopy made of waterproof fabric supported by hinged metal ribs on a handle.",
+      "Carried by hand and pushed open overhead to shield against sudden rainfall or bright sunshine.",
+      "Frequently forgotten and left behind on buses, subways, or entryway stands.",
+      "Can flip inside-out unexpectedly when caught in powerful crosswinds during stormy downpours.",
+    ],
+    undercoverClues: [
+      "A waterproof wearable jacket with a hood tailored to keep clothing dry in wet weather.",
+      "Fastened with buttons, zippers, or drawstrings, freeing both hands for carrying bags or cycling.",
+      "Made from lightweight synthetic nylon, coated PVC, or breathable Gore-Tex membranes.",
+      "Bright yellow versions are a classic protective choice for toddlers, fishermen, and mariners.",
+    ],
+  },
+  {
+    id: "daily-3",
+    category: "daily",
+    civilianWord: "Roller Coaster",
+    undercoverWord: "Ferris Wheel",
+    civilianClues: [
+      "An amusement park thrill ride featuring passenger cars racing along twisting steel tracks.",
+      "Delivers heart-pounding acceleration with steep gravitational drops, corkscrews, and upside-down loops.",
+      "Riders are strapped into secure overhead harness bars while shouting and screaming in delight.",
+      "Ratchets slowly up a towering motorized lift hill before plunging downward at breakneck velocity.",
+    ],
+    undercoverClues: [
+      "A colossal revolving upright steel observation wheel carrying enclosed passenger cabins.",
+      "Rotates at a slow, gentle pace to provide breathtaking panoramic city and harbor skylines.",
+      "Often illuminated by vibrant computerized neon light displays, forming a waterfront landmark.",
+      "A beloved romantic attraction for couples and sightseers seeking a relaxed scenic spin.",
+    ],
+  },
+  {
+    id: "daily-4",
+    category: "daily",
+    civilianWord: "Sunglasses",
+    undercoverWord: "Goggles",
+    civilianClues: [
+      "Protective eyewear fitted with dark tinted or polarized lenses to shield eyes from harsh glare.",
+      "A stylish fashion accessory worn during sunny beach vacations, scenic drives, and summer walks.",
+      "Rests gently across the bridge of the nose with side temples tucked over both ears.",
+      "Shields delicate eye tissues from harmful ultraviolet solar rays while outdoors.",
+    ],
+    undercoverClues: [
+      "Tight-fitting protective eyewear equipped with soft rubber suction gaskets around the eye sockets.",
+      "Secured around the back of the head with an adjustable elastic strap for underwater swimming or skiing.",
+      "Treated with anti-fog coatings to keep vision transparent under water or amid heavy snow.",
+      "Prevents stinging pool chlorine, ocean saltwater, or flying chemical splashes from hurting the eyes.",
+    ],
+  },
+  {
+    id: "daily-5",
+    category: "daily",
+    civilianWord: "Parachute",
+    undercoverWord: "Parasol",
+    civilianClues: [
+      "A large hemispherical fabric canopy that decelerates the descent of a falling object or person.",
+      "Deployed during skydiving excursions, military airborne drops, or spacecraft capsule landings.",
+      "Steered by pulling dual steering toggles to maneuver flight direction toward a target landing zone.",
+      "Requires meticulous, disciplined folding into a backpack rig, as personal safety depends on it.",
+    ],
+    undercoverClues: [
+      "A decorative lightweight handheld canopy used primarily to shield the face from bright sunshine.",
+      "Often crafted from delicate paper, lace, or UV-blocking silk with an ornate wooden handle.",
+      "Traditionally carried as a graceful fashion accessory during sunny garden tea parties.",
+      "Differs from storm umbrellas because it is not intended for heavy wind or torrential rain.",
+    ],
+  },
+];
+
+/**
+ * Returns the curated word bank corresponding to the given locale (default: zh-CN).
+ */
+export function getWordPairsForLocale(locale?: string): WordPair[] {
+  const loc = (locale || "zh-CN").toLowerCase();
+  if (loc.startsWith("en")) return WORD_PAIRS_EN;
+  if (loc.includes("tw") || loc.includes("hk")) return WORD_PAIRS_ZHTW;
+  return WORD_PAIRS;
+}
+
+/**
+ * Helper to select a word pair respecting the current locale.
+ */
 export function selectWordPair(
   category: WordCategory,
   roundSeed: number,
   customCivilian?: string | null,
   customUndercover?: string | null,
+  locale?: string,
 ): WordPair {
+  const loc = (locale || "zh-CN").toLowerCase();
+  const isEn = loc.startsWith("en");
+  const isTw = loc.includes("tw") || loc.includes("hk");
+
   if (
     category === "custom" &&
     customCivilian &&
@@ -577,39 +1249,76 @@ export function selectWordPair(
   ) {
     const civ = customCivilian.trim();
     const und = customUndercover.trim();
+
+    const civilianClues = isEn
+      ? [
+          `An everyday concept familiar to all of us, consisting of ${civ.length} characters.`,
+          "A tangible and distinct mental picture comes to mind when you picture it.",
+          "Very recognizable within its category, often encountered in daily conversations.",
+          "Its core attributes are prominent, with subtle nuances compared to related terms.",
+          "Listening to prior clues, my description leans toward the mainstream scenario.",
+        ]
+      : isTw
+      ? [
+          `日常生活中大家都很熟悉的事物，一共 ${civ.length} 個字`,
+          "提到它的時候，大家腦海裡會有很具體的畫面感",
+          "在同類東西裡辨識度很高，平時經常會接觸或聊到",
+          "它的核心特點很鮮明，但細節上跟相近概念略有區別",
+          "注意聽前幾位描述的使用場景，我這個更偏向主流常見款",
+        ]
+      : [
+          `日常生活中大家都很熟悉的事物，一共 ${civ.length} 个字`,
+          "提到它的时候，大家脑海里会有很具体的画面感",
+          "在同类东西里辨识度很高，平时经常会接触或聊到",
+          "它的核心特点很鲜明，但细节上跟相近概念略有区别",
+          "注意听前几位描述的使用场景，我这个更偏向主流常见款",
+        ];
+
+    const undercoverClues = isEn
+      ? [
+          `A widely recognized concept we frequently encounter, spelled with ${und.length} characters.`,
+          "Tied closely to life experiences with its own unique use cases.",
+          "Its functionality is prominent and indispensable in specific scenarios.",
+          "Hearing everyone's clues, the broad direction aligns, but details feel intriguing.",
+          "My concept has distinct features; I will share subtle clues to test the waters.",
+        ]
+      : isTw
+      ? [
+          `平時經常能聽到或見到的概念，字數是 ${und.length} 個字`,
+          "和生活體驗息息相關，有自己獨特的使用場景",
+          "功能屬性很明確，在特定場合下幾乎不可或缺",
+          "聽大家的描述感覺大方向很接近，但側重點似乎有一點微妙差異",
+          "我手裡的這份特徵很典型，先穩一手看看風向",
+        ]
+      : [
+          `平时经常能听到或见到的概念，字数是 ${und.length} 个字`,
+          "和生活体验息息相关，有自己独特的使用场景",
+          "功能属性很明确，在特定场合下几乎不可或缺",
+          "听大家的描述感觉大方向很接近，但侧重点似乎有一点微妙差异",
+          "我手里的这个特征很典型，先稳一手看看风向",
+        ];
+
     return {
       id: `custom-${roundSeed}`,
       category: "daily",
       civilianWord: civ,
       undercoverWord: und,
-      civilianClues: [
-        `日常生活中大家都很熟悉的事物，一共 ${civ.length} 个字`,
-        "提到它的时候，大家脑海里会有很具体的画面感",
-        "在同类东西里辨识度很高，平时经常会接触或聊到",
-        "它的核心特点很鲜明，但细节上跟相近概念略有区别",
-        "注意听前几位描述的使用场景，我这个更偏向主流常见款",
-        "不用说太透，懂的人一听场景就能对上号",
-      ],
-      undercoverClues: [
-        `平时经常能听到或见到的概念，字数是 ${und.length} 个字`,
-        "和生活体验息息相关，有自己独特的使用场景",
-        "功能属性很明确，在特定场合下几乎不可或缺",
-        "听大家的描述感觉大方向很接近，但侧重点似乎有一点微妙差异",
-        "我手里的这个特征很典型，先稳一手看看风向",
-        "综合前面几位的线索，细节属性上十分耐人寻味",
-      ],
+      civilianClues,
+      undercoverClues,
     };
   }
 
+  const baseList = getWordPairsForLocale(locale);
   const pool =
     category === "all" || category === "custom"
-      ? WORD_PAIRS
-      : WORD_PAIRS.filter((w) => w.category === category);
+      ? baseList
+      : baseList.filter((w) => w.category === category);
 
-  const list = pool.length > 0 ? pool : WORD_PAIRS;
+  const list = pool.length > 0 ? pool : baseList;
   const idx = Math.floor(Math.random() * list.length);
   const chosen = list[idx] || list[0];
 
+  // Randomly swap civilian and undercover 50% of the time so even familiar pairs stay fresh!
   if (Math.random() < 0.5) {
     return {
       id: `${chosen.id}-swap`,
@@ -657,11 +1366,12 @@ export function createInitialPosition(
   customCiv: string | null = null,
   customUnd: string | null = null,
   fixedUndercoverSeats?: Seat[],
+  locale?: string,
 ): UndercoverPosition {
   const activeSeats = seatsForCount(playerCount);
   const actualUndercoverCount = playerCount === 4 ? 1 : undercoverCount;
 
-  const pair = selectWordPair(category, round, customCiv, customUnd);
+  const pair = selectWordPair(category, round, customCiv, customUnd, locale);
 
   let undercoverSet: Set<Seat>;
   if (fixedUndercoverSeats && fixedUndercoverSeats.length > 0) {
@@ -1136,7 +1846,13 @@ export function applyVote(
 export function chooseBotSpeech(p: UndercoverPosition, seat: Seat): string {
   const myWord = p.words[seat];
   const baseId = p.wordPairId.replace(/-swap$/, "");
-  const matchedPair = WORD_PAIRS.find((w) => w.id === baseId);
+  const allCurated = [...WORD_PAIRS, ...WORD_PAIRS_ZHTW, ...WORD_PAIRS_EN];
+  const matchedPair =
+    allCurated.find(
+      (w) =>
+        w.id === baseId &&
+        (w.civilianWord === myWord || w.undercoverWord === myWord),
+    ) || allCurated.find((w) => w.id === baseId);
 
   let candidateClues: string[] = [];
   if (matchedPair) {
@@ -1152,15 +1868,30 @@ export function chooseBotSpeech(p: UndercoverPosition, seat: Seat): string {
     (c) => !alreadyUsedTexts.has(c) && !containsOwnSecretWord(c, myWord),
   );
 
+  const isEnglish = /^[A-Za-z0-9\s\-\.,]+$/.test(myWord);
+
   if (p.pkRound > 0) {
-    const pkLines = [
-      "大家仔细对比我上一轮的描述，我的特征非常贴合主流词，绝对不是卧底！",
-      "别投错好人了！我是顺着大家共性属性说的，建议重点盯发言模棱两可的那位。",
-      "冤枉啊各位探员，我刚才是怕说太透被卧底猜到词才收敛了一点！",
-    ];
-    for (const line of pkLines) {
-      if (!alreadyUsedTexts.has(line) && !containsOwnSecretWord(line, myWord)) {
-        return line;
+    if (isEnglish) {
+      const pkLinesEn = [
+        "Please listen to my previous clue carefully—it aligns with the majority word. I am definitely not the infiltrator!",
+        "Do not vote out an innocent teammate! Look closely at the seat whose testimony sounded ambiguous and vague.",
+        "Fellow detectives, I kept my clue subtle only to prevent the undercover from guessing the exact word!",
+      ];
+      for (const line of pkLinesEn) {
+        if (!alreadyUsedTexts.has(line) && !containsOwnSecretWord(line, myWord)) {
+          return line;
+        }
+      }
+    } else {
+      const pkLines = [
+        "大家仔细对比我上一轮的描述，我的特征非常贴合主流词，绝对不是卧底！",
+        "别投错好人了！我是顺着大家共性属性说的，建议重点盯发言模棱两可的那位。",
+        "冤枉啊各位探员，我刚才是怕说太透被卧底猜到词才收敛了一点！",
+      ];
+      for (const line of pkLines) {
+        if (!alreadyUsedTexts.has(line) && !containsOwnSecretWord(line, myWord)) {
+          return line;
+        }
       }
     }
   }
@@ -1168,6 +1899,21 @@ export function chooseBotSpeech(p: UndercoverPosition, seat: Seat): string {
   if (available.length > 0) {
     const seatIdx = allSeats.indexOf(seat);
     return available[(p.cycle + seatIdx) % available.length];
+  }
+
+  if (isEnglish) {
+    const genericFallbacksEn = [
+      `A concept very familiar to all of us, consisting of ${myWord.length} letters.`,
+      "Encountered very frequently in everyday life; its core attributes match what earlier speakers noted.",
+      "My word represents a classic mainstream variant with very clear practical uses.",
+      "Listening around the table, someone's emphasis felt off; I will protect my hand without oversharing.",
+    ];
+    for (const fb of genericFallbacksEn) {
+      if (!alreadyUsedTexts.has(fb) && !containsOwnSecretWord(fb, myWord)) {
+        return fb;
+      }
+    }
+    return "Its core functionality is universally recognized, and my perspective aligns with the majority.";
   }
 
   const genericFallbacks = [
@@ -1210,6 +1956,20 @@ export function chooseBotVote(
 
   scored.sort((a, b) => b.score - a.score);
   const chosen = scored[0]?.seat || targets[0];
+
+  const isEnglish = /^[A-Za-z0-9\s\-\.,]+$/.test(p.words[voter] || "");
+  if (isEnglish) {
+    const targetNum = chosen.replace("Seat", "");
+    const reasonsEn = [
+      `Agent #${targetNum}'s clue subtly diverged from consensus; they look most suspicious!`,
+      `I feel Agent #${targetNum} was holding back and testing the waters rather than sharing details.`,
+      `Comparing earlier clues, Agent #${targetNum}'s description doesn't quite match our concept.`,
+      `My intuition suspects Agent #${targetNum} holds a different word—voting to expose them!`,
+    ];
+    const reason =
+      reasonsEn[(p.stepCount + allSeats.indexOf(voter)) % reasonsEn.length];
+    return { target: chosen, reason };
+  }
 
   const reasons = [
     `${shortSeatName(chosen)} 的描述方向跟大家有点微妙偏差，嫌疑最大！`,

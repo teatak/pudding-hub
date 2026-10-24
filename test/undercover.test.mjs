@@ -5,6 +5,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   WORD_PAIRS,
+  WORD_PAIRS_ZHTW,
+  WORD_PAIRS_EN,
   selectWordPair,
   initialLobby,
   createInitialPosition,
@@ -50,16 +52,16 @@ function assertStrictJsonValue(val, pathPrefix = "root") {
   assert.fail(`Unsupported type ${typeof val} at ${pathPrefix}`);
 }
 
-test("Undercover 1.0.0-preview.10 release package exists and contains verified source files", async () => {
+test("Undercover 1.0.0-preview.11 release package exists and contains verified source files", async () => {
   const pkgPath = path.join(
     root,
-    "releases/1.0.0-preview.10/undercover.pudding-widget.json",
+    "releases/1.0.0-preview.11/undercover.pudding-widget.json",
   );
   const raw = await fs.readFile(pkgPath, "utf8");
   const pkg = JSON.parse(raw);
 
   assert.equal(pkg.id, "teatak/pudding-hub/widgets/undercover");
-  assert.equal(pkg.version, "1.0.0-preview.10");
+  assert.equal(pkg.version, "1.0.0-preview.11");
   assert.equal(pkg.requires.protocolVersion, 24);
   assert.equal(pkg.requires.sdkVersion, "1");
 
@@ -87,26 +89,28 @@ test("Undercover 1.0.0-preview.10 release package exists and contains verified s
 });
 
 test("Word bank, custom word pairs, secret word leak guard, and bot clues work accurately", () => {
-  assert.ok(WORD_PAIRS.length >= 20);
-  for (const pair of WORD_PAIRS) {
-    assert.ok(pair.civilianWord.length > 0);
-    assert.ok(pair.undercoverWord.length > 0);
-    assert.notEqual(pair.civilianWord, pair.undercoverWord);
-    assert.ok(pair.civilianClues.length >= 4);
-    assert.ok(pair.undercoverClues.length >= 4);
-    for (const clue of pair.civilianClues) {
-      assert.equal(
-        containsOwnSecretWord(clue, pair.civilianWord),
-        false,
-        `Civilian clue "${clue}" leaked "${pair.civilianWord}"`,
-      );
-    }
-    for (const clue of pair.undercoverClues) {
-      assert.equal(
-        containsOwnSecretWord(clue, pair.undercoverWord),
-        false,
-        `Undercover clue "${clue}" leaked "${pair.undercoverWord}"`,
-      );
+  for (const list of [WORD_PAIRS, WORD_PAIRS_ZHTW, WORD_PAIRS_EN]) {
+    assert.ok(list.length >= 20);
+    for (const pair of list) {
+      assert.ok(pair.civilianWord.length > 0);
+      assert.ok(pair.undercoverWord.length > 0);
+      assert.notEqual(pair.civilianWord, pair.undercoverWord);
+      assert.ok(pair.civilianClues.length >= 4);
+      assert.ok(pair.undercoverClues.length >= 4);
+      for (const clue of pair.civilianClues) {
+        assert.equal(
+          containsOwnSecretWord(clue, pair.civilianWord),
+          false,
+          `Civilian clue "${clue}" leaked "${pair.civilianWord}"`,
+        );
+      }
+      for (const clue of pair.undercoverClues) {
+        assert.equal(
+          containsOwnSecretWord(clue, pair.undercoverWord),
+          false,
+          `Undercover clue "${clue}" leaked "${pair.undercoverWord}"`,
+        );
+      }
     }
   }
 
@@ -118,6 +122,9 @@ test("Word bank, custom word pairs, secret word leak guard, and bot clues work a
   );
   assert.equal(customPair.civilianWord, "手冲咖啡");
   assert.equal(customPair.undercoverWord, "挂耳咖啡");
+
+  const enPair = selectWordPair("tech", 1, null, null, "en");
+  assert.match(enPair.civilianWord, /^[A-Za-z0-9\s]+$/);
 });
 
 test("Speaking, PK tie-break defense, voting elimination, victory conditions, and strict jsonValue compliance work end-to-end", () => {

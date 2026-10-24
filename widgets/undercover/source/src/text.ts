@@ -299,16 +299,39 @@ export function seatShortLabel(seat: Seat): string {
   return `${num}号`;
 }
 
+export function getLocale(): LocaleKey {
+  return currentLocale;
+}
+
 export function botNameForSeat(seat: Seat): string {
-  const map: Record<Seat, string> = {
-    Seat1: "探长·福尔摩斯",
-    Seat2: "神探·波洛",
-    Seat3: "怪盗·基德",
-    Seat4: "密探·零号",
-    Seat5: "特工·夜莺",
-    Seat6: "顾问·莫里亚蒂",
+  const names: Record<LocaleKey, Record<Seat, string>> = {
+    "zh-CN": {
+      Seat1: "探长·福尔摩斯",
+      Seat2: "神探·波洛",
+      Seat3: "怪盗·基德",
+      Seat4: "密探·零号",
+      Seat5: "特工·夜莺",
+      Seat6: "顾问·莫里亚蒂",
+    },
+    "zh-TW": {
+      Seat1: "探長·福爾摩斯",
+      Seat2: "神探·白羅",
+      Seat3: "怪盜·基德",
+      Seat4: "密探·零號",
+      Seat5: "特工·夜鶯",
+      Seat6: "顧問·莫里亞蒂",
+    },
+    en: {
+      Seat1: "Insp. Holmes",
+      Seat2: "Det. Poirot",
+      Seat3: "Phantom Kid",
+      Seat4: "Agent Zero",
+      Seat5: "Agent Nightingale",
+      Seat6: "Prof. Moriarty",
+    },
   };
-  return map[seat] || seatLabel(seat);
+  const table = names[currentLocale] || names["zh-CN"];
+  return table[seat] || seatLabel(seat);
 }
 
 export function categoryLabel(cat: WordCategory): string {

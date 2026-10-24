@@ -927,6 +927,7 @@ export default function App() {
         customCivilianWord: pickerCustomCiv,
         customUndercoverWord: pickerCustomUnd,
         assignments: pickerSlots,
+        locale: locale || undefined,
       });
       setPicker(false);
     });
