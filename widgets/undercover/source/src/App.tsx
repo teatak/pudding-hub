@@ -750,22 +750,6 @@ export default function App() {
       ? eligibleVoteTargetsFor(p, humanSeat)
       : [];
 
-  // Calculate spotlight angle based on current turn seat
-  function spotlightClassForTurn(): string {
-    if (!p.turn || l.phase === "lobby" || isFinished) return "is-off";
-    if (p.turn === bottomSeat) return "is-bottom";
-    if (p.turn === topCenterSeat) return "is-top";
-    if (leftWingSeats.includes(p.turn)) {
-      const idx = leftWingSeats.indexOf(p.turn);
-      return leftWingSeats.length > 1 && idx === 1 ? "is-left-low" : "is-left";
-    }
-    if (rightWingSeats.includes(p.turn)) {
-      const idx = rightWingSeats.indexOf(p.turn);
-      return rightWingSeats.length > 1 && idx === 1 ? "is-right-low" : "is-right";
-    }
-    return "is-center";
-  }
-
   function renderAgentCard(seat: Seat, side: "left" | "top" | "right") {
     const info = getPlayerInfo(seat);
     const isAlive = p.aliveSeats.includes(seat);
@@ -1008,12 +992,6 @@ export default function App() {
 
   return (
     <div className="uc-app">
-      {/* Ambient Noir Volumetric Spotlight Beam */}
-      <div
-        className={`uc-spotlight-cone ${spotlightClassForTurn()}`}
-        aria-hidden="true"
-      />
-
       {/* Top Header Bar */}
       <header className="uc-topbar">
         <div className="uc-brand">
