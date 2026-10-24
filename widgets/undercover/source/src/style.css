@@ -63,46 +63,81 @@ body,
   overflow-y: auto;
 }
 
-/* Volumetric Overhead Spotlight Cone Animation */
+/* Volumetric Overhead Theatrical Spotlight Beam */
 .uc-spotlight-cone {
   position: absolute;
-  top: -110px;
+  top: -120px;
   left: 50%;
-  width: 580px;
-  height: 740px;
-  margin-left: -290px;
+  width: 640px;
+  height: 760px;
+  margin-left: -320px;
   background: radial-gradient(
-    ellipse at 50% 0%,
-    rgba(251, 191, 36, 0.35) 0%,
-    rgba(245, 158, 11, 0.15) 45%,
-    transparent 76%
+    ellipse 60% 70% at 50% 0%,
+    rgba(253, 224, 71, 0.42) 0%,
+    rgba(245, 158, 11, 0.22) 32%,
+    rgba(217, 119, 6, 0.08) 60%,
+    transparent 80%
   );
-  clip-path: polygon(44% 0%, 56% 0%, 100% 100%, 0% 100%);
+  clip-path: polygon(42% 0%, 58% 0%, 100% 100%, 0% 100%);
+  filter: blur(28px);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.9) 45%,
+    rgba(0, 0, 0, 0) 90%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.9) 45%,
+    rgba(0, 0, 0, 0) 90%
+  );
+  mix-blend-mode: screen;
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
   transform-origin: 50% 0%;
-  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease;
+  opacity: 0;
+}
+
+.uc-spotlight-cone.is-off {
+  opacity: 0;
+  transform: rotate(0deg) scale(0.8);
 }
 
 .uc-spotlight-cone.is-center {
-  transform: rotate(0deg) scaleX(1);
-  opacity: 0.9;
+  transform: rotate(0deg) scale(0.9, 0.75);
+  opacity: 0.4;
 }
-.uc-spotlight-cone.is-left {
-  transform: rotate(22deg) translateX(-70px);
-  opacity: 0.95;
-}
-.uc-spotlight-cone.is-right {
-  transform: rotate(-22deg) translateX(70px);
-  opacity: 0.95;
-}
+
 .uc-spotlight-cone.is-top {
-  transform: rotate(0deg) scaleY(0.75);
-  opacity: 0.95;
+  transform: rotate(0deg) scale(0.72, 0.45);
+  opacity: 0.92;
 }
+
+.uc-spotlight-cone.is-left {
+  transform: rotate(26deg) scale(1.05, 0.9);
+  opacity: 0.92;
+}
+
+.uc-spotlight-cone.is-left-low {
+  transform: rotate(34deg) scale(1.15, 1);
+  opacity: 0.92;
+}
+
+.uc-spotlight-cone.is-right {
+  transform: rotate(-26deg) scale(1.05, 0.9);
+  opacity: 0.92;
+}
+
+.uc-spotlight-cone.is-right-low {
+  transform: rotate(-34deg) scale(1.15, 1);
+  opacity: 0.92;
+}
+
 .uc-spotlight-cone.is-bottom {
-  transform: rotate(0deg) scaleX(1.16);
-  opacity: 1;
+  transform: rotate(0deg) scale(1.15, 1.1);
+  opacity: 0.95;
 }
 
 /* Top Bar */
@@ -315,10 +350,25 @@ body,
 
 .uc-agent-card.is-turn {
   border-color: #fbbf24;
+  background: linear-gradient(
+    170deg,
+    rgba(54, 76, 118, 0.98) 0%,
+    rgba(36, 52, 82, 0.96) 50%,
+    rgba(22, 32, 54, 0.98) 100%
+  );
   box-shadow:
-    0 0 0 2px rgba(251, 191, 36, 0.45),
-    0 0 20px rgba(245, 158, 11, 0.4),
-    0 12px 30px rgba(0, 0, 0, 0.45);
+    inset 0 1.5px 0 #fffbeb,
+    inset 0 10px 24px rgba(251, 191, 36, 0.22),
+    0 0 0 2px #fbbf24,
+    0 0 28px rgba(251, 191, 36, 0.65),
+    0 0 65px 16px rgba(245, 158, 11, 0.38),
+    0 0 110px 32px rgba(251, 191, 36, 0.16),
+    0 14px 36px rgba(0, 0, 0, 0.45);
+}
+
+.uc-agent-card.is-turn .uc-agent-testimony-slot {
+  background: rgba(18, 28, 50, 0.88);
+  border-color: rgba(251, 191, 36, 0.35);
 }
 
 .uc-agent-card.is-pk {
@@ -1007,10 +1057,26 @@ body,
 .uc-main-seat-card.is-turn,
 .uc-main-seat-card.is-my-turn {
   border-color: #fbbf24;
+  background: linear-gradient(
+    170deg,
+    rgba(54, 76, 118, 0.98) 0%,
+    rgba(36, 52, 84, 0.96) 50%,
+    rgba(22, 32, 54, 0.98) 100%
+  );
   box-shadow:
-    0 0 0 2px rgba(251, 191, 36, 0.45),
-    0 0 24px rgba(245, 158, 11, 0.45),
-    0 12px 34px rgba(0, 0, 0, 0.55);
+    inset 0 1.5px 0 #fffbeb,
+    inset 0 10px 24px rgba(251, 191, 36, 0.25),
+    0 0 0 2px #fbbf24,
+    0 0 32px rgba(251, 191, 36, 0.65),
+    0 0 70px 18px rgba(245, 158, 11, 0.38),
+    0 0 120px 36px rgba(251, 191, 36, 0.16),
+    0 14px 38px rgba(0, 0, 0, 0.5);
+}
+
+.uc-main-seat-card.is-turn .uc-main-seat-body,
+.uc-main-seat-card.is-my-turn .uc-main-seat-body {
+  background: rgba(18, 28, 50, 0.88);
+  border-color: rgba(251, 191, 36, 0.35);
 }
 
 .uc-main-seat-card.is-eliminated {

@@ -50,16 +50,16 @@ function assertStrictJsonValue(val, pathPrefix = "root") {
   assert.fail(`Unsupported type ${typeof val} at ${pathPrefix}`);
 }
 
-test("Undercover 1.0.0-preview.5 release package exists and contains verified source files", async () => {
+test("Undercover 1.0.0-preview.6 release package exists and contains verified source files", async () => {
   const pkgPath = path.join(
     root,
-    "releases/1.0.0-preview.5/undercover.pudding-widget.json",
+    "releases/1.0.0-preview.6/undercover.pudding-widget.json",
   );
   const raw = await fs.readFile(pkgPath, "utf8");
   const pkg = JSON.parse(raw);
 
   assert.equal(pkg.id, "teatak/pudding-hub/widgets/undercover");
-  assert.equal(pkg.version, "1.0.0-preview.5");
+  assert.equal(pkg.version, "1.0.0-preview.6");
   assert.equal(pkg.requires.protocolVersion, 24);
   assert.equal(pkg.requires.sdkVersion, "1");
 
