@@ -244,6 +244,18 @@
       ],
       "releases": [
         {
+          "version": "1.0.0-preview.3",
+          "manifest": "./gmail/releases/1.0.0-preview.3/manifest.json",
+          "package": "./gmail/releases/1.0.0-preview.3/gmail.pudding-plugin.json",
+          "package_sha256": "972b5e1fd817ce07794c22c827ef8d0d741ac98521f5a573948d6b469965cf90",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "released_at": "2026-10-24",
+          "channel": "preview",
+          "preview": true
+        },
+        {
           "version": "1.0.0-preview.2",
           "manifest": "./gmail/releases/1.0.0-preview.2/manifest.json",
           "package": "./gmail/releases/1.0.0-preview.2/gmail.pudding-plugin.json",

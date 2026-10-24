@@ -13,7 +13,7 @@ Use `gmail_rest` with `builtin_rest_request` for Gmail API paths under `https://
 
 ## Connection and permissions
 
-- Use the chat's selected Gmail connection. If a tool returns `connection_required`, ask the user to select the connection in the chat picker; saved credentials alone do not bind an account to the chat.
+- Reuse the chat's existing Gmail binding. Without a binding, Pudding automatically uses the sole usable connection. If multiple accounts are available, choose the account matching the user's intent by calling `builtin_plugin_load` with `plugin_id: "gmail"` and the returned `connection_id`. If ambiguous, ask which account to use in chat, then bind it with that tool; do not require the user to operate the header connection picker.
 - Gmail OAuth requests `gmail.readonly` for reading and `gmail.send` for sending. Existing read-only connections need Google reauthorization using an updated Pudding Core that requests both scopes. Adding a scope in Google Cloud alone does not update an existing token.
 - If sending fails with insufficient permissions, explain that the connection needs reauthorization. If the consent flow still requests only read access, Pudding Core must be updated first. Do not infer missing scopes from `connection_required`.
 - These scopes do not authorize creating or updating drafts, archiving, deleting, marking messages read, or modifying labels.

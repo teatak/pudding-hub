@@ -1,6 +1,6 @@
 id: gmail
 name: Gmail
-version: 1.0.0-preview.2
+version: 1.0.0-preview.3
 description: Search and read Gmail messages, view threads and labels, and send emails and replies through a connected account.
 auth:
   required: true
