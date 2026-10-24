@@ -63,38 +63,40 @@ body,
   overflow-y: auto;
 }
 
-/* Volumetric Overhead Theatrical Spotlight Beam */
+/* Volumetric Overhead Theatrical Spotlight Beam (Rendered in Foreground over Arena) */
 .uc-spotlight-cone {
   position: absolute;
   top: -120px;
   left: 50%;
-  width: 640px;
-  height: 760px;
-  margin-left: -320px;
-  background: radial-gradient(
-    ellipse 60% 70% at 50% 0%,
-    rgba(253, 224, 71, 0.42) 0%,
-    rgba(245, 158, 11, 0.22) 32%,
-    rgba(217, 119, 6, 0.08) 60%,
-    transparent 80%
+  width: 680px;
+  height: 800px;
+  margin-left: -340px;
+  background: conic-gradient(
+    from 158deg at 50% 0%,
+    transparent 0deg,
+    rgba(253, 224, 71, 0.12) 10deg,
+    rgba(253, 224, 71, 0.35) 18deg,
+    rgba(254, 240, 138, 0.45) 22deg,
+    rgba(253, 224, 71, 0.35) 26deg,
+    rgba(253, 224, 71, 0.12) 34deg,
+    transparent 44deg
   );
-  clip-path: polygon(42% 0%, 58% 0%, 100% 100%, 0% 100%);
-  filter: blur(28px);
-  -webkit-mask-image: linear-gradient(
-    to bottom,
+  filter: blur(20px);
+  -webkit-mask-image: radial-gradient(
+    ellipse 75% 85% at 50% 0%,
     rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0.9) 45%,
-    rgba(0, 0, 0, 0) 90%
+    rgba(0, 0, 0, 0.85) 45%,
+    rgba(0, 0, 0, 0) 85%
   );
-  mask-image: linear-gradient(
-    to bottom,
+  mask-image: radial-gradient(
+    ellipse 75% 85% at 50% 0%,
     rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0.9) 45%,
-    rgba(0, 0, 0, 0) 90%
+    rgba(0, 0, 0, 0.85) 45%,
+    rgba(0, 0, 0, 0) 85%
   );
   mix-blend-mode: screen;
   pointer-events: none;
-  z-index: 2;
+  z-index: 8;
   transform-origin: 50% 0%;
   transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease;
   opacity: 0;
@@ -364,6 +366,22 @@ body,
     0 0 65px 16px rgba(245, 158, 11, 0.38),
     0 0 110px 32px rgba(251, 191, 36, 0.16),
     0 14px 36px rgba(0, 0, 0, 0.45);
+}
+
+.uc-agent-card.is-turn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    ellipse at 50% -10%,
+    rgba(254, 240, 138, 0.28) 0%,
+    rgba(251, 191, 36, 0.14) 45%,
+    transparent 85%
+  );
+  pointer-events: none;
+  z-index: 6;
+  mix-blend-mode: screen;
 }
 
 .uc-agent-card.is-turn .uc-agent-testimony-slot {
@@ -1071,6 +1089,23 @@ body,
     0 0 70px 18px rgba(245, 158, 11, 0.38),
     0 0 120px 36px rgba(251, 191, 36, 0.16),
     0 14px 38px rgba(0, 0, 0, 0.5);
+}
+
+.uc-main-seat-card.is-turn::before,
+.uc-main-seat-card.is-my-turn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    ellipse at 50% -10%,
+    rgba(254, 240, 138, 0.3) 0%,
+    rgba(251, 191, 36, 0.15) 45%,
+    transparent 85%
+  );
+  pointer-events: none;
+  z-index: 6;
+  mix-blend-mode: screen;
 }
 
 .uc-main-seat-card.is-turn .uc-main-seat-body,
