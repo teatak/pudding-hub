@@ -8,15 +8,15 @@
     "zh-TW": "GitHub",
     "en": "GitHub"
   },
-  "version": "1.0.5",
+  "version": "1.0.6",
   "targets": [
     "desktop",
     "mobile"
   ],
   "description": {
-    "zh-CN": "通过 GitHub App 或个人访问令牌连接 GitHub REST 与 GraphQL API，用于仓库、Issue、PR 和文件内容查询。",
-    "zh-TW": "透過 GitHub App 或個人存取權杖連接 GitHub REST 與 GraphQL API，用於倉庫、Issue、PR 和檔案內容查詢。",
-    "en": "Connect GitHub REST and GraphQL APIs through a GitHub App or personal access token for repositories, issues, pull requests, and file contents."
+    "zh-CN": "通过 GitHub App 或个人访问令牌连接 GitHub REST 与 GraphQL API，用于仓库、Issue、PR 查询以及发表评论与评审。",
+    "zh-TW": "透過 GitHub App 或個人存取權杖連接 GitHub REST 與 GraphQL API，用於倉庫、Issue、PR 查詢以及發表評論與評審。",
+    "en": "Connect GitHub REST and GraphQL APIs through a GitHub App or personal access token for repositories, issues, pull requests, comments, and reviews."
   },
   "icon": {
     "svg": "./assets/icon.svg",
@@ -35,9 +35,9 @@
     "skills/issues/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.5/manifest.json",
-  "package": "./releases/1.0.5/github.pudding-plugin.json",
-  "package_sha256": "dfceb160754101a3f9cb0ed5e74beb31ab89f80a2b5fd5654e8d06dbb5770a30",
+  "manifest": "./releases/1.0.6/manifest.json",
+  "package": "./releases/1.0.6/github.pudding-plugin.json",
+  "package_sha256": "e4207f8eab921c2b3aad45b9934f5a0b93234a50f07ea203203dc827fb1b7bf8",
   "requires": {
     "pudding_plugin": "^1.0.0"
   },

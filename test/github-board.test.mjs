@@ -62,19 +62,34 @@ globalThis.__githubSDK = {
             default_branch: "main",
             updated_at: "2026-10-25T09:00:00Z",
           },
-          {
-            id: 102,
-            full_name: "teatak/pudding-hub",
-            description: "Widgets and plugins hub",
-            private: false,
-            has_issues: true,
-            stargazers_count: 64,
-            open_issues_count: 2,
-            language: "TypeScript",
-            default_branch: "main",
-            updated_at: "2026-10-25T10:00:00Z",
-          },
         ],
+      };
+    }
+    if (name === "installations") {
+      return {
+        data: {
+          installations: [{ id: 777 }],
+        },
+      };
+    }
+    if (name === "installationRepos") {
+      return {
+        data: {
+          repositories: [
+            {
+              id: 102,
+              full_name: "teatak/pudding-hub",
+              description: "Widgets and plugins hub",
+              private: false,
+              has_issues: true,
+              stargazers_count: 64,
+              open_issues_count: 2,
+              language: "TypeScript",
+              default_branch: "main",
+              updated_at: "2026-10-25T10:00:00Z",
+            },
+          ],
+        },
       };
     }
     if (name === "repoIssues") {
@@ -198,37 +213,39 @@ beforeEach(() => {
   registerInterfaces(api);
 });
 
-test("viewer account, repository listing, direct repoIssues/repoPulls reads (without /search/issues 422), and detail/comments on demand", async () => {
+test("viewer account, combined user + installation repository listing, direct repoIssues/repoPulls reads, and taggedCards persistence across repo switches", async () => {
   const b = await call("getBoard");
   assert.equal(b.account, "octocat");
   assert.equal(b.loadedCount, 3);
   assert.equal(b.counts.triage, 3);
   assert.ok(!requests.some((r) => r.name === "itemDetail"));
 
+  // Merges /user/repos ("teatak/pudding-core") and /user/installations ("teatak/pudding-hub")
   const reposRes = await call("listRepos", { account: "octocat" });
   assert.equal(reposRes.repos.length, 2);
-  assert.equal(reposRes.repos[0].fullName, "teatak/pudding-core");
+  assert.equal(reposRes.repos[0].fullName, "teatak/pudding-hub");
+  assert.equal(reposRes.repos[1].fullName, "teatak/pudding-core");
 
-  // Filtering by a specific repository uses direct repoIssues without /search/issues
-  const coreOnly = await call("listItems", {
+  // Move teatak/pudding-core#2 to "review" column
+  await call("updateCards", {
     account: "octocat",
-    q: "repo:teatak/pudding-core is:open",
+    expectedStorageVersion: 0,
+    updates: [{ id: "teatak/pudding-core#2", status: "review", note: "Check PR" }],
+  });
+
+  // Switch query to ONLY teatak/pudding-hub — teatak/pudding-core#2 is STILL preserved in taggedCards with its meta!
+  const hubOnly = await call("listItems", {
+    account: "octocat",
+    q: "repo:teatak/pudding-hub is:open",
     page: 1,
     limit: 20,
   });
-  assert.equal(coreOnly.items.length, 2);
-  assert.equal(coreOnly.items[0].id, "teatak/pudding-core#2");
-  assert.equal(coreOnly.items[1].id, "teatak/pudding-core#1");
-
-  // Filtering by is:pr uses repoPulls directly
-  const prsOnly = await call("listItems", {
-    account: "octocat",
-    q: "repo:teatak/pudding-core is:open is:pr",
-    page: 1,
-    limit: 20,
-  });
-  assert.equal(prsOnly.items.length, 1);
-  assert.equal(prsOnly.items[0].kind, "pr");
+  assert.equal(hubOnly.items.length, 1);
+  assert.equal(hubOnly.items[0].id, "teatak/pudding-hub#3");
+  assert.equal(hubOnly.taggedCards.length, 1);
+  assert.equal(hubOnly.taggedCards[0].id, "teatak/pudding-core#2");
+  assert.equal(hubOnly.taggedCards[0].title, "PR #2 in teatak/pudding-core");
+  assert.equal(hubOnly.taggedCards[0].status, "review");
 
   const detail = await call("readItem", {
     account: "octocat",
@@ -237,7 +254,6 @@ test("viewer account, repository listing, direct repoIssues/repoPulls reads (wit
   assert.equal(detail.body, "Body description for teatak/pudding-core#1");
   assert.equal(detail.comments.length, 1);
   assert.equal(detail.comments[0].body, "LGTM on #1");
-  assert.equal(saved.version, 0);
 });
 
 test("same item IDs in two GitHub accounts retain separate drafts, notes and statuses across switching", async () => {

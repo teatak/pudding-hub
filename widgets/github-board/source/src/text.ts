@@ -30,7 +30,7 @@ const en = {
   next: "Next",
   loading: "Loading GitHub data…",
   loadingRepos: "Loading repositories…",
-  empty: "No items in this column on the current page",
+  empty: "No items in this column",
   emptyRepos: "No repositories found",
   openHint: "Select an issue or pull request to inspect and organize it.",
   untitled: "(Untitled)",
@@ -41,6 +41,7 @@ const en = {
   stateClosed: "Closed",
   comments: "comments",
   loaded: "items on this page",
+  boardItems: "saved items in this column",
   totalMatched: "matched",
   close: "Close",
   status: "Board column",
@@ -78,11 +79,11 @@ const en = {
   storageLimit:
     "Local notes and drafts exceed the 256 KiB storage limit. Shorten or clear a draft.",
   descBoard:
-    "Read the connected GitHub account login, column counts for the default search page and storageVersion. Connection is selected in the host toolbar. All board statuses, notes and drafts are local; this widget never modifies GitHub remotely.",
+    "Read the connected GitHub account login, column counts and storageVersion. Connection is selected in the host toolbar. All board statuses, notes and drafts are local; this widget never modifies GitHub remotely.",
   descRepos:
-    "List repositories accessible to the connected GitHub account (sorted by recently updated), including stars, open issue counts and primary language. Pass the exact account from getBoard.",
+    "List repositories accessible to the connected GitHub account (combining /user/repos and GitHub App installations, sorted by recently updated), including stars, open issue counts and primary language. Pass the exact account from getBoard.",
   descList:
-    "Search and paginate GitHub issues and pull requests with local status, followUpAt and hasDraft. q uses GitHub search syntax (default: is:open involves:@me), page starts at 1, limit 1–30. Pass the exact account from getBoard.",
+    "List and filter GitHub issues and pull requests with local status, followUpAt, hasDraft and taggedCards. q supports repo:owner/name, is:open/closed, is:pr/issue, author:@me, assignee:@me, review-requested:@me and keywords. Pass the exact account from getBoard.",
   descRead:
     "Read a single GitHub issue or pull request, its paginated comments, and its local note/draft. Pass account and canonical id (owner/repo#number) from listItems.",
   descUpdate:
@@ -126,7 +127,7 @@ export const messages: Record<"en" | "zh-CN" | "zh-TW", Record<Key, string>> = {
     next: "下一页",
     loading: "正在读取 GitHub 数据…",
     loadingRepos: "正在读取仓库列表…",
-    empty: "当前页此列暂无条目",
+    empty: "此列暂无条目",
     emptyRepos: "未找到仓库",
     openHint: "从左侧选择一条 Issue 或 PR，查看讨论详情并记录评审草稿。",
     untitled: "（无标题）",
@@ -137,6 +138,7 @@ export const messages: Record<"en" | "zh-CN" | "zh-TW", Record<Key, string>> = {
     stateClosed: "已关闭",
     comments: "条评论",
     loaded: "个条目 · 当前页",
+    boardItems: "个已归档/跟进条目",
     totalMatched: "条匹配",
     close: "关闭",
     status: "看板状态列",
@@ -170,11 +172,11 @@ export const messages: Record<"en" | "zh-CN" | "zh-TW", Record<Key, string>> = {
     batchSize: "单次批量更新请选择 1–20 个条目。",
     storageLimit: "本地备注与草稿超出 256 KiB 存储上限，请缩短或清除部分草稿。",
     descBoard:
-      "读取当前连接的 GitHub 账号名、默认查询第一页各状态列计数与 storageVersion。所有状态、备注和草稿仅保存在本地，不会直接修改远程 GitHub。",
+      "读取当前连接的 GitHub 账号名、各状态列计数与 storageVersion。所有状态、备注和草稿仅保存在本地，不会直接修改远程 GitHub。",
     descRepos:
-      "分页列出当前连接 GitHub 账号可访问的仓库列表（按最近更新排序），包含星标数、Open Issues 数与主要语言。account 必须传入 getBoard 返回的账号。",
+      "分页列出当前连接 GitHub 账号可访问的仓库列表（融合 /user/repos 与 GitHub App 安装仓库，按最近更新排序），包含星标数、Open Issues 数与主要语言。account 必须传入 getBoard 返回的账号。",
     descList:
-      "使用 GitHub 搜索语法分页读取 Issue 与 PR 摘要，并附带本地 status、followUpAt 和 hasDraft。q 默认 is:open involves:@me；page 从 1 开始；limit 为 1–30。",
+      "使用 GitHub 搜索语法读取 Issue 与 PR 摘要，并附带本地 status、followUpAt、hasDraft 与跨仓保存的 taggedCards。q 默认 is:open involves:@me。",
     descRead:
       "按需读取单条 Issue 或 PR 的完整描述、分页评论列表以及本地备注和草稿。传入 getBoard 的 account 和 listItems 返回的 id（格式 owner/repo#number）。",
     descUpdate:
@@ -213,7 +215,7 @@ export const messages: Record<"en" | "zh-CN" | "zh-TW", Record<Key, string>> = {
     next: "下一頁",
     loading: "正在讀取 GitHub 資料…",
     loadingRepos: "正在讀取倉庫列表…",
-    empty: "目前頁面此欄尚無項目",
+    empty: "此欄尚無項目",
     emptyRepos: "找不到倉庫",
     openHint: "從左側選擇一筆 Issue 或 PR，查看討論詳情並整理評審草稿。",
     untitled: "（無標題）",
@@ -224,6 +226,7 @@ export const messages: Record<"en" | "zh-CN" | "zh-TW", Record<Key, string>> = {
     stateClosed: "已關閉",
     comments: "則評論",
     loaded: "個項目 · 目前頁面",
+    boardItems: "個已歸檔/追蹤項目",
     totalMatched: "筆符合",
     close: "關閉",
     status: "看板狀態欄",
@@ -257,11 +260,11 @@ export const messages: Record<"en" | "zh-CN" | "zh-TW", Record<Key, string>> = {
     batchSize: "單次批次更新請選擇 1–20 個項目。",
     storageLimit: "本機備註與草稿超出 256 KiB 儲存上限，請縮短或清除部分草稿。",
     descBoard:
-      "讀取目前連線的 GitHub 帳號名稱、預設查詢第一頁各狀態欄計數與 storageVersion。所有狀態、備註與草稿僅儲存在本機，不會直接修改遠端 GitHub。",
+      "讀取目前連線的 GitHub 帳號名稱、各狀態欄計數與 storageVersion。所有狀態、備註與草稿僅儲存在本機，不會直接修改遠端 GitHub。",
     descRepos:
-      "分頁列出目前連線 GitHub 帳號可存取的倉庫列表（依最近更新排序），包含星標數、Open Issues 數與主要語言。account 必須傳入 getBoard 回傳的帳號。",
+      "分頁列出目前連線 GitHub 帳號可存取的倉庫列表（融合 /user/repos 與 GitHub App 安裝倉庫，依最近更新排序），包含星標數、Open Issues 數與主要語言。account 必須傳入 getBoard 回傳的帳號。",
     descList:
-      "使用 GitHub 搜尋語法分頁讀取 Issue 與 PR 摘要，並附帶本機 status、followUpAt 與 hasDraft。q 預設 is:open involves:@me；page 從 1 開始；limit 為 1–30。",
+      "使用 GitHub 搜尋語法讀取 Issue 與 PR 摘要，並附帶本機 status、followUpAt、hasDraft 與跨倉儲存的 taggedCards。q 預設 is:open involves:@me。",
     descRead:
       "按需讀取單筆 Issue 或 PR 的完整描述、分頁評論列表以及本機備註與草稿。傳入 getBoard 的 account 與 listItems 回傳的 id（格式 owner/repo#number）。",
     descUpdate:

@@ -150,6 +150,21 @@ function ItemEditor({
             status: form.status,
             note: form.note,
             followUpAt: form.followUpAt,
+            ...(detail.data
+              ? {
+                  meta: {
+                    title: detail.data.title,
+                    author: detail.data.author,
+                    snippet: detail.data.snippet,
+                    updatedAt: detail.data.updatedAt,
+                    kind: detail.data.kind,
+                    state: detail.data.state,
+                    isDraftPR: detail.data.isDraftPR,
+                    commentCount: detail.data.commentCount,
+                    labels: detail.data.labels,
+                  },
+                }
+              : {}),
           },
         ],
         {
@@ -520,7 +535,23 @@ export default function App() {
     retry: false,
   });
 
-  const items = list.data?.items.filter((item) => item.status === status) ?? [];
+  const isTriageTab = status === "triage";
+  const taggedList = list.data?.taggedCards ?? [];
+  const items = isTriageTab
+    ? (list.data?.items.filter((item) => item.status === "triage") ?? [])
+    : taggedList.filter((item) => item.status === status);
+
+  const tabCounts = useMemo(() => {
+    const triageCount =
+      list.data?.items.filter((item) => item.status === "triage").length ?? 0;
+    const tagged = list.data?.taggedCards ?? [];
+    return {
+      triage: triageCount,
+      review: tagged.filter((c) => c.status === "review").length,
+      inProgress: tagged.filter((c) => c.status === "inProgress").length,
+      done: tagged.filter((c) => c.status === "done").length,
+    };
+  }, [list.data]);
 
   function applyQuery(nextQuery: string, nextRepo: string | null = selectedRepo) {
     const clean = nextQuery.trim() || DEFAULT_QUERY;
@@ -572,7 +603,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Direct Repository Fleet Dropdown (Uses bound `repos` operation) */}
+        {/* Direct Repository Fleet Dropdown (Uses bound `repos` & `installations` operations) */}
         <div className="ghb-repo-picker" ref={repoWrapRef}>
           <button
             type="button"
@@ -770,10 +801,7 @@ export default function App() {
                 }}
               >
                 {t(value)}
-                <span>
-                  {list.data?.items.filter((item) => item.status === value)
-                    .length ?? 0}
-                </span>
+                <span>{tabCounts[value]}</span>
               </button>
             ))}
           </nav>
@@ -881,33 +909,37 @@ export default function App() {
             <span aria-live="polite">
               {list.isFetching
                 ? t("loading")
-                : `${list.data?.items.length ?? 0} ${t("loaded")} · ${
-                    list.data?.totalCount ?? 0
-                  } ${t("totalMatched")}`}
+                : isTriageTab
+                  ? `${items.length} ${t("loaded")} · ${
+                      list.data?.totalCount ?? 0
+                    } ${t("totalMatched")}`
+                  : `${items.length} ${t("boardItems")}`}
             </span>
-            <nav className="ghb-pager">
-              <button
-                aria-label={t("previous")}
-                disabled={page <= 1 || list.isFetching}
-                onClick={() => {
-                  setPage((p) => Math.max(1, p - 1));
-                  setSelected(null);
-                }}
-              >
-                <ChevronLeft size={16} />
-              </button>
-              <span>{page}</span>
-              <button
-                aria-label={t("next")}
-                disabled={!list.data?.hasNextPage || list.isFetching}
-                onClick={() => {
-                  setPage((p) => p + 1);
-                  setSelected(null);
-                }}
-              >
-                <ChevronRight size={16} />
-              </button>
-            </nav>
+            {isTriageTab && (
+              <nav className="ghb-pager">
+                <button
+                  aria-label={t("previous")}
+                  disabled={page <= 1 || list.isFetching}
+                  onClick={() => {
+                    setPage((p) => Math.max(1, p - 1));
+                    setSelected(null);
+                  }}
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <span>{page}</span>
+                <button
+                  aria-label={t("next")}
+                  disabled={!list.data?.hasNextPage || list.isFetching}
+                  onClick={() => {
+                    setPage((p) => p + 1);
+                    setSelected(null);
+                  }}
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </nav>
+            )}
           </div>
         </section>
 

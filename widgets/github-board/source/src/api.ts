@@ -7,11 +7,14 @@ import {
   parseItemID,
   viewerSchema,
   repoListSchema,
+  installationsResponseSchema,
+  installationReposResponseSchema,
   repoSummary,
   ghIssueSchema,
   ghIssueListSchema,
   commentListSchema,
   itemSummary,
+  metaFromSummary,
   parseSearchQuery,
   matchesParsedQuery,
   readStore,
@@ -23,7 +26,9 @@ import {
   updateSchema,
   type Update,
   type Card,
+  type CardMeta,
   type ItemSummary,
+  type RepoSummary,
 } from "./model";
 import { t, errorText } from "./text";
 
@@ -33,6 +38,7 @@ export const DEFAULT_QUERY = "is:open involves:@me";
 // cancellation signal so canceling one UI reader never aborts a shared request.
 export function createGitHubBoard(client: QueryClient) {
   const known = new Set<string>();
+  const metaCache = new Map<string, CardMeta>();
 
   const viewer = () =>
     client.fetchQuery({
@@ -67,23 +73,71 @@ export function createGitHubBoard(client: QueryClient) {
       queryKey: ["github", "repos", account, page, limit],
       staleTime: 60000,
       queryFn: async ({ signal: querySignal }) => {
-        const raw = repoListSchema.parse(
-          (
-            await pudding.query(
-              "repos",
-              { page, limit },
-              { signal: querySignal },
-            )
-          ).data,
+        const merged = new Map<string, RepoSummary>();
+
+        // 1. Standard /user/repos (works for PAT and user/collaborator/org_member repos)
+        try {
+          const directRaw = repoListSchema.parse(
+            (
+              await pudding.query(
+                "repos",
+                { page, limit },
+                { signal: querySignal },
+              )
+            ).data,
+          );
+          for (const r of directRaw) {
+            const sum = repoSummary(r);
+            merged.set(sum.fullName, sum);
+          }
+        } catch {
+          // Fall through to GitHub App installations discovery
+        }
+
+        // 2. GitHub App installations discovery (/user/installations -> /user/installations/{id}/repositories)
+        if (page === 1) {
+          try {
+            const instRes = installationsResponseSchema.parse(
+              (
+                await pudding.query(
+                  "installations",
+                  { page: 1, limit: 10 },
+                  { signal: querySignal },
+                )
+              ).data,
+            );
+            for (const inst of instRes.installations.slice(0, 3)) {
+              const instRepos = installationReposResponseSchema.parse(
+                (
+                  await pudding.query(
+                    "installationRepos",
+                    { installationID: inst.id, page: 1, limit },
+                    { signal: querySignal },
+                  )
+                ).data,
+              );
+              for (const r of instRepos.repositories) {
+                const sum = repoSummary(r);
+                if (!merged.has(sum.fullName)) {
+                  merged.set(sum.fullName, sum);
+                }
+              }
+            }
+          } catch {
+            // Ignore if token does not use GitHub App installations endpoint
+          }
+        }
+
+        return [...merged.values()].sort(
+          (a, b) => Date.parse(b.updatedAt || "0") - Date.parse(a.updatedAt || "0"),
         );
-        return raw.map(repoSummary);
       },
     });
     signal?.throwIfAborted();
     return {
       account,
       page,
-      hasNextPage: items.length === limit,
+      hasNextPage: items.length >= limit,
       repos: items,
     };
   }
@@ -98,7 +152,16 @@ export function createGitHubBoard(client: QueryClient) {
   ): Promise<ItemSummary[]> {
     const [owner, repo] = fullRepo.split("/");
     return client.fetchQuery({
-      queryKey: ["github", "repoItems", account, fullRepo, state, kind, page, limit],
+      queryKey: [
+        "github",
+        "repoItems",
+        account,
+        fullRepo,
+        state,
+        kind,
+        page,
+        limit,
+      ],
       staleTime: 60000,
       queryFn: async ({ signal: repoSignal }) => {
         if (kind === "pr") {
@@ -114,8 +177,6 @@ export function createGitHubBoard(client: QueryClient) {
           return pulls.map((p) => itemSummary(p, fullRepo, true));
         }
 
-        // Default: GET /repos/{owner}/{repo}/issues returns BOTH issues and PRs!
-        // If Issues are disabled on the repo, fall back cleanly to repoPulls.
         try {
           const issuesAndPRs = ghIssueListSchema.parse(
             (
@@ -176,7 +237,6 @@ export function createGitHubBoard(client: QueryClient) {
       };
     }
 
-    // Fetch up to 3 repos concurrently (staying within the 4-request host limit)
     const perRepoLists = await Promise.all(
       targetRepos.map((rName) =>
         fetchRepoItems(account, rName, parsed.state, parsed.kind, page, limit),
@@ -187,6 +247,7 @@ export function createGitHubBoard(client: QueryClient) {
     const mergedMap = new Map<string, ItemSummary>();
     for (const list of perRepoLists) {
       for (const it of list) {
+        metaCache.set(it.id, metaFromSummary(it));
         if (matchesParsedQuery(it, parsed)) {
           mergedMap.set(it.id, it);
         }
@@ -218,21 +279,84 @@ export function createGitHubBoard(client: QueryClient) {
   ) {
     const p = await searchPage(account, q, page, limit, signal);
     const s = await storage(signal);
+    const items = p.items.map((item) => {
+      const c = cardFor(s.store, account, item.id);
+      return {
+        ...item,
+        status: c.status,
+        followUpAt: c.followUpAt,
+        hasDraft: Boolean(c.draft),
+        note: c.note,
+      };
+    });
+
+    const accountCards = s.store.accounts[account] ?? {};
+    const pageItemsMap = new Map(items.map((item) => [item.id, item]));
+
+    const taggedCards = Object.entries(accountCards)
+      .filter(
+        ([_, c]) =>
+          c.status !== "triage" ||
+          Boolean(c.draft) ||
+          Boolean(c.note) ||
+          Boolean(c.followUpAt),
+      )
+      .map(([id, c]) => {
+        known.add(id);
+        const fromPage = pageItemsMap.get(id);
+        const cached = metaCache.get(id);
+        const parsedId = parseItemID(id);
+        return {
+          id,
+          repo: `${parsedId.owner}/${parsedId.repo}`,
+          number: parsedId.number,
+          kind: c.meta?.kind ?? fromPage?.kind ?? cached?.kind ?? ("issue" as const),
+          title:
+            c.meta?.title ||
+            fromPage?.title ||
+            cached?.title ||
+            t("untitled"),
+          state: c.meta?.state ?? fromPage?.state ?? cached?.state ?? "open",
+          isDraftPR:
+            c.meta?.isDraftPR ??
+            fromPage?.isDraftPR ??
+            cached?.isDraftPR ??
+            false,
+          author:
+            c.meta?.author ||
+            fromPage?.author ||
+            cached?.author ||
+            account,
+          labels: c.meta?.labels ?? fromPage?.labels ?? cached?.labels ?? [],
+          assignees: fromPage?.assignees ?? [],
+          requestedReviewers: fromPage?.requestedReviewers ?? [],
+          commentCount:
+            c.meta?.commentCount ??
+            fromPage?.commentCount ??
+            cached?.commentCount ??
+            0,
+          updatedAt:
+            c.meta?.updatedAt ||
+            fromPage?.updatedAt ||
+            cached?.updatedAt ||
+            new Date().toISOString(),
+          snippet:
+            c.meta?.snippet ?? fromPage?.snippet ?? cached?.snippet ?? "",
+          status: c.status,
+          note: c.note,
+          followUpAt: c.followUpAt,
+          hasDraft: Boolean(c.draft),
+        };
+      });
+
     return {
       account,
       q: p.q,
       page: p.page,
       totalCount: p.totalCount,
       hasNextPage: p.hasNextPage,
-      items: p.items.map((item) => {
-        const c = cardFor(s.store, account, item.id);
-        return {
-          ...item,
-          status: c.status,
-          followUpAt: c.followUpAt,
-          hasDraft: Boolean(c.draft),
-        };
-      }),
+      items,
+      taggedCards,
       storageVersion: s.raw.version,
     };
   }
@@ -243,13 +367,14 @@ export function createGitHubBoard(client: QueryClient) {
     return {
       account,
       query: p.q,
-      counts: Object.fromEntries(
-        statuses.map((st) => [
-          st,
-          p.items.filter((x) => x.status === st).length,
-        ]),
-      ),
-      countScope: "first search page",
+      counts: {
+        triage: p.items.filter((x) => x.status === "triage").length,
+        review: p.taggedCards.filter((x) => x.status === "review").length,
+        inProgress: p.taggedCards.filter((x) => x.status === "inProgress")
+          .length,
+        done: p.taggedCards.filter((x) => x.status === "done").length,
+      },
+      countScope: "first search page and saved board items",
       loadedCount: p.items.length,
       totalCount: p.totalCount,
       hasNextPage: p.hasNextPage,
@@ -336,6 +461,7 @@ export function createGitHubBoard(client: QueryClient) {
 
     const summary = itemSummary(issue, fullRepo);
     known.add(summary.id);
+    metaCache.set(summary.id, metaFromSummary(summary));
     const s = await storage(signal);
     const rawBody = issue.body ?? "";
 
@@ -374,12 +500,12 @@ export function createGitHubBoard(client: QueryClient) {
     const s = await storage(signal);
     if (s.raw.version !== expectedStorageVersion) throw new Error("conflict");
     let next = updates.length
-      ? updateCards(s.store, account, updates, known)
+      ? updateCards(s.store, account, updates, known, metaCache)
       : s.store;
     if (draft) {
       const validId = itemIDSchema.parse(draft.id);
       if (!known.has(validId)) throw new Error("unknownItem");
-      next = saveDraft(next, account, validId, draft.value);
+      next = saveDraft(next, account, validId, draft.value, metaCache);
     }
     const data = { ...s.raw.data, githubBoard: next as unknown as JSONValue };
     if (new TextEncoder().encode(JSON.stringify(data)).length > 262144) {

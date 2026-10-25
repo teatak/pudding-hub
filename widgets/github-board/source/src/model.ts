@@ -41,12 +41,39 @@ export const draftSchema = z
   })
   .strict();
 
+export const cardMetaSchema = z
+  .object({
+    title: z.string().max(500).default(""),
+    author: z.string().max(120).default(""),
+    snippet: z.string().max(1000).default(""),
+    updatedAt: z.string().max(100).default(""),
+    kind: z.enum(["pr", "issue"]).default("issue"),
+    state: z.string().max(40).default("open"),
+    isDraftPR: z.boolean().default(false),
+    commentCount: z.number().int().nonnegative().default(0),
+    labels: z
+      .array(
+        z
+          .object({
+            name: z.string().max(100),
+            color: z.string().max(20),
+          })
+          .strict(),
+      )
+      .max(8)
+      .default([]),
+  })
+  .strict();
+
+export type CardMeta = z.infer<typeof cardMetaSchema>;
+
 const cardSchema = z
   .object({
     status: z.enum(statuses),
     note: z.string().max(2000),
     followUpAt: dateSchema.nullable(),
     draft: draftSchema.nullable(),
+    meta: cardMetaSchema.optional(),
   })
   .strict();
 
@@ -80,13 +107,15 @@ export const updateSchema = z
     status: z.enum(statuses).optional(),
     note: z.string().max(2000).optional(),
     followUpAt: dateSchema.nullable().optional(),
+    meta: cardMetaSchema.optional(),
   })
   .strict()
   .refine(
     (v) =>
       v.status !== undefined ||
       v.note !== undefined ||
-      v.followUpAt !== undefined,
+      v.followUpAt !== undefined ||
+      v.meta !== undefined,
     "Provide status, note or followUpAt",
   );
 
@@ -97,6 +126,7 @@ export function updateCards(
   account: string,
   updates: Update[],
   knownIDs: Set<string>,
+  metaLookup?: Map<string, CardMeta>,
 ): BoardStore {
   if (updates.length < 1 || updates.length > 20) throw new Error("batchSize");
   if (new Set(updates.map((x) => x.id)).size !== updates.length)
@@ -105,7 +135,13 @@ export function updateCards(
   for (const raw of updates) {
     const { id, ...patch } = updateSchema.parse(raw);
     if (!knownIDs.has(id)) throw new Error("unknownItem");
-    cards[id] = { ...(cards[id] ?? emptyCard()), ...patch };
+    const existing = cards[id] ?? emptyCard();
+    const inferredMeta = patch.meta ?? existing.meta ?? metaLookup?.get(id);
+    cards[id] = {
+      ...existing,
+      ...patch,
+      ...(inferredMeta ? { meta: inferredMeta } : {}),
+    };
   }
   return { ...store, accounts: { ...store.accounts, [account]: cards } };
 }
@@ -115,10 +151,14 @@ export function saveDraft(
   account: string,
   id: string,
   draft: Card["draft"],
+  metaLookup?: Map<string, CardMeta>,
 ): BoardStore {
+  const existing = store.accounts[account]?.[id] ?? emptyCard();
+  const inferredMeta = existing.meta ?? metaLookup?.get(id);
   const card = cardSchema.parse({
-    ...(store.accounts[account]?.[id] ?? emptyCard()),
+    ...existing,
     draft,
+    ...(inferredMeta ? { meta: inferredMeta } : {}),
   });
   return {
     ...store,
@@ -153,6 +193,20 @@ export const repoItemSchema = z.object({
 });
 
 export const repoListSchema = z.array(repoItemSchema);
+
+export const installationsResponseSchema = z.object({
+  installations: z
+    .array(
+      z.object({
+        id: z.number().int().positive(),
+      }),
+    )
+    .default([]),
+});
+
+export const installationReposResponseSchema = z.object({
+  repositories: z.array(repoItemSchema).default([]),
+});
 
 export function repoSummary(raw: z.infer<typeof repoItemSchema>) {
   return {
@@ -283,6 +337,20 @@ export function itemSummary(
 }
 export type ItemSummary = ReturnType<typeof itemSummary>;
 
+export function metaFromSummary(s: ItemSummary): CardMeta {
+  return {
+    title: s.title.slice(0, 500),
+    author: s.author.slice(0, 120),
+    snippet: s.snippet.slice(0, 1000),
+    updatedAt: s.updatedAt.slice(0, 100),
+    kind: s.kind,
+    state: s.state.slice(0, 40),
+    isDraftPR: s.isDraftPR,
+    commentCount: s.commentCount,
+    labels: s.labels.slice(0, 8),
+  };
+}
+
 export interface ParsedQuery {
   repo: string | null;
   state: "open" | "closed" | "all";
@@ -372,7 +440,6 @@ export function matchesParsedQuery(
     const isRequested = item.requestedReviewers.some(
       (r) => r.toLowerCase() === parsed.reviewRequested,
     );
-    // If requested_reviewers wasn't populated on the issue summary, match PRs not authored by the reviewer
     if (!isRequested && item.author.toLowerCase() === parsed.reviewRequested) {
       return false;
     }

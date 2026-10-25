@@ -1,7 +1,7 @@
 id: github
 name: GitHub
-version: 1.0.5
-description: Access GitHub repositories, issues, pull requests, file contents, and GraphQL data through a GitHub App or personal access token.
+version: 1.0.6
+description: Access GitHub repositories, issues, pull requests, file contents, comments, reviews, and GraphQL data through a GitHub App or personal access token.
 auth:
   required: true
   methods:
