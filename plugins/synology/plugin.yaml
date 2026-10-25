@@ -1,0 +1,42 @@
+id: synology
+name: Synology NAS
+version: 1.0.0
+description: Access Synology DiskStation Manager (DSM) File Station to list shares, browse directories, search files, inspect metadata, and download files through the Web API.
+auth:
+  required: false
+connection:
+  fields:
+    - id: sid
+      label: Session Token (sid)
+      description: Synology DSM session ID or API token. Automatically injected as the _sid query parameter into every File Station API request.
+      placeholder: e.g. 7qU-A8a_xxxxxx
+      required: true
+      secret: true
+      inject:
+        - target: query
+          name: _sid
+    - id: account
+      label: Account name
+      description: Optional username for displaying connection identity and multi-NAS selection.
+      placeholder: e.g. admin
+      required: false
+icon:
+  svg: assets/icon.svg
+  color:
+    light: "#FFFFFF"
+    dark: "#FFFFFF"
+  background:
+    light: "#0B2D5A"
+    dark: "#061A36"
+endpoints:
+  synology_webapi:
+    kind: rest
+    url: http://synology.local:5000/webapi
+    url_config:
+      label: Synology NAS Web API address
+      description: Base URL of your Synology DSM Web API (e.g. http://192.168.1.100:5000/webapi or https://nas.example.com:5001/webapi).
+      placeholder: http://192.168.1.100:5000/webapi
+      required: true
+    description: Synology DSM File Station REST Web API.
+skills:
+  - skills/file-station/SKILL.md

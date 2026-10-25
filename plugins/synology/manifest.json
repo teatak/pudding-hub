@@ -1,0 +1,46 @@
+{
+  "kind": "pudding.plugin.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/plugins/synology",
+  "name": "synology",
+  "title": {
+    "zh-CN": "群晖 NAS",
+    "zh-TW": "Synology NAS",
+    "en": "Synology NAS"
+  },
+  "version": "1.0.0",
+  "description": {
+    "zh-CN": "连接群晖 NAS，通过 File Station API 浏览共享文件夹、检索文件内容与属性，并支持文件下载与外链管理。",
+    "zh-TW": "連接 Synology NAS，透過 File Station API 瀏覽共用資料夾、搜尋檔案內容與屬性，並支援檔案下載與分享連結管理。",
+    "en": "Connect a Synology NAS to browse shared folders, search files and metadata, and download files through the File Station API."
+  },
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "color": {
+      "light": "#FFFFFF",
+      "dark": "#FFFFFF"
+    },
+    "background": {
+      "light": "#0B2D5A",
+      "dark": "#061A36"
+    }
+  },
+  "files": [
+    "plugin.yaml",
+    "skills/file-station/SKILL.md",
+    "assets/icon.svg"
+  ],
+  "manifest": "./releases/1.0.0/manifest.json",
+  "package": "./releases/1.0.0/synology.pudding-plugin.json",
+  "package_sha256": "023aacaef4322d86fe8af5325ac9856d9b5ebc5ba6a20e23908e022ffa8b6cba",
+  "requires": {
+    "pudding_plugin": "^1.0.0"
+  },
+  "tags": [
+    "nas",
+    "storage",
+    "files",
+    "synology",
+    "self-hosted"
+  ]
+}

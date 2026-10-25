@@ -1,0 +1,28 @@
+{
+  "kind": "pudding.plugin.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/plugins/synology",
+  "name": "synology",
+  "title": {
+    "zh-CN": "群晖 NAS",
+    "zh-TW": "Synology NAS",
+    "en": "Synology NAS"
+  },
+  "version": "1.0.0",
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "color": {
+      "light": "#FFFFFF",
+      "dark": "#FFFFFF"
+    },
+    "background": {
+      "light": "#0B2D5A",
+      "dark": "#061A36"
+    }
+  },
+  "package": "./synology.pudding-plugin.json",
+  "package_sha256": "023aacaef4322d86fe8af5325ac9856d9b5ebc5ba6a20e23908e022ffa8b6cba",
+  "requires": {
+    "pudding_plugin": "^1.0.0"
+  }
+}
