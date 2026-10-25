@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "sdkVersion": "1",
+  "entry": "src/App.tsx",
+  "sources": {
+    "mail": {
+      "pluginID": "gmail",
+      "endpoint": "gmail_rest"
+    }
+  },
+  "operations": {
+    "profile": {
+      "source": "mail",
+      "kind": "rest",
+      "effectHint": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "request": {
+        "method": "GET",
+        "path": "/users/me/profile"
+      }
+    },
+    "list": {
+      "source": "mail",
+      "kind": "rest",
+      "effectHint": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "pageToken": {
+            "type": "string",
+            "maxLength": 2048
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "required": ["q", "pageToken", "limit"],
+        "additionalProperties": false
+      },
+      "request": {
+        "method": "GET",
+        "path": "/users/me/threads",
+        "query": {
+          "q": {
+            "$input": "/q"
+          },
+          "pageToken": {
+            "$input": "/pageToken"
+          },
+          "maxResults": {
+            "$input": "/limit"
+          }
+        }
+      }
+    },
+    "metadata": {
+      "source": "mail",
+      "kind": "rest",
+      "effectHint": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "required": ["id"],
+        "additionalProperties": false
+      },
+      "request": {
+        "method": "GET",
+        "path": "/users/me/threads/{id}",
+        "pathParams": {
+          "id": {
+            "$input": "/id"
+          }
+        },
+        "query": {
+          "format": "metadata",
+          "fields": "id,snippet,messages(id,internalDate,payload/headers,labelIds)"
+        }
+      }
+    },
+    "thread": {
+      "source": "mail",
+      "kind": "rest",
+      "effectHint": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "required": ["id"],
+        "additionalProperties": false
+      },
+      "request": {
+        "method": "GET",
+        "path": "/users/me/threads/{id}",
+        "pathParams": {
+          "id": {
+            "$input": "/id"
+          }
+        },
+        "query": {
+          "format": "full"
+        }
+      }
+    }
+  }
+}

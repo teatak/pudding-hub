@@ -18,6 +18,7 @@ test("widget catalog contains all registered widgets with complete, verifiable r
   assert.deepEqual(names, [
     "debate",
     "doudizhu",
+    "gmail-board",
     "gomoku",
     "kanban",
     "notes",

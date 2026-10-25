@@ -58,6 +58,33 @@
       ]
     },
     {
+      "id": "teatak/pudding-hub/widgets/gmail-board",
+      "title": {
+        "zh-CN": "Gmail 看板",
+        "zh-TW": "Gmail 看板",
+        "en": "Gmail Board"
+      },
+      "description": {
+        "zh-CN": "按账号整理邮件会话、跟进事项和本地回复草稿。",
+        "zh-TW": "依帳號整理郵件對話、追蹤事項與本機回覆草稿。",
+        "en": "Organize email threads, follow-ups and local reply drafts by account."
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTUiIGZpbGw9IiM1MjUyNWIiLz48cmVjdCB4PSIxMiIgeT0iMTciIHdpZHRoPSI0MCIgaGVpZ2h0PSIzMCIgcng9IjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMy41Ii8+PHBhdGggZD0ibTE0IDIwIDE4IDE0IDE4LTE0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+Cg==",
+      "releases": [
+        {
+          "version": "1.0.0-preview.1",
+          "package": "./gmail-board/releases/1.0.0-preview.1/gmail-board.pudding-widget.json",
+          "packageHash": "b2e54e499c7df0da3c7b01085862fab914fa28673c84b6aee077e84e1e721c8c",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        }
+      ]
+    },
+    {
       "id": "teatak/pudding-hub/widgets/gomoku",
       "title": {
         "zh-CN": "五子棋",
