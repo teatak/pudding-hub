@@ -21,6 +21,8 @@ import {
 import { t, errorText } from "./text";
 
 // One controller/cache per guest binding. A connection change creates a new guest.
+// Shared cache requests own their cancellation signal; one UI/model caller must
+// never cancel the same request still used by another reader.
 export function createMailbox(client: QueryClient) {
   const known = new Set<string>();
   const profile = () =>
@@ -55,13 +57,13 @@ export function createMailbox(client: QueryClient) {
     const result = await client.fetchQuery({
       queryKey: ["gmail", "page", account, q, cursor, limit],
       staleTime: 60000,
-      queryFn: async () => {
+      queryFn: async ({ signal: pageSignal }) => {
         const listing = listSchema.parse(
           (
             await pudding.query(
               "list",
               { q, pageToken: cursor, limit },
-              { signal },
+              { signal: pageSignal },
             )
           ).data,
         );
@@ -74,10 +76,15 @@ export function createMailbox(client: QueryClient) {
                 const raw = await client.fetchQuery({
                   queryKey: ["gmail", "metadata", account, id],
                   staleTime: 60000,
-                  queryFn: async () =>
+                  queryFn: async ({ signal: metadataSignal }) =>
                     threadSchema.parse(
-                      (await pudding.query("metadata", { id }, { signal }))
-                        .data,
+                      (
+                        await pudding.query(
+                          "metadata",
+                          { id },
+                          { signal: metadataSignal },
+                        )
+                      ).data,
                     ),
                 });
                 if (raw.id !== id) throw new Error("Thread ID mismatch");
@@ -144,9 +151,10 @@ export function createMailbox(client: QueryClient) {
     const thread = await client.fetchQuery({
       queryKey: ["gmail", "thread", account, id],
       staleTime: 60000,
-      queryFn: async () =>
+      queryFn: async ({ signal: threadSignal }) =>
         threadSchema.parse(
-          (await pudding.query("thread", { id }, { signal })).data,
+          (await pudding.query("thread", { id }, { signal: threadSignal }))
+            .data,
         ),
     });
     if (thread.id !== id) throw new Error("Thread ID mismatch");

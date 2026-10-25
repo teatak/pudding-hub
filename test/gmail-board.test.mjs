@@ -267,23 +267,19 @@ test("all interfaces serialize to JSON schema in all three locales; invalid fiel
   assert.equal(dateSchema.safeParse("2026-02-30").success, false);
   assert.equal(dateSchema.safeParse("2028-02-29").success, true);
   assert.throws(() =>
-    defs
-      .get("saveReplyDraft")
-      .input.parse({
-        account,
-        id: "t1",
-        expectedStorageVersion: 0,
-        draft: { subject: "", body: "x".repeat(8001) },
-      }),
+    defs.get("saveReplyDraft").input.parse({
+      account,
+      id: "t1",
+      expectedStorageVersion: 0,
+      draft: { subject: "", body: "x".repeat(8001) },
+    }),
   );
   assert.throws(() =>
-    defs
-      .get("updateCards")
-      .input.parse({
-        account,
-        expectedStorageVersion: 0,
-        updates: [{ id: "t1" }],
-      }),
+    defs.get("updateCards").input.parse({
+      account,
+      expectedStorageVersion: 0,
+      updates: [{ id: "t1" }],
+    }),
   );
   assert.throws(() => readStore(null), /invalidData/);
 });
@@ -302,5 +298,43 @@ test("multipart plain text prefers body over attachments and decodes base64url U
       ],
     }),
     { text: "您好 🌤", format: "plain" },
+  );
+});
+
+test("canceling one UI reader does not abort a shared mailbox or message read used by another caller", async () => {
+  await api.profile();
+  for (const kind of ["page", "message"]) {
+    let release;
+    gate = new Promise((r) => {
+      release = r;
+    });
+    const canceled = new AbortController();
+    const read = (signal) =>
+      kind === "page"
+        ? api.list(account, "in:inbox", "", 20, signal)
+        : api.read(account, "t1", 0, 5, signal);
+    const first = read(canceled.signal);
+    const failure = assert.rejects(first, { name: "AbortError" });
+    // Let the first reader create the shared request before the second attaches.
+    await new Promise((r) => setTimeout(r, 0));
+    const second = read(new AbortController().signal);
+    canceled.abort();
+    release();
+    await failure;
+    const result = await second;
+    assert.equal(result.account, account);
+    gate = null;
+  }
+});
+test("cards use the most recent Gmail message snippet when the thread omits snippet", async () => {
+  const { threadSummary, threadSchema } = await import(
+    new URL("model.ts", source)
+  );
+  const data = mail("t1", "metadata");
+  delete data.snippet;
+  data.messages[0].snippet = "Actual Gmail message summary";
+  assert.equal(
+    threadSummary(threadSchema.parse(data)).snippet,
+    "Actual Gmail message summary",
   );
 });

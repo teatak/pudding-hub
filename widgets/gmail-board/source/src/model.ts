@@ -156,7 +156,7 @@ export function threadSummary(thread: Thread) {
     id: thread.id,
     subject: header(last.payload, "Subject"),
     from: header(last.payload, "From"),
-    snippet: thread.snippet.slice(0, 300),
+    snippet: (last.snippet || thread.snippet).slice(0, 300),
     updatedAt: new Date(Number(last.internalDate)).toISOString(),
     messageCount: messages.length,
     unread: messages.some((m) => m.labelIds.includes("UNREAD")),

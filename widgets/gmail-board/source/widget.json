@@ -89,7 +89,7 @@
         },
         "query": {
           "format": "metadata",
-          "fields": "id,snippet,messages(id,internalDate,payload/headers,labelIds)"
+          "fields": "id,snippet,messages(id,internalDate,snippet,payload/headers,labelIds)"
         }
       }
     },

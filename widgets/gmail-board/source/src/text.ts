@@ -1,5 +1,11 @@
 import { pudding } from "@pudding/widget";
 const en = {
+  copied: "Copied",
+  copyFailed: "Copy unavailable. The text is selected; press ⌘C / Ctrl+C.",
+  messageTab: "Messages",
+  organizeTab: "Organize & draft",
+  detailView: "Thread details",
+  about: "About this board",
   reloadSaved: "Reload saved content",
   title: "Gmail Board",
   accountHint: "Switch accounts in the connection selector above",
@@ -67,6 +73,12 @@ type Key = keyof typeof en;
 export const messages: Record<"en" | "zh-CN" | "zh-TW", Record<Key, string>> = {
   en,
   "zh-CN": {
+    copied: "已复制",
+    copyFailed: "无法自动复制，已选中文字，请按 ⌘C / Ctrl+C。",
+    messageTab: "邮件正文",
+    organizeTab: "处理与草稿",
+    detailView: "邮件详情",
+    about: "关于看板",
     reloadSaved: "重新载入已保存内容",
     title: "Gmail 看板",
     accountHint: "可在上方连接选择器切换账号",
@@ -127,6 +139,12 @@ export const messages: Record<"en" | "zh-CN" | "zh-TW", Record<Key, string>> = {
       "刷新当前连接账号的 Gmail 读取缓存，返回 getBoard 摘要，不重复返回完整邮件。account 来自 getBoard，本地状态和草稿保留。",
   },
   "zh-TW": {
+    copied: "已複製",
+    copyFailed: "無法自動複製，已選取文字，請按 ⌘C / Ctrl+C。",
+    messageTab: "郵件內文",
+    organizeTab: "處理與草稿",
+    detailView: "郵件詳情",
+    about: "關於看板",
     reloadSaved: "重新載入已儲存內容",
     title: "Gmail 看板",
     accountHint: "可在上方連線選擇器切換帳號",
