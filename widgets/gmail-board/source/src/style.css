@@ -577,6 +577,30 @@ body {
   text-decoration: underline;
   cursor: pointer;
 }
+.gb-email-html [align="center" i],
+.gb-email-html center {
+  text-align: -webkit-center;
+  text-align: center;
+}
+.gb-email-html table[align="center" i],
+.gb-email-html [align="center" i] table,
+.gb-email-html [style*="text-align: center" i] table,
+.gb-email-html [style*="text-align:center" i] table,
+.gb-email-html center table {
+  margin-left: auto;
+  margin-right: auto;
+}
+.gb-email-html [align="center" i] img,
+.gb-email-html [style*="text-align: center" i] img,
+.gb-email-html [style*="text-align:center" i] img,
+.gb-email-html [style*="text-align: -webkit-center" i] img,
+.gb-email-html [style*="text-align:-webkit-center" i] img,
+.gb-email-html center img,
+.gb-email-html img[align="center" i],
+.gb-email-html img[align="middle" i] {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
 .gb-truncated {
   margin-top: 8px;
 }
