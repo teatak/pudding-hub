@@ -379,6 +379,31 @@
       ]
     },
     {
+      "id": "teatak/pudding-hub/widgets/synology-files",
+      "title": {
+        "zh-CN": "群晖文件",
+        "zh-TW": "Synology 檔案",
+        "en": "Synology Files"
+      },
+      "description": {
+        "zh-CN": "浏览群晖共享文件夹与目录结构，支持多条件快速检索、文件详情查看与直链下载。",
+        "zh-TW": "瀏覽 Synology 共用資料夾與目錄架構，支援多條件快速搜尋、檔案詳細資訊檢視與直接下載。",
+        "en": "Browse Synology NAS shared folders and directory trees, with fast search and file download links."
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI4IiBmaWxsPSIjMEIyRDVBIi8+CiAgPCEtLSBGb2xkZXIgc2hhcGUgaW4gYmFja2dyb3VuZCAtLT4KICA8cGF0aCBkPSJNMjggNDIgQzI4IDM4IDMxIDM1IDM1IDM1IEw1MiAzNSBDNTUgMzUgNTggMzcgNjAgNDAgTDY1IDQ2IEw5MyA0NiBDOTcgNDYgMTAwIDQ5IDEwMCA1MyBMMTAwIDkwIEMxMDAgOTQgOTcgOTcgOTMgOTcgTDM1IDk3IEMzMSA5NyAyOCA5NCAyOCA5MCBaIiBmaWxsPSIjMUU0RThDIiBvcGFjaXR5PSIwLjYiLz4KICA8IS0tIE5BUyBmcm9udCBiYXkgYm94IC0tPgogIDxyZWN0IHg9IjM2IiB5PSI1MiIgd2lkdGg9IjU2IiBoZWlnaHQ9IjQyIiByeD0iNiIgZmlsbD0iIzEzMzY2MyIgc3Ryb2tlPSIjNEE3QkI4IiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDwhLS0gRGlzayBkcml2ZSBzbG90cyAtLT4KICA8cmVjdCB4PSI0NCIgeT0iNjAiIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNiIgcng9IjIiIGZpbGw9IiMwQjIxM0QiIHN0cm9rZT0iIzJCNUI5NCIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8cmVjdCB4PSI1OSIgeT0iNjAiIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNiIgcng9IjIiIGZpbGw9IiMwQjIxM0QiIHN0cm9rZT0iIzJCNUI5NCIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8cmVjdCB4PSI3NCIgeT0iNjAiIHdpZHRoPSIxMCIgaGVpZ2h0PSIyNiIgcng9IjIiIGZpbGw9IiMwQjIxM0QiIHN0cm9rZT0iIzJCNUI5NCIgc3Ryb2tlLXdpZHRoPSIxLjUiLz4KICA8IS0tIEFjdGl2aXR5IExFRHMgLS0+CiAgPGNpcmNsZSBjeD0iNDkiIGN5PSI2NSIgcj0iMS41IiBmaWxsPSIjMDBFNjc2Ii8+CiAgPGNpcmNsZSBjeD0iNjQiIGN5PSI2NSIgcj0iMS41IiBmaWxsPSIjMDBFNjc2Ii8+CiAgPGNpcmNsZSBjeD0iNzkiIGN5PSI2NSIgcj0iMS41IiBmaWxsPSIjMDBFNjc2Ii8+Cjwvc3ZnPgo=",
+      "releases": [
+        {
+          "version": "1.0.0",
+          "package": "./synology-files/releases/1.0.0/synology-files.pudding-widget.json",
+          "packageHash": "97c202edfddd6272580df49fad2efe1826c8a733a7c8790af6d03b1e2c785d93",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          }
+        }
+      ]
+    },
+    {
       "id": "teatak/pudding-hub/widgets/undercover",
       "title": {
         "zh-CN": "谁是卧底",

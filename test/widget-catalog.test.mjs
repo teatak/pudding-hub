@@ -26,6 +26,7 @@ test("widget catalog contains all registered widgets with complete, verifiable r
     "pocket-studio",
     "reversi",
     "shared-todo",
+    "synology-files",
     "undercover",
   ]);
   const catalog = await read(path.join(root, "registry.json"));

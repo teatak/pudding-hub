@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="28" fill="#0B2D5A"/>
+  <!-- Folder shape in background -->
+  <path d="M28 42 C28 38 31 35 35 35 L52 35 C55 35 58 37 60 40 L65 46 L93 46 C97 46 100 49 100 53 L100 90 C100 94 97 97 93 97 L35 97 C31 97 28 94 28 90 Z" fill="#1E4E8C" opacity="0.6"/>
+  <!-- NAS front bay box -->
+  <rect x="36" y="52" width="56" height="42" rx="6" fill="#133663" stroke="#4A7BB8" stroke-width="2.5"/>
+  <!-- Disk drive slots -->
+  <rect x="44" y="60" width="10" height="26" rx="2" fill="#0B213D" stroke="#2B5B94" stroke-width="1.5"/>
+  <rect x="59" y="60" width="10" height="26" rx="2" fill="#0B213D" stroke="#2B5B94" stroke-width="1.5"/>
+  <rect x="74" y="60" width="10" height="26" rx="2" fill="#0B213D" stroke="#2B5B94" stroke-width="1.5"/>
+  <!-- Activity LEDs -->
+  <circle cx="49" cy="65" r="1.5" fill="#00E676"/>
+  <circle cx="64" cy="65" r="1.5" fill="#00E676"/>
+  <circle cx="79" cy="65" r="1.5" fill="#00E676"/>
+</svg>

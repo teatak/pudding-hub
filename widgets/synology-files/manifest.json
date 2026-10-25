@@ -1,0 +1,19 @@
+{
+  "id": "teatak/pudding-hub/widgets/synology-files",
+  "version": "1.0.0",
+  "title": {
+    "zh-CN": "群晖文件",
+    "zh-TW": "Synology 檔案",
+    "en": "Synology Files"
+  },
+  "description": {
+    "zh-CN": "浏览群晖共享文件夹与目录结构，支持多条件快速检索、文件详情查看与直链下载。",
+    "zh-TW": "瀏覽 Synology 共用資料夾與目錄架構，支援多條件快速搜尋、檔案詳細資訊檢視與直接下載。",
+    "en": "Browse Synology NAS shared folders and directory trees, with fast search and file download links."
+  },
+  "requires": {
+    "protocolVersion": 24,
+    "sdkVersion": "1"
+  },
+  "icon": "./assets/icon.svg"
+}
