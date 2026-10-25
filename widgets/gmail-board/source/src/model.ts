@@ -141,6 +141,69 @@ export const listSchema = z.object({
   nextPageToken: z.string().optional(),
   resultSizeEstimate: z.number().optional(),
 });
+export function decodeHtmlEntities(str: string): string {
+  if (!str || !str.includes("&")) return str;
+  return str
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(Number(dec)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) =>
+      String.fromCharCode(parseInt(hex, 16)),
+    )
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&");
+}
+
+export function sanitizeEmailHtml(rawHtml: string): string {
+  if (!rawHtml) return "";
+  if (typeof DOMParser === "undefined") {
+    return rawHtml
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+      .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
+      .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, "")
+      .replace(/\s+on\w+="[^"]*"/gi, "")
+      .replace(/\s+on\w+='[^']*'/gi, "");
+  }
+
+  try {
+    const doc = new DOMParser().parseFromString(rawHtml, "text/html");
+    const dangerous = doc.querySelectorAll(
+      "script,iframe,object,embed,form,input,button,select,textarea,meta,link,base,applet,frame,frameset",
+    );
+    dangerous.forEach((el) => el.remove());
+
+    const allElements = doc.querySelectorAll("*");
+    allElements.forEach((el) => {
+      for (const attr of Array.from(el.attributes)) {
+        const name = attr.name.toLowerCase();
+        const value = attr.value.trim().toLowerCase();
+        if (name.startsWith("on")) {
+          el.removeAttribute(attr.name);
+        } else if (
+          (name === "href" || name === "src" || name === "action") &&
+          (value.startsWith("javascript:") ||
+            value.startsWith("data:text/html") ||
+            value.startsWith("vbscript:"))
+        ) {
+          el.removeAttribute(attr.name);
+        }
+      }
+
+      if (el.tagName.toLowerCase() === "a") {
+        el.setAttribute("target", "_blank");
+        el.setAttribute("rel", "noopener noreferrer");
+      }
+    });
+
+    return doc.body.innerHTML || "";
+  } catch {
+    return "";
+  }
+}
+
 export function header(part: Part, name: string) {
   return (
     part.headers?.find((h) => h.name.toLowerCase() === name.toLowerCase())
@@ -154,9 +217,9 @@ export function threadSummary(thread: Thread) {
   const last = messages[messages.length - 1];
   return {
     id: thread.id,
-    subject: header(last.payload, "Subject"),
+    subject: decodeHtmlEntities(header(last.payload, "Subject")),
     from: header(last.payload, "From"),
-    snippet: (last.snippet || thread.snippet).slice(0, 300),
+    snippet: decodeHtmlEntities((last.snippet || thread.snippet).slice(0, 300)),
     updatedAt: new Date(Number(last.internalDate)).toISOString(),
     messageCount: messages.length,
     unread: messages.some((m) => m.labelIds.includes("UNREAD")),
@@ -165,7 +228,8 @@ export function threadSummary(thread: Thread) {
 export type Summary = ReturnType<typeof threadSummary>;
 export function messageBody(part: Part): {
   text: string;
-  format: "plain" | "html-text" | "unavailable";
+  html?: string;
+  format: "plain" | "html" | "html-text" | "unavailable";
 } {
   const leaves: Part[] = [];
   const visit = (p: Part) => {
@@ -182,23 +246,40 @@ export function messageBody(part: Part): {
       ),
     );
   const plain = leaves.filter((p) => p.mimeType === "text/plain");
-  if (plain.length)
-    return { text: plain.map(decode).join("\n"), format: "plain" };
-  const html = leaves.filter((p) => p.mimeType === "text/html");
-  if (html.length) {
-    const text = html
-      .map((p) => {
-        const doc = new DOMParser().parseFromString(decode(p), "text/html");
-        doc
-          .querySelectorAll("script,style,iframe,object,svg")
-          .forEach((e) => e.remove());
-        doc
-          .querySelectorAll("br,p,div,li,tr")
-          .forEach((e) => e.append(doc.createTextNode("\n")));
-        return doc.body.textContent?.trim() ?? "";
-      })
-      .join("\n");
-    return { text, format: "html-text" };
+  const htmlParts = leaves.filter((p) => p.mimeType === "text/html");
+
+  const rawHtml = htmlParts.length
+    ? htmlParts.map(decode).join("<hr />")
+    : undefined;
+  const sanitizedHtml = rawHtml ? sanitizeEmailHtml(rawHtml) : undefined;
+
+  if (plain.length) {
+    const text = plain.map(decode).join("\n");
+    return {
+      text,
+      ...(sanitizedHtml ? { html: sanitizedHtml } : {}),
+      format: sanitizedHtml ? "html" : "plain",
+    };
+  }
+  if (rawHtml) {
+    let text = "";
+    if (typeof DOMParser !== "undefined") {
+      const doc = new DOMParser().parseFromString(rawHtml, "text/html");
+      doc
+        .querySelectorAll("script,style,iframe,object,svg")
+        .forEach((e) => e.remove());
+      doc
+        .querySelectorAll("br,p,div,li,tr")
+        .forEach((e) => e.append(doc.createTextNode("\n")));
+      text = doc.body.textContent?.trim() ?? "";
+    } else {
+      text = rawHtml.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    }
+    return {
+      text,
+      ...(sanitizedHtml ? { html: sanitizedHtml } : {}),
+      format: "html",
+    };
   }
   return { text: "", format: "unavailable" };
 }

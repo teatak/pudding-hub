@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "sdkVersion": "1",
+  "entry": "src/App.tsx",
+  "sources": {
+    "gh": {
+      "pluginID": "github",
+      "endpoint": "github_rest"
+    }
+  },
+  "operations": {
+    "viewer": {
+      "source": "gh",
+      "kind": "rest",
+      "effectHint": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "request": {
+        "method": "GET",
+        "path": "/user"
+      }
+    },
+    "repos": {
+      "source": "gh",
+      "kind": "rest",
+      "effectHint": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          }
+        },
+        "required": ["page", "limit"],
+        "additionalProperties": false
+      },
+      "request": {
+        "method": "GET",
+        "path": "/user/repos",
+        "query": {
+          "sort": "updated",
+          "affiliation": "owner,collaborator,organization_member",
+          "page": {
+            "$input": "/page"
+          },
+          "per_page": {
+            "$input": "/limit"
+          }
+        }
+      }
+    },
+    "searchItems": {
+      "source": "gh",
+      "kind": "rest",
+      "effectHint": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 30
+          }
+        },
+        "required": ["q", "page", "limit"],
+        "additionalProperties": false
+      },
+      "request": {
+        "method": "GET",
+        "path": "/search/issues",
+        "query": {
+          "q": {
+            "$input": "/q"
+          },
+          "sort": "updated",
+          "order": "desc",
+          "page": {
+            "$input": "/page"
+          },
+          "per_page": {
+            "$input": "/limit"
+          }
+        }
+      }
+    },
+    "itemDetail": {
+      "source": "gh",
+      "kind": "rest",
+      "effectHint": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "owner": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "repo": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "number": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000000
+          }
+        },
+        "required": ["owner", "repo", "number"],
+        "additionalProperties": false
+      },
+      "request": {
+        "method": "GET",
+        "path": "/repos/{owner}/{repo}/issues/{number}",
+        "pathParams": {
+          "owner": {
+            "$input": "/owner"
+          },
+          "repo": {
+            "$input": "/repo"
+          },
+          "number": {
+            "$input": "/number"
+          }
+        }
+      }
+    },
+    "itemComments": {
+      "source": "gh",
+      "kind": "rest",
+      "effectHint": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "owner": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "repo": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "number": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000000
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "required": ["owner", "repo", "number", "page", "limit"],
+        "additionalProperties": false
+      },
+      "request": {
+        "method": "GET",
+        "path": "/repos/{owner}/{repo}/issues/{number}/comments",
+        "pathParams": {
+          "owner": {
+            "$input": "/owner"
+          },
+          "repo": {
+            "$input": "/repo"
+          },
+          "number": {
+            "$input": "/number"
+          }
+        },
+        "query": {
+          "page": {
+            "$input": "/page"
+          },
+          "per_page": {
+            "$input": "/limit"
+          }
+        }
+      }
+    }
+  }
+}

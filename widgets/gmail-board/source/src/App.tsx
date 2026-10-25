@@ -13,9 +13,12 @@ import {
   Info,
   Copy,
   Check,
+  ExternalLink,
+  Globe,
+  FileText,
 } from "lucide-react";
 import { createMailbox, registerInterfaces, type Mailbox } from "./api";
-import { statuses, type Card } from "./model";
+import { statuses, decodeHtmlEntities, type Card } from "./model";
 import { t, errorText } from "./text";
 import "./style.css";
 import { copyError } from "./copy";
@@ -70,6 +73,189 @@ function ErrorBox({
     </div>
   );
 }
+function parseSender(raw: string) {
+  const trimmed = raw.trim();
+  const match = trimmed.match(/^(.*?)\s*<([^>]+)>$/);
+  if (match) {
+    let name = match[1].trim().replace(/^["']|["']$/g, "");
+    const email = match[2].trim();
+    if (!name) name = email.split("@")[0] || email;
+    return { name, email, full: raw };
+  }
+  return {
+    name: trimmed.split("@")[0] || trimmed,
+    email: trimmed.includes("@") ? trimmed : "",
+    full: raw,
+  };
+}
+
+function SenderAvatar({ name }: { name: string }) {
+  const letter = (name.trim()[0] || "?").toUpperCase();
+  return (
+    <div className="gb-sender-avatar" aria-hidden="true">
+      {letter}
+    </div>
+  );
+}
+
+function formatUrlLabel(url: string): string {
+  try {
+    const u = new URL(url);
+    const pathPart =
+      u.pathname.length > 24 ? u.pathname.slice(0, 20) + "…" : u.pathname;
+    return `${u.hostname}${pathPart !== "/" ? pathPart : ""}`;
+  } catch {
+    return url.length > 36 ? url.slice(0, 32) + "…" : url;
+  }
+}
+
+function LinkChip({ url }: { url: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <span className="gb-link-chip">
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        title={url}
+        className="gb-link-url"
+      >
+        <ExternalLink size={12} />
+        <span>{formatUrlLabel(url)}</span>
+      </a>
+      <button
+        type="button"
+        className="gb-link-copy-btn"
+        title={copied ? t("linkCopied") : t("copyLink")}
+        aria-label={t("copyLink")}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          void navigator.clipboard?.writeText(url);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        }}
+      >
+        {copied ? <Check size={11} /> : <Copy size={11} />}
+      </button>
+    </span>
+  );
+}
+
+function FormattedText({ text }: { text: string }) {
+  const clean = decodeHtmlEntities(text);
+  const urlRegex = /(<https?:\/\/[^\s>]+>|https?:\/\/[^\s<>"']+)/gi;
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = urlRegex.exec(clean)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(clean.slice(lastIndex, match.index));
+    }
+    const raw = match[0];
+    let url = raw;
+    if (raw.startsWith("<") && raw.endsWith(">")) {
+      url = raw.slice(1, -1);
+    }
+    parts.push(<LinkChip key={match.index} url={url} />);
+    lastIndex = match.index + raw.length;
+  }
+  if (lastIndex < clean.length) {
+    parts.push(clean.slice(lastIndex));
+  }
+
+  return <div className="gb-plain-body">{parts}</div>;
+}
+
+function MessageCard({
+  m,
+}: {
+  m: {
+    id: string;
+    from: string;
+    to: string;
+    date: string;
+    text: string;
+    html?: string;
+    format: string;
+    truncated?: boolean;
+  };
+}) {
+  const hasHtml = Boolean(m.html);
+  const [viewMode, setViewMode] = useState<"html" | "plain">(
+    hasHtml ? "html" : "plain",
+  );
+  const sender = parseSender(m.from);
+
+  return (
+    <article key={m.id} className="gb-message-card">
+      <div className="gb-message-card-header">
+        <SenderAvatar name={sender.name} />
+        <div className="gb-message-header-info">
+          <div className="gb-message-meta">
+            <div className="gb-sender-line">
+              <strong className="gb-sender-name" title={sender.full}>
+                {sender.name}
+              </strong>
+              {sender.email && (
+                <span className="gb-sender-email" title={sender.email}>
+                  &lt;{sender.email}&gt;
+                </span>
+              )}
+            </div>
+            <time>
+              {new Date(m.date).toLocaleString(pudding.locale.read())}
+            </time>
+          </div>
+          <p className="gb-recipient" title={m.to}>
+            To: {m.to || "me"}
+          </p>
+        </div>
+        {hasHtml && (
+          <div className="gb-view-toggle">
+            <button
+              type="button"
+              className={viewMode === "html" ? "is-active" : ""}
+              onClick={() => setViewMode("html")}
+              title={t("viewHtml")}
+            >
+              <Globe size={12} />
+              <span>{t("viewHtml")}</span>
+            </button>
+            <button
+              type="button"
+              className={viewMode === "plain" ? "is-active" : ""}
+              onClick={() => setViewMode("plain")}
+              title={t("viewPlain")}
+            >
+              <FileText size={12} />
+              <span>{t("viewPlain")}</span>
+            </button>
+          </div>
+        )}
+      </div>
+
+      {m.format === "unavailable" && (
+        <p className="gb-muted">{t("bodyUnavailable")}</p>
+      )}
+
+      <div className="gb-message-content">
+        {viewMode === "html" && m.html ? (
+          <div
+            className="gb-email-html"
+            dangerouslySetInnerHTML={{ __html: m.html }}
+          />
+        ) : (
+          <FormattedText text={m.text} />
+        )}
+      </div>
+
+      {m.truncated && <p className="gb-muted gb-truncated">{t("truncated")}</p>}
+    </article>
+  );
+}
+
 function Editor({
   mail,
   account,
@@ -177,26 +363,13 @@ function Editor({
         {detail.data && (
           <section className="gb-read" hidden={tab !== "message"}>
             <p className="gb-muted">
-              {detail.data.messageCount} {t("messages")}
+              {detail.data.messageCount === 1
+                ? t("oneMessage")
+                : `${detail.data.messageCount} ${t("messages")}`}
             </p>
             <section className="gb-messages">
               {detail.data.messages.map((m) => (
-                <article key={m.id}>
-                  <div className="gb-message-meta">
-                    <strong title={m.from}>{m.from}</strong>
-                    <time>
-                      {new Date(m.date).toLocaleString(pudding.locale.read())}
-                    </time>
-                  </div>
-                  <p className="gb-recipient" title={m.to}>
-                    {m.to}
-                  </p>
-                  {m.format === "unavailable" && (
-                    <p className="gb-muted">{t("bodyUnavailable")}</p>
-                  )}
-                  <pre>{m.text}</pre>
-                  {m.truncated && <p className="gb-muted">{t("truncated")}</p>}
-                </article>
+                <MessageCard key={m.id} m={m} />
               ))}
             </section>
             {(offset > 0 || detail.data.nextOffset !== null) && (

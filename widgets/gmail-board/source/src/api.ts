@@ -180,6 +180,7 @@ export function createMailbox(client: QueryClient) {
           to: header(m.payload, "To"),
           date: new Date(Number(m.internalDate)).toISOString(),
           text: text.slice(0, 12000),
+          html: body.html ? body.html.slice(0, 60000) : undefined,
           format: body.format,
           truncated: text.length > 12000,
         };
