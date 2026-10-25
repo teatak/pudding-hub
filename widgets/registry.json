@@ -72,6 +72,17 @@
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiBmaWxsPSJub25lIj4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI4IiBmaWxsPSIjMTgxODFCIi8+CiAgPHJlY3QgeD0iNiIgeT0iNiIgd2lkdGg9IjExNiIgaGVpZ2h0PSIxMTYiIHJ4PSIyMyIgc3Ryb2tlPSIjM0YzRjQ2IiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cGF0aCBmaWxsPSIjRkFGQUZBIiBkPSJNNjQgMjJjLTIzLjIgMC00MiAxOC44LTQyIDQyIDAgMTguNTYgMTIuMDMgMzQuMyAyOC43MiAzOS44NSAyLjEuMzggMi44Ni0uOTIgMi44Ni0yLjAzIDAtMS0uMDQtNC4zLS4wNi03Ljc5LTExLjY4IDIuNTQtMTQuMTUtNC45Ni0xNC4xNS00Ljk2LTEuOS00Ljg1LTQuNjctNi4xNS00LjY3LTYuMTUtMy44Mi0uMTkuMjktMy43NC4yOS0zLjc0IDQuMjIuMyA2LjQ1IDQuMzMgNi40NSA0LjMzIDMuNzYgNi40NCA5Ljg1IDQuNTggMTIuMjYgMy41LjM4LTIuNzMgMS40Ny00LjU4IDIuNjctNS42My05LjMyLTEuMDctMTkuMTMtNC42Ni0xOS4xMy0yMC43MyAwLTQuNTggMS42NC04LjM1IDQuMzMtMTEuMjctLjQ0LTEuMDctMS44Ny01LjM1LjQyLTExLjEzIDAgMCAzLjUzLS4xMyAxMS41NSA0LjNhNDAuMyA0MC4zIDAgMCAxIDIxLjA0IDBjOC4wMi00LjQzIDExLjUzLTQuMyAxMS41My00LjMgMi4yOSA1Ljc4Ljg2IDEwLjA2LjQyIDExLjEzIDIuNjkgMi45MiA0LjMzIDYuNjkgNC4zMyAxMS4yNyAwIDE2LjExLTkuODMgMTkuNjUtMTkuMTkgMjAuNjggMS41MSAxLjMgMi44NiAzLjg2IDIuODYgNy43NyAwIDUuNjEtLjA2IDEwLjE0LS4wNiAxMS41MSAwIDEuMTMuNzYgMi40MyAyLjg4IDIuMDNBNDIuMDIgNDIuMDIgMCAwIDAgMTA2IDY0YzAtMjMuMi0xOC44LTQyLTQyLTQyWiIvPgogIDxjaXJjbGUgY3g9Ijk2IiBjeT0iOTYiIHI9IjE2IiBmaWxsPSIjMjU2M0VCIiBzdHJva2U9IiMxODE4MUIiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxwYXRoIGQ9Ik05MCA5Nmw0IDQgOC04IiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=",
       "releases": [
         {
+          "version": "1.0.0-preview.2",
+          "package": "./github-board/releases/1.0.0-preview.2/github-board.pudding-widget.json",
+          "packageHash": "43460d797049c9e6a1301f298b29bd328d2fcf39b42e2b5df32b5908b2674225",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
           "version": "1.0.0-preview.1",
           "package": "./github-board/releases/1.0.0-preview.1/github-board.pudding-widget.json",
           "packageHash": "8dfc9a4ea47dcf40cdea39a162a46e18d6b81750d79da255ee14231df48d4152",
