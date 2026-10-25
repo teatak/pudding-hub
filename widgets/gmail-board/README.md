@@ -1,4 +1,4 @@
-# Gmail Board · 1.0.0-preview.3
+# Gmail Board · 1.0.0-preview.4
 
 A local triage board for Gmail threads. Requires the Gmail plugin and a connected Google account with `gmail.readonly`. Enable **Show widget preview versions** to install this preview (and **Show plugin preview versions** if Gmail is still a preview).
 

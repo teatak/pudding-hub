@@ -388,9 +388,7 @@ export default function App() {
     <main className="gb-app">
       <header className="gb-header">
         <div className="gb-brand">
-          <span className="gb-icon">
-            <Mail size={20} />
-          </span>
+          <span className="gb-icon" aria-hidden="true" />
           <div>
             <h1>{t("title")}</h1>
             <p className="gb-account" title={account}>

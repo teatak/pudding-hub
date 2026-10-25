@@ -105,9 +105,7 @@ body {
   height: 36px;
   display: grid;
   place-items: center;
-  background: var(--panel);
-  border: 1px solid var(--edge);
-  border-radius: 9px;
+  background: url("../assets/icon.svg") center / contain no-repeat;
   flex-shrink: 0;
 }
 .gb-account {
