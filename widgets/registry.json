@@ -72,6 +72,17 @@
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTUiIGZpbGw9IiM1MjUyNWIiLz48cmVjdCB4PSIxMiIgeT0iMTciIHdpZHRoPSI0MCIgaGVpZ2h0PSIzMCIgcng9IjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMy41Ii8+PHBhdGggZD0ibTE0IDIwIDE4IDE0IDE4LTE0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+Cg==",
       "releases": [
         {
+          "version": "1.0.0-preview.3",
+          "package": "./gmail-board/releases/1.0.0-preview.3/gmail-board.pudding-widget.json",
+          "packageHash": "96a8578423ceda49d34ad78a354a018e0a5b3028673e9d088f043eab113c34af",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
           "version": "1.0.0-preview.2",
           "package": "./gmail-board/releases/1.0.0-preview.2/gmail-board.pudding-widget.json",
           "packageHash": "edaf0383598adc16e4ed07085b629cf0e2836db4459ed8cf4babdf8f87846d98",

@@ -1,4 +1,4 @@
-# Gmail Board · 1.0.0-preview.2
+# Gmail Board · 1.0.0-preview.3
 
 A local triage board for Gmail threads. Requires the Gmail plugin and a connected Google account with `gmail.readonly`. Enable **Show widget preview versions** to install this preview (and **Show plugin preview versions** if Gmail is still a preview).
 
@@ -8,7 +8,7 @@ Use Pudding's **account selector in the widget toolbar** to choose an existing G
 
 Each connected mailbox is identified by the authenticated Gmail profile's email address, normalized to lowercase. Board statuses, follow-up dates, notes and saved reply drafts are partitioned by that mailbox inside the widget's item storage. Two connections to the same Gmail account intentionally share its board. Switching connections starts a fresh guest/cache; returning to an account loads its saved data. Reading a thread does not move its card or change unread state.
 
-Open a card in the full-height reader; switch to **Organize & draft** for its local form. The board keeps four readable columns, with horizontal scrolling in narrow windows. Errors stay compact without shifting the board; details expand within a bounded area and can be copied from the sandbox. If copying is blocked, the error is selected for keyboard copying.
+Use the status tabs to filter one mail list. Selecting a thread opens its body in the reading pane on the right; switch to **Organize & draft** for its local form. The list and reader scroll independently, and the list remains accessible while reading. Status counts apply to the current Gmail page. Errors stay compact without shifting the board; details expand within a bounded area and can be copied from the sandbox. If copying is blocked, the error is selected for keyboard copying.
 
 Changes in the detail form are saved with **Save**; the form shows when changes are unsaved. Save before switching accounts, changing threads or closing the view. Drafts are local to this installed board, **not Gmail server drafts**. No send, archive, label modification or mark-as-read endpoints are declared.
 

@@ -185,11 +185,13 @@ body {
   padding: 7px;
 }
 .gb-page-info {
+  padding: 0 12px;
+  border-top: 1px solid var(--edge);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  height: 48px;
+  height: 44px;
   flex-shrink: 0;
   color: var(--muted);
   font-size: 12px;
@@ -206,50 +208,64 @@ body {
   min-height: 0;
   min-width: 0;
   flex: 1;
-  display: flex;
-}
-.gb-board {
   display: grid;
-  grid-template-columns: repeat(4, minmax(250px, 1fr));
-  gap: 12px;
-  min-height: 0;
-  min-width: 0;
-  width: 100%;
-  overflow-x: auto;
-  padding-bottom: 6px;
-}
-.gb-column {
-  background: var(--panel);
+  grid-template-columns: minmax(300px, 34%) minmax(320px, 1fr);
+  margin-top: 16px;
+  overflow: auto;
   border: 1px solid var(--edge);
   border-radius: 10px;
+}
+.gb-inbox {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
   min-height: 0;
-  display: flex;
-  flex-direction: column;
+  border-right: 1px solid var(--edge);
 }
-.gb-column > h2 {
-  padding: 12px;
-  font-size: 13px;
+.gb-status-tabs {
   display: flex;
-  gap: 8px;
-  align-items: center;
-  border-bottom: 1px solid var(--edge);
   flex-shrink: 0;
+  border-bottom: 1px solid var(--edge);
+  padding: 0 10px;
+  gap: 6px;
+  overflow-x: auto;
 }
-.gb-column > h2 > span {
+.gb-status-tabs button {
+  flex: 1;
+  padding: 14px 5px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   color: var(--muted);
-  font-size: 11px;
-  font-weight: 400;
-  padding: 1px 5px;
+  font-size: 12px;
+  gap: 4px;
+}
+.gb-status-tabs button[aria-selected="true"] {
+  color: var(--text);
+  box-shadow: inset 0 -2px var(--text);
+}
+.gb-status-tabs button > span {
+  font-size: 10px;
+  color: var(--muted);
 }
 .gb-cards {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 9px;
-  padding: 10px;
-  overflow-y: auto;
   min-height: 0;
-  scrollbar-gutter: stable;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.gb-reader-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
 }
 .gb-app .gb-card {
   display: flex;
@@ -259,11 +275,14 @@ body {
   white-space: normal;
   gap: 7px;
   min-width: 0;
-  padding: 12px;
-  box-shadow: 0 1px 2px #00000005;
+  padding: 15px 16px;
+  border: 0;
+  border-bottom: 1px solid var(--edge);
+  border-radius: 0;
 }
 .gb-card[aria-pressed="true"] {
-  border-color: var(--muted);
+  background: var(--panel);
+  box-shadow: inset 3px 0 var(--text);
 }
 .gb-card-top {
   display: flex;
@@ -306,16 +325,11 @@ body {
 .gb-card footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   color: var(--muted);
   font-size: 10px;
   gap: 5px;
   margin-top: 3px;
-}
-.gb-card footer span {
-  display: flex;
-  align-items: center;
-  gap: 4px;
 }
 .gb-empty {
   padding: 24px 10px;
@@ -324,27 +338,13 @@ body {
   font-size: 12px;
 }
 .gb-detail {
-  position: fixed;
-  inset: 0 0 0 auto;
-  margin: 0;
-  height: 100dvh;
-  max-height: 100dvh;
-  width: min(760px, calc(100vw - 32px));
-  max-width: none;
-  padding: 0;
-  background: var(--surface);
-  color: var(--text);
-  border: 0;
-  border-left: 1px solid var(--edge);
-  box-shadow: -8px 0 40px #0002;
-  overflow: hidden;
-}
-.gb-detail[open] {
   display: flex;
   flex-direction: column;
-}
-.gb-detail::backdrop {
-  background: #0005;
+  min-width: 0;
+  min-height: 0;
+  background: var(--surface);
+  color: var(--text);
+  overflow: hidden;
 }
 .gb-detail-top {
   display: flex;
@@ -398,8 +398,8 @@ body {
   padding: 24px;
   scrollbar-gutter: stable;
 }
-.gb-read > h2 {
-  margin-bottom: 8px;
+.gb-thread-title {
+  margin-bottom: 12px !important;
 }
 .gb-messages {
   display: flex;
@@ -588,13 +588,9 @@ body {
   .gb-account {
     max-width: 190px;
   }
-  .gb-board {
-    grid-template-columns: repeat(4, minmax(240px, 1fr));
-    gap: 10px;
-  }
-  .gb-detail {
-    width: 100%;
-    border-left: 0;
+  .gb-workspace {
+    grid-template-columns: 280px minmax(320px, 1fr);
+    margin-top: 12px;
   }
   .gb-detail-scroll {
     padding: 20px;

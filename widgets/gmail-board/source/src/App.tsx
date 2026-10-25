@@ -170,8 +170,12 @@ function Editor({
         ) : null}
         {detail.isPending ? <p className="gb-muted">{t("loading")}</p> : null}
         {detail.data && (
+          <h2 className="gb-thread-title">
+            {detail.data.subject || t("untitled")}
+          </h2>
+        )}
+        {detail.data && (
           <section className="gb-read" hidden={tab !== "message"}>
-            <h2>{detail.data.subject || t("untitled")}</h2>
             <p className="gb-muted">
               {detail.data.messageCount} {t("messages")}
             </p>
@@ -303,7 +307,7 @@ function Editor({
     </>
   );
 }
-function DetailDrawer({
+function ThreadDetail({
   account,
   mail,
   id,
@@ -314,19 +318,8 @@ function DetailDrawer({
   id: string;
   onClose: () => void;
 }) {
-  const dialog = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
-    const node = dialog.current!;
-    node.showModal();
-    return () => node.close();
-  }, []);
   return (
-    <dialog
-      ref={dialog}
-      className="gb-detail"
-      aria-label={t("detailView")}
-      onCancel={onClose}
-    >
+    <aside className="gb-detail" aria-label={t("detailView")}>
       <div className="gb-detail-top">
         <span title={account}>{account}</span>
         <button aria-label={t("close")} onClick={onClose}>
@@ -334,7 +327,7 @@ function DetailDrawer({
         </button>
       </div>
       <Editor key={`${account}:${id}`} mail={mail} account={account} id={id} />
-    </dialog>
+    </aside>
   );
 }
 export default function App() {
@@ -362,6 +355,7 @@ export default function App() {
     [q, setQ] = useState("in:inbox"),
     [cursors, setCursors] = useState([""]),
     [selected, setSelected] = useState<string | null>(null),
+    [status, setStatus] = useState<Card["status"]>("todo"),
     [refreshing, setRefreshing] = useState(false),
     [error, setError] = useState<unknown>(null);
   const cursor = cursors[cursors.length - 1];
@@ -371,6 +365,7 @@ export default function App() {
     enabled: !!account,
     retry: false,
   });
+  const items = list.data?.items.filter((item) => item.status === status) ?? [];
   function find() {
     setQ(search.trim());
     setCursors([""]);
@@ -451,98 +446,141 @@ export default function App() {
           />
         </div>
       ) : null}
-      <div className="gb-page-info">
-        <span aria-live="polite">
-          {list.isFetching
-            ? t("loading")
-            : `${list.data?.items.length ?? 0} ${t("loaded")}`}
-        </span>
-        <nav className="gb-pager">
-          <button
-            aria-label={t("previous")}
-            disabled={cursors.length === 1 || list.isFetching}
-            onClick={() => {
-              setCursors((v) => v.slice(0, -1));
-              setSelected(null);
-            }}
+      <div className="gb-workspace">
+        <section className="gb-inbox" aria-label={t("title")}>
+          <nav
+            className="gb-status-tabs"
+            role="tablist"
+            aria-label={t("status")}
           >
-            <ChevronLeft size={16} />
-          </button>
-          <span>{cursors.length}</span>
-          <button
-            aria-label={t("next")}
-            disabled={!list.data?.nextCursor || list.isFetching}
-            onClick={() => {
-              setCursors((v) => [...v, list.data!.nextCursor!]);
-              setSelected(null);
-            }}
+            {statuses.map((value, index) => (
+              <button
+                key={value}
+                role="tab"
+                id={`gb-tab-${value}`}
+                aria-selected={status === value}
+                aria-controls="gb-thread-list"
+                tabIndex={status === value ? 0 : -1}
+                onClick={() => {
+                  setStatus(value);
+                  setSelected(null);
+                }}
+                onKeyDown={(event) => {
+                  let next: number;
+                  if (event.key === "ArrowRight")
+                    next = (index + 1) % statuses.length;
+                  else if (event.key === "ArrowLeft")
+                    next = (index + statuses.length - 1) % statuses.length;
+                  else if (event.key === "Home") next = 0;
+                  else if (event.key === "End") next = statuses.length - 1;
+                  else return;
+                  event.preventDefault();
+                  setStatus(statuses[next]);
+                  setSelected(null);
+                  document.getElementById(`gb-tab-${statuses[next]}`)?.focus();
+                }}
+              >
+                {t(value)}
+                <span>
+                  {list.data?.items.filter((item) => item.status === value)
+                    .length ?? 0}
+                </span>
+              </button>
+            ))}
+          </nav>
+          <div
+            className="gb-cards"
+            id="gb-thread-list"
+            role="tabpanel"
+            aria-labelledby={`gb-tab-${status}`}
+            tabIndex={0}
           >
-            <ChevronRight size={16} />
-          </button>
-        </nav>
-      </div>
-      <div className="gb-workspace" data-detail-open={!!selected}>
-        <section className="gb-board" aria-label={t("title")}>
-          {statuses.map((status) => {
-            const items =
-              list.data?.items.filter((x) => x.status === status) ?? [];
-            return (
-              <section key={status} className="gb-column">
-                <h2>
-                  {t(status)}
-                  <span>{items.length}</span>
-                </h2>
-                <div className="gb-cards">
-                  {items.map((item) => (
-                    <button
-                      key={item.id}
-                      className="gb-card"
-                      data-thread-id={item.id}
-                      aria-pressed={selected === item.id}
-                      onClick={() => setSelected(item.id)}
-                    >
-                      <div className="gb-card-top">
-                        <span title={item.from}>{item.from}</span>
-                        {item.unread && <i aria-label={t("unread")} />}
-                      </div>
-                      <strong title={item.subject}>
-                        {item.subject || t("untitled")}
-                      </strong>
-                      {item.snippet && <p>{item.snippet}</p>}
-                      <footer>
-                        <time>
-                          {new Date(item.updatedAt).toLocaleDateString(locale, {
-                            month: "short",
-                            day: "numeric",
-                          })}
-                        </time>
-                        <span>
-                          {item.hasDraft && (
-                            <FilePenLine size={14} aria-label={t("draft")} />
-                          )}{" "}
-                          {item.followUpAt && (
-                            <>
-                              <CalendarClock size={14} />
-                              {item.followUpAt}
-                            </>
-                          )}
-                        </span>
-                      </footer>
-                    </button>
-                  ))}
-                  {!items.length && <p className="gb-empty">{t("empty")}</p>}
+            {items.map((item) => (
+              <button
+                key={item.id}
+                className="gb-card"
+                data-thread-id={item.id}
+                aria-pressed={selected === item.id}
+                onClick={() => setSelected(item.id)}
+              >
+                <div className="gb-card-top">
+                  <span title={item.from}>{item.from}</span>
+                  <time>
+                    {new Date(item.updatedAt).toLocaleDateString(locale, {
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </time>
+                  {item.unread && <i aria-label={t("unread")} />}
                 </div>
-              </section>
-            );
-          })}
+                <strong title={item.subject}>
+                  {item.subject || t("untitled")}
+                </strong>
+                {item.snippet && <p>{item.snippet}</p>}
+                {(item.hasDraft || item.followUpAt) && (
+                  <footer>
+                    {item.hasDraft && (
+                      <FilePenLine size={14} aria-label={t("draft")} />
+                    )}
+                    {item.followUpAt && (
+                      <>
+                        <CalendarClock size={14} />
+                        {item.followUpAt}
+                      </>
+                    )}
+                  </footer>
+                )}
+              </button>
+            ))}
+            {!items.length && (
+              <p className="gb-empty">
+                {list.isFetching ? t("loading") : t("empty")}
+              </p>
+            )}
+          </div>
+          <div className="gb-page-info">
+            <span aria-live="polite">
+              {list.isFetching
+                ? t("loading")
+                : `${list.data?.items.length ?? 0} ${t("loaded")}`}
+            </span>
+            <nav className="gb-pager">
+              <button
+                aria-label={t("previous")}
+                disabled={cursors.length === 1 || list.isFetching}
+                onClick={() => {
+                  setCursors((v) => v.slice(0, -1));
+                  setSelected(null);
+                }}
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <span>{cursors.length}</span>
+              <button
+                aria-label={t("next")}
+                disabled={!list.data?.nextCursor || list.isFetching}
+                onClick={() => {
+                  setCursors((v) => [...v, list.data!.nextCursor!]);
+                  setSelected(null);
+                }}
+              >
+                <ChevronRight size={16} />
+              </button>
+            </nav>
+          </div>
         </section>
-        {selected && account && (
-          <DetailDrawer
+        {selected && account ? (
+          <ThreadDetail
             account={account}
             mail={mail}
             id={selected}
             onClose={() => setSelected(null)}
           />
+        ) : (
+          <section className="gb-reader-empty">
+            <Mail size={28} />
+            <p>{t("openHint")}</p>
+          </section>
         )}
       </div>
     </main>

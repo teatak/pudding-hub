@@ -8,7 +8,7 @@ export function copyError(text: string, root: HTMLElement): boolean {
   input.readOnly = true;
   input.style.cssText =
     "position:fixed;opacity:0;inset:0 auto auto 0;width:1px;height:1px";
-  // Mount inside the dialog if present; the rest of the document is inert.
+  // Keep the temporary selection in the visible error's focus scope.
   root.append(input);
   try {
     input.focus({ preventScroll: true });
