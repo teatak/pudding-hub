@@ -301,6 +301,28 @@ test("multipart plain text prefers body over attachments and decodes base64url U
   );
 });
 
+test("multipart html email extracts both text and sanitized html", () => {
+  const data = (s) => Buffer.from(s).toString("base64url");
+  const res = messageBody({
+    mimeType: "multipart/alternative",
+    parts: [
+      { mimeType: "text/plain", body: { data: data("Plain text") } },
+      {
+        mimeType: "text/html",
+        body: {
+          data: data(
+            '<div style="color:red"><script>alert(1)</script><p>Hello HTML</p></div>',
+          ),
+        },
+      },
+    ],
+  });
+  assert.equal(res.text, "Plain text");
+  assert.equal(res.format, "html");
+  assert.ok(res.html.includes("<p>Hello HTML</p>"));
+  assert.ok(!res.html.includes("<script>"));
+});
+
 test("canceling one UI reader does not abort a shared mailbox or message read used by another caller", async () => {
   await api.profile();
   for (const kind of ["page", "message"]) {

@@ -155,10 +155,19 @@ function FormattedText({ text }: { text: string }) {
     }
     const raw = match[0];
     let url = raw;
+    let trailingPunct = "";
     if (raw.startsWith("<") && raw.endsWith(">")) {
       url = raw.slice(1, -1);
+    } else {
+      while (/[),.;]$/.test(url)) {
+        trailingPunct = url.slice(-1) + trailingPunct;
+        url = url.slice(0, -1);
+      }
     }
     parts.push(<LinkChip key={match.index} url={url} />);
+    if (trailingPunct) {
+      parts.push(trailingPunct);
+    }
     lastIndex = match.index + raw.length;
   }
   if (lastIndex < clean.length) {
