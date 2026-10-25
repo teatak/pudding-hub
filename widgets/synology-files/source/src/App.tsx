@@ -110,11 +110,16 @@ export function App() {
 
   // Fetch directory files or search results
   useEffect(() => {
-    if (error) return;
+    // In root view, shared folders are shown via loadShares(); do not query files for "/"
+    if (currentPath === "/" && !searchQuery.trim()) {
+      setFiles([]);
+      return;
+    }
+
     let cancelled = false;
     setLoading(true);
     const queryPromise = searchQuery.trim()
-      ? searchFiles(currentPath, searchQuery)
+      ? searchFiles(currentPath === "/" ? "" : currentPath, searchQuery)
       : fetchFiles(currentPath, sortBy, sortOrder);
 
     queryPromise
@@ -126,7 +131,9 @@ export function App() {
       })
       .catch((err) => {
         if (!cancelled) {
-          setError(err);
+          if (currentPath !== "/") {
+            setError(err);
+          }
           setFiles([]);
         }
       })
@@ -137,7 +144,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [currentPath, searchQuery, sortBy, sortOrder, error]);
+  }, [currentPath, searchQuery, sortBy, sortOrder]);
 
   const navigateTo = (path: string) => {
     const clean = path.replace(/\/+$/, "") || "/";
@@ -300,7 +307,7 @@ export function App() {
             <HardDrive size={44} color="#94a3b8" />
             <h3 style={{ margin: "4px 0 0 0", fontSize: "14px", fontWeight: 600 }}>{t("notConnectedTitle")}</h3>
             <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "12px", maxWidth: "360px", textAlign: "center", lineHeight: 1.5 }}>
-              {t("notConnectedDesc")}
+              {error instanceof Error && error.message !== "Failed to fetch shares" ? error.message : t("notConnectedDesc")}
             </p>
             <button
               type="button"
