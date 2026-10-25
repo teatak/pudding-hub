@@ -14,14 +14,14 @@ test("synology plugin manifest, yaml, release and registry are valid and verifia
   const pluginDir = path.join(root, "synology");
   const manifest = await readJSON(path.join(pluginDir, "manifest.json"));
   assert.equal(manifest.name, "synology");
-  assert.equal(manifest.version, "1.1.0");
+  assert.equal(manifest.version, "1.1.0-preview.1");
   assert.ok(manifest.title["zh-CN"]);
   assert.ok(manifest.title.en);
 
   const yamlContent = await fs.readFile(path.join(pluginDir, "plugin.yaml"), "utf8");
   const pluginYaml = parseYAML(yamlContent);
   assert.equal(pluginYaml.id, "synology");
-  assert.equal(pluginYaml.version, "1.1.0");
+  assert.equal(pluginYaml.version, "1.1.0-preview.1");
   assert.ok(pluginYaml.endpoints.synology_webapi);
   assert.equal(pluginYaml.endpoints.synology_webapi.kind, "rest");
   assert.equal(pluginYaml.endpoints.synology_webapi.url_config.required, true);
@@ -70,5 +70,10 @@ test("synology plugin manifest, yaml, release and registry are valid and verifia
   const registryItem = registry.items.find((i) => i.name === "synology");
   assert.ok(registryItem, "synology must be listed in registry.json");
   assert.equal(registryItem.version, "1.1.0");
-  assert.equal(registryItem.package_sha256, releaseManifest.package_sha256);
+  const releaseEntry = registryItem.releases.find((r) => r.version === manifest.version);
+  assert.ok(releaseEntry, "synology release must be listed in registry.json releases");
+  assert.equal(releaseEntry.version, "1.1.0-preview.1");
+  assert.equal(releaseEntry.package_sha256, releaseManifest.package_sha256);
+  assert.equal(releaseEntry.channel, "preview");
+  assert.equal(releaseEntry.preview, true);
 });
