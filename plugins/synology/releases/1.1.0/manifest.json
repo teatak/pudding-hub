@@ -13,7 +13,7 @@
     "svg": "./assets/icon.svg"
   },
   "package": "./synology.pudding-plugin.json",
-  "package_sha256": "9f74aa16973930a5adb973805c9fe9f07faf53295ae57dda4b5c9724c8260b2c",
+  "package_sha256": "2760a5d1ed536b7f307d6dd66972973c101692fb74d65d1ce4019102b25b8a42",
   "requires": {
     "pudding_plugin": "^1.0.0"
   }

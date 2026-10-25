@@ -26,6 +26,8 @@ test("synology plugin manifest, yaml, release and registry are valid and verifia
   assert.equal(pluginYaml.endpoints.synology_webapi.kind, "rest");
   assert.equal(pluginYaml.endpoints.synology_webapi.url_config.required, true);
 
+  assert.equal(pluginYaml.auth.required, true);
+  assert.equal(pluginYaml.auth.methods.length, 1);
   const login = pluginYaml.auth.methods.find(method => method.type === "session").session;
   assert.equal(login.endpoint, "synology_webapi");
   assert.equal(login.outputs.sid, "data.sid");
