@@ -109,19 +109,51 @@ export function createMailbox(client: QueryClient) {
   ) {
     const p = await page(account, q, cursor, limit, signal),
       s = await storage(signal);
+    const items = p.items.map((item) => {
+      const c = cardFor(s.store, account, item.id);
+      return {
+        ...item,
+        status: c.status,
+        followUpAt: c.followUpAt,
+        hasDraft: !!c.draft,
+        note: c.note,
+      };
+    });
+
+    const accountCards = s.store.accounts[account] ?? {};
+    const pageItemsMap = new Map(items.map((item) => [item.id, item]));
+
+    const taggedCards = Object.entries(accountCards)
+      .filter(
+        ([_, c]) =>
+          c.status !== "todo" || !!c.draft || !!c.note || !!c.followUpAt,
+      )
+      .map(([id, c]) => {
+        known.add(id);
+        const fromPage = pageItemsMap.get(id);
+        return {
+          id,
+          status: c.status,
+          note: c.note,
+          followUpAt: c.followUpAt,
+          hasDraft: !!c.draft,
+          from: c.meta?.from || fromPage?.from || account,
+          subject: c.meta?.subject || fromPage?.subject || t("untitled"),
+          snippet: c.meta?.snippet || fromPage?.snippet || "",
+          updatedAt:
+            c.meta?.updatedAt ||
+            fromPage?.updatedAt ||
+            new Date().toISOString(),
+          unread: fromPage?.unread ?? false,
+        };
+      });
+
     return {
       account,
       q,
       ...p,
-      items: p.items.map((item) => {
-        const c = cardFor(s.store, account, item.id);
-        return {
-          ...item,
-          status: c.status,
-          followUpAt: c.followUpAt,
-          hasDraft: !!c.draft,
-        };
-      }),
+      items,
+      taggedCards,
       storageVersion: s.raw.version,
     };
   }

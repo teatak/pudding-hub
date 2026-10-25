@@ -308,6 +308,12 @@ function Editor({
             status: form.status,
             note: form.note,
             followUpAt: form.followUpAt,
+            meta: {
+              subject: detail.data?.subject || "",
+              from: detail.data?.from || "",
+              snippet: detail.data?.snippet || "",
+              updatedAt: detail.data?.updatedAt || new Date().toISOString(),
+            },
           },
         ],
         {
@@ -538,7 +544,23 @@ export default function App() {
     enabled: !!account,
     retry: false,
   });
-  const items = list.data?.items.filter((item) => item.status === status) ?? [];
+  const isTodoTab = status === "todo";
+  const taggedList = list.data?.taggedCards ?? [];
+  const items = isTodoTab
+    ? (list.data?.items.filter((item) => item.status === "todo") ?? [])
+    : taggedList.filter((item) => item.status === status);
+
+  const tabCounts = useMemo(() => {
+    const todoCount =
+      list.data?.items.filter((item) => item.status === "todo").length ?? 0;
+    const tagged = list.data?.taggedCards ?? [];
+    return {
+      todo: todoCount,
+      reply: tagged.filter((c) => c.status === "reply").length,
+      followUp: tagged.filter((c) => c.status === "followUp").length,
+      done: tagged.filter((c) => c.status === "done").length,
+    };
+  }, [list.data]);
   function find() {
     setQ(search.trim());
     setCursors([""]);
@@ -652,10 +674,7 @@ export default function App() {
                 }}
               >
                 {t(value)}
-                <span>
-                  {list.data?.items.filter((item) => item.status === value)
-                    .length ?? 0}
-                </span>
+                <span>{tabCounts[value]}</span>
               </button>
             ))}
           </nav>
@@ -713,31 +732,35 @@ export default function App() {
             <span aria-live="polite">
               {list.isFetching
                 ? t("loading")
-                : `${list.data?.items.length ?? 0} ${t("loaded")}`}
+                : isTodoTab
+                  ? `${items.length} ${t("loaded")}`
+                  : `${items.length} ${t("boardThreads")}`}
             </span>
-            <nav className="gb-pager">
-              <button
-                aria-label={t("previous")}
-                disabled={cursors.length === 1 || list.isFetching}
-                onClick={() => {
-                  setCursors((v) => v.slice(0, -1));
-                  setSelected(null);
-                }}
-              >
-                <ChevronLeft size={16} />
-              </button>
-              <span>{cursors.length}</span>
-              <button
-                aria-label={t("next")}
-                disabled={!list.data?.nextCursor || list.isFetching}
-                onClick={() => {
-                  setCursors((v) => [...v, list.data!.nextCursor!]);
-                  setSelected(null);
-                }}
-              >
-                <ChevronRight size={16} />
-              </button>
-            </nav>
+            {isTodoTab && (
+              <nav className="gb-pager">
+                <button
+                  aria-label={t("previous")}
+                  disabled={cursors.length === 1 || list.isFetching}
+                  onClick={() => {
+                    setCursors((v) => v.slice(0, -1));
+                    setSelected(null);
+                  }}
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <span>{cursors.length}</span>
+                <button
+                  aria-label={t("next")}
+                  disabled={!list.data?.nextCursor || list.isFetching}
+                  onClick={() => {
+                    setCursors((v) => [...v, list.data!.nextCursor!]);
+                    setSelected(null);
+                  }}
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </nav>
+            )}
           </div>
         </section>
         {selected && account ? (

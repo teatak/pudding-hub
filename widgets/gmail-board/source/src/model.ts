@@ -10,6 +10,16 @@ export const dateSchema = z
     const d = new Date(s + "T00:00:00Z");
     return !Number.isNaN(d.valueOf()) && d.toISOString().slice(0, 10) === s;
   });
+export const cardMetaSchema = z
+  .object({
+    subject: z.string().max(500).default(""),
+    from: z.string().max(500).default(""),
+    snippet: z.string().max(1000).default(""),
+    updatedAt: z.string().max(100).default(""),
+  })
+  .strict();
+export type CardMeta = z.infer<typeof cardMetaSchema>;
+
 const cardSchema = z
   .object({
     status: z.enum(statuses),
@@ -19,6 +29,7 @@ const cardSchema = z
       .object({ subject: z.string().max(500), body: z.string().max(8000) })
       .strict()
       .nullable(),
+    meta: cardMetaSchema.optional(),
   })
   .strict();
 const storeSchema = z
@@ -47,13 +58,15 @@ export const updateSchema = z
     status: z.enum(statuses).optional(),
     note: z.string().max(2000).optional(),
     followUpAt: dateSchema.nullable().optional(),
+    meta: cardMetaSchema.optional(),
   })
   .strict()
   .refine(
     (v) =>
       v.status !== undefined ||
       v.note !== undefined ||
-      v.followUpAt !== undefined,
+      v.followUpAt !== undefined ||
+      v.meta !== undefined,
     "Provide status, note or followUpAt",
   );
 export type Update = z.infer<typeof updateSchema>;
