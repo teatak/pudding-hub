@@ -49,8 +49,18 @@ export async function writeStore(
 }
 
 export async function fetchShares(signal?: AbortSignal): Promise<ShareFolder[]> {
-  const res = await pudding.query("listShares", {}, { signal });
-  return z.array(shareFolderSchema).parse(res.data);
+  const res = await pudding.query<any>("listShares", {}, { signal });
+  const raw = res.data;
+  if (!raw || raw.success === false) {
+    throw new Error(raw?.error?.code ? `Synology error ${raw.error.code}` : "Failed to fetch shares");
+  }
+  const list = raw.data?.shares ?? (Array.isArray(raw.data) ? raw.data : (Array.isArray(raw) ? raw : []));
+  return list.map((item: any) => ({
+    name: String(item.name || ""),
+    path: String(item.path || `/${item.name}`),
+    isdir: true,
+    desc: String(item.desc || item.additional?.real_path || ""),
+  }));
 }
 
 export async function fetchFiles(
@@ -59,12 +69,31 @@ export async function fetchFiles(
   sortOrder: "asc" | "desc" = "asc",
   signal?: AbortSignal,
 ): Promise<FileItem[]> {
-  const res = await pudding.query(
+  const cleanPath = folderPath.trim() || "/";
+  const res = await pudding.query<any>(
     "listFiles",
-    { folderPath, sortBy, sortOrder },
+    { folderPath: cleanPath, sortBy, sortOrder },
     { signal },
   );
-  return z.array(fileItemSchema).parse(res.data);
+  const raw = res.data;
+  if (!raw || raw.success === false) {
+    throw new Error(raw?.error?.code ? `Synology error ${raw.error.code}` : "Failed to fetch files");
+  }
+  const list = raw.data?.files ?? (Array.isArray(raw.data) ? raw.data : (Array.isArray(raw) ? raw : []));
+  return list.map((item: any) => {
+    const isdir = Boolean(item.isdir);
+    const size = typeof item.additional?.size === "number" ? item.additional.size : (typeof item.size === "number" ? item.size : 0);
+    const mtime = typeof item.additional?.time?.mtime === "number" ? item.additional.time.mtime : (typeof item.mtime === "number" ? item.mtime : 0);
+    const fileType = String(item.additional?.type || item.fileType || "");
+    return {
+      name: String(item.name || ""),
+      path: String(item.path || `${cleanPath.replace(/\/+$/, "")}/${item.name}`),
+      isdir,
+      size,
+      mtime,
+      fileType,
+    };
+  });
 }
 
 export async function searchFiles(
@@ -74,12 +103,31 @@ export async function searchFiles(
 ): Promise<FileItem[]> {
   const query = keyword.trim();
   if (!query) return [];
-  const res = await pudding.query(
+  const cleanPath = folderPath.trim() || "/";
+  const res = await pudding.query<any>(
     "searchFiles",
-    { folderPath, query },
+    { folderPath: cleanPath, query: `*${query}*` },
     { signal },
   );
-  return z.array(fileItemSchema).parse(res.data);
+  const raw = res.data;
+  if (!raw || raw.success === false) {
+    throw new Error(raw?.error?.code ? `Synology error ${raw.error.code}` : "Failed to search files");
+  }
+  const list = raw.data?.files ?? (Array.isArray(raw.data) ? raw.data : (Array.isArray(raw) ? raw : []));
+  return list.map((item: any) => {
+    const isdir = Boolean(item.isdir);
+    const size = typeof item.additional?.size === "number" ? item.additional.size : (typeof item.size === "number" ? item.size : 0);
+    const mtime = typeof item.additional?.time?.mtime === "number" ? item.additional.time.mtime : (typeof item.mtime === "number" ? item.mtime : 0);
+    const fileType = String(item.additional?.type || item.fileType || "");
+    return {
+      name: String(item.name || ""),
+      path: String(item.path || `${cleanPath.replace(/\/+$/, "")}/${item.name}`),
+      isdir,
+      size,
+      mtime,
+      fileType,
+    };
+  });
 }
 
 export function registerInterfaces() {

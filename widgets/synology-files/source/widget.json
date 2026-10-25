@@ -2,6 +2,117 @@
   "schemaVersion": 1,
   "sdkVersion": "1",
   "entry": "src/App.tsx",
-  "sources": {},
-  "operations": {}
+  "sources": {
+    "syno": {
+      "pluginID": "synology",
+      "endpoint": "synology_webapi"
+    }
+  },
+  "operations": {
+    "listShares": {
+      "source": "syno",
+      "kind": "rest",
+      "effectHint": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "request": {
+        "method": "GET",
+        "path": "/entry.cgi",
+        "query": {
+          "api": "SYNO.FileStation.List",
+          "version": "2",
+          "method": "list_share",
+          "additional": "real_path,owner,time,perm"
+        }
+      }
+    },
+    "listFiles": {
+      "source": "syno",
+      "kind": "rest",
+      "effectHint": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "folderPath": {
+            "type": "string",
+            "maxLength": 1024
+          },
+          "sortBy": {
+            "type": "string",
+            "enum": ["name", "size", "user", "group", "mtime", "atime", "ctime", "crtime", "posix"]
+          },
+          "sortOrder": {
+            "type": "string",
+            "enum": ["asc", "desc"]
+          }
+        },
+        "required": ["folderPath"],
+        "additionalProperties": false
+      },
+      "request": {
+        "method": "GET",
+        "path": "/entry.cgi",
+        "query": {
+          "api": "SYNO.FileStation.List",
+          "version": "2",
+          "method": "list",
+          "folder_path": {
+            "$input": "/folderPath"
+          },
+          "sort_by": {
+            "$input": "/sortBy"
+          },
+          "sort_direction": {
+            "$input": "/sortOrder"
+          },
+          "offset": "0",
+          "limit": "100",
+          "additional": "real_path,size,owner,time,perm,type"
+        }
+      }
+    },
+    "searchFiles": {
+      "source": "syno",
+      "kind": "rest",
+      "effectHint": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "folderPath": {
+            "type": "string",
+            "maxLength": 1024
+          },
+          "query": {
+            "type": "string",
+            "maxLength": 200
+          }
+        },
+        "required": ["folderPath", "query"],
+        "additionalProperties": false
+      },
+      "request": {
+        "method": "GET",
+        "path": "/entry.cgi",
+        "query": {
+          "api": "SYNO.FileStation.List",
+          "version": "2",
+          "method": "list",
+          "folder_path": {
+            "$input": "/folderPath"
+          },
+          "pattern": {
+            "$input": "/query"
+          },
+          "filetype": "all",
+          "offset": "0",
+          "limit": "50",
+          "additional": "real_path,size,owner,time,perm,type"
+        }
+      }
+    }
+  }
 }
