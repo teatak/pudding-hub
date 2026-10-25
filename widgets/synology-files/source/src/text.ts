@@ -30,6 +30,8 @@ export const translations = {
     typeFile: "文件",
     connected: "群晖在线",
     offline: "未连接",
+    notConnectedTitle: "未检测到群晖 NAS 连接",
+    notConnectedDesc: "请先在「插件 (Plugins) → 群晖 NAS」中配置您的 NAS 地址与 Session Token。",
   },
   "zh-TW": {
     title: "Synology 檔案",
@@ -60,6 +62,8 @@ export const translations = {
     typeFile: "檔案",
     connected: "Synology 連線正常",
     offline: "未連線",
+    notConnectedTitle: "未偵測到 Synology NAS 連線",
+    notConnectedDesc: "請先在「外掛 (Plugins) → Synology NAS」中設定您的 NAS 位址與 Session Token。",
   },
   en: {
     title: "Synology Files",
@@ -90,6 +94,8 @@ export const translations = {
     typeFile: "File",
     connected: "NAS Online",
     offline: "Disconnected",
+    notConnectedTitle: "No Synology NAS Connection Found",
+    notConnectedDesc: "Please configure your Synology NAS connection in Plugins → Synology NAS first.",
   },
 };
 

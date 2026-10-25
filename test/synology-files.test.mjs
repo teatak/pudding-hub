@@ -10,7 +10,7 @@ const readJSON = async (file) => JSON.parse(await fs.readFile(file, "utf8"));
 test("synology-files manifest, widget.json and release package are valid and verifiable", async () => {
   const manifest = await readJSON(path.join(root, "manifest.json"));
   assert.equal(manifest.id, "teatak/pudding-hub/widgets/synology-files");
-  assert.equal(manifest.version, "1.0.0");
+  assert.equal(manifest.version, "1.0.1");
   assert.ok(manifest.title["zh-CN"]);
   assert.ok(manifest.title.en);
 

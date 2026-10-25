@@ -49,20 +49,8 @@ export async function writeStore(
 }
 
 export async function fetchShares(signal?: AbortSignal): Promise<ShareFolder[]> {
-  try {
-    const res = await pudding.query("listShares", {}, { signal });
-    const parsed = z.array(shareFolderSchema).safeParse(res.data);
-    if (parsed.success) return parsed.data;
-  } catch {
-    // If not yet connected to a live DSM backend, return standard fallback shared folders
-  }
-  return [
-    { name: "documents", path: "/documents", isdir: true, desc: "Personal and team documents" },
-    { name: "media", path: "/media", isdir: true, desc: "Photos, music and video library" },
-    { name: "homes", path: "/homes", isdir: true, desc: "User personal home directories" },
-    { name: "docker", path: "/docker", isdir: true, desc: "Container volumes and configs" },
-    { name: "backups", path: "/backups", isdir: true, desc: "Automated snapshot and system archives" },
-  ];
+  const res = await pudding.query("listShares", {}, { signal });
+  return z.array(shareFolderSchema).parse(res.data);
 }
 
 export async function fetchFiles(
@@ -71,36 +59,12 @@ export async function fetchFiles(
   sortOrder: "asc" | "desc" = "asc",
   signal?: AbortSignal,
 ): Promise<FileItem[]> {
-  try {
-    const res = await pudding.query(
-      "listFiles",
-      { folderPath, sortBy, sortOrder },
-      { signal },
-    );
-    const parsed = z.array(fileItemSchema).safeParse(res.data);
-    if (parsed.success) return parsed.data;
-  } catch {
-    // Graceful fallback sample files if live endpoint is in discovery mode
-  }
-
-  const cleanPath = folderPath.replace(/\/+$/, "") || "/";
-  if (cleanPath === "/" || cleanPath === "") {
-    return [
-      { name: "documents", path: "/documents", isdir: true, size: 0, mtime: 1730000000 },
-      { name: "media", path: "/media", isdir: true, size: 0, mtime: 1729000000 },
-      { name: "homes", path: "/homes", isdir: true, size: 0, mtime: 1728000000 },
-      { name: "docker", path: "/docker", isdir: true, size: 0, mtime: 1727000000 },
-      { name: "backups", path: "/backups", isdir: true, size: 0, mtime: 1726000000 },
-    ];
-  }
-
-  return [
-    { name: "Project-Summary-2026.pdf", path: `${cleanPath}/Project-Summary-2026.pdf`, isdir: false, size: 3450000, mtime: 1729850000, fileType: "pdf" },
-    { name: "Architecture-Diagram.png", path: `${cleanPath}/Architecture-Diagram.png`, isdir: false, size: 1820000, mtime: 1729720000, fileType: "png" },
-    { name: "docker-compose.yml", path: `${cleanPath}/docker-compose.yml`, isdir: false, size: 4200, mtime: 1729600000, fileType: "yml" },
-    { name: "notes", path: `${cleanPath}/notes`, isdir: true, size: 0, mtime: 1729500000 },
-    { name: "database-dump.sql.gz", path: `${cleanPath}/database-dump.sql.gz`, isdir: false, size: 58200000, mtime: 1729400000, fileType: "gz" },
-  ];
+  const res = await pudding.query(
+    "listFiles",
+    { folderPath, sortBy, sortOrder },
+    { signal },
+  );
+  return z.array(fileItemSchema).parse(res.data);
 }
 
 export async function searchFiles(
@@ -108,22 +72,14 @@ export async function searchFiles(
   keyword: string,
   signal?: AbortSignal,
 ): Promise<FileItem[]> {
-  const query = keyword.trim().toLowerCase();
+  const query = keyword.trim();
   if (!query) return [];
-  try {
-    const res = await pudding.query(
-      "searchFiles",
-      { folderPath, query },
-      { signal },
-    );
-    const parsed = z.array(fileItemSchema).safeParse(res.data);
-    if (parsed.success) return parsed.data;
-  } catch {
-    // Fallback search over sample files
-  }
-
-  const all = await fetchFiles(folderPath, "name", "asc", signal);
-  return all.filter((item) => item.name.toLowerCase().includes(query));
+  const res = await pudding.query(
+    "searchFiles",
+    { folderPath, query },
+    { signal },
+  );
+  return z.array(fileItemSchema).parse(res.data);
 }
 
 export function registerInterfaces() {

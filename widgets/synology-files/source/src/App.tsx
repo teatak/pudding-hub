@@ -75,6 +75,7 @@ export function App() {
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [copiedPath, setCopiedPath] = useState<string | null>(null);
+  const [error, setError] = useState<unknown>(null);
 
   const currentPath = store.currentPath || "/";
   const sortBy = store.sortBy || "name";
@@ -85,40 +86,58 @@ export function App() {
     registerInterfaces();
   }, []);
 
+  const loadShares = () => {
+    setLoading(true);
+    fetchShares()
+      .then((res) => {
+        setShares(res);
+        setError(null);
+      })
+      .catch((err) => {
+        setError(err);
+        setShares([]);
+        setFiles([]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
   // Fetch accessible share folders on mount
   useEffect(() => {
-    let cancelled = false;
-    void fetchShares().then((res) => {
-      if (!cancelled) setShares(res);
-    });
-    return () => {
-      cancelled = true;
-    };
+    loadShares();
   }, []);
 
   // Fetch directory files or search results
   useEffect(() => {
+    if (error) return;
     let cancelled = false;
     setLoading(true);
-    if (searchQuery.trim()) {
-      void searchFiles(currentPath, searchQuery).then((res) => {
+    const queryPromise = searchQuery.trim()
+      ? searchFiles(currentPath, searchQuery)
+      : fetchFiles(currentPath, sortBy, sortOrder);
+
+    queryPromise
+      .then((res) => {
         if (!cancelled) {
           setFiles(res);
-          setLoading(false);
+          setError(null);
         }
-      });
-    } else {
-      void fetchFiles(currentPath, sortBy, sortOrder).then((res) => {
+      })
+      .catch((err) => {
         if (!cancelled) {
-          setFiles(res);
-          setLoading(false);
+          setError(err);
+          setFiles([]);
         }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
       });
-    }
+
     return () => {
       cancelled = true;
     };
-  }, [currentPath, searchQuery, sortBy, sortOrder]);
+  }, [currentPath, searchQuery, sortBy, sortOrder, error]);
 
   const navigateTo = (path: string) => {
     const clean = path.replace(/\/+$/, "") || "/";
@@ -170,11 +189,20 @@ export function App() {
       {/* Top Header */}
       <header className="syno-header">
         <div className="syno-brand">
-          <HardDrive size={18} color="#0284c7" />
+          <HardDrive size={18} color={error ? "#94a3b8" : "#0284c7"} />
           <span>{t("title")}</span>
-          <span className="syno-status-badge">
-            <span className="syno-status-dot" />
-            {t("connected")}
+          <span
+            className="syno-status-badge"
+            style={{
+              background: error ? "rgba(100, 116, 139, 0.12)" : "rgba(34, 197, 94, 0.12)",
+              color: error ? "var(--text-muted)" : "var(--success)",
+            }}
+          >
+            <span
+              className="syno-status-dot"
+              style={{ background: error ? "#94a3b8" : "var(--success)" }}
+            />
+            {error ? t("offline") : t("connected")}
           </span>
         </div>
 
@@ -223,49 +251,79 @@ export function App() {
       </header>
 
       {/* Navigation Section */}
-      <section className="syno-nav-section">
-        {/* Breadcrumbs */}
-        <div className="syno-breadcrumbs">
-          {breadcrumbs.map((crumb, idx) => {
-            const isLast = idx === breadcrumbs.length - 1;
-            return (
-              <span key={crumb.path} style={{ display: "inline-flex", alignItems: "center" }}>
-                <button
-                  type="button"
-                  className={`syno-crumb ${isLast ? "is-current" : ""}`}
-                  onClick={() => navigateTo(crumb.path)}
-                  disabled={isLast}
-                >
-                  {crumb.name}
-                </button>
-                {!isLast && <ChevronRight size={12} className="syno-crumb-sep" />}
-              </span>
-            );
-          })}
-        </div>
+      {!error && (
+        <section className="syno-nav-section">
+          {/* Breadcrumbs */}
+          <div className="syno-breadcrumbs">
+            {breadcrumbs.map((crumb, idx) => {
+              const isLast = idx === breadcrumbs.length - 1;
+              return (
+                <span key={crumb.path} style={{ display: "inline-flex", alignItems: "center" }}>
+                  <button
+                    type="button"
+                    className={`syno-crumb ${isLast ? "is-current" : ""}`}
+                    onClick={() => navigateTo(crumb.path)}
+                    disabled={isLast}
+                  >
+                    {crumb.name}
+                  </button>
+                  {!isLast && <ChevronRight size={12} className="syno-crumb-sep" />}
+                </span>
+              );
+            })}
+          </div>
 
-        {/* Shares quick chips */}
-        <div className="syno-shares-bar">
-          {shares.map((share) => {
-            const isActive = currentPath === share.path || currentPath.startsWith(`${share.path}/`);
-            return (
-              <button
-                key={share.path}
-                type="button"
-                className={`syno-share-chip ${isActive ? "is-active" : ""}`}
-                onClick={() => navigateTo(share.path)}
-              >
-                <Folder size={12} />
-                <span>{share.name}</span>
-              </button>
-            );
-          })}
-        </div>
-      </section>
+          {/* Shares quick chips */}
+          <div className="syno-shares-bar">
+            {shares.map((share) => {
+              const isActive = currentPath === share.path || currentPath.startsWith(`${share.path}/`);
+              return (
+                <button
+                  key={share.path}
+                  type="button"
+                  className={`syno-share-chip ${isActive ? "is-active" : ""}`}
+                  onClick={() => navigateTo(share.path)}
+                >
+                  <Folder size={12} />
+                  <span>{share.name}</span>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* Main File List View */}
       <main className="syno-content-area">
-        {loading ? (
+        {error ? (
+          <div className="syno-empty-state">
+            <HardDrive size={44} color="#94a3b8" />
+            <h3 style={{ margin: "4px 0 0 0", fontSize: "14px", fontWeight: 600 }}>{t("notConnectedTitle")}</h3>
+            <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "12px", maxWidth: "360px", textAlign: "center", lineHeight: 1.5 }}>
+              {t("notConnectedDesc")}
+            </p>
+            <button
+              type="button"
+              style={{
+                marginTop: "10px",
+                padding: "6px 14px",
+                borderRadius: "6px",
+                border: "1px solid var(--border)",
+                background: "var(--bg-secondary)",
+                color: "var(--text)",
+                cursor: "pointer",
+                fontSize: "12px",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+              }}
+              onClick={loadShares}
+            >
+              <RefreshCw size={12} />
+              <span>{t("retry")}</span>
+            </button>
+          </div>
+        ) : loading ? (
           <div className="syno-empty-state">
             <RefreshCw size={24} className="animate-spin" />
             <span>{searchQuery ? t("searching") : t("loading")}</span>
@@ -359,11 +417,13 @@ export function App() {
       {/* Footer Status */}
       <footer className="syno-footer">
         <span>
-          {searchQuery
+          {error
+            ? t("offline")
+            : searchQuery
             ? t("searchCount", { count: sortedFiles.length })
             : t("itemsCount", { count: sortedFiles.length })}
         </span>
-        <span>{currentPath}</span>
+        <span>{error ? "-" : currentPath}</span>
       </footer>
     </div>
   );
