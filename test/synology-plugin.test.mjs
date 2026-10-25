@@ -14,17 +14,23 @@ test("synology plugin manifest, yaml, release and registry are valid and verifia
   const pluginDir = path.join(root, "synology");
   const manifest = await readJSON(path.join(pluginDir, "manifest.json"));
   assert.equal(manifest.name, "synology");
-  assert.equal(manifest.version, "1.0.0");
+  assert.equal(manifest.version, "1.1.0");
   assert.ok(manifest.title["zh-CN"]);
   assert.ok(manifest.title.en);
 
   const yamlContent = await fs.readFile(path.join(pluginDir, "plugin.yaml"), "utf8");
   const pluginYaml = parseYAML(yamlContent);
   assert.equal(pluginYaml.id, "synology");
-  assert.equal(pluginYaml.version, "1.0.0");
+  assert.equal(pluginYaml.version, "1.1.0");
   assert.ok(pluginYaml.endpoints.synology_webapi);
   assert.equal(pluginYaml.endpoints.synology_webapi.kind, "rest");
   assert.equal(pluginYaml.endpoints.synology_webapi.url_config.required, true);
+
+  const login = pluginYaml.auth.methods.find(method => method.type === "session").session;
+  assert.equal(login.endpoint, "synology_webapi");
+  assert.equal(login.outputs.sid, "data.sid");
+  assert.deepEqual(login.challenges["403"], ["otp_code"]);
+  assert.ok(!pluginYaml.connection.fields.some(field => ["password", "otp_code"].includes(field.id)));
 
   // Check connection fields for sid auto injection
   const sidField = pluginYaml.connection?.fields?.find((f) => f.id === "sid");
@@ -61,6 +67,6 @@ test("synology plugin manifest, yaml, release and registry are valid and verifia
   const registry = await readJSON(path.join(root, "registry.json"));
   const registryItem = registry.items.find((i) => i.name === "synology");
   assert.ok(registryItem, "synology must be listed in registry.json");
-  assert.equal(registryItem.version, "1.0.0");
+  assert.equal(registryItem.version, "1.1.0");
   assert.equal(registryItem.package_sha256, releaseManifest.package_sha256);
 });

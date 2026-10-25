@@ -8,7 +8,7 @@
     "zh-TW": "Synology NAS",
     "en": "Synology NAS"
   },
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": {
     "zh-CN": "连接群晖 NAS，通过 File Station API 浏览共享文件夹、检索文件内容与属性，并支持文件下载与外链管理。",
     "zh-TW": "連接 Synology NAS，透過 File Station API 瀏覽共用資料夾、搜尋檔案內容與屬性，並支援檔案下載與分享連結管理。",
@@ -22,9 +22,9 @@
     "skills/file-station/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.0/manifest.json",
-  "package": "./releases/1.0.0/synology.pudding-plugin.json",
-  "package_sha256": "acd679537bdfa26d10063ff9961f6adeb8bcb1a851fd9e48fb927537843e2d2d",
+  "manifest": "./releases/1.1.0/manifest.json",
+  "package": "./releases/1.1.0/synology.pudding-plugin.json",
+  "package_sha256": "9f74aa16973930a5adb973805c9fe9f07faf53295ae57dda4b5c9724c8260b2c",
   "requires": {
     "pudding_plugin": "^1.0.0"
   },

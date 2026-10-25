@@ -1,9 +1,45 @@
 id: synology
 name: Synology NAS
-version: 1.0.0
+version: 1.1.0
 description: Access Synology DiskStation Manager (DSM) File Station to list shares, browse directories, search files, inspect metadata, and download files through the Web API.
 auth:
   required: false
+  methods:
+    - id: account-login
+      type: session
+      label: Account sign-in
+      default: true
+      session:
+        endpoint: synology_webapi
+        path: /entry.cgi
+        encoding: form
+        inputs:
+          - { id: account, label: Account, required: true }
+          - { id: password, label: Password, required: true, secret: true }
+          - { id: otp_code, label: Verification code, secret: true }
+        parameters:
+          api: SYNO.API.Auth
+          version: "6"
+          method: login
+          session: FileStation
+          format: sid
+          enable_syno_token: "yes"
+        body_fields:
+          account: account
+          passwd: password
+          otp_code: otp_code
+        success_field: success
+        error_code_field: error.code
+        challenges:
+          "403": [otp_code]
+          "404": [otp_code]
+        outputs:
+          sid: data.sid
+          synotoken: data.synotoken
+        account_input: account
+    - id: manual
+      type: none
+      label: Existing session token
 connection:
   fields:
     - id: sid
@@ -15,6 +51,13 @@ connection:
       inject:
         - target: query
           name: _sid
+    - id: synotoken
+      label: SynoToken
+      description: CSRF protection token returned by DSM when enabled.
+      secret: true
+      inject:
+        - target: query
+          name: SynoToken
     - id: account
       label: Account name
       description: Optional username for displaying connection identity and multi-NAS selection.

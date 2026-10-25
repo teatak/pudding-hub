@@ -5,7 +5,9 @@ description: Browse shared folders, list directory contents, search files, inspe
 
 # Synology File Station
 
-Use endpoint `synology_webapi`. The active connection automatically injects the Synology DSM session token as the `_sid` query parameter. Never ask the user to repeat the session token or include it in chat output.
+Use endpoint `synology_webapi`. Create a connection using Account sign-in in the plugin settings; enter any requested verification code there, never in chat. The active connection automatically injects the Synology DSM session token as `_sid` and, when present, the CSRF token as `SynoToken`. Never ask the user to repeat the session token or include it in chat output.
+
+Session errors (106, 107, 119) require signing in again in connection settings. Do not retry login with passwords or OTPs in tool calls. This version does not store passwords or automatically re-login.
 
 ## 1. List Shared Folders
 
