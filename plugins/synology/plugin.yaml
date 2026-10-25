@@ -22,12 +22,6 @@ connection:
       required: false
 icon:
   svg: assets/icon.svg
-  color:
-    light: "#FFFFFF"
-    dark: "#FFFFFF"
-  background:
-    light: "#0B2D5A"
-    dark: "#061A36"
 endpoints:
   synology_webapi:
     kind: rest

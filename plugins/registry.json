@@ -806,17 +806,9 @@
         "en": "Connect a Synology NAS to browse shared folders, search files and metadata, and download files through the File Station API."
       },
       "icon": {
-        "svg": "./synology/assets/icon.svg",
-        "color": {
-          "light": "#FFFFFF",
-          "dark": "#FFFFFF"
-        },
-        "background": {
-          "light": "#0B2D5A",
-          "dark": "#061A36"
-        }
+        "svg": "./synology/assets/icon.svg"
       },
-      "icon_sha256": "fd3a07f0e1ca7ae001e97bdab7397397cf3c03455abd9319507a62f9c24a825d",
+      "icon_sha256": "a53ca9697f2806ac01fe064fb4bed757fd4fc798f01f89ae9458932ada22989f",
       "tags": [
         "nas",
         "storage",
@@ -827,7 +819,7 @@
       "version": "1.0.0",
       "manifest": "./synology/releases/1.0.0/manifest.json",
       "package": "./synology/releases/1.0.0/synology.pudding-plugin.json",
-      "package_sha256": "023aacaef4322d86fe8af5325ac9856d9b5ebc5ba6a20e23908e022ffa8b6cba",
+      "package_sha256": "acd679537bdfa26d10063ff9961f6adeb8bcb1a851fd9e48fb927537843e2d2d",
       "requires": {
         "pudding_plugin": "^1.0.0"
       },
@@ -836,7 +828,7 @@
           "version": "1.0.0",
           "manifest": "./synology/releases/1.0.0/manifest.json",
           "package": "./synology/releases/1.0.0/synology.pudding-plugin.json",
-          "package_sha256": "023aacaef4322d86fe8af5325ac9856d9b5ebc5ba6a20e23908e022ffa8b6cba",
+          "package_sha256": "acd679537bdfa26d10063ff9961f6adeb8bcb1a851fd9e48fb927537843e2d2d",
           "requires": {
             "pudding_plugin": "^1.0.0"
           },
