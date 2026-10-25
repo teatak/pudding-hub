@@ -575,6 +575,7 @@ body {
 .gb-email-html a {
   color: #3b82f6;
   text-decoration: underline;
+  cursor: pointer;
 }
 .gb-truncated {
   margin-top: 8px;
