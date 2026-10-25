@@ -8,10 +8,12 @@ import {
   viewerSchema,
   repoListSchema,
   repoSummary,
-  searchResultSchema,
   ghIssueSchema,
+  ghIssueListSchema,
   commentListSchema,
   itemSummary,
+  parseSearchQuery,
+  matchesParsedQuery,
   readStore,
   cardFor,
   updateCards,
@@ -21,6 +23,7 @@ import {
   updateSchema,
   type Update,
   type Card,
+  type ItemSummary,
 } from "./model";
 import { t, errorText } from "./text";
 
@@ -85,6 +88,65 @@ export function createGitHubBoard(client: QueryClient) {
     };
   }
 
+  async function fetchRepoItems(
+    account: string,
+    fullRepo: string,
+    state: "open" | "closed" | "all",
+    kind: "pr" | "issue" | "all",
+    page: number,
+    limit: number,
+  ): Promise<ItemSummary[]> {
+    const [owner, repo] = fullRepo.split("/");
+    return client.fetchQuery({
+      queryKey: ["github", "repoItems", account, fullRepo, state, kind, page, limit],
+      staleTime: 60000,
+      queryFn: async ({ signal: repoSignal }) => {
+        if (kind === "pr") {
+          const pulls = ghIssueListSchema.parse(
+            (
+              await pudding.query(
+                "repoPulls",
+                { owner, repo, state, page, limit },
+                { signal: repoSignal },
+              )
+            ).data,
+          );
+          return pulls.map((p) => itemSummary(p, fullRepo, true));
+        }
+
+        // Default: GET /repos/{owner}/{repo}/issues returns BOTH issues and PRs!
+        // If Issues are disabled on the repo, fall back cleanly to repoPulls.
+        try {
+          const issuesAndPRs = ghIssueListSchema.parse(
+            (
+              await pudding.query(
+                "repoIssues",
+                { owner, repo, state, page, limit },
+                { signal: repoSignal },
+              )
+            ).data,
+          );
+          if (issuesAndPRs.length > 0 || kind === "issue") {
+            return issuesAndPRs.map((it) => itemSummary(it, fullRepo, false));
+          }
+        } catch {
+          if (kind === "issue") return [];
+        }
+
+        const pulls = ghIssueListSchema.parse(
+          (
+            await pudding.query(
+              "repoPulls",
+              { owner, repo, state, page, limit },
+              { signal: repoSignal },
+            )
+          ).data,
+        );
+        return pulls.map((p) => itemSummary(p, fullRepo, true));
+      },
+    });
+  }
+
   async function searchPage(
     account: string,
     q = DEFAULT_QUERY,
@@ -94,31 +156,57 @@ export function createGitHubBoard(client: QueryClient) {
   ) {
     await ensure(account, signal);
     const normalizedQ = q.trim() || DEFAULT_QUERY;
-    const result = await client.fetchQuery({
-      queryKey: ["github", "search", account, normalizedQ, page, limit],
-      staleTime: 60000,
-      queryFn: async ({ signal: searchSignal }) => {
-        const parsed = searchResultSchema.parse(
-          (
-            await pudding.query(
-              "searchItems",
-              { q: normalizedQ, page, limit },
-              { signal: searchSignal },
-            )
-          ).data,
-        );
-        const items = parsed.items.map((item) => itemSummary(item));
-        return {
-          totalCount: parsed.total_count,
-          items,
-          hasNextPage:
-            items.length === limit && page * limit < parsed.total_count,
-        };
-      },
-    });
+    const parsed = parseSearchQuery(normalizedQ, account);
+
+    let targetRepos: string[] = [];
+    if (parsed.repo) {
+      targetRepos = [parsed.repo];
+    } else {
+      const repoList = await repos(account, 1, 20, signal);
+      targetRepos = repoList.repos.slice(0, 3).map((r) => r.fullName);
+    }
+
+    if (targetRepos.length === 0) {
+      return {
+        q: normalizedQ,
+        page,
+        totalCount: 0,
+        items: [] as ItemSummary[],
+        hasNextPage: false,
+      };
+    }
+
+    // Fetch up to 3 repos concurrently (staying within the 4-request host limit)
+    const perRepoLists = await Promise.all(
+      targetRepos.map((rName) =>
+        fetchRepoItems(account, rName, parsed.state, parsed.kind, page, limit),
+      ),
+    );
     signal?.throwIfAborted();
-    result.items.forEach((x) => known.add(x.id));
-    return { q: normalizedQ, page, ...result };
+
+    const mergedMap = new Map<string, ItemSummary>();
+    for (const list of perRepoLists) {
+      for (const it of list) {
+        if (matchesParsedQuery(it, parsed)) {
+          mergedMap.set(it.id, it);
+        }
+      }
+    }
+
+    const sorted = [...mergedMap.values()].sort(
+      (a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt),
+    );
+    const items = sorted.slice(0, limit);
+    items.forEach((x) => known.add(x.id));
+
+    const hasNextPage = perRepoLists.some((l) => l.length === limit);
+    return {
+      q: normalizedQ,
+      page,
+      totalCount: sorted.length,
+      items,
+      hasNextPage,
+    };
   }
 
   async function list(
@@ -184,16 +272,29 @@ export function createGitHubBoard(client: QueryClient) {
       client.fetchQuery({
         queryKey: ["github", "detail", account, fullRepo, number],
         staleTime: 60000,
-        queryFn: async ({ signal: detailSignal }) =>
-          ghIssueSchema.parse(
-            (
-              await pudding.query(
-                "itemDetail",
-                { owner, repo, number },
-                { signal: detailSignal },
-              )
-            ).data,
-          ),
+        queryFn: async ({ signal: detailSignal }) => {
+          try {
+            return ghIssueSchema.parse(
+              (
+                await pudding.query(
+                  "itemDetail",
+                  { owner, repo, number },
+                  { signal: detailSignal },
+                )
+              ).data,
+            );
+          } catch {
+            return ghIssueSchema.parse(
+              (
+                await pudding.query(
+                  "pullDetail",
+                  { owner, repo, number },
+                  { signal: detailSignal },
+                )
+              ).data,
+            );
+          }
+        },
       }),
       client.fetchQuery({
         queryKey: [
@@ -206,22 +307,27 @@ export function createGitHubBoard(client: QueryClient) {
           commentLimit,
         ],
         staleTime: 60000,
-        queryFn: async ({ signal: commentsSignal }) =>
-          commentListSchema.parse(
-            (
-              await pudding.query(
-                "itemComments",
-                {
-                  owner,
-                  repo,
-                  number,
-                  page: commentPage,
-                  limit: commentLimit,
-                },
-                { signal: commentsSignal },
-              )
-            ).data,
-          ),
+        queryFn: async ({ signal: commentsSignal }) => {
+          try {
+            return commentListSchema.parse(
+              (
+                await pudding.query(
+                  "itemComments",
+                  {
+                    owner,
+                    repo,
+                    number,
+                    page: commentPage,
+                    limit: commentLimit,
+                  },
+                  { signal: commentsSignal },
+                )
+              ).data,
+            );
+          } catch {
+            return [];
+          }
+        },
       }),
     ]);
 

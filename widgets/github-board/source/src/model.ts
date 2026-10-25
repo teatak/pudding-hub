@@ -144,6 +144,7 @@ export const repoItemSchema = z.object({
   full_name: z.string().regex(/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/),
   description: z.string().nullable().optional(),
   private: z.boolean().default(false),
+  has_issues: z.boolean().default(true),
   stargazers_count: z.number().default(0),
   open_issues_count: z.number().default(0),
   language: z.string().nullable().optional(),
@@ -158,6 +159,7 @@ export function repoSummary(raw: z.infer<typeof repoItemSchema>) {
     fullName: raw.full_name,
     description: (raw.description ?? "").slice(0, 240),
     isPrivate: raw.private,
+    hasIssues: raw.has_issues,
     stars: raw.stargazers_count,
     openIssues: raw.open_issues_count,
     language: raw.language ?? null,
@@ -183,6 +185,7 @@ export const ghIssueSchema = z.object({
   created_at: z.string().optional(),
   repository_url: z.string().optional(),
   html_url: z.string().optional(),
+  head: z.record(z.string(), z.unknown()).optional(),
   user: z
     .object({
       login: z.string(),
@@ -193,15 +196,14 @@ export const ghIssueSchema = z.object({
   assignees: z
     .array(z.object({ login: z.string() }))
     .default([]),
+  requested_reviewers: z
+    .array(z.object({ login: z.string() }))
+    .default([]),
   pull_request: z.record(z.string(), z.unknown()).nullable().optional(),
 });
 
 export type GhIssue = z.infer<typeof ghIssueSchema>;
-
-export const searchResultSchema = z.object({
-  total_count: z.number().int().nonnegative().default(0),
-  items: z.array(ghIssueSchema).default([]),
-});
+export const ghIssueListSchema = z.array(ghIssueSchema);
 
 export const commentItemSchema = z.object({
   id: z.number(),
@@ -249,26 +251,138 @@ export function cleanMarkdownSnippet(raw: string | null | undefined): string {
     .slice(0, 260);
 }
 
-export function itemSummary(item: GhIssue, fallbackRepo?: string) {
+export function itemSummary(
+  item: GhIssue,
+  fallbackRepo?: string,
+  forcePR = false,
+) {
   const repo = extractRepoFullName(item, fallbackRepo);
   const id = `${repo}#${item.number}`;
+  const isPR = forcePR || Boolean(item.pull_request) || Boolean(item.head);
   return {
     id,
     repo,
     number: item.number,
-    kind: item.pull_request ? ("pr" as const) : ("issue" as const),
+    kind: isPR ? ("pr" as const) : ("issue" as const),
     title: item.title,
     state: item.state,
     isDraftPR: Boolean(item.draft),
     author: item.user?.login ?? "unknown",
     labels: item.labels.slice(0, 6).map((l) => ({
       name: l.name,
-      color: l.color.replace(/^#/, ""),
+      color: (l.color || "6e7781").replace(/^#/, ""),
     })),
     assignees: item.assignees.slice(0, 4).map((a) => a.login),
+    requestedReviewers: item.requested_reviewers
+      .slice(0, 4)
+      .map((r) => r.login),
     commentCount: item.comments,
     updatedAt: item.updated_at,
     snippet: cleanMarkdownSnippet(item.body),
   };
 }
 export type ItemSummary = ReturnType<typeof itemSummary>;
+
+export interface ParsedQuery {
+  repo: string | null;
+  state: "open" | "closed" | "all";
+  kind: "pr" | "issue" | "all";
+  author: string | null;
+  assignee: string | null;
+  reviewRequested: string | null;
+  involves: string | null;
+  keywords: string[];
+}
+
+export function parseSearchQuery(rawQ: string, account: string): ParsedQuery {
+  const tokens = rawQ.trim().split(/\s+/).filter(Boolean);
+  let repo: string | null = null;
+  let state: "open" | "closed" | "all" = "open";
+  let kind: "pr" | "issue" | "all" = "all";
+  let author: string | null = null;
+  let assignee: string | null = null;
+  let reviewRequested: string | null = null;
+  let involves: string | null = null;
+  const keywords: string[] = [];
+
+  const resolveUser = (val: string) =>
+    val.toLowerCase() === "@me" ? account.toLowerCase() : val.toLowerCase();
+
+  for (const tok of tokens) {
+    const lower = tok.toLowerCase();
+    if (lower.startsWith("repo:")) {
+      const r = tok.slice(5);
+      if (/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(r)) repo = r;
+    } else if (lower === "is:open" || lower === "state:open") {
+      state = "open";
+    } else if (lower === "is:closed" || lower === "state:closed") {
+      state = "closed";
+    } else if (lower === "is:all" || lower === "state:all") {
+      state = "all";
+    } else if (lower === "is:pr" || lower === "type:pr") {
+      kind = "pr";
+    } else if (lower === "is:issue" || lower === "type:issue") {
+      kind = "issue";
+    } else if (lower.startsWith("author:")) {
+      author = resolveUser(tok.slice(7));
+    } else if (lower.startsWith("assignee:")) {
+      assignee = resolveUser(tok.slice(9));
+    } else if (lower.startsWith("review-requested:")) {
+      reviewRequested = resolveUser(tok.slice(17));
+      kind = "pr";
+    } else if (lower.startsWith("involves:")) {
+      involves = resolveUser(tok.slice(9));
+    } else {
+      keywords.push(lower);
+    }
+  }
+
+  return {
+    repo,
+    state,
+    kind,
+    author,
+    assignee,
+    reviewRequested,
+    involves,
+    keywords,
+  };
+}
+
+export function matchesParsedQuery(
+  item: ItemSummary,
+  parsed: ParsedQuery,
+): boolean {
+  if (parsed.state !== "all" && item.state.toLowerCase() !== parsed.state) {
+    return false;
+  }
+  if (parsed.kind !== "all" && item.kind !== parsed.kind) {
+    return false;
+  }
+  if (parsed.author && item.author.toLowerCase() !== parsed.author) {
+    return false;
+  }
+  if (
+    parsed.assignee &&
+    !item.assignees.some((a) => a.toLowerCase() === parsed.assignee)
+  ) {
+    return false;
+  }
+  if (parsed.reviewRequested) {
+    const isRequested = item.requestedReviewers.some(
+      (r) => r.toLowerCase() === parsed.reviewRequested,
+    );
+    // If requested_reviewers wasn't populated on the issue summary, match PRs not authored by the reviewer
+    if (!isRequested && item.author.toLowerCase() === parsed.reviewRequested) {
+      return false;
+    }
+  }
+  for (const kw of parsed.keywords) {
+    const hay =
+      `${item.id} ${item.title} ${item.snippet} ${item.author} ${item.labels
+        .map((l) => l.name)
+        .join(" ")}`.toLowerCase();
+    if (!hay.includes(kw)) return false;
+  }
+  return true;
+}

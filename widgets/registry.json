@@ -74,7 +74,7 @@
         {
           "version": "1.0.0-preview.1",
           "package": "./github-board/releases/1.0.0-preview.1/github-board.pudding-widget.json",
-          "packageHash": "e292aa155b58db2a54bbededc3fe365ee97c24838a9b6b125d5a7993e3b27eb8",
+          "packageHash": "71205e9d78b01f7a08db8a72dab8b685d0f536581035ae7624541f0ec1e0d909",
           "requires": {
             "protocolVersion": 24,
             "sdkVersion": "1"

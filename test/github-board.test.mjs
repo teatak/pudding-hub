@@ -26,12 +26,19 @@ const mockIssue = (repo, number, isPR = false) => ({
   draft: false,
   body: `Body description for ${repo}#${number}`,
   comments: 2,
-  updated_at: "2026-10-25T10:00:00Z",
+  updated_at: `2026-10-25T10:0${number}:00Z`,
   repository_url: `https://api.github.com/repos/${repo}`,
   user: { login: account },
   labels: [{ name: "bug", color: "d73a4a" }],
   assignees: [{ login: account }],
-  ...(isPR ? { pull_request: { url: `https://api.github.com/repos/${repo}/pulls/${number}` } } : {}),
+  requested_reviewers: [],
+  ...(isPR
+    ? {
+        pull_request: {
+          url: `https://api.github.com/repos/${repo}/pulls/${number}`,
+        },
+      }
+    : {}),
 });
 
 globalThis.__githubSDK = {
@@ -47,7 +54,8 @@ globalThis.__githubSDK = {
             id: 101,
             full_name: "teatak/pudding-core",
             description: "Core daemon",
-            private: false,
+            private: true,
+            has_issues: true,
             stargazers_count: 88,
             open_issues_count: 4,
             language: "Go",
@@ -59,6 +67,7 @@ globalThis.__githubSDK = {
             full_name: "teatak/pudding-hub",
             description: "Widgets and plugins hub",
             private: false,
+            has_issues: true,
             stargazers_count: 64,
             open_issues_count: 2,
             language: "TypeScript",
@@ -68,21 +77,35 @@ globalThis.__githubSDK = {
         ],
       };
     }
-    if (name === "searchItems") {
-      return {
-        data: {
-          total_count: 3,
-          items:
-            p.page === 2
+    if (name === "repoIssues") {
+      const fullRepo = `${p.owner}/${p.repo}`;
+      if (p.page === 2) {
+        return {
+          data:
+            fullRepo === "teatak/pudding-hub"
               ? [mockIssue("teatak/pudding-hub", 3, true)]
-              : [
-                  mockIssue("teatak/pudding-core", 1, false),
-                  mockIssue("teatak/pudding-core", 2, true),
-                ],
-        },
+              : [],
+        };
+      }
+      if (fullRepo === "teatak/pudding-core") {
+        return {
+          data: [
+            mockIssue("teatak/pudding-core", 1, false),
+            mockIssue("teatak/pudding-core", 2, true),
+          ],
+        };
+      }
+      return {
+        data: [mockIssue(fullRepo, 3, true)],
       };
     }
-    if (name === "itemDetail") {
+    if (name === "repoPulls") {
+      const fullRepo = `${p.owner}/${p.repo}`;
+      return {
+        data: [mockIssue(fullRepo, 2, true)],
+      };
+    }
+    if (name === "itemDetail" || name === "pullDetail") {
       return {
         data: mockIssue(`${p.owner}/${p.repo}`, p.number, p.number === 2),
       };
@@ -141,7 +164,7 @@ const hook = registerHooks({
 const { createGitHubBoard, registerInterfaces } = await import(
   new URL("api.ts", source)
 );
-const { readStore, dateSchema, parseItemID } = await import(
+const { readStore, dateSchema, parseItemID, parseSearchQuery } = await import(
   new URL("model.ts", source)
 );
 const { messages } = await import(new URL("text.ts", source));
@@ -175,25 +198,37 @@ beforeEach(() => {
   registerInterfaces(api);
 });
 
-test("viewer account, repository listing, compact search reads, and detail/comments on demand", async () => {
+test("viewer account, repository listing, direct repoIssues/repoPulls reads (without /search/issues 422), and detail/comments on demand", async () => {
   const b = await call("getBoard");
   assert.equal(b.account, "octocat");
-  assert.equal(b.loadedCount, 2);
-  assert.equal(b.counts.triage, 2);
-  assert.equal(b.totalCount, 3);
+  assert.equal(b.loadedCount, 3);
+  assert.equal(b.counts.triage, 3);
   assert.ok(!requests.some((r) => r.name === "itemDetail"));
 
   const reposRes = await call("listRepos", { account: "octocat" });
   assert.equal(reposRes.repos.length, 2);
   assert.equal(reposRes.repos[0].fullName, "teatak/pudding-core");
 
-  const page2 = await call("listItems", {
+  // Filtering by a specific repository uses direct repoIssues without /search/issues
+  const coreOnly = await call("listItems", {
     account: "octocat",
-    page: 2,
-    limit: 2,
+    q: "repo:teatak/pudding-core is:open",
+    page: 1,
+    limit: 20,
   });
-  assert.equal(page2.items[0].id, "teatak/pudding-hub#3");
-  assert.equal(page2.items[0].kind, "pr");
+  assert.equal(coreOnly.items.length, 2);
+  assert.equal(coreOnly.items[0].id, "teatak/pudding-core#2");
+  assert.equal(coreOnly.items[1].id, "teatak/pudding-core#1");
+
+  // Filtering by is:pr uses repoPulls directly
+  const prsOnly = await call("listItems", {
+    account: "octocat",
+    q: "repo:teatak/pudding-core is:open is:pr",
+    page: 1,
+    limit: 20,
+  });
+  assert.equal(prsOnly.items.length, 1);
+  assert.equal(prsOnly.items[0].kind, "pr");
 
   const detail = await call("readItem", {
     account: "octocat",
@@ -226,7 +261,7 @@ test("same item IDs in two GitHub accounts retain separate drafts, notes and sta
   account = "hubot";
   const b = make();
   const info = await b.board();
-  assert.equal(info.counts.triage, 2);
+  assert.equal(info.counts.triage, 3);
   assert.equal(
     (await b.read("hubot", "teatak/pudding-core#1")).draft,
     null,
@@ -312,7 +347,7 @@ test("canceling one UI reader does not abort a shared search or item detail read
     const canceled = new AbortController();
     const read = (signal) =>
       kind === "list"
-        ? api.list("octocat", "is:open involves:@me", 1, 20, signal)
+        ? api.list("octocat", "repo:teatak/pudding-core is:open", 1, 20, signal)
         : api.read("octocat", "teatak/pudding-core#1", 1, 10, signal);
     const first = read(canceled.signal);
     const failure = assert.rejects(first, { name: "AbortError" });
@@ -344,6 +379,13 @@ test("all 7 interfaces serialize to JSON schema in all three locales and validat
     repo: "pudding-core",
     number: 42,
   });
+  const parsed = parseSearchQuery(
+    "repo:teatak/pudding-core is:open is:pr author:@me",
+    "octocat",
+  );
+  assert.equal(parsed.repo, "teatak/pudding-core");
+  assert.equal(parsed.kind, "pr");
+  assert.equal(parsed.author, "octocat");
   assert.equal(dateSchema.safeParse("2026-02-30").success, false);
   assert.equal(dateSchema.safeParse("2028-02-29").success, true);
   assert.throws(() => readStore(null), /invalidData/);
