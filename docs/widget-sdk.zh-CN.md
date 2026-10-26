@@ -2,46 +2,69 @@
 
 [English](widget-sdk.md) · [开发文档](README.zh-CN.md) · [小组件开发](widget-development.zh-CN.md)
 
-通过 `import { pudding } from '@pudding/widget'` 使用宿主固定提供的 SDK。本文覆盖 SDK 1 的公开能力；准确类型由[运行时 TypeScript 声明](https://github.com/teatak/pudding-desktop/blob/main/electron/widget-sdk.cjs)定义，源码清单和外部操作由 Core 校验。
+SDK 是 Pudding 提供给小组件的接口。通过 `import { pudding } from '@pudding/widget'` 使用；下文的 `state`、`query` 等方法都属于 `pudding`。以 `use` 开头的 React Hook 从同一个包单独导入。
+
+首次开发请先完成[计数器示例](widget-development.zh-CN.md#首个小组件)。本文用于查找具体能力；准确类型见[SDK 声明](https://github.com/teatak/pudding-desktop/blob/main/electron/widget-sdk.cjs)。
 
 ## 能力索引
 
-| API | 用途 |
+| 需求 | API |
 | --- | --- |
-| `state.read/write/subscribe`、`useWidgetState` | 当前页面状态 |
-| `storage.read/write/subscribe`、`useStorage` | 同一 item 各打开位置共享的长期数据 |
-| `query`、`useQuery` | 已声明的插件读取 |
-| `action`、`useAction` | 由宿主确认后执行的外部写入 |
-| `defineInterface` | 供模型调用的类型化操作 |
-| `interaction.*`、`useWidgetInteraction` | 参与者、模型通知和运行控制 |
-| `locale.read/subscribe`、`useWidgetLocale` | 跟随 Pudding 语言 |
-| `clipboard.writeText` | 授权后复制文本 |
-| `notifications.getPermission/requestPermission/show` | 授权后发送系统通知 |
-| `exportFile`、`capabilities` | 系统保存对话框与能力检测 |
-| `links.list/create/remove` | 绑定来源中的实体关联 |
-| `requestAgent` | 用户确认后交给选定会话 |
+| 复用按钮、表格、图表等界面组件 | `@pudding/ui` |
+| 保存当前页面状态 | `state`、`useWidgetState` |
+| 保存关闭页面后仍需保留的数据 | `storage`、`useStorage` |
+| 读取外部服务 | `query`、`useQuery` |
+| 修改外部服务的数据 | `action`、`useAction` |
+| 让模型调用小组件的业务功能 | `defineInterface` |
+| 组织多会话协作、请求模型行动 | `interaction`、`useWidgetInteraction` |
+| 跟随 Pudding 的语言 | `locale`、`useWidgetLocale` |
+| 复制文本 | `clipboard.writeText` |
+| 发送操作系统通知 | `notifications` |
+| 保存文本或二进制文件 | `exportFile` |
+| 保存不同服务中记录之间的关联 | `links` |
+| 请用户选择一个会话处理任务 | `requestAgent` |
 
 ## 宿主 UI 组件
 
-从 `@pudding/ui` 导入固定组件，不支持任意组件路径或自行安装依赖。宿主提供 Button、Card、Input、Textarea、Badge、Table、Separator、Label 系列，以及以下组合组件：
+从 `@pudding/ui` 导入。可用的基础组件包括 Button、Card、Input、Textarea、Badge、Table、Separator、Label 及其子组件。还提供三个组合组件：
 
-| 组件 | 参数 |
-| --- | --- |
-| `Document` | `title?`、`children` |
-| `DataTable` | `title?`、`columns: {key,label}[]`、`rows: Record<string,unknown>[]`、`exportName?` |
-| `ChartView` | `title?`、`rows`、`xKey`、`series: {key,label?,color?}[]`、`type?: 'bar' \| 'line'` |
+| 组件 | 参数 | 行为 |
+| --- | --- | --- |
+| `Document` | `title?`、`children` | 排版标题与正文 |
+| `DataTable` | `title?`、`columns: {key,label}[]`、`rows: Record<string,unknown>[]`、`exportName?` | 展示行数据；指定 exportName 后提供 CSV 导出 |
+| `ChartView` | `title?`、`rows`、`xKey`、`series: {key,label?,color?}[]`、`type?: 'bar' \| 'line'` | 展示柱状图或折线图，默认柱状图，高度 320 像素 |
 
-`Document` 是排版容器，不会创建保存到 Studio 的 Page。`DataTable` 展示传入行，设置 exportName 后通过原生保存接口导出 CSV，不会创建 Studio 表格。`ChartView` 默认柱状图，图表高度 320 像素。这些组件本身不读取或持久化业务数据。准确参数见 [WidgetComponents](https://github.com/teatak/pudding-desktop/blob/main/electron/WidgetComponents.tsx)。
+这些组件只负责展示传入的数据，不负责读取或保存，也不会创建 Studio Page 或表格。参数类型见 [WidgetComponents](https://github.com/teatak/pudding-desktop/blob/main/electron/WidgetComponents.tsx)。
 
-在 TSX 入口导入组件 CSS，编译器扫描源码类名生成 Tailwind 工具样式。内置颜色 token 默认浅色，作者仍需编写并验证明暗主题，不能假设已完整自动适配。避免使用会撑坏窄栏的固定尺寸。
+自定义 CSS 需从 TSX 入口导入。编译器根据源码中的类名生成 Tailwind 样式；不要在运行时拼接无法被扫描的类名。内置颜色变量默认使用浅色值，仍需为小组件编写和检查深色样式。
 
 ## state 与 storage
 
-两者都保存 JSON 对象，快照格式为 `{ version, data }`。JSON 值包括 null、布尔、有限数字、字符串、数组和由 JSON 值组成的对象。缺失值使用 null，不把 undefined、函数、Date 对象或凭据放入公开结果。
+先决定数据需要保留多久：
 
-`state.read(): DataSnapshot` 同步返回已恢复、冻结的页面快照。`await state.write({expectedVersion, data})` 在宿主提交后整体替换对象，并返回新快照。`state.subscribe(listener)` 返回取消订阅函数；React 中使用 `useWidgetState()` 订阅。
+| | `state` | `storage` |
+| --- | --- | --- |
+| 适合保存 | 页面筛选、临时编辑、一局游戏的进度 | 待办、乐曲、账号草稿等长期数据 |
+| 归属 | 当前运行页面及其源码版本 | Studio 中的小组件条目 |
+| 刷新或重启后 | 页面仍存在时恢复 | 保留 |
+| 显式关闭页面后 | 清除 | 保留 |
+| 同一条目的多个独立页面 | 各自独立 | 共享 |
+| 复制为新条目 | 新页面有自己的状态 | 复制当时的数据，此后独立 |
 
-页面存在期间，state 在刷新、崩溃和重启后保留；显式关闭页面清理。它按源码版本和页面身份隔离。`storage.read({signal?})` 异步读取；`storage.write({expectedVersion,data})` 同样整体替换。`storage.subscribe(listener)` 和 `useStorage()` 观察长期 item 数据，各打开位置共享，升级后保留。复制 item 时得到独立数据快照。Core 当前将 storage 限制为 256 KiB。
+两者都保存 JSON 对象，并返回 `{version, data}`。`version` 是写入时用于检查冲突的版本号；`data` 是完整数据。允许 null、布尔、有限数字、字符串、数组和 JSON 对象。缺失值可省略或写成 null，不要传 undefined、Date 实例或函数。
+
+| 方法 | 返回值 |
+| --- | --- |
+| `state.read()` | 同步返回 `DataSnapshot` |
+| `state.write({expectedVersion, data})` | 提交成功后返回新快照的 Promise |
+| `state.subscribe(listener)` | 取消订阅函数 |
+| `useWidgetState()` | 随更新变化的页面快照 |
+| `storage.read({signal?})` | 长期数据快照的 Promise |
+| `storage.write({expectedVersion, data})` | 提交成功后返回新快照的 Promise |
+| `storage.subscribe(listener)` | 取消订阅函数 |
+| `useStorage()` | 包含加载状态、错误和快照的 TanStack Query 结果 |
+
+写入会**替换整个 data 对象**，不是合并某几个字段。例如，修改 completed 时要保留其他字段：
 
 ```ts
 const current = pudding.state.read();
@@ -51,11 +74,17 @@ await pudding.state.write({
 });
 ```
 
-冲突时重新读取并判断操作，不能盲目重试覆盖。通知或返回成功前必须等待写入完成。`useState` 只保存临时控件状态，不用 localStorage 另建业务存储。观察工具不会自动暴露 state，但作者和调试工具不属于对抗性的隔离边界。
+如果版本已变化，写入会被拒绝。重新读取后，按用户意图合并修改，再提交。state 和 storage 分别写入，两个调用不构成同一个事务。两者目前各有 256 KiB 的限制。
+
+页面加载前宿主已恢复 state；只在数据不存在时设置默认值。`useStorage()` 可见时每五秒刷新，也会响应宿主的数据变化。加载未完成或读取失败时，不应把空对象当作已有数据写回。
+
+已有页面可能继续运行旧源码，因此更新 storage 格式时要考虑旧页面。源码升级不会自动替你迁移业务数据。小组件公开界面和接口只应返回任务需要的数据；不要在其中保存连接凭据。
 
 ## 插件数据与操作
 
-在 `widget.json` 中声明来源槽位和操作：
+### 声明来源和请求
+
+在 `widget.json` 的 sources 中给插件端点起一个本地名称，再在 operations 中声明可调用的请求。以下示例把 GitHub 端点命名为 gh，并提供 viewer 查询：
 
 ```json
 {
@@ -73,19 +102,31 @@ await pudding.state.write({
 }
 ```
 
-`query<T>(operationID, params?, {signal?}?)` 返回 `{data:T, fetchedAt, requestID, revisionHash, bindingVersion}`。ID 对应已声明的操作，不能替换成任意 URL。请求模板可用 `{"$input":"/id"}` 映射到已声明的路径参数、query 或 body 字段；先读真实插件 API 再填写。凭据和连接级地址由 Core 解析，不经过小组件源码。
+小组件调用 `query('viewer')`，由宿主使用所选 GitHub 连接发送请求。小组件不接收账号 token。`pluginID` 使用插件运行 ID，例如 github，而不是带仓库前缀的发布 ID。
 
-`useQuery<T>(operationID, params?, {enabled?}?)` 返回 TanStack Query 结果。仅可见时读取，stale time 为无限，不在聚焦、重连或重新挂载时自动刷新。历史 `refreshMS` 参数已经忽略，需要时由组件显式定时调用 `refetch()`。`useStorage()` 则在可见时刷新长期数据，包括每五秒一次刷新。
+动态参数用 JSON Pointer 取值，例如 `{"$input":"/id"}`。路径参数需在 pathParams 中声明；query 和 body 也可以引用输入值。请求必须符合插件的真实 API，不能把 operationID 替换成任意 URL。
 
-Hook 保留加载、错误状态和结果外层：`useQuery<T>(...).data?.data` 是服务返回值，`useStorage().data?.data` 是保存的 JSON 对象。不能把加载中或失败的读取当成成功的空结果。
+### 读取和刷新
 
-`action(operationID, params?)` 经宿主准备和用户确认后，返回执行结果。`useAction(operationID)` 返回 mutation。声明写入不等于获得执行权限：插件端点须以 `widget_writes: true` 开放，仍需宿主审批。标记为读取不能授权写入。
+`query<T>(operationID, params?, options?)` 返回 Promise，options 可传 `{signal}` 以取消请求。结果为 `{data:T, fetchedAt, requestID, revisionHash, bindingVersion}`，其中 data 是服务响应。
 
-通过宿主的来源选择器绑定连接。插件会话绑定与小组件资源绑定相互独立。切换账号时，长期草稿按稳定账号身份分区，清理页面选中项，丢弃旧请求结果。不要在源码中保存 API key，也不要用直接 fetch 绕过来源绑定。
+`useQuery<T>(operationID, params?, {enabled?}?)` 返回 TanStack Query 结果。因此，Hook 的 `result.data?.data` 才是服务数据；外层 result 还包含 isPending、isFetching、error 和 refetch 等状态与方法。
+
+Hook 在页面可见且 enabled 不为 false 时发起读取。它不因聚焦、重连、重新挂载或操作完成而自动刷新，也不提供定时轮询。需要时显式调用 `refetch()`；旧的 refreshMS 参数已被忽略。刷新只读取服务，不调用模型。
+
+### 写入和切换账号
+
+`action(operationID, params?)` 先由宿主准备操作并请用户确认，再返回执行结果；`useAction(operationID)` 提供对应的 mutation。检查结果中的 succeeded、failed 或 unknown 状态，不能把结果不明当作成功并重试。
+
+小组件写入外部服务还要求插件端点声明 `widget_writes: true`。effectHint 只是操作声明的一部分，不能绕过插件和宿主的限制。
+
+账号由宿主的来源选择器管理，与聊天会话使用的插件账号独立。切换账号时，按稳定账号身份区分长期数据和草稿，并清理当前选中项、忽略旧请求的响应，避免将旧账号的结果写入新账号。
 
 ## 模型接口与页面输入
 
-`defineInterface({name, description, input, run})` 注册操作并返回注销函数。`input` 为 Zod 对象 schema；`run(input, context)` 可异步执行。注册一次，或在 React effect 中注册并返回注销函数。
+模型可以操作页面控件，也可以调用你定义的接口。批量编辑、准确落子等操作适合提供接口；普通按钮不必逐个注册。
+
+`defineInterface({name, description, input, run})` 注册接口并返回注销函数。input 使用 Zod 对象 schema；run 可以返回值或 Promise。组件卸载时应注销在 React effect 中注册的接口。
 
 ```ts
 import { z } from 'zod';
@@ -97,19 +138,31 @@ const unregister = pudding.defineInterface({
 });
 ```
 
-模型通过 `widget_invoke` 传入 `{targetID, name, input, expectedStateVersion}`。宿主注入调用者身份，版本过期时在运行接口前拒绝。返回值包含 `{result, stateVersion}`。`context` 含 `callID`、`signal`，以及可选的 `sessionID` 和 `actor:{runID,participantID,notificationID?}`。写入前检查取消和业务规则，不能把 input 中的角色或会话 ID 当成真实调用者。
+模型使用 `widget_invoke({targetID, name, input, expectedStateVersion})` 调用，结果包含 `{result, stateVersion}`。宿主先检查页面版本，再运行接口。这个检查不覆盖 storage；修改长期数据仍需读取 storage 版本并在写入时传 expectedVersion。
 
-页面上的可访问控件也能通过 `widget_observe/click/type/scroll` 操作，接口不是必需的。observe 默认返回精简信息，不会默认列出全部控件或截图。模型可用读取接口或页面观察补充状态。异步 DOM 业务操作用 `interaction.handle(context => ...)` 包裹，以保留宿主 actor 作用域；接口处理函数已经有该作用域。
+run 的第二个参数 context 包含 callID、signal，以及可选的 sessionID、actor。共享协作中 actor 为 `{runID, participantID, notificationID?}`，由宿主提供。按它判断调用者角色，不信任 input 中自报的身份。异步工作结束后，写入前检查 signal 是否已取消。
 
-接口名以字母开头，最多 64 个字母、数字或下划线；最多 64 个接口。说明最多 2000 字符，schema 序列化后最多 16,000 字符，结果最多 256 KiB。写操作保持原子性，只返回精简回执；大历史由独立读取接口按需返回。
+页面按钮与模型接口应调用同一个业务函数。有参与者身份要求的异步按钮处理，用 `interaction.handle(context => ...)` 包裹；接口处理函数已带有该上下文。
+
+模型也可使用 `widget_observe/click/type/scroll`。observe 默认不返回所有控件或截图，按需请求即可。接口应返回简短结果，大量历史另设读取接口。
+
+接口限制：名称以字母开头，最多 64 个字母、数字或下划线；最多 64 个接口；说明最多 2000 字符；输入 schema 序列化后最多 16,000 字符；返回值最多 256 KiB。
 
 ## 参与者与模型通知
 
-`interaction.read()` 返回 `WidgetRun | null`；`interaction.subscribe(listener)` 和 `useWidgetInteraction()` 观察公开运行信息。run 包含身份、状态、参与者和通知回执。模型与人类的 participantID 由宿主管理，业务角色由 state 保存。
+### 选择参与会话
 
-`await interaction.candidates()` 返回 `{sessions, preferredSessionIDs, connectedSessionIDs, maxSessions}`。每个会话有 `{id,name,participantID?,model:{id,name,icon}}`。选择器只用 `connectedSessionIDs ?? preferredSessionIDs` 初始化一次：Studio 默认不选，会话默认自己，上下分屏默认两侧。`connect({sessionIDs})` 创建或更新明确运行，最多 15 个会话和一个人类。连接不会分配座位或唤醒模型。
+普通分屏会话可共享当前页面。需要明确组织对局或协作任务时，再使用 interaction 管理参与者和行动请求。
 
-`interaction.notify(notification)` 接受：
+`interaction.candidates()` 返回 `{sessions, preferredSessionIDs, connectedSessionIDs, maxSessions}`。sessions 中每项有 `{id, name, participantID?, model:{id,name,icon}}`。
+
+选择器用 `connectedSessionIDs ?? preferredSessionIDs` 初始化一次：Studio 默认不选会话，单会话默认选择自己，分屏默认选择两侧。已有的空选择也要保留，不要在切换焦点时重新套用默认值。
+
+`interaction.connect({sessionIDs})` 创建或更新协作运行，最多支持 15 个会话和一个人类参与者。宿主负责 participantID，组件负责棋手颜色、准备状态等业务角色。连接本身不会启动模型。
+
+`interaction.read()` 返回 `WidgetRun | null`；`interaction.subscribe(listener)` 返回取消订阅函数；`useWidgetInteraction()` 供 React 读取。WidgetRun 包含运行状态、参与者和通知回执。
+
+### 发送通知
 
 ```ts
 {
@@ -121,25 +174,46 @@ const unregister = pudding.defineInterface({
 }
 ```
 
-`inform` 仅记录上下文，不调用模型；`request-action` 请求指定参与者行动。这是会话通知，与系统通知不同。宿主附加目标、身份和当前 state version。先提交业务状态，再通知；通知 ID 稳定，同一 ID 和内容不可修改。data 只包含适当的公开数据，不放未揭晓选择或凭据。
+上面的对象传给 `interaction.notify(notification)`。delivery 决定用途：
 
-`setRequests([{notificationID,participantID}, ...])` 只保留仍有效的请求键。清除会撤销待执行工作，重发旧通知不会恢复已清除请求。`pause()`、`resume()` 控制模型自动执行；`disconnect()` 移除连接但不删除业务数据。`onResume(handler)` 返回注销函数，用于恢复暂停运行时重新生成当前有效请求。旧 target/run ID 和回执不能充当长期业务身份。
+- `inform`：把信息加入会话上下文，不启动模型。
+- `request-action`：请求模型处理任务。会话忙碌时等待，不中断当前工作。
+
+audience 为 all 时包含发送者；selected 只投递给指定 participantID。summary 用作简短展示，message 写清任务，data 携带需要的公开业务数据。宿主会补充 targetID、参与者身份和当前 stateVersion。
+
+先提交业务状态，再发通知。同一逻辑通知使用固定 ID，重试时保持内容一致；新事件使用新 ID。无需每手重复完整历史，也无需强制模型每次先 observe。定向投递不会把共享页面上的数据变成私密数据。
+
+### 完成、暂停和恢复
+
+`interaction.setRequests([{notificationID, participantID}, ...])` 指定哪些已有行动请求仍有效。完成一个任务时，移除它并保留其他待办请求；传 [] 会清除全部请求。已经清除的请求不能靠重发旧通知恢复。
+
+`pause()` 暂停模型自动执行，`resume()` 继续，`disconnect()` 结束参与者连接并取消待执行工作，但保留业务数据。暂停时是否允许人类修改棋盘等行为，由组件的业务规则决定。
+
+页面刷新或应用重启后，协作运行以暂停状态恢复。通过 `onResume(handler)` 根据当前业务状态生成仍需处理的新请求；该方法返回注销函数。不要重播已完成的结果，也不要将一次运行的 runID 当作永久业务 ID。
 
 ## 语言
 
-`locale.read()` 返回 `zh-CN`、`zh-TW` 或 `en`；`locale.subscribe(listener)` 返回取消订阅函数。`useWidgetLocale()` 在语言切换时更新，不重载组件。界面、错误、模型接口说明和通知摘要都应本地化。已安装小组件由宿主管理的标题／图标，与其内部界面分别处理。
+`locale.read()` 返回 zh-CN、zh-TW 或 en；`locale.subscribe(listener)` 返回取消订阅函数。React 中用 `useWidgetLocale()`，语言变化时会更新，不需要重载页面。
+
+界面、错误、接口说明和通知摘要都应跟随语言。安装后显示在 Studio 中的名称由宿主管理，小组件内部文字仍需自己翻译。
 
 ## 运行时授权与剪贴板
 
-授权按已安装 item 和能力分别保存，与账号、业务数据独立。首次使用由宿主 App 弹出“拒绝／允许”，两种决定都保留；在小组件 **⋯ → 权限** 中管理。新引入的权限，已有组件也从未询问开始。
+权限按小组件条目和能力保存，独立于账号连接。首次使用时，Pudding 弹出“拒绝／允许”；没有“本次允许”。决定会保留，可在小组件的 **⋯ → 权限** 中修改。已有组件首次使用新权限时也需要授权。
 
-`await clipboard.writeText(text)` 复制文本，上限 256 KiB。程序读取剪贴板始终禁止，用户主动粘贴仍是正常输入。拒绝时抛出 `permission_denied: clipboard.write`，不作为致命运行错误。Promise 成功后才能显示已复制。宿主也控制浏览器异步和旧式复制路径，新组件应使用 SDK Promise。
+`clipboard.writeText(text)` 返回 Promise，文本上限 256 KiB。成功后才显示“已复制”。程序读取剪贴板始终禁止；用户主动粘贴仍属于正常输入。
 
-首次拒绝安静关闭。后续用户操作被已保存的拒绝拦截时，显示紧凑、中性的权限横条，提供管理权限与关闭；后台重试不提示。权限开关已经表达决定，不额外重复“已允许／未允许”。
+拒绝复制会使 Promise 以 `permission_denied: clipboard.write` 失败，这是正常的权限结果，不应再显示红色运行错误。首次拒绝后关闭弹窗；以后再次点击受限操作，宿主显示带“管理权限”和关闭按钮的中性横条。后台重试不显示该提示。
+
+新小组件应使用 SDK。宿主也管理浏览器复制权限，但旧式同步复制 API 不能准确表达异步授权是否成功。
 
 ## 系统通知
 
-`capabilities.systemNotifications` 检测宿主 API。`notifications.getPermission()` 查询，`requestPermission()` 申请，返回 `prompt | granted | denied`，与剪贴板权限独立。应在用户开启提醒、组件可见时申请。
+系统通知显示在操作系统的通知界面中，和前面的会话通知是两种能力。它需要单独授权，不会启动模型。
+
+1. 检查 `capabilities.systemNotifications`。
+2. 用户开启提醒时，在可见页面调用 `notifications.requestPermission()`。
+3. 获得 granted 后，用 `notifications.show()` 发送。
 
 ```ts
 if (pudding.capabilities.systemNotifications) {
@@ -152,26 +226,55 @@ if (pudding.capabilities.systemNotifications) {
 }
 ```
 
-`show({title, body?, tag?})` 的 title 为 1–120 字符，body 最多 1000 字符，tag 非空且最多 80 字符。同一 item 的同 tag 通知替换已有通知。宿主添加小组件名称，每个 item 每三秒最多发送一条。点击返回原有小组件／会话挂载，不启动模型。
+`notifications.getPermission()` 查询当前决定；requestPermission 返回决定。两者的结果均为 prompt、granted 或 denied。
 
-收到原生投递回执后返回 `{shown:true}`；否则为 `{shown:false,reason}`，原因包括 `permission_denied`、`permission_required`、`rate_limited`、`unavailable`、`closed`、`delivery_failed`。拒绝是正常结果，不抛异常；输入无效则在申请权限前抛出简短字段错误。
+| show 参数 | 要求 |
+| --- | --- |
+| title | 必填，1–120 字符 |
+| body | 可选，最多 1000 字符 |
+| tag | 可选，非空且最多 80 字符；同一条目内相同 tag 替换已有通知 |
 
-已授权且仍在运行的后台组件可发送。未授权的隐藏组件不能弹窗，show 返回 `permission_required`。关闭、重载实例或撤销权限会关闭其尚未结束的通知；没有服务在组件关闭后继续运行计时器。系统通知设置和专注／免打扰仍有效，shown 不表示用户已阅读。使用 SDK，不使用浏览器 `new Notification`。旧宿主的能力标记为 false，show 返回 unavailable。
+宿主在通知中标明小组件名称，每个条目每三秒最多发送一条。点击通知回到原来打开小组件的位置，不触发模型执行。
+
+show 收到原生投递回执后返回 `{shown:true}`。未发送时返回 `{shown:false, reason}`，reason 可为 permission_denied、permission_required、rate_limited、unavailable、closed、delivery_failed。拒绝授权不会抛异常；输入不合法会抛出校验错误。
+
+已授权且仍在运行的后台页面可以通知。尚未决定权限的隐藏页面不能弹出授权，show 返回 permission_required。关闭、重载页面或撤销授权会关闭该实例已有通知；组件关闭后没有后台服务继续它的计时器。
+
+系统通知设置和免打扰仍然有效，shown 不表示用户已经看到或阅读。应使用 SDK，而不是 `new Notification`。缺少该能力时，旧 SDK 可能没有这些方法；提供新 API 的宿主会以能力标记和 unavailable 结果表达不可用状态。始终先检测能力。
 
 ## 文件导出
 
-`capabilities.binaryFileExport` 检测原生导出能力。`exportFile({filename,content,encoding?})` 打开系统保存对话框，返回 `{saved:boolean}`。默认编码 `utf8`；`base64` 用于二进制内容，解码后上限 8 MiB。filename 只是建议名称，不授予任意路径写权限。取消是正常结果。工程 JSON、WAV 都使用这一通用接口，不需要业务专用文件系统能力。
+`exportFile({filename, content, encoding?})` 打开系统保存对话框，返回 `{saved:boolean}`。用户取消时 saved 为 false。filename 是建议文件名，最终路径由用户选择。
 
-导入可使用文件输入框／FileReader 读取用户选择的文件，完整校验后再替换状态。导入导出进度不应改变编辑区结构。不能用下载导航绕过原生导出能力。
+- 文本：encoding 省略或为 utf8，content 为字符串，可保存 JSON、CSV、Markdown 等。
+- 二进制：先检查 `capabilities.binaryFileExport`，传 encoding: base64，content 为 base64 字符串。解码后的文件上限为 8 MiB。
+
+WAV 导出也使用这个通用接口。小组件不能自行写入任意文件路径，下载链接也不能代替该接口。
+
+导入时可用文件输入框和 FileReader 读取用户选定的文件，校验完整内容后再替换数据。将进度放在现有控件内，避免新增提示行让编辑区上下跳动。
 
 ## 实体关联与会话交接
 
-`links.list()` 返回 `{links}`；`links.create({left,right})` 的两端使用 `{source,entityType,entityID}`，source 是已声明槽位，插件和账号身份由宿主解析。保存后的关联包含 `id,itemID,left,right,createdAt`。`links.remove(linkID)` 删除关联。创建和删除由宿主确认；切换来源账号时不能静默修改关联。
+### 保存记录之间的关联
 
-`requestAgent({prompt,context?})` 经用户确认后交给选定会话，返回宿主结果，类型为 unknown。context 保持 JSON 兼容且精简。它与明确连接的 run 中 `request-action` 通知不同；发送系统通知不意味着可以调用模型。
+links 用于记住不同来源中两条记录的关系，例如 GitHub issue 与另一服务中的任务。
+
+- `links.list()` 返回 `{links}`。
+- `links.create({left,right})` 创建关联，两端均为 `{source,entityType,entityID}`。
+- `links.remove(linkID)` 删除关联。
+
+source 对应已声明的来源名，宿主补全插件和账号身份。保存后的记录包括 id、itemID、left、right、createdAt。创建和删除均由宿主请用户确认。切换账号后，已有关联仍属于原账号，不能自动解释为新账号的数据。
+
+### 交给另一个会话处理
+
+`requestAgent({prompt,context?})` 请用户选择会话并确认，然后提交任务。返回值取决于宿主，类型为 unknown。context 使用必要的 JSON 数据即可。
+
+已建立协作运行的组件可用 interaction 的 request-action 通知参与者；临时请用户选会话时用 requestAgent。系统通知不承担这两种功能。
 
 ## 沙箱与错误
 
-组件没有 daemon token、Node／Electron API、任意网络 fetch、剪贴板读取或文件路径访问权。使用声明的插件操作和宿主能力。HTTPS 图片遵循宿主加载策略，不等于通用联网权限。表单不能原生提交，不用 `document.open/write/writeln` 替换宿主管理的整份文档，更新 React／DOM 子树即可。
+外部服务通过已声明的插件操作访问；文件保存、复制和通知通过 SDK 使用。小组件没有 daemon token、Node／Electron API、任意 fetch 或剪贴板读取能力。HTTPS 图片可按宿主规则加载，但不能附加连接凭据，这也不意味着组件可任意联网。
 
-源码、构建和运行失败由宿主错误条展示简短摘要，详情可展开、滚动、复制和关闭。关闭提示不重载组件，不同的新错误仍可出现。校验、拒绝授权和业务结果应返回具体可操作的简短信息，避免重复整段 JSON 或全量数据集。
+宿主管理页面文档。更新 React 渲染内容即可，不要调用 `document.open/write/writeln` 替换整页。表单原生提交被禁止，应阻止默认提交并调用业务处理函数。
+
+源码、构建和运行错误由顶部错误条显示，详情可展开、滚动、复制、关闭。业务校验请返回具体字段和允许范围，避免整段 JSON。关闭错误提示不会重载页面；出现不同的新错误时仍会提示。

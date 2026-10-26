@@ -2,46 +2,69 @@
 
 [中文](widget-sdk.zh-CN.md) · [Developer documentation](README.md) · [Widget development](widget-development.md)
 
-Import the fixed host SDK with `import { pudding } from '@pudding/widget'`. This reference covers the public SDK 1 surface. The [runtime TypeScript declarations](https://github.com/teatak/pudding-desktop/blob/main/electron/widget-sdk.cjs) define exact types; Core validates source manifests and external operations.
+The SDK is Pudding's interface for widgets. Import `pudding` from `@pudding/widget`; methods such as state and query below belong to that object. Import React hooks whose names start with use separately from the same package.
+
+Start with the [counter example](widget-development.md#first-widget) if this is your first widget. Use this reference to look up individual features. Exact types are in the [SDK declarations](https://github.com/teatak/pudding-desktop/blob/main/electron/widget-sdk.cjs).
 
 ## Capability map
 
-| API | Purpose |
+| Need | API |
 | --- | --- |
-| `state.read/write/subscribe`, `useWidgetState` | Current page state |
-| `storage.read/write/subscribe`, `useStorage` | Durable data shared by openings of one item |
-| `query`, `useQuery` | Declared plugin reads |
-| `action`, `useAction` | Declared external writes with host confirmation |
-| `defineInterface` | Typed operations callable by a model |
-| `interaction.*`, `useWidgetInteraction` | Participants, model notifications and run control |
-| `locale.read/subscribe`, `useWidgetLocale` | Follow Pudding's language |
-| `clipboard.writeText` | Authorized text copying |
-| `notifications.getPermission/requestPermission/show` | Authorized system notifications |
-| `exportFile`, `capabilities` | Native save dialog and feature detection |
-| `links.list/create/remove` | Links between entities from bound sources |
-| `requestAgent` | User-confirmed handoff to a selected conversation |
+| Reuse buttons, tables and charts | `@pudding/ui` |
+| Save the current page's state | `state`, `useWidgetState` |
+| Keep data after closing the page | `storage`, `useStorage` |
+| Read an external service | `query`, `useQuery` |
+| Change data in an external service | `action`, `useAction` |
+| Let a model call business operations | `defineInterface` |
+| Coordinate conversations and request model work | `interaction`, `useWidgetInteraction` |
+| Follow Pudding's language | `locale`, `useWidgetLocale` |
+| Copy text | `clipboard.writeText` |
+| Send OS notifications | `notifications` |
+| Save text or binary files | `exportFile` |
+| Link records from different services | `links` |
+| Ask the user to choose a conversation for a task | `requestAgent` |
 
 ## Host UI components
 
-Import the fixed components from `@pudding/ui`; there is no arbitrary component-path import or package installation. The host exposes Button, Card, Input, Textarea, Badge, Table, Separator and Label families, plus these higher-level components:
+Import from `@pudding/ui`. Available families include Button, Card, Input, Textarea, Badge, Table, Separator and Label, including their child components. Three composed components are also available:
 
-| Component | Props |
-| --- | --- |
-| `Document` | `title?`, `children` |
-| `DataTable` | `title?`, `columns: {key,label}[]`, `rows: Record<string,unknown>[]`, `exportName?` |
-| `ChartView` | `title?`, `rows`, `xKey`, `series: {key,label?,color?}[]`, `type?: 'bar' \| 'line'` |
+| Component | Props | Behavior |
+| --- | --- | --- |
+| `Document` | `title?`, `children` | Lay out a title and body |
+| `DataTable` | `title?`, `columns: {key,label}[]`, `rows: Record<string,unknown>[]`, `exportName?` | Display rows; exportName enables CSV export |
+| `ChartView` | `title?`, `rows`, `xKey`, `series: {key,label?,color?}[]`, `type?: 'bar' \| 'line'` | Display a bar or line chart; defaults to bar, with a height of 320 pixels |
 
-`Document` is a layout wrapper, not a saved Studio Page. `DataTable` displays supplied rows; `exportName` adds CSV export through the native save API. It does not create a Studio Sheet. `ChartView` defaults to a bar chart with a 320-pixel chart height. These components do not fetch or persist data themselves. Exact component props are in [WidgetComponents](https://github.com/teatak/pudding-desktop/blob/main/electron/WidgetComponents.tsx).
+These components display supplied data. They neither fetch nor persist it and do not create Studio Pages or Sheets. See [WidgetComponents](https://github.com/teatak/pudding-desktop/blob/main/electron/WidgetComponents.tsx) for exact props.
 
-Import widget CSS from the TSX entry. The compiler scans source classes for Tailwind utilities. Its default color tokens are light; authors must style and verify both themes rather than assuming a complete automatic theme adaptation. Avoid hard-coded dimensions that break a narrow panel.
+Import custom CSS from the TSX entry. The compiler generates Tailwind styles from class names found in source; avoid building unscannable class names at runtime. Default color variables use light values, so author and check dark styles as well.
 
 ## State and storage
 
-Both store a JSON object and use `{ version, data }` snapshots. JSON values are null, booleans, finite numbers, strings, arrays and records of JSON values. Use null for absent values; do not put undefined, functions, Date objects or secrets in public results.
+Choose a store according to how long the data must survive:
 
-`state.read(): DataSnapshot` is synchronous and returns the restored, frozen page snapshot. `await state.write({expectedVersion, data})` replaces the complete object after the host commits it, then returns the new snapshot. `state.subscribe(listener)` returns an unsubscribe function. `useWidgetState()` subscribes in React.
+| | `state` | `storage` |
+| --- | --- | --- |
+| Suitable data | Page filters, temporary edits, a game's progress | Tasks, songs and account-specific drafts |
+| Owner | Running page and its source revision | Widget item in Studio |
+| Refresh or app restart | Restored while the page still exists | Preserved |
+| Explicit page close | Cleared | Preserved |
+| Independent pages of the same item | Separate | Shared |
+| Copy to a new item | A separate page state | Snapshot copied, then independent |
 
-Page state survives refresh/crash/restart while its page exists; explicitly closing the page clears it. It is isolated by source revision and page identity. `storage.read({signal?})` is asynchronous; `storage.write({expectedVersion,data})` is also a complete replacement. `storage.subscribe(listener)` and `useStorage()` observe durable item data, shared across openings and preserved through upgrades. A copied item receives an independent data snapshot. Storage is currently limited to 256 KiB by Core policy.
+Both store a JSON object and return `{version, data}`. version detects write conflicts; data is the complete object. Values may be null, booleans, finite numbers, strings, arrays or JSON objects. Omit missing properties or use null; do not pass undefined, Date instances or functions.
+
+| Method | Result |
+| --- | --- |
+| `state.read()` | Synchronous `DataSnapshot` |
+| `state.write({expectedVersion, data})` | Promise of the new committed snapshot |
+| `state.subscribe(listener)` | Unsubscribe function |
+| `useWidgetState()` | Page snapshot that updates with state changes |
+| `storage.read({signal?})` | Promise of the durable snapshot |
+| `storage.write({expectedVersion, data})` | Promise of the new committed snapshot |
+| `storage.subscribe(listener)` | Unsubscribe function |
+| `useStorage()` | TanStack Query result with loading state, error and snapshot |
+
+A write **replaces the whole data object**. Preserve other fields when changing one:
 
 ```ts
 const current = pudding.state.read();
@@ -51,11 +74,17 @@ await pudding.state.write({
 });
 ```
 
-On conflict, reread and reconsider the operation; do not blindly retry an overwrite. Await the write before sending a notification or reporting success. Use `useState` only for temporary controls, and avoid localStorage as a second business store. Inspection does not automatically expose state, but authors/debuggers are not an adversarial isolation boundary.
+A stale version is rejected. Read again, reconcile the requested change and submit it. State and storage writes are separate commits, not one transaction. Each store currently has a 256 KiB limit.
+
+The host restores state before loading author code. Initialize defaults only when saved data is absent. useStorage refreshes every five seconds while visible and responds to host data changes. Do not write an empty object back while a read is pending or has failed.
+
+Open pages may keep running old source after an update, so consider them when changing the storage format. Source upgrades do not migrate business data automatically. Return only the data needed by the public UI or interface; keep connection credentials out of widget data.
 
 ## Plugin data and actions
 
-Declare source slots and operations in `widget.json`:
+### Declare sources and requests
+
+Give a plugin endpoint a local name in widget.json sources, then declare callable requests in operations. This example names the GitHub source gh and defines a viewer query:
 
 ```json
 {
@@ -73,19 +102,31 @@ Declare source slots and operations in `widget.json`:
 }
 ```
 
-`query<T>(operationID, params?, {signal?}?)` returns `{data:T, fetchedAt, requestID, revisionHash, bindingVersion}`. IDs name declared operations, not arbitrary URLs. Request templates may map `{"$input":"/id"}` into declared path parameters, query or body fields; inspect the actual plugin API before writing them. Credentials and connection-specific addresses are resolved by Core, not passed through widget code.
+The widget calls `query('viewer')`; the host sends the request using the selected GitHub connection. The widget never receives its token. pluginID is the runtime ID, such as github, rather than a catalog ID with a repository prefix.
 
-`useQuery<T>(operationID, params?, {enabled?}?)` returns a TanStack Query result. It reads while visible, uses infinite stale time, and does not refetch automatically on focus, reconnect or remount. Its legacy `refreshMS` option is ignored; explicitly schedule `refetch()` in widget code when appropriate. `useStorage()` instead refreshes durable data while visible, including a five-second interval.
+Use JSON Pointer values such as `{"$input":"/id"}` for dynamic inputs. Declare URL parameters in pathParams; query and body fields can also reference inputs. Follow the plugin's actual API. An operationID cannot be replaced with an arbitrary URL.
 
-The hooks retain loading/error states and their result envelopes: `useQuery<T>(...).data?.data` is the service payload; `useStorage().data?.data` is the stored JSON object. Do not treat a pending or failed read as an empty successful result.
+### Read and refresh
 
-`action(operationID, params?)` returns the executed operation result after the host's preparation and user confirmation. `useAction(operationID)` returns a mutation. Declaring a write does not grant execution: the plugin endpoint must opt in with `widget_writes: true`, and host approval still applies. A read hint cannot authorize a write.
+`query<T>(operationID, params?, options?)` returns a Promise. options accepts `{signal}` for cancellation. The result is `{data:T, fetchedAt, requestID, revisionHash, bindingVersion}`, with the service response in data.
 
-Select resource connections through the host's source selector. Plugin chat bindings and widget resource bindings are independent. When accounts change, partition durable drafts by a stable account identity, reset page selection, and discard stale responses. Never embed API keys or use direct fetch to bypass a source binding.
+`useQuery<T>(operationID, params?, {enabled?}?)` returns a TanStack Query result. Access the service payload through `result.data?.data`; the outer result also provides isPending, isFetching, error and refetch.
+
+The hook reads when visible and enabled is not false. It does not automatically refresh on focus, reconnect, remount or action completion, and has no polling schedule. Call refetch explicitly when needed; the legacy refreshMS option is ignored. Refreshing reads the service without invoking a model.
+
+### Write and switch accounts
+
+`action(operationID, params?)` prepares the operation, asks for user confirmation and returns the execution result. `useAction(operationID)` provides the corresponding mutation. Check its succeeded, failed or unknown state; do not report an unknown outcome as success or retry it blindly.
+
+External writes also require `widget_writes: true` on the plugin endpoint. effectHint is part of the operation declaration, not a way around plugin or host restrictions.
+
+The host's source selector manages accounts independently of a chat's plugin binding. Partition durable data and drafts by stable account identity. On account changes, clear the current selection and ignore earlier requests so old responses cannot be written into the new account's data.
 
 ## Model interfaces and page input
 
-`defineInterface({name, description, input, run})` registers an operation and returns its unregister function. `input` is a Zod object schema; `run(input, context)` may be asynchronous. Register once, or return the unregister function from a React effect.
+Models can operate page controls or call interfaces you define. Interfaces are useful for precise or batch operations; every button does not need its own interface.
+
+`defineInterface({name, description, input, run})` registers an operation and returns an unregister function. input is a Zod object schema; run returns a value or Promise. Unregister interfaces created in a React effect when the component unmounts.
 
 ```ts
 import { z } from 'zod';
@@ -97,19 +138,31 @@ const unregister = pudding.defineInterface({
 });
 ```
 
-Models call `widget_invoke` with `{targetID, name, input, expectedStateVersion}`; the host supplies the caller identity and rejects stale versions before executing the handler. The result contains `{result, stateVersion}`. `context` includes `callID`, `signal`, optional `sessionID`, and optional `actor:{runID,participantID,notificationID?}`. Check cancellation and business rules before writing; never trust a role/session supplied in input as the caller's identity.
+Models call `widget_invoke({targetID, name, input, expectedStateVersion})` and receive `{result, stateVersion}`. The host checks the page version before running the handler. This does not cover storage: durable writes still require reading its version and passing expectedVersion.
 
-Accessible page controls are also operable with `widget_observe/click/type/scroll`; interfaces are optional. Observe defaults to compact information, not every control or a screenshot. Models can use a read interface or observation to obtain missing state. Wrap asynchronous DOM actions in `interaction.handle(context => ...)` to retain the host's actor scope; interface handlers already receive it.
+The handler's context contains callID, signal and optional sessionID and actor. In a shared run, actor is `{runID, participantID, notificationID?}` supplied by the host. Use it to check roles instead of trusting an identity supplied in input. Check signal after asynchronous work, before writing.
 
-Interface names start with a letter and contain up to 64 letters/digits/underscores. There are at most 64 interfaces, descriptions are at most 2000 characters, schemas at most 16,000 serialized characters and results at most 256 KiB. Keep writes atomic and return a concise receipt; expose large histories through separate read interfaces.
+UI buttons and model interfaces should call the same business function. Wrap asynchronous buttons that need participant identity with `interaction.handle(context => ...)`; interface handlers already have that context.
+
+Models may also use `widget_observe/click/type/scroll`. Observe omits controls and screenshots by default; request them when needed. Return short operation results and expose large histories through a separate read interface.
+
+Limits: names start with a letter and contain at most 64 letters, digits or underscores; at most 64 interfaces; descriptions up to 2000 characters; serialized input schemas up to 16,000 characters; results up to 256 KiB.
 
 ## Participants and model notifications
 
-`interaction.read()` returns `WidgetRun | null`; `interaction.subscribe(listener)` and `useWidgetInteraction()` observe the public run. A run includes identity, status, participants and notification receipts. Model and human participants have host-owned IDs; business roles belong to your state.
+### Select conversations
 
-`await interaction.candidates()` returns `{sessions, preferredSessionIDs, connectedSessionIDs, maxSessions}`. Each session includes `{id,name,participantID?,model:{id,name,icon}}`. Initialize a selector once with `connectedSessionIDs ?? preferredSessionIDs`: Studio defaults to none, a conversation to itself, and a split to both sides. `connect({sessionIDs})` creates/updates the explicit run, with up to 15 conversations and one human. Connecting does not assign seats or wake a model.
+Visible split conversations can share the current page. Use interaction when the widget needs an explicit set of participants and action requests, such as a match or collaborative task.
 
-`interaction.notify(notification)` accepts:
+`interaction.candidates()` returns `{sessions, preferredSessionIDs, connectedSessionIDs, maxSessions}`. Each session contains `{id, name, participantID?, model:{id,name,icon}}`.
+
+Initialize a selector once with `connectedSessionIDs ?? preferredSessionIDs`: Studio defaults to none, a conversation to itself, and a split to both sides. Preserve an existing empty selection. Do not reapply defaults on focus changes.
+
+`interaction.connect({sessionIDs})` creates or updates a run with up to 15 conversations and one human participant. The host assigns participantIDs; the widget assigns business roles such as stone colors and readiness. Connecting alone does not invoke a model.
+
+`interaction.read()` returns `WidgetRun | null`; `interaction.subscribe(listener)` returns an unsubscribe function; `useWidgetInteraction()` provides the React hook. WidgetRun includes run status, participants and notification receipts.
+
+### Send notifications
 
 ```ts
 {
@@ -121,25 +174,46 @@ Interface names start with a letter and contain up to 64 letters/digits/undersco
 }
 ```
 
-`inform` records context without calling a model; `request-action` requests work from the selected participants. These are conversation notifications, separate from system notifications. The host adds target, identity and current state version. Commit business state first, use stable notification IDs, and keep the same ID/content immutable. Include only appropriate public data, never unrevealed choices or credentials.
+Pass that object to `interaction.notify(notification)`. delivery determines its purpose:
 
-`setRequests([{notificationID,participantID}, ...])` keeps exactly the request keys still valid. Clearing one cancels pending work; resending an old notification does not recreate a cleared request. `pause()` and `resume()` control automatic model execution; `disconnect()` removes connections without deleting business data. `onResume(handler)` returns an unregister function; use it to regenerate currently valid requests after a restored paused run. Old target/run IDs and receipts are not durable business identities.
+- `inform` adds context to conversations without starting a model.
+- `request-action` requests model work. A busy conversation waits rather than being interrupted.
+
+audience all includes the sender; selected addresses the given participantIDs. Use summary for a short display message, message for the task and data for necessary public context. The host adds targetID, participant identity and the current stateVersion.
+
+Commit business state before notifying. Use a stable ID and identical content when retrying the same event; use a new ID for a new event. Avoid repeating full history or requiring observe before every action. Directed delivery does not make data on a shared page private.
+
+### Complete, pause and resume
+
+`interaction.setRequests([{notificationID, participantID}, ...])` states which existing action requests remain valid. Remove the completed request while preserving other pending ones; [] clears them all. Resending an old notification cannot restore a cleared request.
+
+`pause()` suspends automatic model execution, `resume()` continues it, and `disconnect()` removes participants and cancels pending work while keeping business data. The widget decides whether human edits are allowed during a pause.
+
+After a page refresh or app restart, a run is restored paused. Register `onResume(handler)` to derive fresh outstanding requests from current business state; it returns an unregister function. Do not replay completed results or use a runID as a permanent business identity.
 
 ## Language
 
-`locale.read()` returns `zh-CN`, `zh-TW` or `en`; `locale.subscribe(listener)` returns an unsubscribe function. `useWidgetLocale()` follows changes without reloading the widget. Translate UI text, errors, model-visible descriptions and notification summaries. An installed widget's host-managed title/icon is separate from its inner UI.
+`locale.read()` returns zh-CN, zh-TW or en; `locale.subscribe(listener)` returns an unsubscribe function. In React, use `useWidgetLocale()` to respond to language changes without reloading.
+
+Translate UI text, errors, interface descriptions and notification summaries. The host manages the installed item's Studio title; authors translate the widget's own content.
 
 ## Runtime authorization and clipboard
 
-Authorization is per installed item and capability, separate from accounts and business data. The host shows an in-app dialog with Deny/Allow at first use; both decisions persist. Manage them through the widget's **⋯ → Permissions** menu. Existing widgets begin unasked for a newly introduced permission.
+Permissions are stored per widget item and capability, independently of account connections. Pudding asks Deny/Allow at first use, with no one-time option. Decisions persist and can be changed in **⋯ → Permissions**. Existing widgets also need authorization when first using a new permission.
 
-`await clipboard.writeText(text)` copies text, up to 256 KiB. Clipboard reading is prohibited; user-initiated paste remains normal input. Denial rejects with `permission_denied: clipboard.write` and is not a fatal runtime error. Only report successful copying after the Promise resolves. The host also gates browser async and legacy copying; new widgets should use the SDK Promise.
+`clipboard.writeText(text)` returns a Promise and accepts up to 256 KiB. Report successful copying only after it resolves. Programmatic clipboard reading remains prohibited; user-initiated paste is normal input.
 
-Initial denial closes quietly. A later user action blocked by a saved denial gets a compact neutral permission bar with Manage permissions and Close. Background retries stay quiet. The switch conveys the decision without duplicate Allowed/Denied labels.
+Refusal rejects with `permission_denied: clipboard.write`. Treat it as a permission outcome without adding a red runtime error. The initial denial closes the dialog. A later blocked user action shows a neutral bar with Manage permissions and Close; background retries stay quiet.
+
+Use the SDK for new widgets. The host also controls browser copying, but a legacy synchronous copy API cannot accurately report the result of asynchronous authorization.
 
 ## System notifications
 
-`capabilities.systemNotifications` detects the host API. Use `notifications.getPermission()` or `requestPermission()` to read/request `prompt | granted | denied`; the permission is independent of clipboard writing. Request it when the user enables reminders while the widget is visible.
+System notifications appear in the operating system's notification UI. They are separate from conversation notifications, require their own permission and never start a model.
+
+1. Check `capabilities.systemNotifications`.
+2. When the user enables reminders, call `notifications.requestPermission()` from the visible page.
+3. After granted, send with `notifications.show()`.
 
 ```ts
 if (pudding.capabilities.systemNotifications) {
@@ -152,26 +226,55 @@ if (pudding.capabilities.systemNotifications) {
 }
 ```
 
-`show({title, body?, tag?})` accepts 1–120 characters in title, up to 1000 in body and a nonempty tag up to 80 characters. A tag replaces an earlier notification from the same item. The host prefixes the widget name and limits delivery to one notification per item every three seconds. Clicking returns to the original widget/conversation mount without starting a model.
+`notifications.getPermission()` reads the decision; requestPermission requests it. Both return prompt, granted or denied.
 
-The result is `{shown:true}` after a native delivery acknowledgement, or `{shown:false,reason}` with `permission_denied`, `permission_required`, `rate_limited`, `unavailable`, `closed` or `delivery_failed`. Denial is a normal result, not an exception. Invalid input throws a short validation error before permission is requested.
+| show argument | Requirement |
+| --- | --- |
+| title | Required; 1–120 characters |
+| body | Optional; up to 1000 characters |
+| tag | Optional; nonempty and up to 80 characters. Replaces an existing notification with the same tag for this item |
 
-An authorized running widget can notify while hidden. A new hidden widget cannot open a permission prompt; `show` returns `permission_required`. Closing/reloading the instance or revoking permission closes its outstanding notifications. There is no service that continues a widget's timers after closing. OS notification settings and Focus/Do Not Disturb still apply; `shown` does not prove the user read a notification. Use this SDK instead of browser `new Notification`. Older hosts report the capability as false and return `unavailable` from `show`.
+The host identifies the widget and limits delivery to one notification per item every three seconds. Clicking returns to where the widget was opened without starting a model.
+
+show returns `{shown:true}` after native delivery acknowledgement. Otherwise it returns `{shown:false, reason}`, where reason is permission_denied, permission_required, rate_limited, unavailable, closed or delivery_failed. Refusal is not an exception; invalid input throws a validation error.
+
+An authorized page may notify while running in the background. A hidden page with no permission decision cannot prompt; show returns permission_required. Closing or reloading the page, or revoking permission, closes its outstanding notifications. No background service continues a closed widget's timers.
+
+OS notification settings and Do Not Disturb still apply. shown does not prove the user saw or read the notification. Use the SDK instead of `new Notification`. Older SDKs may lack these methods; hosts providing the API express unavailability through the capability flag and unavailable result. Always detect the capability first.
 
 ## File export
 
-`capabilities.binaryFileExport` detects native file export support. `exportFile({filename,content,encoding?})` opens the system save dialog and returns `{saved:boolean}`. Default encoding is `utf8`; `base64` supports binary content up to 8 MiB decoded. The filename is a suggestion, not permission to write arbitrary paths. Cancellation is normal. Project JSON and WAV exports use this same generic API; there is no widget-specific filesystem access.
+`exportFile({filename, content, encoding?})` opens the system save dialog and returns `{saved:boolean}`. Cancellation returns saved: false. filename suggests a name; the user chooses the destination.
 
-Use a file input/FileReader for a user-selected import, validate the complete project before replacing state, and do not let import/export progress change the editor's structure. Download navigation cannot substitute for the native export capability.
+- Text: omit encoding or use utf8. content is a string, such as JSON, CSV or Markdown.
+- Binary: check `capabilities.binaryFileExport`, use encoding: base64 and pass a base64 string. Decoded content is limited to 8 MiB.
+
+WAV export uses this same API. Widgets cannot write arbitrary filesystem paths or use download links to replace the native export flow.
+
+For import, use a file input and FileReader to read the user's chosen file. Validate it completely before replacing data. Keep progress within existing controls so a new status row does not shift the editor.
 
 ## Entity links and conversation handoff
 
-`links.list()` returns `{links}`. `links.create({left,right})` accepts each side as `{source,entityType,entityID}` using declared source slots; the host resolves plugin and account identities. Stored links include `id,itemID,left,right,createdAt`. `links.remove(linkID)` removes a link. Creation/removal use host confirmation; do not silently change associations when a source account changes.
+### Link records
 
-`requestAgent({prompt,context?})` opens a user-confirmed handoff to a chosen conversation and returns its host result as unknown. Keep context JSON-compatible and small. It is distinct from an explicitly connected run's `request-action` notifications, and system notifications never imply permission to invoke a model.
+links stores relationships between records from different sources, such as a GitHub issue and a task in another service.
+
+- `links.list()` returns `{links}`.
+- `links.create({left,right})` creates a link; each side is `{source,entityType,entityID}`.
+- `links.remove(linkID)` removes it.
+
+source names a declared source; the host adds plugin and account identities. Stored links contain id, itemID, left, right and createdAt. Creation and removal require host confirmation. An account change does not reinterpret existing links as records belonging to the new account.
+
+### Hand off a task
+
+`requestAgent({prompt,context?})` asks the user to select a conversation and confirm the task. Its result is host-defined and typed as unknown. Keep context to the JSON data needed for that task.
+
+Use interaction request-action notifications for participants in an established run. Use requestAgent when the user should choose a conversation for a handoff. System notifications do neither.
 
 ## Sandbox and errors
 
-The widget has no daemon token, Node/Electron API, arbitrary network fetch, clipboard read or filesystem path access. Use declared plugin operations and host capabilities. HTTPS images follow host loading policy; that is not general network permission. Forms cannot perform native submits. Do not replace the host-owned document with `document.open/write/writeln`; update the React/DOM subtree instead.
+Use declared plugin operations for services and SDK methods for file saving, copying and notifications. Widgets have no daemon token, Node/Electron API, arbitrary fetch or clipboard read access. HTTPS images may load under host policy, but cannot attach connection credentials and do not imply general network access.
 
-Source/build/runtime failures use the host's short, expandable, scrollable, copyable and dismissible error bar. Closing a message does not reload the widget; a different new failure may reappear. Validation, authorization denial and business outcomes should have concise, actionable results rather than repeated full JSON or full datasets.
+The host owns the page document. Update React content rather than replacing the page with `document.open/write/writeln`. Native form submission is blocked; prevent the default submission and call your handler.
+
+Source, build and runtime failures appear in the top error bar, with expandable, scrollable, copyable and dismissible details. For business validation, return the field and allowed range rather than a large JSON dump. Closing the bar does not reload the page; a different new error may appear again.

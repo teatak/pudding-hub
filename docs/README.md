@@ -2,20 +2,43 @@
 
 [中文](README.zh-CN.md) · [Hub home](../README.md)
 
-Use a **plugin** to expose an external REST, GraphQL or MCP service with connections and task instructions. Use a **widget** to build an interactive React interface that can use installed plugin endpoints. App packages were replaced by plugins; new integrations use `plugin.yaml`.
+Pudding has two extension types. **Plugins** connect external services. **Widgets** display content and provide interactive interfaces. They can work together or independently: the Gmail plugin provides mail APIs for the Gmail Board widget, while a Gomoku widget needs no external service.
 
-| Guide | Contents |
+App was the old name for a plugin and is no longer a separate extension type. New plugins use `plugin.yaml`.
+
+## Where to start
+
+| What you want to build | Guide |
 | --- | --- |
-| [Plugin development](plugin-development.md) | Package layout, endpoints, authentication, connections, Skills, local authoring and distribution |
-| [Widget development](widget-development.md) | First widget, source manifest, account binding, model interaction, packaging and validation |
-| [Widget SDK reference](widget-sdk.md) | Every public SDK method, state and storage, queries and actions, permissions, system notifications and exports |
+| Let a model use an API or MCP service | [Plugin development](plugin-development.md) |
+| Create an interface people can click and edit | [Widget development](widget-development.md) |
+| Find APIs for storage, model interaction, copying or system notifications | [Widget SDK reference](widget-sdk.md) |
 
-Start with [Shared Todo](../widgets/shared-todo/source/src/App.tsx) for state and model interfaces, [Gmail Board](../widgets/gmail-board/source/widget.json) for a plugin-backed widget, and [GitHub](../plugins/github/plugin.yaml), [Synology](../plugins/synology/plugin.yaml) or [Sequential Thinking](../plugins/sequential-thinking/plugin.yaml) for plugin endpoint and authentication examples.
+The development guides provide steps and examples. The SDK reference explains methods, arguments and results by feature. Both are available in full in English and Chinese.
 
-## Sources and maintenance
+## Terms used in these guides
 
-Hub is the shared author-facing reference. English and Chinese guides cover the same features. Keep them together when changing a public capability. Widget SDK 1 is a family of host-provided capabilities; check `pudding.capabilities` for newer native features instead of inferring support from SDK 1 alone.
+- **Host**: Pudding, which runs plugins and widgets. It handles compilation, persistence, service requests and permission prompts.
+- **Endpoint**: A service entry declared by a plugin, such as the GitHub REST API. Tools use its name to select the service.
+- **Connection**: An account, credentials and service address configured by the user. A plugin can have several connections.
+- **Widget item**: A widget saved in Studio, with its own source and durable data.
+- **Running page (instance)**: An open, executing widget page. Several conversations can access the same page; one item can also have several independently opened pages.
+- **Skill**: Instructions supplied to a model. A plugin Skill explains how to use a service. An authoring Skill explains how to create or edit plugins or widgets.
 
-Implementation details remain with [Core contracts](https://github.com/teatak/pudding-core/blob/main/contracts/README.md), [plugin definitions](https://github.com/teatak/pudding-core/blob/main/internal/plugin/types.go), [Desktop SDK types](https://github.com/teatak/pudding-desktop/blob/main/electron/widget-sdk.cjs) and [Desktop runtime authorization](https://github.com/teatak/pudding-desktop/blob/main/docs/widget-permissions-design.md). A feature documented from current source may require a newer Desktop build than the installed release.
+Selecting an account chooses the data source. Granting clipboard or system notification permission decides which host capabilities a widget may use. These are separate settings.
 
-Developer documentation does not change registry packages or publish releases. Follow each guide's packaging steps when distributing a new version.
+## Examples
+
+| Example | What it demonstrates |
+| --- | --- |
+| [Shared Todo](../widgets/shared-todo/source/src/App.tsx) | Persistence and model-callable operations |
+| [Gmail Board](../widgets/gmail-board/source/widget.json) | Plugin sources and queries |
+| [GitHub plugin](../plugins/github/plugin.yaml) | REST endpoints and authentication |
+| [Synology plugin](../plugins/synology/plugin.yaml) | Custom service addresses and account login |
+| [Sequential Thinking](../plugins/sequential-thinking/plugin.yaml) | MCP endpoints and platform-specific commands |
+
+## Versions and maintenance
+
+These guides describe current source. A newer capability may not yet be available in an installed release. SDK version 1 alone does not guarantee every native feature; check the relevant `pudding.capabilities` flag before use.
+
+Hub maintains the developer guides in both languages. Bundled authoring Skills retain the instructions needed to complete a task and link here for details. Implementation references are the [Core contracts](https://github.com/teatak/pudding-core/blob/main/contracts/README.md), [plugin types](https://github.com/teatak/pudding-core/blob/main/internal/plugin/types.go), [Widget SDK types](https://github.com/teatak/pudding-desktop/blob/main/electron/widget-sdk.cjs) and [authorization design](https://github.com/teatak/pudding-desktop/blob/main/docs/widget-permissions-design.md).

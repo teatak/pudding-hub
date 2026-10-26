@@ -2,7 +2,15 @@
 
 [中文](widget-development.zh-CN.md) · [Developer documentation](README.md) · [SDK reference](widget-sdk.md)
 
-Widgets are editable React/TypeScript source packages. The host provides compilation, data access and model interaction; authors own the interface and business rules. A widget does not need a plugin unless it accesses an external service.
+A widget is a React/TypeScript interface running in Pudding. It can display data, provide controls and expose business operations to models. Pudding handles compilation, persistence and host permissions; authors build the interface and business rules.
+
+A widget that displays supplied data or runs a local game needs no plugin. To access Gmail, GitHub or another service, install its plugin and use the declared endpoint.
+
+## Choose an authoring workflow
+
+**Create with a model in Pudding** to make or edit your own widget. Enter Code mode, load widget-authoring and follow “open draft → edit → commit → inspect → activate.” See the [model authoring workflow](#model-authoring-workflow).
+
+**Develop and distribute through Hub** to maintain source, tests and installable packages. The counter below demonstrates this workflow. Hub's manifest.json describes distribution; widget.json and the React files are the runtime source.
 
 ## First widget
 
@@ -15,7 +23,9 @@ widgets/counter/
   source/src/App.tsx
 ```
 
-`manifest.json` is catalog metadata:
+### 1. Add package metadata
+
+manifest.json declares the ID, version, display name and minimum host requirements:
 
 ```json
 {
@@ -27,7 +37,9 @@ widgets/counter/
 }
 ```
 
-`source/widget.json` is the runtime contract:
+### 2. Declare the entry point
+
+source/widget.json tells Pudding which file to run. The counter has no external service, so sources and operations are empty:
 
 ```json
 {
@@ -36,7 +48,9 @@ widgets/counter/
 }
 ```
 
-`source/src/App.tsx` exports a React component:
+### 3. Build the interface
+
+source/src/App.tsx must default-export a React component:
 
 ```tsx
 import { useState } from 'react';
@@ -73,37 +87,11 @@ export default function App() {
 }
 ```
 
-This example uses restored page state and follows all three Pudding locales. It does not store business data in localStorage or use a second state copy. Choose durable item storage when the counter must survive explicitly closing its page; see [state and storage](widget-sdk.md#state-and-storage).
+Clicking the button saves the count in page state. Refresh restores it; explicitly closing the page clears it. Use storage if the count must survive closing. See [state and storage](widget-sdk.md#state-and-storage). useWidgetLocale keeps the title and button in Pudding's selected language.
 
-## Source and build contract
+### 4. Compile a development package
 
-Use schema 1, SDK `"1"` and a TSX entry under `src/`. Source files may be TS/TSX, CSS, JSON or SVG under allowed `src/`, `assets/` and `fixtures/` paths. There is no widget package manager, custom build script, precompiled HTML, Node/Electron API or arbitrary import. The host provides React, React DOM, TanStack Query, react-hook-form, Zod, Recharts, lucide-react, the fixed `@pudding/widget` SDK and supported `@pudding/ui` components. Do not assume another npm dependency is available.
-
-Current Core source limits are 32 files, 512 KiB per file and 2 MiB total; the distribution envelope is bounded separately. [Core policy](https://github.com/teatak/pudding-core/blob/main/contracts/widget.json) owns limits and host validation. Outer manifest requirements must match the features used; newer native features also require [capability checks](widget-sdk.md#system-notifications).
-
-The host owns the document, sandbox and message bridge. Render/update a subtree instead of `document.open/write/writeln`. Native form submission is blocked: use explicit buttons and prevent Enter's default submit before invoking the same handler. Use readable labels, keyboard-accessible controls, responsive layouts and both color themes.
-
-## Connect plugin data
-
-Declare `sources` as installed plugin IDs and endpoint names, then declare bounded read/write `operations`. See the [SDK query example](widget-sdk.md#plugin-data-and-actions) and [Gmail Board source](../widgets/gmail-board/source/widget.json). Never invent endpoints or embed credentials. The host's source selector owns account binding; widget binding is independent of a conversation's plugin account.
-
-Keep each account's durable data and drafts separate, clear transient selection on account changes and ignore old requests. A source change may rebuild the page binding; it must not apply one account's response to another. Plugin endpoint writes require `widget_writes: true` and user confirmation, not just an author-supplied effect hint.
-
-## Expose useful model operations
-
-Accessible controls work with `widget_observe/click/type/scroll`. For exact or bulk operations register `pudding.defineInterface` with a Zod object schema and a concise description. Models use `widget_invoke` with the current target and state version. Both approaches can coexist.
-
-UI handlers and interfaces should call the same business function. Check trusted `context.actor`, cancellation, versions and business rules; do not accept input fields as proof of identity. Validate a batch before one atomic write. Return a compact receipt and expose long history through a separate optional read interface. See [model interfaces](widget-sdk.md#model-interfaces-and-page-input).
-
-## Participants and the two notification channels
-
-For multiplayer or collaborative workflows, use `interaction.candidates/connect/notify/setRequests` and run controls. The host binds identities and dispatches work; the widget owns seats, readiness and phases. Commit state before sending a model request. The [SDK](widget-sdk.md#participants-and-model-notifications) covers exact arguments, caller scope, notification deduplication and recovery through `onResume`.
-
-`interaction.notify` addresses connected conversations and may request model work. `notifications.show` instead creates an OS notification after an independent runtime permission; it never invokes a model. Ask for that permission while the user enables reminders. Clipboard write permission is separate again. File export uses a system save dialog. See [runtime authorization](widget-sdk.md#runtime-authorization-and-clipboard), [system notifications](widget-sdk.md#system-notifications) and [file export](widget-sdk.md#file-export).
-
-## Validate and package
-
-Use compatible sibling Core and Desktop checkouts and the Node version required by Desktop. Prepare dependencies and create a development package:
+Prepare compatible sibling Core and Desktop checkouts and the Node version required by Desktop. Run in Hub:
 
 ```bash
 pnpm install
@@ -112,16 +100,82 @@ PUDDING_CORE_DIR=../pudding-core npm --prefix ../pudding-desktop run core:prepar
 PUDDING_CORE_DIR=../pudding-core PUDDING_DESKTOP_DIR=../pudding-desktop pnpm package-widget counter --dev
 ```
 
-`--dev` writes ignored local output, not a registry release. The packager invokes Core's source-package validator and Desktop's real TypeScript/JS/CSS compiler before writing output; it does not execute widget code. Missing compiler dependencies fail packaging. Use the same Core contracts as the Desktop being tested.
+`--dev` writes to the ignored dev directory without creating a formal release. Packaging runs Core source validation and Desktop's TypeScript/JS/CSS compiler; compilation failure prevents output. This checks whether source builds. Verify actual interaction in Pudding separately.
 
-In Pudding, LLM authoring loads `widget-authoring` in Code mode, opens a persistent draft, edits through the built-in `scope:"widget"` file tools, then commits, previews/inspects and activates. Keep the returned widget ID, which may be an editing copy. Reuse the same `clientRequestID` and original arguments after uncertain creation; do not create another item as an error-recovery shortcut. The [Desktop authoring tool](https://github.com/teatak/pudding-desktop/blob/main/web/src/mcp/widgetSourceTools.ts) defines the current tool schema.
+## Model authoring workflow
 
-Test real host interaction in a temporary profile: UI/model operations, conflicts, reload/storage recovery, account switching, three locales, light/dark themes, cancellation and permission denial. Desktop's `widget-hub` smoke uses `PUDDING_HUB_DIR` for local source fixtures. Run Hub tests with a compatible `PUDDING_CORE_DIR`; individual model/Windows verification is separate. Documentation checks do not need to send mail or alter live accounts.
+Models edit drafts through Pudding tools rather than writing into installation directories:
+
+1. Find existing widgets with widget_list, then create or open a draft with widget_draft_open.
+2. Keep the returned widget.id. The first edit of a downloaded widget creates an independent copy; use that copy's ID afterward.
+3. Use built-in file tools with `scope:"widget"`, widget_id and relative paths. Edit with builtin_file_patch and the latest expectedDraftHash.
+4. Commit with widget_commit, then use widget_inspect to examine compilation, queries, errors and the rendered page. widget_preview can show a candidate first.
+5. Fix issues, commit and inspect again. Call widget_activate and confirm activeRevision matches the inspected version before reporting it active.
+
+Creating an item or its first editing copy requires clientRequestID. It identifies one creation intent: after response loss or an uncertain result, reuse the same ID and arguments to avoid duplicates. Continuing an owned item or existing copy does not require another creation.
+
+A draft may be incomplete while editing. File changes do not alter the running page; commit creates a source revision and activation changes the default version. A draft-only request does not require activation. Exact arguments are defined by the [Desktop authoring tools](https://github.com/teatak/pudding-desktop/blob/main/web/src/mcp/widgetSourceTools.ts).
+
+## Source requirements
+
+- widget.json uses schemaVersion: 1, sdkVersion: "1" and a TSX entry under src.
+- Source validation accepts TS, TSX, CSS, JSON and SVG in permitted paths, including src, assets and fixtures. Distribute files needed at runtime, without invented business data used for testing.
+- Limits are 32 source files, 512 KiB per file and 2 MiB total. See [Core source policy](https://github.com/teatak/pudding-core/blob/main/contracts/widget.json).
+- The host provides React, React DOM, TanStack Query, react-hook-form, Zod, Recharts, lucide-react, `@pudding/widget` and `@pudding/ui`. Widgets cannot install npm packages or run their own build scripts.
+
+Import local CSS from the entry. Support narrow panels, both themes and keyboard input. Handle forms through business functions and prevent native submission. Update React content instead of replacing the host document with document.write or similar methods.
+
+## Connect plugin data
+
+Read the installed plugin's real endpoints and Skill before declaring sources and operations in widget.json. Sources identify plugins and endpoints; operations describe queries or writes. See the [SDK data example](widget-sdk.md#plugin-data-and-actions) and [Gmail Board](../widgets/gmail-board/source/widget.json).
+
+Pudding's source selector manages accounts and credentials, so the widget does not handle tokens. Its account is independent of the chat's plugin account. Keep drafts and workflow state separate per account. Clear selections on changes and ignore unfinished requests from the previous account.
+
+Use action for external writes. The endpoint must declare widget_writes: true, and the host asks for confirmation. On query failure, show the error and a retry control rather than substituting sample data.
+
+## Expose useful model operations
+
+Register operations such as “add a task,” “edit a bar” or “place at H8” with `pudding.defineInterface`. Define clear input and a handler. Models call it through widget_invoke or operate the page with observe, click and related tools.
+
+Use the same business function for buttons and interfaces. For multiplayer work, identify callers through host-supplied context.actor. Validate business rules before mutation and check cancellation after asynchronous work. Validate an entire batch before committing one write.
+
+Return a short receipt describing changes and versions. Expose full histories, scores or large lists through separate read operations. See [SDK model interfaces](widget-sdk.md#model-interfaces-and-page-input).
+
+## Participants and the two notification channels
+
+Use interaction when several conversations participate in a match or task. Pudding handles identities and scheduling; the widget owns roles, readiness and turns. Save business state before notifying.
+
+| Need | API |
+| --- | --- |
+| Add information to participants' context | interaction.notify with delivery: inform |
+| Ask participant models to act | interaction.notify with delivery: request-action |
+| Remind the user through the operating system | notifications.show, with separate permission |
+
+Conversation and system notifications have different recipients. System notifications never start a model. Clipboard writing has its own permission, and export uses the system save dialog. See [model collaboration](widget-sdk.md#participants-and-model-notifications), [clipboard](widget-sdk.md#runtime-authorization-and-clipboard), [system notifications](widget-sdk.md#system-notifications) and [file export](widget-sdk.md#file-export).
+
+## Validate and package
+
+Validate a development package in a temporary Pudding data directory before creating a formal release. Check the features the widget actually uses:
+
+- UI and model operations modify the same data and handle conflicts, cancellation and errors.
+- Refresh, closing/reopening and upgrades follow the state/storage behavior.
+- Account switching, all three languages, narrow panels and both themes work.
+- Copy, notification and export flows handle permission refusal and cancellation correctly.
+
+Desktop's widget-hub smoke can read local source through PUDDING_HUB_DIR. Hub tests require a compatible PUDDING_CORE_DIR; compilation also requires a matching Desktop. Record the models and platforms actually tested rather than inferring broader coverage.
 
 ## Publish and upgrade
 
-A widget release is `pudding.widget.source-package` schema 2 with all source files and their SHA-256 inventory. The registry pins complete package bytes. `manifest.json` carries identity, localized title/description, host requirements and optional self-contained icon; `source/widget.json` carries runtime behavior. The registry determines the current catalog, not a hard-coded first-launch list.
+### Stable and preview releases
 
-Bump the version before publishing changed bytes. `pnpm package-widget counter` writes the formal package and registry; `pnpm package-widgets` packages all widget directories. Published widget release bytes are immutable. For a preview use a distinct version such as `1.1.0-preview.1` and `"preview": true`; optional `"channel":"preview"` is descriptive. A suffix/channel alone is not the widget preview flag. Settings → Advanced has separate preview switches for widgets and plugins. Disabling previews neither downgrades nor removes an installed preview.
+Packages use pudding.widget.source-package with schemaVersion 2 and contain source, per-file hashes and package metadata. registry.json is the install catalog read by Pudding and records complete package hashes.
 
-Repeated installation opens the original item. The first LLM edit of a downloaded original creates an independent copy of its source and durable data. Updates require unmodified installed source; local edits are not silently overwritten. A validated update becomes the default source after activation, while already-open pages retain their pinned revision until reloaded. Durable storage survives; page state belongs to its revision. Installed icons belong to the package, and the host manages localized catalog titles.
+Update the version in manifest.json before releasing changed content, then run `pnpm package-widget counter`. Use `pnpm package-widgets` for all widget directories. These commands write releases and registry metadata. Existing published packages cannot be overwritten.
+
+For previews, use a distinct version such as 1.1.0-preview.1 and set `"preview": true` in manifest.json. A version suffix or channel alone does not mark a widget as preview. Users enable widget previews in Settings → Advanced; plugin previews have a separate switch. Turning the switch off does not downgrade or uninstall an existing preview.
+
+### Updating installed widgets
+
+Repeated installation opens the original item. A model's first edit of a downloaded original copies its source and current storage. The original and copy then remain independent.
+
+Updates do not overwrite locally edited source. A validated, activated version becomes the default, while existing pages continue their original revision until reloaded. Storage persists; state is scoped to its page and source revision. The package supplies installed icons, and the host manages localized item names.

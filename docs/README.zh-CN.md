@@ -2,20 +2,43 @@
 
 [English](README.md) · [Hub 首页](../README.zh-CN.md)
 
-需要通过连接访问外部 REST、GraphQL 或 MCP 服务，并提供任务指引时，开发**插件**；需要可交互的 React 界面、调用已安装插件的接口时，开发**小组件**。App 包已经被插件替代，新集成统一使用 `plugin.yaml`。
+Pudding 支持两种扩展：**插件**负责接入外部服务，**小组件**负责展示内容和提供交互。两者可以配合使用，也可以独立开发。例如，Gmail 插件提供邮件接口，Gmail 看板小组件用这些接口展示邮件；五子棋小组件则不需要外部服务。
 
-| 指南 | 内容 |
+App 是插件的旧名称，已不再作为独立扩展类型。新插件统一使用 `plugin.yaml`。
+
+## 从哪里开始
+
+| 你想做什么 | 阅读文档 |
 | --- | --- |
-| [插件开发](plugin-development.zh-CN.md) | 包结构、端点、认证、连接、Skill、本地创作与分发 |
-| [小组件开发](widget-development.zh-CN.md) | 首个小组件、源码清单、账号绑定、模型交互、打包与验证 |
-| [小组件 SDK 参考](widget-sdk.zh-CN.md) | 全部公开 SDK 方法、state 与 storage、查询与操作、权限、系统通知和文件导出 |
+| 让模型使用某个 API 或 MCP 服务 | [插件开发](plugin-development.zh-CN.md) |
+| 制作一个可点击、可编辑的界面 | [小组件开发](widget-development.zh-CN.md) |
+| 查询小组件如何保存数据、调用模型、复制内容或发送系统通知 | [小组件 SDK 参考](widget-sdk.zh-CN.md) |
 
-从[共享待办](../widgets/shared-todo/source/src/App.tsx)了解状态和模型接口，从 [Gmail 看板](../widgets/gmail-board/source/widget.json)了解插件数据接入；插件端点与认证可参考 [GitHub](../plugins/github/plugin.yaml)、[Synology](../plugins/synology/plugin.yaml)和 [Sequential Thinking](../plugins/sequential-thinking/plugin.yaml)。
+开发指南包含步骤和示例。SDK 参考按功能解释方法、参数和返回值。两类文档都提供完整中英文版本。
 
-## 依据与维护
+## 文档中的几个概念
 
-Hub 是面向作者的统一参考入口。中英文指南覆盖相同功能，新增公开能力时一起维护。SDK 1 包含随宿主逐步增加的能力；较新的原生功能应检查 `pudding.capabilities`，不能只凭 SDK 1 推断支持情况。
+- **宿主**：运行小组件和插件的 Pudding。它负责编译、保存数据、调用外部服务和处理授权。
+- **端点**：插件声明的一个服务入口，例如 GitHub REST API。端点名用于告诉工具应调用哪个服务。
+- **连接**：用户为插件配置的账号、凭据和服务地址。同一个插件可以配置多个连接。
+- **小组件条目（item）**：保存在 Studio 中的一份小组件，有自己的源码和长期数据。
+- **运行页面（实例）**：小组件被打开后正在运行的页面。多个会话可以访问同一个页面；同一条目也可能被独立打开为多个页面。
+- **Skill**：交给模型的使用说明。插件 Skill 说明如何使用服务，制作 Skill 说明如何创建或修改插件、小组件。
 
-实现细节仍由 [Core 契约](https://github.com/teatak/pudding-core/blob/main/contracts/README.md)、[插件定义](https://github.com/teatak/pudding-core/blob/main/internal/plugin/types.go)、[Desktop SDK 类型](https://github.com/teatak/pudding-desktop/blob/main/electron/widget-sdk.cjs)和 [Desktop 运行时授权](https://github.com/teatak/pudding-desktop/blob/main/docs/widget-permissions-design.md)说明。按当前源码记录的能力，可能需要比已安装正式版更新的 Desktop。
+“连接某个账号”和“允许复制或发送系统通知”是两件事：前者选择数据来源，后者决定小组件可以使用哪些宿主能力。
 
-整理开发文档不会修改注册表包或发布版本。需要分发新版本时，按各指南的打包步骤操作。
+## 参考示例
+
+| 示例 | 适合参考的内容 |
+| --- | --- |
+| [共享待办](../widgets/shared-todo/source/src/App.tsx) | 保存数据、向模型提供操作接口 |
+| [Gmail 看板](../widgets/gmail-board/source/widget.json) | 声明插件数据来源和查询 |
+| [GitHub 插件](../plugins/github/plugin.yaml) | REST 端点和认证 |
+| [Synology 插件](../plugins/synology/plugin.yaml) | 自定义服务地址和账号登录 |
+| [Sequential Thinking](../plugins/sequential-thinking/plugin.yaml) | MCP 端点和不同系统下的启动方式 |
+
+## 版本与维护
+
+这些文档以当前源码为依据。较新的能力可能尚未包含在用户安装的版本中。SDK 版本同为 1，也不代表所有宿主都支持相同的原生能力；使用前应检查相应的 `pudding.capabilities` 标记。
+
+Hub 维护面向开发者的指南，中英文同步更新。Pudding 内置制作 Skill 保留完成任务所需的操作说明，并链接到这里查询详细用法。实现细节见 [Core 契约](https://github.com/teatak/pudding-core/blob/main/contracts/README.md)、[插件类型](https://github.com/teatak/pudding-core/blob/main/internal/plugin/types.go)、[Widget SDK 类型](https://github.com/teatak/pudding-desktop/blob/main/electron/widget-sdk.cjs)和[授权设计](https://github.com/teatak/pudding-desktop/blob/main/docs/widget-permissions-design.md)。

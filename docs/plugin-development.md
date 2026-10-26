@@ -1,10 +1,14 @@
 # Plugin development
 
-[中文](plugin-development.zh-CN.md) · [Developer documentation](README.md) · [Widget integration](widget-sdk.md)
+[中文](plugin-development.zh-CN.md) · [Developer documentation](README.md) · [Widget SDK](widget-sdk.md)
 
-A Pudding plugin declares external endpoints, authentication, connection configuration and Skills. The host resolves credentials and exposes generic REST/GraphQL or discovered MCP tools after loading. App packages were replaced by plugins; use `plugins/<name>/plugin.yaml` for new integrations.
+Plugins let Pudding call external services. Authors declare service addresses, authentication and usage instructions. Pudding reads the user's connection settings and executes requests. A plugin can provide REST, GraphQL or MCP endpoints, and widgets can use it as a data source.
+
+Plugins replaced Apps; new definitions use plugin.yaml. First create the service definition and Skill, configure a connection and verify it in Pudding. Package through Hub when you want to distribute it.
 
 ## First plugin
+
+This example uses a fictional Example Service to illustrate the files. Replace the address, authentication and operations with the real service's documented API.
 
 ```text
 plugins/example-service/
@@ -14,7 +18,9 @@ plugins/example-service/
   skills/records/SKILL.md
 ```
 
-`plugin.yaml` defines runtime behavior:
+### 1. Define the service
+
+Pudding reads plugin.yaml at runtime. This example declares a REST endpoint with Bearer token authentication:
 
 ```yaml
 id: example-service
@@ -38,7 +44,15 @@ skills:
   - skills/records/SKILL.md
 ```
 
-`manifest.json` describes catalog identity and the complete package file list:
+example_rest is the endpoint name used by tools and widgets. Names start with a lowercase letter and then use lowercase letters, digits and underscores.
+
+### 2. Add instructions and an icon
+
+Save the next section's Skill example as skills/records/SKILL.md and create assets/icon.svg. Use a self-contained square SVG. The Skill should describe actual operations, parameters and results rather than only listing product features.
+
+### 3. Add Hub metadata
+
+Source maintained in Hub also needs manifest.json. It lists installed files and the metadata shown in the catalog:
 
 ```json
 {
@@ -52,11 +66,20 @@ skills:
 }
 ```
 
-The runtime ID (`plugin.yaml.id`, `manifest.name`) is `example-service`; the catalog ID is the qualified `manifest.id`. Keep versions consistent. Endpoint names start with a lowercase letter and use lowercase letters, digits and underscores; prefer a scoped name such as `example_rest`.
+The two IDs serve different purposes:
+
+| Field | Example | Purpose |
+| --- | --- | --- |
+| plugin.yaml.id, manifest.name | example-service | Runtime identity used by tools |
+| manifest.id | teatak/pudding-hub/plugins/example-service | Distribution identity, including the source repository |
+
+Keep version equal in both files and include every installed file in manifest.files. When creating a local plugin directly in Pudding, the authoring tool saves runtime files; no handwritten Hub registry is needed.
 
 ## Skills and model tools
 
-A Skill describes real API behavior and the user requests it supports:
+### Write a service Skill
+
+A Skill tells the model when to use the plugin and how to call it correctly:
 
 ```markdown
 ---
@@ -70,43 +93,66 @@ Use endpoint `example_rest`. Read the service API before forming a request.
 Select the account matching the user's intent before reading private records.
 ```
 
-Load with `builtin_plugin_load(plugin_id, connection_id?)`. REST uses `builtin_rest_request`; GraphQL uses `builtin_graphql_request`, `builtin_graphql_introspect` and `builtin_graphql_search`. MCP tools are discovered after their endpoint is resolved. Skills should explain identifiers, pagination, injected fields and meaningful read/write boundaries. They do not grant permission to send mail, delete records or perform other external writes.
+A real Skill should identify the endpoint, record IDs, pagination, success criteria and operations that change external data. Explain automatically injected fields so the model does not supply credentials again.
 
-To create a local installed plugin with an LLM, load `plugin-authoring` in Code mode, then use `builtin_plugin_save` with `operation: create|update`, `plugin_id` and the complete UTF-8 file set. Updates may inspect the read-only plugin file scope first. Save validates a candidate before replacement; it is not a partial patch or a Hub release. Ask/Auto approval modes confirm persistent package writes; Full Access saves directly. It cannot overwrite built-in/runtime plugins. Configure credentials in Connections, never in package files or chat.
+Load with `builtin_plugin_load(plugin_id, connection_id?)`, then use:
+
+| Endpoint | Tools |
+| --- | --- |
+| REST | builtin_rest_request |
+| GraphQL | builtin_graphql_request, builtin_graphql_introspect, builtin_graphql_search |
+| MCP | Tools discovered after loading the endpoint |
+
+A Skill does not replace user authorization. A request to draft mail does not authorize sending it. Follow the user's request and host approval rules for each operation.
+
+### Create a plugin with a model
+
+1. Load plugin-authoring in Code mode to obtain the plugin-creator Skill and builtin_plugin_save.
+2. Prepare complete runtime files. For an update, read the installed package using built-in file tools with `scope:"plugin"`; connection and private configuration files are excluded.
+3. Call builtin_plugin_save with create or update, plugin_id and the complete UTF-8 file set. It validates a temporary package before replacement. Omitted files are not retained automatically.
+4. Configure an account in the plugin's connection settings, then load the plugin and verify a small read request.
+
+Ask/Auto modes confirm changes to installed packages; Full Access saves directly. The tool cannot replace built-in or runtime-provided plugins. Saving a local installation does not publish it to Hub.
 
 ## Endpoint types
 
-| Kind | Configuration | Execution |
+| Type | Configuration | Purpose |
 | --- | --- | --- |
-| REST | `kind: rest`, `url` | Generic HTTP requests |
-| GraphQL | `kind: graphql`, `url` | Query/introspection/search tools |
-| MCP over HTTP | `kind: mcp`, `transport: streamable_http`, `url` | Tools discovered on load |
-| MCP over stdio | `kind: mcp`, `transport: stdio`, `command`, optional `args`/`env` | Process started on demand; requires Code capability |
+| REST | kind: rest, url | HTTP API |
+| GraphQL | kind: graphql, url | GraphQL requests and related tools |
+| HTTP MCP | kind: mcp, transport: streamable_http, url | Remote MCP service |
+| stdio MCP | kind: mcp, transport: stdio, command, optional args/env | Local MCP process started on demand; requires Code capability |
 
-REST/GraphQL addresses are fixed unless `url_config` is declared. `widget_writes: true` explicitly lets widgets prepare writes to an endpoint; host confirmation remains necessary. Widget reads use source slots such as `{pluginID:'example-service',endpoint:'example_rest'}`, not the catalog-qualified ID.
+REST/GraphQL use fixed addresses by default. Add url_config when users must supply their own server; see [connection addresses](#per-connection-addresses-and-tls). Use platforms for MCP commands that differ by operating system, as in [Sequential Thinking](../plugins/sequential-thinking/plugin.yaml).
 
-For platform-specific MCP invocations, use endpoint `platforms` overrides, as in [Sequential Thinking](../plugins/sequential-thinking/plugin.yaml). Keep secrets in connections/private overrides, not `env` literals committed to Hub.
+Widgets identify an endpoint with `{pluginID:'example-service', endpoint:'example_rest'}`. Set widget_writes: true on an endpoint if widgets need to change its data. The host still asks for confirmation before execution.
 
-The **Add MCP Plugin** UI imports standard `mcpServers` JSON as a simplified `kind: mcp` plugin: exactly one MCP endpoint and no plugin connection. Sensitive headers/environment overrides remain in private configuration. It uses the same load mechanism; there is no separate `builtin_mcp_load` tool. Streamable HTTP simplified MCP plugins require Work capability; stdio requires Code.
+### Import an existing MCP server
+
+Add MCP Plugin imports standard mcpServers JSON. It creates a simplified kind: mcp plugin with one endpoint and no separate plugin connection. Sensitive headers and environment variables stay in private configuration. HTTP requires Work capability; stdio requires Code. Loading uses builtin_plugin_load, with no separate builtin_mcp_load tool.
 
 ## Authentication
 
-Declare methods in `auth.methods`; users select/configure one in Connections. `required: false` supports configuration-only connections, including services without authentication.
+auth.methods declares the choices shown in connection settings. Packages contain field definitions, never real tokens or passwords. Use required: false when authentication is optional; configuration-only connections can still hold a server address or other settings.
 
-| Type | Purpose |
+| Type | Use |
 | --- | --- |
-| `none` | No credentials; only when authentication is optional |
-| `bearer` | Bearer token |
-| `token` | Token with an optional configured authorization prefix |
-| `basic` | Username/password HTTP authentication |
-| `header` | Token in a declared `header` |
-| `oauth2` | A host-supported provider named by `provider` |
-| `token_exchange` | Connection fields exchanged for a short-lived token |
-| `session` | Interactive declarative login returning managed credentials |
+| none | No credentials, only when authentication is optional |
+| bearer | Authorization: Bearer token |
+| token | Authorization token with a configurable prefix |
+| basic | HTTP username/password authentication |
+| header | Token in a specified header |
+| oauth2 | An OAuth provider already supported by Pudding |
+| token_exchange | Exchange connection fields for a short-lived token |
+| session | User signs in through settings; store returned session credentials |
 
-An `oauth2` provider name does not add a new OAuth implementation by itself. Use supported providers and configure the host's authorization service. GitHub and Gmail examples live in their [manifests](../plugins/github/plugin.yaml) and [Skills](../plugins/gmail/skills/mailbox/SKILL.md). A plugin update cannot expand scopes of an existing token; reauthorize when the required scopes change. Gmail's current read/send scopes do not imply draft-editing or mailbox-modification permissions.
+An oauth2 provider must be implemented by the host. A new name alone does not add a new OAuth integration. See the [GitHub definition](../plugins/github/plugin.yaml) and [Gmail Skill](../plugins/gmail/skills/mailbox/SKILL.md).
+
+Updating a plugin cannot expand an existing token's scopes. Users must reauthorize when new scopes are needed. For example, current Gmail read/send scopes do not cover editing drafts, archiving or changing labels.
 
 ### Token exchange
+
+Use this for services that exchange an application ID and secret for a short-lived token:
 
 ```yaml
 auth:
@@ -126,9 +172,11 @@ connection:
     - {id: clientSecret, required: true, secret: true}
 ```
 
-`body_fields` maps request keys to connection field IDs; response paths may be dotted. Core exchanges and caches tokens for REST/GraphQL calls until shortly before expiry. Credentials and token responses are not model arguments or output. See [Feishu](../plugins/feishu/plugin.yaml).
+body_fields maps request parameter names on the left to connection.fields IDs on the right. access_token_field and expires_in_field locate values in the response and support dotted paths. Core performs the exchange before REST/GraphQL requests and refreshes its cache near expiry. Models need not read secrets or make token requests themselves. See [Feishu](../plugins/feishu/plugin.yaml).
 
 ### Interactive session login
+
+Use this when a service accepts an account, password or verification code and returns a session token:
 
 ```yaml
 auth:
@@ -164,17 +212,41 @@ endpoints:
     url_config: {label: Server URL, required: true}
 ```
 
-Protocol 52 introduces this flow. `encoding` supports form or JSON. Inputs preserve exact values, including password whitespace; `success_field` must be JSON true. Outputs map JSON paths to declared secret fields, with at least one required credential. `expires_in_field`, if used, is positive seconds up to one year.
+Supported from protocol 52. The main fields are:
 
-Login is a settings operation, not a model tool. A challenge identifies input fields for another explicit form submission, not a retained server-side login. Failure leaves the old connection untouched; concurrent modification fails with a conflict. The host does not retain passwords, automatically sign in again, replay failed business requests, support cookie sessions or run arbitrary login scripts. See [Synology](../plugins/synology/plugin.yaml).
+| Field | Meaning |
+| --- | --- |
+| endpoint, path | Declared endpoint and path receiving the login request |
+| encoding | form or json request encoding |
+| inputs | Fields collected in settings; mark passwords and similar inputs secret |
+| body_fields | Map inputs to login parameters |
+| success_field | Response path whose value must be JSON true |
+| challenges | Additional inputs requested by the service, such as a verification code |
+| outputs | Save response fields into declared secret connection fields |
+
+At least one credential output must be required. Optional expires_in_field gives positive lifetime seconds, up to one year. Inputs preserve their exact characters, including password whitespace.
+
+Login is performed by the user in settings, not exposed as a model tool. A challenge requires another form submission; the host retains neither unfinished login passwords nor challenges. Failure preserves the previous connection, and concurrent edits cause a conflict. Cookie sessions, automatic re-login and arbitrary login scripts are unsupported. See [Synology](../plugins/synology/plugin.yaml) for a complete example.
 
 ## Connections and account selection
 
-`connection.selection` is `user` by default. A chat reuses its saved binding; otherwise the sole usable connection is resolved without saving a binding. Multiple accounts require an explicit choice through `builtin_plugin_load(plugin_id, connection_id)`, including when already loaded. If intent is ambiguous, ask the user. Saving credentials does not select an account, and a REST/GraphQL `connection` argument only checks the resolved account.
+connection.selection controls how multiple connections are selected:
 
-`single_active` allows multiple saved connections but one globally active selection. Configuration uses the plugin's active connection setting; it is shared across tools. `automatic` is reserved and rejected, not a third working mode. Chat bindings persist with the chat but are not inherited by clones/child sessions. A missing, deleted or changed identity requires selection again, without fallback. Widgets keep independent explicit resource bindings.
+| Value | Behavior |
+| --- | --- |
+| user (default) | Each conversation selects its own connection |
+| single_active | All consumers share one globally selected connection |
+| automatic | Reserved and currently rejected |
+
+With user, reuse the conversation's saved binding first. With no binding and one usable connection, use it without saving a binding. With several connections, select explicitly through `builtin_plugin_load(plugin_id, connection_id)`. Calling it again can switch an already loaded plugin. Ask the user only when the intended account is unclear.
+
+Saving credentials, selecting an account and enabling a plugin are separate operations. The REST/GraphQL connection argument only checks the resolved connection; it cannot switch accounts. Conversation bindings survive restart but do not carry over to cloned or child conversations. A deleted connection or changed identity requires a new selection.
+
+Widgets select their own source connections rather than inheriting chat bindings.
 
 ### Connection fields and injection
+
+Services may need per-connection settings such as a tenantId in addition to authentication:
 
 ```yaml
 connection:
@@ -191,9 +263,15 @@ connection:
         - {target: header, name: X-Tenant-ID}
 ```
 
-Fields have stable unique IDs and optional label, description, placeholder, required, secret and inject. Injection targets are `query`, `body`, `header`, or `env` for stdio MCP. Omitted `name` uses the field ID; omitted `methods` applies to all relevant REST methods. Body injection requires an object `body_json` and cannot mix with `body_text`. Explicit tool values are not overwritten; forbidden headers such as Host/Content-Length are rejected. `secret` hides form input, not a promise of encryption at rest. Explain injected fields in the plugin's Skill.
+Fields support label, description, placeholder, required and secret. secret hides input in the form; it does not guarantee encryption at rest.
+
+inject specifies where to use the value: query, body, header, or env for stdio MCP. Omitted name uses the field ID; omitted methods covers relevant REST methods. Injection does not overwrite explicit request values.
+
+Body injection requires an object body_json and cannot be combined with body_text. Forbidden headers such as Host and Content-Length fail validation.
 
 ### Per-connection addresses and TLS
+
+To let users enter their own service address:
 
 ```yaml
 endpoints:
@@ -206,13 +284,17 @@ endpoints:
       required: true
 ```
 
-Only REST/GraphQL endpoints declaring `url_config` can receive connection-specific addresses. Optional empty settings keep the default; required settings must be filled. Accept HTTP/HTTPS without userinfo, query or fragments. Overrides are keyed by endpoint name. MCP address/header configuration uses private MCP overrides.
+Only REST/GraphQL endpoints with url_config accept per-connection addresses. required: true demands a value; otherwise an empty value keeps the default. Addresses must be HTTP/HTTPS without userinfo, query or fragment. MCP addresses and headers use private MCP configuration.
 
-Protocol 53 adds an **Ignore server certificate errors** switch for configurable HTTPS endpoints, off by default. It disables chain and hostname verification for that connection/endpoint only; prefer a valid server certificate. Changing the URL clears the exception; changing a session connection's policy requires signing in again. It applies to login, REST, GraphQL and widget requests, not browsers or OAuth/token-exchange URLs. Managed credentials are redacted from textual results. See [Core implementation notes](https://github.com/teatak/pudding-core/blob/main/docs/plugins.md) for persistence and API details.
+Protocol 53 adds Ignore server certificate errors for configurable HTTPS endpoints, off by default. It disables certificate-chain and hostname validation only for that connection and endpoint. Prefer a valid server certificate.
+
+Changing the URL clears the exception. Session-login connections must sign in again after this setting changes. The exception covers login, REST, GraphQL and widget requests, not browsers or OAuth/token-exchange URLs. See [Core implementation notes](https://github.com/teatak/pudding-core/blob/main/docs/plugins.md) for persistence and APIs.
 
 ## Icons and localized metadata
 
-Use a self-contained square SVG in `assets/icon.svg`, without scripts, remote assets, fonts or secrets. `plugin.yaml.icon` controls the runtime icon and optional `color`/`background` values for light/dark themes. `manifest.title` and `description` support language maps; maintain English, Simplified Chinese and Traditional Chinese for catalog entries. Update source metadata and package together so catalog and installed visuals match. `targets` declares supported host targets; do not copy targets a plugin has not been tested on.
+Use a self-contained assets/icon.svg without scripts, remote resources or credentials. plugin.yaml.icon chooses the runtime icon and can set light/dark color and background values.
+
+Hub manifest.title and description are language maps. Maintain English, Simplified Chinese and Traditional Chinese names and descriptions. Update source and release packages together so installed metadata matches the catalog. List only supported, verified host targets in targets.
 
 ## Packaging and previews
 
@@ -225,14 +307,20 @@ pnpm package-plugin example-service
 pnpm package-plugins
 ```
 
-These commands write release files and registry metadata. There is no plugin `--dev` mode; do not run packaging just to validate documentation. The packager reads the listed UTF-8 files, checks basic YAML/package shape, generates `pudding.plugin.package` schema 1 and SHA-256 metadata. Core performs the runtime manifest/Skill/endpoint validation on installation; a successful Hub package alone is not full runtime validation.
+These commands create releases and update registries. Plugin packaging has no --dev mode and rewrites the selected version's output. Bump the version before changing published content.
 
-Plugin package/registry fields use `schema_version` and `package_sha256`, unlike widget `schemaVersion` and `packageSHA256`. Releases live under `plugins/<name>/releases/<version>/`; bump a published version before changing package bytes. The package command rewrites the selected release output, so inspect the version before running it. Never put credentials, lock files or private MCP overrides in `manifest.files`.
+The packager reads UTF-8 files listed in manifest.files, checks basic YAML/package structure and generates pudding.plugin.package format 1 with SHA-256 metadata. Core performs complete endpoint, authentication and Skill validation on installation. Packaging success therefore still needs installation verification.
 
-For previews, use a distinct version such as `1.1.0-preview.1` and set `preview: true` in the outer manifest; optional `channel: preview` describes the release. A version suffix alone is not the preview flag. Users enable plugin previews in Settings → Advanced; widget previews have a separate switch. Third-party catalogs use `plugins/registry.json`; source identity is preserved, and an installed package cannot silently be adopted by a different source.
+Releases live in `plugins/<name>/releases/<version>/`. Plugin packages use schema_version and package_sha256; widget packages use schemaVersion and packageSHA256. Keep the formats distinct, and exclude credentials, installation locks and private MCP configuration from files.
+
+For previews, use a distinct version such as 1.1.0-preview.1 and set preview: true in manifest.json; channel: preview may also be supplied. A version suffix alone is insufficient. Users enable plugin previews in Settings → Advanced; widget previews have their own switch.
+
+Third-party distribution uses plugins/registry.json. Pudding retains package source information and rejects silent replacement of an installed package by another source.
 
 ## Validation and references
 
-Check manifest/runtime ID and version agreement, declared files, Skill paths, portable MCP commands, connection switching, cancellation and failed-login preservation. Install in an isolated Pudding data directory and use a small read-only API request; test external writes only with explicit user authorization. Verify widgets can read the endpoint and that unapproved/unopted-in writes remain blocked. Do not exercise production mail or destructive endpoints as a packaging test.
+Install and test in a separate Pudding data directory. Check IDs, versions, file lists and Skill paths, then configure a real connection and verify a small read. If accounts or custom servers are supported, test switching, cancellation and preservation of the old connection after a failed login.
 
-Runtime types and validation live in [Core plugin definitions](https://github.com/teatak/pudding-core/blob/main/internal/plugin/types.go) and [loader](https://github.com/teatak/pudding-core/blob/main/internal/plugin/loader.go); public widget integration is documented in the [SDK reference](widget-sdk.md). Built-in/runtime plugins remain implementation-owned and are not Hub-authored replacements.
+Test external writes within the user's authorized task. Sending real mail or deleting production data is not an ordinary installation check. Built-in and runtime-provided plugins are maintained in their implementation repositories rather than replaced by Hub packages.
+
+Exact fields and validation live in the [Core plugin types](https://github.com/teatak/pudding-core/blob/main/internal/plugin/types.go) and [loader](https://github.com/teatak/pudding-core/blob/main/internal/plugin/loader.go). Widget integration is covered by the [SDK reference](widget-sdk.md).
