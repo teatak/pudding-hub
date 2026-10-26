@@ -1,6 +1,6 @@
 ---
 name: notion-data-sources
-description: Use when the user asks to query, summarize, inspect, or report on Notion data sources, databases, views, or structured Notion records through a connected Notion app.
+description: Use when the user asks to query, summarize, inspect, or report on Notion data sources, databases, views, or structured Notion records through a connected Notion plugin.
 ---
 
 # Notion Data Sources

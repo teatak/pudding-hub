@@ -1,6 +1,6 @@
 ---
 name: jira-projects
-description: Use when the user asks to inspect Jira Cloud projects, boards, sprints, versions, components, users, or project metadata through a connected Jira app.
+description: Use when the user asks to inspect Jira Cloud projects, boards, sprints, versions, components, users, or project metadata through a connected Jira plugin.
 ---
 
 # Jira Projects

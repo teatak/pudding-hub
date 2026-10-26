@@ -1,6 +1,6 @@
 ---
 name: linear-issues
-description: Use when the user asks to find, summarize, triage, or inspect Linear issues, comments, assignees, labels, states, priorities, or cycles through a connected Linear app.
+description: Use when the user asks to find, summarize, triage, or inspect Linear issues, comments, assignees, labels, states, priorities, or cycles through a connected Linear plugin.
 ---
 
 # Linear Issues

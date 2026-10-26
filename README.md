@@ -2,98 +2,72 @@
 
 [中文](README.zh-CN.md)
 
-Pudding Hub is the official public resource hub for Pudding. It hosts installable plugins and editable-source widgets with their editable source files.
+Pudding Hub is Pudding's official extension repository. It contains source and installable packages for plugins and widgets.
+
+- **Plugins** connect external services for models and widgets.
+- **Widgets** provide interactive interfaces. They may use plugins or run independently.
 
 ## Developer documentation
 
-Start at the [developer documentation](docs/README.md): [plugins](docs/plugin-development.md), [widgets](docs/widget-development.md) and the [complete Widget SDK](docs/widget-sdk.md). Full [Chinese documentation](docs/README.zh-CN.md) covers the same capabilities, including connections, runtime permissions, system notifications and exports.
+Start at the [developer index](docs/README.md):
 
-## Registry URL
+| Guide | Contents |
+| --- | --- |
+| [Plugin development](docs/plugin-development.md) | Services, authentication, connections, Skills, verification and publishing |
+| [Widget development](docs/widget-development.md) | Complete example, model authoring workflow, data integration, testing and publishing |
+| [Widget SDK](docs/widget-sdk.md) | Persistence, model interfaces, collaboration, clipboard, system notifications and export |
 
-Plugins registry:
+The [Chinese guides](docs/README.zh-CN.md) cover the same content.
+
+## Install in Pudding
+
+Pudding reads registries to discover installable resources and versions. Official addresses:
+
+| Type | Registry |
+| --- | --- |
+| Plugins | https://teatak.github.io/pudding-hub/plugins/registry.json |
+| Widgets | https://teatak.github.io/pudding-hub/widgets/registry.json |
+
+Use these URLs in the corresponding source settings. Install widgets through Studio's widget library. Preview releases require their respective switches in Settings → Advanced.
+
+## Source and release files
 
 ```text
-https://teatak.github.io/pudding-hub/plugins/registry.json
+plugins/<name>/
+  plugin.yaml             # Service, auth, connection and Skill paths
+  manifest.json           # Hub metadata and file inventory
+  skills/                 # Model-facing usage instructions
+  releases/<version>/     # Packaged installation files
+widgets/<name>/
+  manifest.json           # Hub metadata and host requirements
+  source/widget.json      # Entry point and data operations
+  source/src/             # React, TypeScript and styles
+  releases/<version>/     # Packaged source revision
+scripts/                  # Packaging tools
 ```
 
-Plugin sources live in `plugins/<name>/` with `plugin.yaml`; packages use `pudding.plugin.package` and `.pudding-plugin.json`. Rebuild a plugin with `pnpm package-plugin <name>`, or all plugins with `pnpm package-plugins`. The new registry contains the current source release of each plugin, including preview releases.
+Editing source or a Skill does not update installed copies. Follow the relevant guide to package and publish a release. Plugins use pudding.plugin.package; widgets use pudding.widget.source-package. Their fields and packaging workflows differ.
 
-Widgets registry:
+Use `pnpm package-widget <name> --dev` for a development widget package in the ignored dev directory. Formal packaging commands change releases and registries; consult the corresponding guide first. Update versions for new content and do not overwrite published widget packages.
 
-```text
-https://teatak.github.io/pudding-hub/widgets/registry.json
-```
+## Registries and hosting
 
-Use the plugin and widget URLs in Pudding to discover and install official packages.
-
-GitHub Pages should be enabled for this repository with source `main` branch and folder `/ (root)`.
-
-## Registry Metadata
-
-`widgets/registry.json` includes source-level display metadata:
+plugins/registry.json and widgets/registry.json are the install catalogs read by Pudding. A widget registry has this basic structure:
 
 ```json
 {
   "kind": "pudding.widget.registry",
   "schemaVersion": 2,
   "name": "pudding-widgets",
-  "title": {
-    "zh-CN": "Pudding 小组件",
-    "zh-TW": "Pudding 小組件",
-    "en": "Pudding Widgets"
-  },
+  "title": {"zh-CN":"Pudding 小组件","zh-TW":"Pudding 小組件","en":"Pudding Widgets"},
   "items": []
 }
 ```
 
-`name` identifies the registry. `title` provides localized display metadata.
+name is a stable identifier; title maps languages to display names. items records resources, releases and package hashes. The empty array illustrates the structure; packaging maintains the actual catalog.
 
-## Repository Layout
-
-```text
-pudding-hub/
-  scripts/package-widget.mjs
-  widgets/
-    registry.json
-    shared-todo/
-      manifest.json
-      README.md
-      source/
-        widget.json
-        src/App.tsx
-        src/style.css
-      releases/1.0.0/shared-todo.pudding-widget.json
-    gomoku/
-```
-
-Key files:
-
-- `widgets/registry.json`: widget registry consumed by Pudding.
-- `widgets/<name>/manifest.json`: identity, version, localized metadata and host requirements.
-- `widgets/<name>/source/`: editable source files.
-- `widgets/<name>/releases/<version>/`: immutable release snapshot installed by Pudding.
-- `scripts/package-widget.mjs`: local packaging script.
-
-## Widget source packages
-
-Widgets ship as React / TypeScript source packages (format 2), with host requirements declared per manifest. The registry lists the current catalog; newer native features also use SDK capability detection.
-
-```sh
-pnpm install
-export PUDDING_CORE_DIR=/path/to/pudding-core
-pnpm package-widget shared-todo --dev
-pnpm test
-pnpm package-widgets
-```
-
-Use a Core checkout containing `cmd/widget-package`. The packager reads Core policy and invokes the same validator as installation. Publish against a committed Core revision matching the Desktop lock.
-
-`manifest.json` declares identity, version, localized metadata and host requirements. `source/widget.json` and `source/src/` are editable runtime files. Releases include the complete source and per-file SHA-256 inventory; registry format 2 pins the complete package SHA-256. Existing release bytes cannot change. `--dev` writes only the ignored `dev/` directory.
-
-Install from Studio → Start creating → Widget library. Reinstall opens the existing item. Only the LLM editing workflow forks downloaded originals, copying current persistent data into an independent item. Updates stage a source version for preview/activation, preserving the current running rules and all item data. Local source edits are never overwritten.
-
-See [Widget development](docs/widget-development.md).
+GitHub Pages hosts the repository from the root of the main branch. Pudding verifies package SHA-256 hashes, so publishing must update both package files and the registry.
 
 ## Legacy compatibility
 
-App packages were replaced by plugins and are no longer a development model. The `apps/` directory and [historical registry](https://teatak.github.io/pudding-hub/apps/registry.json) remain only for old clients. Use the plugin guide for new integrations.
+Plugins replaced Apps, which are no longer a separate development type. The apps directory and [historical registry](https://teatak.github.io/pudding-hub/apps/registry.json) remain for older clients. New integrations use plugin.yaml.

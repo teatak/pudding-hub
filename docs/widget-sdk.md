@@ -116,7 +116,7 @@ The hook reads when visible and enabled is not false. It does not automatically 
 
 ### Write and switch accounts
 
-`action(operationID, params?)` prepares the operation, asks for user confirmation and returns the execution result. `useAction(operationID)` provides the corresponding mutation. Check its succeeded, failed or unknown state; do not report an unknown outcome as success or retry it blindly.
+`action(operationID, params?)` prepares the operation, asks for user confirmation and returns an action record. `useAction(operationID)` provides the corresponding mutation. Check the record's `state` field for `succeeded`, `failed` or `unknown`; do not report an unknown outcome as success or retry it blindly.
 
 External writes also require `widget_writes: true` on the plugin endpoint. effectHint is part of the operation declaration, not a way around plugin or host restrictions.
 

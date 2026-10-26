@@ -1,6 +1,6 @@
 ---
 name: linear-projects
-description: Use when the user asks to inspect or summarize Linear projects, roadmaps, milestones, teams, cycles, initiatives, or progress through a connected Linear app.
+description: Use when the user asks to inspect or summarize Linear projects, roadmaps, milestones, teams, cycles, initiatives, or progress through a connected Linear plugin.
 ---
 
 # Linear Projects

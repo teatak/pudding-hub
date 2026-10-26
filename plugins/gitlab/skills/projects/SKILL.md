@@ -1,6 +1,6 @@
 ---
 name: gitlab-projects
-description: Use when the user asks to inspect GitLab projects, groups, branches, commits, repository files, releases, or pipelines through a connected GitLab app.
+description: Use when the user asks to inspect GitLab projects, groups, branches, commits, repository files, releases, or pipelines through a connected GitLab plugin.
 ---
 
 # GitLab Projects

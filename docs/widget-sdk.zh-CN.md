@@ -116,7 +116,7 @@ Hook 在页面可见且 enabled 不为 false 时发起读取。它不因聚焦�
 
 ### 写入和切换账号
 
-`action(operationID, params?)` 先由宿主准备操作并请用户确认，再返回执行结果；`useAction(operationID)` 提供对应的 mutation。检查结果中的 succeeded、failed 或 unknown 状态，不能把结果不明当作成功并重试。
+`action(operationID, params?)` 先由宿主准备操作并请用户确认，再返回操作记录；`useAction(operationID)` 提供对应的 mutation。检查返回对象的 `state` 字段：`succeeded` 表示成功，`failed` 表示失败，`unknown` 表示结果尚不确定。结果不确定时，先核对外部数据，再决定是否重试，不能直接报告成功。
 
 小组件写入外部服务还要求插件端点声明 `widget_writes: true`。effectHint 只是操作声明的一部分，不能绕过插件和宿主的限制。
 

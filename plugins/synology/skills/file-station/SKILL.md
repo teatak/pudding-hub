@@ -5,7 +5,9 @@ description: Browse shared folders, list directory contents, search files, inspe
 
 # Synology File Station
 
-Use endpoint `synology_webapi`. Create a connection using Account sign-in in the plugin settings; enter any requested verification code there, never in chat. The active connection automatically injects the Synology DSM session token as `_sid` and, when present, the CSRF token as `SynoToken`. Never ask the user to repeat the session token or include it in chat output.
+Use endpoint `synology_webapi`. Configure the account through Account sign-in in the plugin's connection settings. Enter passwords and verification codes there, not in chat.
+
+Reuse the conversation's selected connection. If several accounts are available and none is selected, choose the intended account with `builtin_plugin_load(plugin_id="synology", connection_id=...)`. Ask the user only when the intended account is unclear. The host injects `_sid` and, when present, `SynoToken`; do not request or repeat these credentials.
 
 Session errors (106, 107, 119) require signing in again in connection settings. Do not retry login with passwords or OTPs in tool calls. This version does not store passwords or automatically re-login.
 
@@ -79,17 +81,16 @@ To retrieve detailed info about a specific file:
   - `path`: Target file path (e.g. `/documents/report.pdf`)
   - `additional`: `real_path,size,owner,time,perm,type`
 
-## 5. Download or Share File
+## 5. Download or Share a File
 
-To generate a download URL or shareable link for a file:
+For a requested download, call the authenticated `synology_webapi` endpoint with `GET /entry.cgi` and query parameters `api=SYNO.FileStation.Download`, `version=2`, `method=download`, `path=<file path>` and `mode=download`. Let the host inject credentials. Never construct or display a download URL containing `_sid` or `SynoToken`.
 
-- Direct download URL pattern:
-  `{synology_webapi_url}/entry.cgi?api=SYNO.FileStation.Download&version=2&method=download&path={encoded_file_path}&mode=download&_sid={sid}`
-- Share link creation via API:
-  - `GET /entry.cgi?api=SYNO.FileStation.Sharing&version=3&method=create&path={encoded_file_path}`
+Check that the returned file is complete before offering it to the user. A truncated response is not a usable download. If the host cannot deliver the complete file, direct the user to download it in File Station.
+
+Creating a share link changes access even though this API uses GET. Only do it when the user asks to share: call `GET /entry.cgi` with `api=SYNO.FileStation.Sharing`, `version=3`, `method=create` and the requested path. Report success only after checking the response, and display only the returned share URL without account credentials.
 
 ## Permissions and Safety
 
 - This skill is designed for read-only navigation and inspection by default.
-- Never call deletion (`SYNO.FileStation.Delete`), file move/overwrite (`SYNO.FileStation.CopyMove`), or permission alteration APIs unless the user has explicitly confirmed the exact target paths in the current turn.
+- Delete, move, overwrite or change permissions only when the user has authorized that operation and the target paths are clear. Ask for missing details rather than repeating an already satisfied confirmation.
 - Format human-readable file sizes (e.g. KB, MB, GB) and readable local timestamps when reporting files to the user.

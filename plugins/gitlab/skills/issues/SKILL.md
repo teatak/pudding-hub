@@ -1,6 +1,6 @@
 ---
 name: gitlab-issues-merge-requests
-description: Use when the user asks to inspect GitLab issues, merge requests, discussions, approvals, or review status through a connected GitLab app.
+description: Use when the user asks to inspect GitLab issues, merge requests, discussions, approvals, or review status through a connected GitLab plugin.
 ---
 
 # GitLab Issues And Merge Requests

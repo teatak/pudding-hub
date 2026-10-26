@@ -1,6 +1,6 @@
 ---
 name: jira-issues
-description: Use when the user asks to search, inspect, summarize, or update Jira Cloud issues through a connected Jira app.
+description: Use when the user asks to search, inspect, summarize, or update Jira Cloud issues through a connected Jira plugin.
 ---
 
 # Jira Issues

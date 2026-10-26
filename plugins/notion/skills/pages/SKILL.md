@@ -1,6 +1,6 @@
 ---
 name: notion-pages
-description: Use when the user asks to search, read, summarize, inspect, or update Notion pages, page properties, block children, comments, or workspace content through a connected Notion app.
+description: Use when the user asks to search, read, summarize, inspect, or update Notion pages, page properties, block children, comments, or workspace content through a connected Notion plugin.
 ---
 
 # Notion Pages
