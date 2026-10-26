@@ -69,7 +69,8 @@ test("synology plugin manifest, yaml, release and registry are valid and verifia
   const registry = await readJSON(path.join(root, "registry.json"));
   const registryItem = registry.items.find((i) => i.name === "synology");
   assert.ok(registryItem, "synology must be listed in registry.json");
-  assert.equal(registryItem.version, "1.0.0");
+  assert.equal(registryItem.version, undefined);
+  assert.equal(registryItem.releases.length, 1);
   const releaseEntry = registryItem.releases.find((r) => r.version === manifest.version);
   assert.ok(releaseEntry, "synology release must be listed in registry.json releases");
   assert.equal(releaseEntry.version, "1.1.0-preview.1");

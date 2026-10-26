@@ -402,51 +402,6 @@
           },
           "channel": "preview",
           "preview": true
-        },
-        {
-          "version": "1.0.4",
-          "package": "./synology-files/releases/1.0.4/synology-files.pudding-widget.json",
-          "packageHash": "a435d6590dc05b213e4a661c4a1097f6af2e1ad0a124ffb27a656b04711e0a2a",
-          "requires": {
-            "protocolVersion": 24,
-            "sdkVersion": "1"
-          }
-        },
-        {
-          "version": "1.0.3",
-          "package": "./synology-files/releases/1.0.3/synology-files.pudding-widget.json",
-          "packageHash": "0062bd598d3b3de12d289d9c1a8b22b59878868c6be9a41d5f3a76c4b780e55c",
-          "requires": {
-            "protocolVersion": 24,
-            "sdkVersion": "1"
-          }
-        },
-        {
-          "version": "1.0.2",
-          "package": "./synology-files/releases/1.0.2/synology-files.pudding-widget.json",
-          "packageHash": "d164c9beac866112d4cd39feca312e6b8ecdcdaa91c653accda47239a10dae1c",
-          "requires": {
-            "protocolVersion": 24,
-            "sdkVersion": "1"
-          }
-        },
-        {
-          "version": "1.0.1",
-          "package": "./synology-files/releases/1.0.1/synology-files.pudding-widget.json",
-          "packageHash": "97680a98c22c1e092b6fb497288f5bda6b1bd167fad11cab6f8d094e657ce5b4",
-          "requires": {
-            "protocolVersion": 24,
-            "sdkVersion": "1"
-          }
-        },
-        {
-          "version": "1.0.0",
-          "package": "./synology-files/releases/1.0.0/synology-files.pudding-widget.json",
-          "packageHash": "97c202edfddd6272580df49fad2efe1826c8a733a7c8790af6d03b1e2c785d93",
-          "requires": {
-            "protocolVersion": 24,
-            "sdkVersion": "1"
-          }
         }
       ]
     },
