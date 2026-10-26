@@ -816,10 +816,10 @@
         "synology",
         "self-hosted"
       ],
-      "version": "1.1.0",
-      "manifest": "./synology/releases/1.1.0/manifest.json",
-      "package": "./synology/releases/1.1.0/synology.pudding-plugin.json",
-      "package_sha256": "2760a5d1ed536b7f307d6dd66972973c101692fb74d65d1ce4019102b25b8a42",
+      "version": "1.0.0",
+      "manifest": "./synology/releases/1.0.0/manifest.json",
+      "package": "./synology/releases/1.0.0/synology.pudding-plugin.json",
+      "package_sha256": "acd679537bdfa26d10063ff9961f6adeb8bcb1a851fd9e48fb927537843e2d2d",
       "requires": {
         "pudding_plugin": "^1.0.0"
       },
@@ -835,16 +835,6 @@
           "released_at": "2026-10-26",
           "channel": "preview",
           "preview": true
-        },
-        {
-          "version": "1.1.0",
-          "manifest": "./synology/releases/1.1.0/manifest.json",
-          "package": "./synology/releases/1.1.0/synology.pudding-plugin.json",
-          "package_sha256": "2760a5d1ed536b7f307d6dd66972973c101692fb74d65d1ce4019102b25b8a42",
-          "requires": {
-            "pudding_plugin": "^1.0.0"
-          },
-          "released_at": "2026-10-25"
         },
         {
           "version": "1.0.0",
