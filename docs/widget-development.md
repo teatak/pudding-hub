@@ -1,44 +1,127 @@
 # Widget development
 
-Widgets use React source packages and the fixed `@pudding/widget` SDK. The platform supplies generic page inspection/input, optional typed interfaces, page state, item storage, participant binding and notifications. It does not define game rules.
+[中文](widget-development.zh-CN.md) · [Developer documentation](README.md) · [SDK reference](widget-sdk.md)
 
-See the [complete Chinese contract and examples](widget-development.zh-CN.md). The runtime sources are [Shared Todo](../widgets/shared-todo/source/src/App.tsx) and [Gomoku](../widgets/gomoku/source/src/App.tsx).
+Widgets are editable React/TypeScript source packages. The host provides compilation, data access and model interaction; authors own the interface and business rules. A widget does not need a plugin unless it accesses an external service.
 
-- `state` is a durable per-page snapshot, hydrated before author module code. Refresh/crash/restart preserve it; explicit tab close clears it. `state.read()` is synchronous, but always await `state.write(...)` before publishing or returning. Source revisions have separate snapshots. `storage` is persistent per-item JSON shared by all openings; copies are independent. Both use version checks. Never silently retry a conflicting write.
-- Native form submission is disabled by the sandbox. Use `type="button"` and an Enter handler that prevents the default and invokes the same save function.
-- The author may define interfaces with Zod input schemas. UI handlers and interfaces call the same business logic. DOM handlers use `interaction.handle` to retain the trusted actor across asynchronous work. Use the trusted `context.actor.participantID` to check roles in your own state; never trust identity in business arguments.
-- `await interaction.candidates()` returns real sessions, `preferredSessionIDs`, `connectedSessionIDs` and `maxSessions`. Your selector initializes once with `connectedSessionIDs ?? preferredSessionIDs`: Studio defaults to none, a conversation to itself, a split to both sides. Call `interaction.connect({sessionIDs})` to create/update connections; one human and up to 15 sessions. Retained members keep their IDs; removal revokes access and pending work. Connection does not assign roles or wake models. Store roles/readiness in page state, assign roles according to the widget rules, and send invitations for models to confirm readiness through interfaces.
-- With protocol 23, each candidate includes `model: {id, name, icon}` (real model ID, display name and a self-contained `data:` brand image), plus `participantID` when connected. Match this ID to public run participants to render player cards. Packages using this metadata must require protocol 23. Candidate reads also work while a widget is hidden/preloading; hidden writes remain restricted.
-- Optional notification `summary` is a short localized user-facing description; `message` contains full instructions shown in collapsed details and retained in model context.
-- The host supplies notification `targetID`, participant identity and `stateVersion`. Put appropriate public context from the same committed state in `data`, without unrevealed/private inputs. Describe the business goal instead of requiring `widget_observe` before every action. Models with known interfaces and sufficient context may act directly; page observation and read interfaces fill missing context. Version conflicts still require a fresh read and a new decision, never a blind write retry.
-- Notifications independently choose all/selected participants and inform/request-action delivery. IDs are immutable and deduplicated. `setRequests` retains only still-valid requests; cleared requests cannot be revived by resending an old notification. Turn completion is not business completion.
-- Store recoverable unrevealed choices in page state, which is not automatically exposed by inspection tools. Keep them out of DOM, logs, notifications and interface results. A widget author/debugger is not an adversarial isolation boundary.
+## First widget
 
-Package identity and requirements belong in `widgets/<name>/manifest.json`; editable files live under `source/`, including `widget.json`. Runtime dependencies are fixed; no package manager, build scripts, external modules or HTML runtime bundle. Format 2 wraps the source plus a SHA-256 inventory. The registry pins complete package bytes.
+Create these files in Hub:
 
-Set `PUDDING_CORE_DIR` to the compatible Core checkout and run `pnpm package-widget <name> --dev`, then `pnpm test`. The packager invokes Core's installation validator. Bump the version before formal packaging; published bytes are immutable. The development output never changes the registry.
+```text
+widgets/counter/
+  manifest.json
+  source/widget.json
+  source/src/App.tsx
+```
 
-Packaging (including `--dev`) also runs the Desktop installation compiler: TypeScript checks and JS/CSS bundling must pass before any package or registry is written. Set `PUDDING_DESKTOP_DIR` to a compatible Desktop checkout (defaults to sibling `pudding-desktop`), install its `web` dependencies and run `npm run core:prepare` with the same `PUDDING_CORE_DIR`. Missing compiler dependencies fail packaging; diagnostics include source files and line numbers. Widget source is compiled, never executed.
+`manifest.json` is catalog metadata:
 
-Installation creates a normal Studio item with source provenance. Reinstall opens it. Only the LLM editing workflow forks downloaded originals, snapshotting current persistent data into an independent item. Upgrades refuse local edits and make the successfully built new source the default. Existing pages remain pinned; newly opened pages use the new version. Old pages offer an explicit reload with a page-state warning; durable storage is retained. Restore archived installations before reinstalling.
+```json
+{
+  "id": "teatak/pudding-hub/widgets/counter",
+  "version": "1.0.0",
+  "title": {"en": "Counter", "zh-CN": "计数器", "zh-TW": "計數器"},
+  "description": {"en": "A page counter.", "zh-CN": "页面计数器。", "zh-TW": "頁面計數器。"},
+  "requires": {"protocolVersion": 24, "sdkVersion": "1"}
+}
+```
 
-### Widget artwork
+`source/widget.json` is the runtime contract:
 
-The optional `icon` in `manifest.json` points to `./assets/<name>.svg`. The packager embeds the same SVG as a base64 image in the registry and source package; Core limits it to 16 KiB and stores it with the installed item. Catalog cards, tabs and the Studio sidebar share this icon, including offline. Existing release bytes remain immutable: bump the version when adding or changing artwork. SVGs are displayed only as images, never injected into the host DOM.
+```json
+{
+  "schemaVersion": 1, "sdkVersion": "1", "entry": "src/App.tsx",
+  "sources": {}, "operations": {}
+}
+```
 
-Gomoku sends its final result with `audience: {kind: "all"}` and `delivery: "request-action"`, so each conversation participant processes the result once. The card says “Notified everyone”; ordinary `inform` broadcasts remain passive.
+`source/src/App.tsx` exports a React component:
 
-Restored interactions create a new paused run and revoke old targets. Register `pudding.interaction.onResume(async () => { ... })` to derive only currently valid requests from saved state after the user continues. Never replay old receipts or completed results; do not bind persisted business data to an ephemeral run ID. Authors may call `interaction.pause()/resume()/disconnect()` and render their own controls. Pause affects model execution only. Disconnect retains page state. The host does not render game controls.
+```tsx
+import { useState } from 'react';
+import { pudding, useWidgetLocale, useWidgetState } from '@pudding/widget';
 
-The initial catalog contains Todo and Gomoku 1.0.0, requiring protocol 24. Unreleased widget history was reset once before production; future formal release bytes remain immutable. Development builds use `--dev` and do not accumulate catalog releases.
+export default function App() {
+  const snapshot = useWidgetState();
+  const locale = useWidgetLocale();
+  const [error, setError] = useState('');
+  const count = typeof snapshot.data.count === 'number' ? snapshot.data.count : 0;
+  const labels = {
+    en: { title: 'Counter', add: 'Add one' },
+    'zh-CN': { title: '计数器', add: '加一' },
+    'zh-TW': { title: '計數器', add: '加一' },
+  }[locale];
+  async function add() {
+    const current = pudding.state.read();
+    const previous = typeof current.data.count === 'number' ? current.data.count : 0;
+    try {
+      await pudding.state.write({
+        expectedVersion: current.version,
+        data: { ...current.data, count: previous + 1 },
+      });
+      setError('');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : String(error));
+    }
+  }
+  return <main style={{ padding: 24 }}>
+    <h1>{labels.title}</h1><output>{count}</output>
+    <button type="button" onClick={() => void add()}>{labels.add}</button>
+    {error ? <p role="alert">{error}</p> : null}
+  </main>;
+}
+```
 
-For a distributed preview release, use a distinct version such as `1.1.0-preview.1` and set `"preview": true` in `manifest.json`; optional `"channel": "preview"` is descriptive metadata. The packager preserves these fields in both the source package and registry release. As with plugins, `preview` is the authoritative flag; a version suffix or channel alone does not opt a release into preview filtering. Desktop hides previews by default. Settings → Advanced → Show widget preview versions enables their selection independently of plugin previews. Disabling it never downgrades or removes an installed preview; a newer stable release can replace it while preserving item data. `--dev` remains local-only and does not publish a preview.
+This example uses restored page state and follows all three Pudding locales. It does not store business data in localStorage or use a second state copy. Choose durable item storage when the counter must survive explicitly closing its page; see [state and storage](widget-sdk.md#state-and-storage).
 
-## Follow the application language
+## Source and build contract
 
-Packages requiring protocol 24 can read `pudding.locale.read()` and subscribe with
-`pudding.locale.subscribe(listener)`, or call `useWidgetLocale()` in React. The
-host supplies `zh-CN`, `zh-TW` or `en` before module initialization and updates it
-without remounting the page. Use this instead of `navigator.language`; keep
-interface names, JSON fields and coordinate values language-independent. Installed
-item names need not change when the user changes language.
+Use schema 1, SDK `"1"` and a TSX entry under `src/`. Source files may be TS/TSX, CSS, JSON or SVG under allowed `src/`, `assets/` and `fixtures/` paths. There is no widget package manager, custom build script, precompiled HTML, Node/Electron API or arbitrary import. The host provides React, React DOM, TanStack Query, react-hook-form, Zod, Recharts, lucide-react, the fixed `@pudding/widget` SDK and supported `@pudding/ui` components. Do not assume another npm dependency is available.
+
+Current Core source limits are 32 files, 512 KiB per file and 2 MiB total; the distribution envelope is bounded separately. [Core policy](https://github.com/teatak/pudding-core/blob/main/contracts/widget.json) owns limits and host validation. Outer manifest requirements must match the features used; newer native features also require [capability checks](widget-sdk.md#system-notifications).
+
+The host owns the document, sandbox and message bridge. Render/update a subtree instead of `document.open/write/writeln`. Native form submission is blocked: use explicit buttons and prevent Enter's default submit before invoking the same handler. Use readable labels, keyboard-accessible controls, responsive layouts and both color themes.
+
+## Connect plugin data
+
+Declare `sources` as installed plugin IDs and endpoint names, then declare bounded read/write `operations`. See the [SDK query example](widget-sdk.md#plugin-data-and-actions) and [Gmail Board source](../widgets/gmail-board/source/widget.json). Never invent endpoints or embed credentials. The host's source selector owns account binding; widget binding is independent of a conversation's plugin account.
+
+Keep each account's durable data and drafts separate, clear transient selection on account changes and ignore old requests. A source change may rebuild the page binding; it must not apply one account's response to another. Plugin endpoint writes require `widget_writes: true` and user confirmation, not just an author-supplied effect hint.
+
+## Expose useful model operations
+
+Accessible controls work with `widget_observe/click/type/scroll`. For exact or bulk operations register `pudding.defineInterface` with a Zod object schema and a concise description. Models use `widget_invoke` with the current target and state version. Both approaches can coexist.
+
+UI handlers and interfaces should call the same business function. Check trusted `context.actor`, cancellation, versions and business rules; do not accept input fields as proof of identity. Validate a batch before one atomic write. Return a compact receipt and expose long history through a separate optional read interface. See [model interfaces](widget-sdk.md#model-interfaces-and-page-input).
+
+## Participants and the two notification channels
+
+For multiplayer or collaborative workflows, use `interaction.candidates/connect/notify/setRequests` and run controls. The host binds identities and dispatches work; the widget owns seats, readiness and phases. Commit state before sending a model request. The [SDK](widget-sdk.md#participants-and-model-notifications) covers exact arguments, caller scope, notification deduplication and recovery through `onResume`.
+
+`interaction.notify` addresses connected conversations and may request model work. `notifications.show` instead creates an OS notification after an independent runtime permission; it never invokes a model. Ask for that permission while the user enables reminders. Clipboard write permission is separate again. File export uses a system save dialog. See [runtime authorization](widget-sdk.md#runtime-authorization-and-clipboard), [system notifications](widget-sdk.md#system-notifications) and [file export](widget-sdk.md#file-export).
+
+## Validate and package
+
+Use compatible sibling Core and Desktop checkouts and the Node version required by Desktop. Prepare dependencies and create a development package:
+
+```bash
+pnpm install
+npm --prefix ../pudding-desktop/web ci
+PUDDING_CORE_DIR=../pudding-core npm --prefix ../pudding-desktop run core:prepare
+PUDDING_CORE_DIR=../pudding-core PUDDING_DESKTOP_DIR=../pudding-desktop pnpm package-widget counter --dev
+```
+
+`--dev` writes ignored local output, not a registry release. The packager invokes Core's source-package validator and Desktop's real TypeScript/JS/CSS compiler before writing output; it does not execute widget code. Missing compiler dependencies fail packaging. Use the same Core contracts as the Desktop being tested.
+
+In Pudding, LLM authoring loads `widget-authoring` in Code mode, opens a persistent draft, edits through the built-in `scope:"widget"` file tools, then commits, previews/inspects and activates. Keep the returned widget ID, which may be an editing copy. Reuse the same `clientRequestID` and original arguments after uncertain creation; do not create another item as an error-recovery shortcut. The [Desktop authoring tool](https://github.com/teatak/pudding-desktop/blob/main/web/src/mcp/widgetSourceTools.ts) defines the current tool schema.
+
+Test real host interaction in a temporary profile: UI/model operations, conflicts, reload/storage recovery, account switching, three locales, light/dark themes, cancellation and permission denial. Desktop's `widget-hub` smoke uses `PUDDING_HUB_DIR` for local source fixtures. Run Hub tests with a compatible `PUDDING_CORE_DIR`; individual model/Windows verification is separate. Documentation checks do not need to send mail or alter live accounts.
+
+## Publish and upgrade
+
+A widget release is `pudding.widget.source-package` schema 2 with all source files and their SHA-256 inventory. The registry pins complete package bytes. `manifest.json` carries identity, localized title/description, host requirements and optional self-contained icon; `source/widget.json` carries runtime behavior. The registry determines the current catalog, not a hard-coded first-launch list.
+
+Bump the version before publishing changed bytes. `pnpm package-widget counter` writes the formal package and registry; `pnpm package-widgets` packages all widget directories. Published widget release bytes are immutable. For a preview use a distinct version such as `1.1.0-preview.1` and `"preview": true`; optional `"channel":"preview"` is descriptive. A suffix/channel alone is not the widget preview flag. Settings → Advanced has separate preview switches for widgets and plugins. Disabling previews neither downgrades nor removes an installed preview.
+
+Repeated installation opens the original item. The first LLM edit of a downloaded original creates an independent copy of its source and durable data. Updates require unmodified installed source; local edits are not silently overwritten. A validated update becomes the default source after activation, while already-open pages retain their pinned revision until reloaded. Durable storage survives; page state belongs to its revision. Installed icons belong to the package, and the host manages localized catalog titles.

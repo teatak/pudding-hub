@@ -1,73 +1,127 @@
 # 小组件开发
 
-小组件是普通 React 源码包。规则由作者定义，平台只提供通用的页面观察/操作、可选接口、临时状态、长期存储、参与者和通知。
+[English](widget-development.md) · [开发文档](README.zh-CN.md) · [SDK 参考](widget-sdk.zh-CN.md)
 
-## 源码与包契约
+小组件是可编辑的 React／TypeScript 源码包。宿主提供编译、数据接入和模型交互，作者负责界面和业务规则。不访问外部服务的小组件不需要插件。
 
-`source/widget.json` 使用 `schemaVersion:1`、`sdkVersion:"1"`、`entry:"src/App.tsx"`，并显式声明 `sources` / `operations`。入口导出 React 组件。支持源码内的 TS、TSX、CSS、JSON、SVG；使用固定依赖，不带 package.json、构建脚本、外部模块或预编译 HTML。
+## 首个小组件
 
-外层 `manifest.json`：
+在 Hub 中创建：
+
+```text
+widgets/counter/
+  manifest.json
+  source/widget.json
+  source/src/App.tsx
+```
+
+`manifest.json` 为目录元数据：
 
 ```json
 {
-  "id": "teatak/pudding-hub/widgets/shared-todo",
+  "id": "teatak/pudding-hub/widgets/counter",
   "version": "1.0.0",
-  "title": {"en":"Shared Todo","zh-CN":"共享待办","zh-TW":"共享待辦"},
-  "description": {"en":"One persistent list across all openings."},
-  "requires": {"protocolVersion":18,"sdkVersion":"1"}
+  "title": {"en": "Counter", "zh-CN": "计数器", "zh-TW": "計數器"},
+  "description": {"en": "A page counter.", "zh-CN": "页面计数器。", "zh-TW": "頁面計數器。"},
+  "requires": {"protocolVersion": 24, "sdkVersion": "1"}
 }
 ```
 
-打包器生成 `pudding.widget.source-package`（schemaVersion 2），包含 source.files 和 fileHashes。Core 验证身份、最低宿主能力、完整包 SHA-256、逐文件哈希、路径、大小和 widget.json；Desktop 使用现有编译器，不执行 Hub 的构建脚本。使用 `PUDDING_CORE_DIR` 指定同一 Core 契约，并执行 `pnpm package-widget <name> --dev` 验证，再升版本正式打包。旧发布文件不可改写。
+`source/widget.json` 为运行契约：
 
-打包（包括 `--dev`）还会调用 Desktop 安装时使用的编译器：TypeScript 检查和 JS/CSS 打包全部通过后，才写入包与索引。用 `PUDDING_DESKTOP_DIR` 指向兼容的 Desktop 仓库（默认同级 `pudding-desktop`），安装其 `web` 依赖，并使用同一 `PUDDING_CORE_DIR` 执行 `npm run core:prepare`。缺少编译环境会阻止打包；错误包含源码文件和行号。只编译小组件源码，不执行它。
+```json
+{
+  "schemaVersion": 1, "sdkVersion": "1", "entry": "src/App.tsx",
+  "sources": {}, "operations": {}
+}
+```
 
-## state 与 storage
+`source/src/App.tsx` 导出 React 组件：
 
-- `pudding.state.read/write/subscribe`、`useWidgetState()`：当前页面的持久快照，作者模块执行前恢复。`read()` 同步读取，必须等待 `await write(...)` 提交成功再通知或返回。刷新、崩溃与重启保留，显式关闭标签页清理；源码版本间隔离。页面与接口共用它。
-- `pudding.storage.read/write/subscribe`、`useStorage()`：Studio item 的长期 JSON 数据，所有打开位置共享，重启、源码升级后仍保留。副本独立；源码预览不能写入。
-- 写入必须提供读到的 `expectedVersion`。冲突时呈现错误并重新读取，不盲目自动覆盖。
-- 不把业务数据放 localStorage。观察工具不会自动返回 state；未揭晓选择可保存在 state，但不能通过 DOM、通知、日志或接口返回暴露。
+```tsx
+import { useState } from 'react';
+import { pudding, useWidgetLocale, useWidgetState } from '@pudding/widget';
 
-[共享待办](../widgets/shared-todo/source/src/App.tsx) 展示 UI 与 addTask / completeTask / deleteTask 接口共用同一个 CAS 写入函数，不启动互动会话。
+export default function App() {
+  const snapshot = useWidgetState();
+  const locale = useWidgetLocale();
+  const [error, setError] = useState('');
+  const count = typeof snapshot.data.count === 'number' ? snapshot.data.count : 0;
+  const labels = {
+    en: { title: 'Counter', add: 'Add one' },
+    'zh-CN': { title: '计数器', add: '加一' },
+    'zh-TW': { title: '計數器', add: '加一' },
+  }[locale];
+  async function add() {
+    const current = pudding.state.read();
+    const previous = typeof current.data.count === 'number' ? current.data.count : 0;
+    try {
+      await pudding.state.write({
+        expectedVersion: current.version,
+        data: { ...current.data, count: previous + 1 },
+      });
+      setError('');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : String(error));
+    }
+  }
+  return <main style={{ padding: 24 }}>
+    <h1>{labels.title}</h1><output>{count}</output>
+    <button type="button" onClick={() => void add()}>{labels.add}</button>
+    {error ? <p role="alert">{error}</p> : null}
+  </main>;
+}
+```
 
-原生表单提交由 sandbox 禁止。使用 `type="button"` 的按钮直接调用保存函数，输入框回车先 `preventDefault()` 再调用同一函数；不要依赖 form 的原生 submit。
+示例使用已恢复的页面状态，跟随 Pudding 三种语言，不在 localStorage 保存业务数据，也不维护第二份状态。若计数需要在显式关闭页面后继续保留，改用长期 item storage，见 [state 与 storage](widget-sdk.zh-CN.md#state-与-storage)。
 
-## 页面操作与可选接口
+## 源码与构建契约
 
-页面提供可观察文字、清晰可访问名称和控件，模型可通过 widget_observe/click/type/scroll 操作。需要更精确的操作时，可用 `pudding.defineInterface({name,description,input:z.object(...),run(input,context)})` 声明接口；模型通过 widget_invoke 调用。两种入口任选，也可共存。不要求定义 placeStone 之类的接口，也不禁止作者定义。
+使用 schema 1、SDK `"1"`，入口为 src 下的 TSX。允许在 src、assets、fixtures 的合法路径中放 TS／TSX、CSS、JSON、SVG。组件没有自己的包管理器、构建脚本、预编译 HTML、Node／Electron API 或任意 import。宿主固定提供 React、React DOM、TanStack Query、react-hook-form、Zod、Recharts、lucide-react、`@pudding/widget` 和受支持的 `@pudding/ui` 组件，不能假设其他 npm 依赖可用。
 
-模型身份取 `context.actor`，不能信任输入中的 sessionID、role 或 participantID。接口可以接收业务角色参数，但必须检查调用者确实拥有该角色。DOM 异步处理用 `pudding.interaction.handle(context=>...)` 保留 CDP 调用者身份。规则函数在更新状态前检查角色、当前业务状态、重复操作和 AbortSignal。没有主持者/棋类专用平台逻辑。
+Core 当前限制 32 个源码文件、单文件 512 KiB、总计 2 MiB，分发包外壳另有限制。[Core 策略](https://github.com/teatak/pudding-core/blob/main/contracts/widget.json)统一规定限制和校验。外层清单的宿主要求应符合实际功能，较新原生功能还需[能力检测](widget-sdk.zh-CN.md#系统通知)。
 
-## 参与者与主动通知
+宿主管理整份文档、沙箱和消息桥，更新渲染子树，不使用 `document.open/write/writeln`。原生表单提交被禁止，使用明确按钮，输入框回车先阻止默认提交，再调用同一处理函数。控件提供清晰名称和键盘操作，布局适应窗口宽度及明暗主题。
 
-`await interaction.candidates()` 返回真实会话列表、`preferredSessionIDs`、`connectedSessionIDs` 与 `maxSessions`。组件自己的选择界面仅初始化一次：`connectedSessionIDs ?? preferredSessionIDs`。Studio 默认不选；会话默认自己；分屏默认两侧，与焦点无关。已有连接不因位置变化或重启重新套用默认。
+## 接入插件数据
 
-Protocol 23 起，每个候选包含 `model: {id, name, icon}`，分别为真实模型 ID、显示名称和自包含的 `data:` 品牌图片；已连接时还有 `participantID`，可与公开 run 的参与者匹配来显示棋手卡片。使用这些字段的包须声明要求 protocol 23。隐藏／预加载时也可读取候选，隐藏写入仍受限制。
+sources 声明已安装插件 ID 和端点名，operations 声明受约束的读写操作。参考 [SDK 查询示例](widget-sdk.zh-CN.md#插件数据与操作)和 [Gmail 看板源码](../widgets/gmail-board/source/widget.json)。不要编造端点或嵌入凭据，账号由宿主来源选择器绑定，与会话中的插件账号独立。
 
-`interaction.connect({sessionIDs})` 创建或更新明确的连接，最多 15 个会话加一个人类。保留成员的 participantID 不变，移除成员撤销访问和该页待执行请求，不删除历史或页面状态。连接不自动分配角色或唤醒模型。组件把座位、准备与阶段存入自己的 state，发出邀请后由模型通过接口或 CDP 自主加入、选边和准备。
+长期数据和草稿按账号隔离，切换时清理临时选中项、忽略旧请求。来源变化可能更新页面绑定，不能把一个账号的响应写入另一个账号。外部写入必须由插件端点设置 `widget_writes: true` 并获得用户确认，不只看作者填写的 effect hint。
 
-`interaction.notify({id,audience,delivery,topic,summary?,message,data?})`：
+## 提供实用的模型操作
 
-- `audience:{kind:"all"}` 全体；`{kind:"selected",participantIDs:[...]}` 定向。
-- `delivery:"inform"` 只记录，不调用模型；`"request-action"` 请求行动，忙碌会话等待已有工作完成。
-- `summary` 使用用户语言提供简短可见摘要；`message` 放完整操作说明，通知卡片将其折叠，模型仍收到完整内容。
-- 通知由宿主附带 `targetID`、参与者身份和 `stateVersion`。`data` 可提供同一已提交状态的公开业务快照，减少重复读取；不得泄露未揭晓的数据。说明要描述业务目标，不要求每次先调用 `widget_observe`。模型已知接口且上下文足够时直接行动，需要补充信息时任选页面观察或作者读取接口；版本冲突仍需重新读取和判断，不能盲目重试。
-- notification ID 和内容不可变；重复发送去重。业务完成后用 `setRequests` 保留仍有效的请求键。清除后不能靠重复旧通知重新唤醒。
-- 作者可调用 `interaction.pause()/resume()/disconnect()`；宿主只负责执行控制，不显示业务互动栏或角色选择器。暂停仅影响模型自动执行，人工仍可操作。disconnect 清理连接但不清空页面数据；游戏结束、离座和重开由组件定义。模型 turn 完成不等于业务完成。
+可访问控件支持 `widget_observe/click/type/scroll`。需要精确或批量操作时，用 `pudding.defineInterface` 配合 Zod 对象 schema 和简短说明注册。模型通过带当前 target 和 state version 的 `widget_invoke` 调用；两种方式可以共存。
 
-[五子棋](../widgets/gomoku/source/src/App.tsx) 验证轮流行动：下一方定向行动请求，结束使用 `all + request-action` 通知全体，让各会话参与者自动处理结果。界面只写“通知全体”，不强调请求回复。
+UI 和接口共用业务函数。检查可信的 context.actor、取消、版本和业务规则，不以输入参数证明身份。批次先整体校验，再原子写入。返回精简回执，长历史由独立读取接口按需提供，详见[模型接口](widget-sdk.zh-CN.md#模型接口与页面输入)。
 
-## 安装与升级
+## 参与者与两类通知
 
-来源记录包含 registry URL、包 ID、版本、包哈希和原始源码哈希。重复安装打开原 item；仅 LLM 首次编辑下载原版时创建副本，复制当前长期数据后各自独立，组件库无手动复制入口。升级只在当前源码仍等于安装源码且没有未提交编辑时允许，构建成功后设为默认版本。旧页面继续固定旧版，新页面使用新版；旧页面显示可重载提示并说明可能丢失页面状态。长期 storage 保留。已归档的原项需要先恢复；不会静默另建同源安装。
+多人或协作流程使用 `interaction.candidates/connect/notify/setRequests` 和运行控制。宿主绑定身份、调度行动，组件负责座位、准备与阶段。提交 state 后再请求模型行动。[SDK](widget-sdk.zh-CN.md#参与者与模型通知)说明参数、调用者作用域、通知去重和 onResume 恢复。
 
-## 验证
+`interaction.notify` 面向已连接会话，可请求模型工作；`notifications.show` 则在独立运行时授权后发送操作系统通知，不调用模型。应在用户启用提醒时申请通知权限。剪贴板写入又是独立权限，文件导出沿用系统保存对话框。参见[运行时授权](widget-sdk.zh-CN.md#运行时授权与剪贴板)、[系统通知](widget-sdk.zh-CN.md#系统通知)、[文件导出](widget-sdk.zh-CN.md#文件导出)。
 
-`PUDDING_CORE_DIR=... pnpm test` 验证包的不可改写性和样例规则。Desktop 的 `widget-hub` smoke 使用 `PUDDING_HUB_DIR` 读取当前源码，在隔离 home/端口中测试真实 guest 和 Core/MCP，不依赖线上 registry。外部模型的观察、决策效果及 Windows 需单独验收。
+## 验证与打包
 
-恢复互动会创建新的暂停运行，旧 target 与在途调用失效。作者注册 `pudding.interaction.onResume(async () => { ... })`，在用户继续且宿主核验参与者后，根据保存的状态生成当前有效请求；不重播旧回执或已结束的结果，不将持久业务数据绑定到临时 runID。结束互动保留页面，明确关闭标签页才清理。
+使用兼容的同级 Core、Desktop 源码和 Desktop 要求的 Node 版本，准备依赖并生成开发包：
 
-首发目录仅保留待办与五子棋 1.0.0，需要协议 24。本次上线前统一清理未发布历史；此后的正式发布包仍保持不可变。开发调试用 `--dev`，不积累目录版本。
+```bash
+pnpm install
+npm --prefix ../pudding-desktop/web ci
+PUDDING_CORE_DIR=../pudding-core npm --prefix ../pudding-desktop run core:prepare
+PUDDING_CORE_DIR=../pudding-core PUDDING_DESKTOP_DIR=../pudding-desktop pnpm package-widget counter --dev
+```
 
-发布可安装的预览版时，在 `manifest.json` 使用独立版本（如 `1.1.0-preview.1`）并设置 `"preview": true`；可选的 `"channel": "preview"` 仅描述渠道。打包器会把标记同时写入源码包和 registry release。与插件一致，以 `preview` 为筛选依据，只有版本后缀或 channel 不会自动标为预览版。桌面默认隐藏预览版，在「设置 → 高级 → 显示小组件预览版」开启，和插件开关独立。关闭后不降级、不删除已安装预览版；以后可升级到更高的正式版并保留数据。`--dev` 仍只生成本地调试包，不会发布预览版。
+`--dev` 只写忽略的本地输出，不写注册表发布记录。打包器先调用 Core 源码包校验和 Desktop 真实 TypeScript／JS／CSS 编译器，再写输出，不执行组件源码。缺少编译依赖会失败。使用与被测 Desktop 相同的 Core 契约。
+
+在 Pudding 中用 LLM 创作时，在 Code 模式加载 widget-authoring，打开持久 draft，用内置 `scope:"widget"` 文件工具编辑，然后提交、预览／检查和启用。保留返回的 widget ID，它可能是编辑副本。创建结果不确定时复用同一 clientRequestID 和原参数，不能以新建另一个 item 作为错误恢复。当前工具 schema 由 [Desktop 创作工具](https://github.com/teatak/pudding-desktop/blob/main/web/src/mcp/widgetSourceTools.ts)定义。
+
+使用临时数据目录验证真实宿主：UI／模型操作、冲突、刷新和数据恢复、账号切换、三种语言、明暗主题、取消和拒绝授权。Desktop 的 widget-hub smoke 通过 PUDDING_HUB_DIR 读取本地源码夹具。Hub 测试需配置兼容的 PUDDING_CORE_DIR；外部模型和 Windows 验收分别进行。文档验证不需要发邮件或修改真实账号。
+
+## 发布与升级
+
+发布包为 `pudding.widget.source-package` schema 2，包含完整源码和逐文件 SHA-256，注册表固定整个包的哈希。manifest.json 包含身份、本地化标题／说明、宿主要求和可选自包含图标；source/widget.json 包含运行行为。当前目录由注册表决定，不沿用写死的首发清单。
+
+改源码发布前升版本。`pnpm package-widget counter` 写正式包和注册表，`pnpm package-widgets` 打包全部组件目录。已发布小组件包字节不可修改。预览版用独立版本，如 `1.1.0-preview.1`，并设置 `"preview": true`；可选 channel 只描述渠道，仅版本后缀或 channel 不是小组件预览标记。设置 → 高级中的小组件和插件预览开关独立；关闭后不降级或删除已安装预览版。
+
+重复安装打开原 item。首次通过 LLM 编辑下载原版，会复制源码和当时长期数据，之后独立。更新要求安装源码未被修改，不静默覆盖本地编辑。构建校验和启用后更新默认源码，已打开页面仍固定原版本，重载后才切换。长期 storage 保留，页面 state 属于各自版本。已安装图标属于包，目录标题本地化由宿主管理。

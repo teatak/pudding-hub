@@ -4,9 +4,13 @@
 
 Pudding Hub 是 Pudding 的官方公共资源仓库，用来发布可安装的插件、可编辑源码小组件及对应源码。
 
+## 开发文档
+
+从[开发文档总览](docs/README.zh-CN.md)进入：[插件开发](docs/plugin-development.zh-CN.md)、[小组件开发](docs/widget-development.zh-CN.md)、[完整小组件 SDK](docs/widget-sdk.zh-CN.md)。[英文文档](docs/README.md)覆盖相同能力，包括连接、运行时授权、系统通知和文件导出。
+
 ## 注册表地址
 
-插件注册表（Desktop protocol 8）：
+插件注册表：
 
 ```text
 https://teatak.github.io/pudding-hub/plugins/registry.json
@@ -14,21 +18,13 @@ https://teatak.github.io/pudding-hub/plugins/registry.json
 
 插件源码位于 `plugins/<name>/`，定义文件为 `plugin.yaml`，包格式为 `pudding.plugin.package`，扩展名为 `.pudding-plugin.json`。运行 `pnpm package-plugin <name>` 打包一个插件，或运行 `pnpm package-plugins` 打包全部插件。新注册表包含各插件当前源码版本，包括预览版本。
 
-`apps/` 目录与已发布包保持不变，继续供旧客户端使用。
-
-旧版 App 注册表：
-
-```text
-https://teatak.github.io/pudding-hub/apps/registry.json
-```
-
 小组件注册表：
 
 ```text
 https://teatak.github.io/pudding-hub/widgets/registry.json
 ```
 
-在 Pudding 中添加上面的地址，即可发现并安装官方 App 和小组件。
+在 Pudding 中添加插件和小组件注册表地址，即可发现并安装官方资源。
 
 GitHub Pages 需要在仓库设置中开启，source 选 `main` 分支，folder 选 `/ (root)`。
 
@@ -80,8 +76,7 @@ pudding-hub/
 
 ## 小组件源码包
 
-Widget 使用 React / TypeScript 源码包（格式 2），需要支持协议 24、SDK 1 的 Desktop。
-Hub 首发仅提供待办和五子棋，版本均为 1.0.0。未上线的小组件历史发布包已清理；已有开发安装及其长期数据保持不变。
+小组件使用 React／TypeScript 源码包（格式 2），宿主要求按各清单声明。当前目录以注册表为准，较新原生功能还需检查 SDK 能力标记。
 
 ```sh
 pnpm install
@@ -102,3 +97,7 @@ pnpm package-widgets
 Desktop 从 Studio → 开始创作 → 小组件库安装。重复安装打开原项；只有 LLM 首次编辑下载原版时创建独立副本，复制当时的长期数据，之后各自独立。更新保存为待启用版本，经过预览和启用后生效；有本地源码修改时拒绝覆盖。
 
 制作规范与数据/通知示例见 [小组件开发](docs/widget-development.zh-CN.md)。
+
+## 历史兼容
+
+App 包已经被插件替代，不再作为开发类型。`apps/` 及[历史注册表](https://teatak.github.io/pudding-hub/apps/registry.json)仅供旧客户端兼容；新集成使用插件开发指南。

@@ -4,9 +4,13 @@
 
 Pudding Hub is the official public resource hub for Pudding. It hosts installable plugins and editable-source widgets with their editable source files.
 
+## Developer documentation
+
+Start at the [developer documentation](docs/README.md): [plugins](docs/plugin-development.md), [widgets](docs/widget-development.md) and the [complete Widget SDK](docs/widget-sdk.md). Full [Chinese documentation](docs/README.zh-CN.md) covers the same capabilities, including connections, runtime permissions, system notifications and exports.
+
 ## Registry URL
 
-Plugins registry (Desktop protocol 8):
+Plugins registry:
 
 ```text
 https://teatak.github.io/pudding-hub/plugins/registry.json
@@ -14,21 +18,13 @@ https://teatak.github.io/pudding-hub/plugins/registry.json
 
 Plugin sources live in `plugins/<name>/` with `plugin.yaml`; packages use `pudding.plugin.package` and `.pudding-plugin.json`. Rebuild a plugin with `pnpm package-plugin <name>`, or all plugins with `pnpm package-plugins`. The new registry contains the current source release of each plugin, including preview releases.
 
-The `apps/` directory and its released packages remain unchanged for older clients.
-
-Legacy Apps registry:
-
-```text
-https://teatak.github.io/pudding-hub/apps/registry.json
-```
-
 Widgets registry:
 
 ```text
 https://teatak.github.io/pudding-hub/widgets/registry.json
 ```
 
-Use these URLs in Pudding to discover and install official apps and widgets.
+Use the plugin and widget URLs in Pudding to discover and install official packages.
 
 GitHub Pages should be enabled for this repository with source `main` branch and folder `/ (root)`.
 
@@ -80,7 +76,7 @@ Key files:
 
 ## Widget source packages
 
-Widgets ship as React / TypeScript source packages (format 2), requiring Desktop protocol 24 and SDK 1. The initial public catalog contains Todo and Gomoku, both at 1.0.0. Unreleased widget history has been removed; installed development items and their persistent data are not touched.
+Widgets ship as React / TypeScript source packages (format 2), with host requirements declared per manifest. The registry lists the current catalog; newer native features also use SDK capability detection.
 
 ```sh
 pnpm install
@@ -97,3 +93,7 @@ Use a Core checkout containing `cmd/widget-package`. The packager reads Core pol
 Install from Studio → Start creating → Widget library. Reinstall opens the existing item. Only the LLM editing workflow forks downloaded originals, copying current persistent data into an independent item. Updates stage a source version for preview/activation, preserving the current running rules and all item data. Local source edits are never overwritten.
 
 See [Widget development](docs/widget-development.md).
+
+## Legacy compatibility
+
+App packages were replaced by plugins and are no longer a development model. The `apps/` directory and [historical registry](https://teatak.github.io/pudding-hub/apps/registry.json) remain only for old clients. Use the plugin guide for new integrations.
