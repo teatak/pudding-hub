@@ -220,26 +220,28 @@ export default function App() {
   const act = (ready: boolean) =>
     perform(() => pudding.interaction.handle((c) => changeReadiness(ready, c)));
   function openRound(choosePlayers = false) {
-    const choice = l.round
-      ? l.players.flatMap((id) =>
-          id === human?.id
-            ? [me]
-            : candidates!.sessions
-                .filter((s) => s.participantID === id)
-                .map((s) => s.id),
-        )
-      : selected;
-    if (choosePlayers || choice.length !== 2) {
-      setSelected(choice);
-      setPicker(true);
-      return;
-    }
-    void perform(() =>
-      start(
-        choice.filter((id) => id !== me),
-        choice.includes(me),
-      ),
-    );
+    void perform(async () => {
+      // Connections may arrive after the board opened. Refresh only the picker;
+      // participant identity and game state still come from the shared run.
+      const current = await pudding.interaction.candidates();
+      setCandidates(current);
+      const available = new Set([me, ...current.sessions.map((s) => s.id)]);
+      const choice = (l.round
+        ? l.players.flatMap((id) =>
+            id === human?.id
+              ? [me]
+              : current.sessions
+                  .filter((s) => s.participantID === id)
+                  .map((s) => s.id),
+          )
+        : selected).filter((id) => available.has(id));
+      if (choosePlayers || choice.length !== 2) {
+        setSelected(choice);
+        setPicker(true);
+        return;
+      }
+      await start(choice.filter((id) => id !== me), choice.includes(me));
+    });
   }
   const title =
     run?.status === "paused"

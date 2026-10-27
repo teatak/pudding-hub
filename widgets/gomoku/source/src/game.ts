@@ -259,7 +259,7 @@ export const start = (sessionIDs: string[], includeMe: boolean) =>
     const previous = lobby();
     const run = await pudding.interaction.connect({ sessionIDs });
     const players = run.participants
-      .filter((p) => p.kind === "session" || includeMe)
+      .filter((p) => p.kind !== "human" || includeMe)
       .map((p) => p.id);
     await pudding.interaction.setRequests([]);
     await save(newLobby(previous, players), initial());
