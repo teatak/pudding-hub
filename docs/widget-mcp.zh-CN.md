@@ -13,7 +13,8 @@ Pudding 的本地 MCP 让外部 agent 参与用户选定的小组件，适用于
 ```text
 ~/.pudding/mcp/
 ├── widget-mcp-client.cjs
-└── widget-mcp.json
+├── widget-mcp.json
+└── widget-identities/       # 首次加入后生成的私有恢复记录
 ```
 
 开发版使用 `~/.pudding-dev/mcp/`；自定义 `PUDDING_HOME` 时使用其 `mcp/` 子目录。连接文件包含随机端口和独立访问凭证，只由本地客户端读取，不应贴到提示词、提交仓库或复制进小组件。Pudding 退出后删除凭证文件。
@@ -25,7 +26,7 @@ Pudding 的本地 MCP 让外部 agent 参与用户选定的小组件，适用于
 需要 Node.js 20+。在支持本地 STDIO MCP 的客户端配置：
 
 - Command：本机 Node 的绝对路径。
-- Args：脚本的绝对路径，可附 `--name` 和容易辨认的客户端名称。
+- Args：脚本的绝对路径，可附 `--name` 设置显示名称，`--identity` 设置固定 Agent 身份。
 - 只有一个 Command 输入框时，把命令和参数写在同一行；带空格的路径或名称需加引号。
 
 以下 macOS 示例中的用户名、Node 路径需要替换成自己的实际路径：
@@ -35,7 +36,7 @@ Pudding 的本地 MCP 让外部 agent 参与用户选定的小组件，适用于
   "mcpServers": {
     "pudding": {
       "command": "/opt/homebrew/opt/node/bin/node",
-      "args": ["/Users/yourname/.pudding/mcp/widget-mcp-client.cjs", "--name", "My Agent"]
+      "args": ["/Users/yourname/.pudding/mcp/widget-mcp-client.cjs", "--name", "My Agent", "--identity", "my-agent"]
     }
   }
 }
@@ -54,7 +55,7 @@ Pudding 的本地 MCP 让外部 agent 参与用户选定的小组件，适用于
 ## 多参与者活动
 
 1. 配置 MCP。初始化、发现、心跳和模型自报都不会创建候选条目。
-2. 用户要求参与时，可先用 `widget_set_profile` 自报已知模型，再调用 `widget_join`；保存 `participantID` 和私有 `resumeToken`，重复加入复用原条目。可以先发现小组件，也可以先进入待分配候选池。
+2. 用户要求参与时，可先用 `widget_set_profile` 自报已知模型，再调用 `widget_join`；桥接自动保存恢复凭据，模型只需使用返回的 `participantID`，重复加入复用原条目。可以先发现小组件，也可以先进入待分配候选池。
 3. 不带 `targetID` 持续调用 `widget_wait` 等待分配。`widget_targets` 也可能返回普通页面和 `participation_required` 活动，发现目标不等于获得席位或私有状态访问权。
 4. 小组件通过 `interaction.candidates()` 读取候选。五子棋优先将新加入的在线 Agent 补入空位；用户可以手动移除或取消勾选，也可以补充内部对话或自己，然后点击开始。人数足够不会自动启动活动。
 5. 小组件连接选定参与者并分配角色。Agent 获得对应 `targetID` 后，通过 `widget_observe` 读取该实例的说明、角色、规则和结束条件，使用最新 `stateVersion` 调用接口。
@@ -67,13 +68,13 @@ MCP 不能唤醒已经结束的模型 turn，外部 Agent 连续参与时须保�
 
 活动提示词示例：
 
-> 加入 Pudding 候选池并持续等待分配。我开始活动后，读取该实例的说明和接口，按规则参与到结束或我要求停止。无事件时继续等待，不重复加入。保存私有 resumeToken，意外重连后用它恢复原身份，并先读取当前状态再继续。
+> 加入 Pudding 候选池并持续等待分配。我开始活动后，读取该实例的说明和接口，按规则参与到结束或我要求停止。无事件时继续等待，不重复加入。意外重连由桥接恢复原身份，恢复后先读取当前状态再继续，不重放结果不明的操作。
 
 ## 工具
 
 | 工具 | 作用 |
 | --- | --- |
-| `widget_join` | 登记候选参与者；携带 `resumeToken` 可恢复原身份和已有席位。新身份须由用户选择 |
+| `widget_join` | 不带参数登记候选；桥接自动恢复原身份和已有席位。新身份须由用户选择 |
 | `widget_set_profile` | 自报模型名称和提供商，只影响显示 |
 | `widget_targets` | 发现可用普通小组件和活动；未分配的活动返回 participation_required |
 | `widget_observe` | 读取指定目标的说明、接口、页面文本，或按需读取控件/截图 |
@@ -90,8 +91,12 @@ MCP 不能唤醒已经结束的模型 turn，外部 Agent 连续参与时须保�
 
 MCP 初始化说明负责通用的加入、等待、发现和退出流程。小组件作者通过 [`pudding.setInstructions(text)`](widget-sdk.zh-CN.md#模型接口与页面输入) 声明自身用途与规则；`widget_observe` 总是返回 `instructions`，未声明时为空字符串。说明按目标实例隔离，已开始的多参与者活动仍须获得席位后才能观察和操作；它不覆盖用户要求、宿主权限或上层指令。
 
-已加入的参与者断线后保留并标记离线，由用户手动移除，或由仍连接的 agent 主动退出。未加入的连接不会留下候选项。意外重连后，携带原 `resumeToken` 调用 `widget_join`，可恢复同一个候选项、模型显示和已选席位；同时撤销旧通信连接，避免两个连接同时操作同一身份。恢复后先观察当前状态，不重放结果不明的旧操作。不同会话应分别保存自己的凭据，不能按模型名称合并。
+已加入的参与者断线后保留并标记离线，由用户手动移除，或由仍连接的 agent 主动退出。未加入的连接不会留下候选项。STDIO 桥接在重新初始化时读取本地恢复记录，自动恢复同一个候选项、模型显示和已选席位；同时撤销旧通信连接及其待执行请求。模型不需要记住或传入 `resumeToken`。恢复后先观察当前状态，不重放结果不明的旧操作。
 
-`resumeToken` 是仅限该参与身份的私有恢复凭据，不是 `widget-mcp.json` 中的服务访问 token。它只返回给加入的 agent，不出现在候选列表或小组件数据中；agent 应保留在自己的对话上下文，不发给其他参与者、不贴进小组件。主动退出、手动移除或 Pudding 重启都会使它失效。无效 token 返回错误，绝不静默新建玩家；凭据丢失时需征得用户同意再以新身份加入。恢复仅覆盖同一 Pudding 进程内的客户端断线，不跨 Pudding 重启。
+`--identity`（或 `PUDDING_WIDGET_MCP_IDENTITY`）是配置时设置的固定 Agent 槽位，例如 `gemini-a`、`gemini-b`。同一槽位代表同一玩家，替换连接会接管它；两个独立玩家必须使用不同槽位。未设置时，Codex 客户端若有 `CODEX_THREAD_ID` 就按会话隔离；否则按初始化客户端名称与 `--name` 组合选择默认槽位。MCP 不一定提供聊天会话 ID，不能据此区分同一客户端内的多个聊天窗口；需要多玩家时显式配置 identity。身份不依据模型名称或模型自报信息合并。
+
+恢复记录由 Pudding 写入 `mcp/widget-identities/`，目录仅当前用户可访问、文件仅当前用户可读写。适配器只读取，因此沙箱客户端仍只需 mcp 目录读取权限。文件不应交给模型或其他参与者；返回给模型的工具结果不包含恢复 token。保存失败则加入失败，同槽位并发加入不会新增多份候选。
+
+主动退出、手动移除或 Pudding 重启会撤销恢复。重新连接不会自动复活被移除的玩家，只有用户要求后再次显式调用 `widget_join({})` 才开始新的参与。记录损坏、缺失或 token 失效时，不静默创建替代玩家。恢复只覆盖同一 Pudding 进程内的客户端断线，不跨 Pudding 重启。直接连接 HTTP、未使用此托管 STDIO 适配器的客户端仍可自行维护私有 `resumeToken`，但不能混用其他 identity 的凭据。
 
 此桥接不暴露 Core 凭证、通用文件操作、会话管理或小组件源码编辑。

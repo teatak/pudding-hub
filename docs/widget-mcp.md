@@ -13,7 +13,8 @@ Starting Pudding creates:
 ```text
 ~/.pudding/mcp/
 ├── widget-mcp-client.cjs
-└── widget-mcp.json
+├── widget-mcp.json
+└── widget-identities/       # private recovery records, created on first join
 ```
 
 Development builds use `~/.pudding-dev/mcp/`; a custom `PUDDING_HOME` uses its `mcp/` subdirectory. The connection file contains a random port and a separate access credential. Only the local client reads it: do not paste it into prompts, commit it or copy it into widgets. Pudding removes the credential file when it exits.
@@ -22,7 +23,7 @@ The supported entry point is currently the script installed by Pudding. No npm c
 
 ## Configure an MCP client
 
-Node.js 20+ is required. In a client supporting local STDIO MCP, set Command to the absolute Node path and Args to the absolute script path, optionally followed by `--name` and a recognizable client name. With a single Command field, enter the command and arguments together, quoting names or paths containing spaces.
+Node.js 20+ is required. In a client supporting local STDIO MCP, set Command to the absolute Node path and Args to the absolute script path, optionally followed by `--name` for display and `--identity` for a stable Agent identity. With a single Command field, enter the command and arguments together, quoting names or paths containing spaces.
 
 Replace the username and Node path in this macOS example:
 
@@ -31,7 +32,7 @@ Replace the username and Node path in this macOS example:
   "mcpServers": {
     "pudding": {
       "command": "/opt/homebrew/opt/node/bin/node",
-      "args": ["/Users/yourname/.pudding/mcp/widget-mcp-client.cjs", "--name", "My Agent"]
+      "args": ["/Users/yourname/.pudding/mcp/widget-mcp-client.cjs", "--name", "My Agent", "--identity", "my-agent"]
     }
   }
 }
@@ -50,7 +51,7 @@ Ask the agent directly: “Summarize the mail in the Gmail Board currently open 
 ## Multi-participant activities
 
 1. Configure MCP. Initialization, discovery, heartbeats and model profiles never create candidate entries.
-2. When asked to participate, optionally report a known model/provider with `widget_set_profile`, then call `widget_join`. Save its `participantID` and private `resumeToken`; repeated joins reuse the entry. The agent can discover a widget first or enter the candidate pool before assignment.
+2. When asked to participate, optionally report a known model/provider with `widget_set_profile`, then call `widget_join`. The bridge saves recovery credentials automatically; the model receives `participantID` without a recovery token. Repeated joins reuse the entry. The agent can discover a widget first or enter the candidate pool before assignment.
 3. Keep calling `widget_wait` without `targetID` until assigned. `widget_targets` can also list ordinary pages and activities requiring participation; discovering one does not assign a seat or authorize its private state.
 4. The widget reads candidates with `interaction.candidates()`. Gomoku fills vacant choices with newly joined online agents; the user can remove agents, deselect them or supplement with internal conversations or themselves, then click Start. Having enough candidates never starts the activity automatically.
 5. The widget connects the chosen participants and assigns its own roles. Use the assigned `targetID` with `widget_observe` to learn that instance's instructions, roles, rules and completion conditions. Invoke interfaces with the latest `stateVersion`.
@@ -63,13 +64,13 @@ MCP cannot wake an ended model turn. External agents must remain in their waitin
 
 Example activity prompt:
 
-> Join Pudding's candidate pool and keep waiting for assignment. After I start an activity, read its instructions and interfaces, then participate until it finishes or I stop you. Keep waiting when no event arrives, without joining again. Save your private resumeToken and use it to recover after an unexpected transport reconnect; observe current state before continuing.
+> Join Pudding's candidate pool and keep waiting for assignment. After I start an activity, read its instructions and interfaces, then participate until it finishes or I stop you. Keep waiting when no event arrives, without joining again. Let the local bridge recover your identity after an unexpected transport reconnect; observe current state before continuing and never replay an uncertain operation.
 
 ## Tools
 
 | Tool | Purpose |
 | --- | --- |
-| `widget_join` | Register a candidate or pass `resumeToken` to restore the original player and seats; fresh players require user selection |
+| `widget_join` | Join with no arguments; the bridge automatically restores the original player and seats on reconnect. Fresh players require user selection |
 | `widget_set_profile` | Report model and provider for display only |
 | `widget_targets` | Discover available ordinary widgets and activities; unassigned activities report participation_required |
 | `widget_observe` | Read target instructions, interfaces and page text, with optional controls/screenshots |
@@ -86,8 +87,12 @@ Widget-specific operations are discovered through `widget_observe` and invoked t
 
 MCP initialization instructions describe the generic join, wait, discovery and exit workflow. Widget authors declare their own purpose and rules with [`pudding.setInstructions(text)`](widget-sdk.md#model-interfaces-and-page-input). `widget_observe` always returns `instructions`, or an empty string when none were supplied. Guidance is scoped to the discovered instance; active multi-participant runs still require membership for observation and actions; it does not override user requests, host permissions or higher-priority instructions.
 
-Joined participants remain listed as offline after transport disconnection. Users may remove them manually; connected agents may explicitly leave. Unjoined connections leave no picker entries. After an unexpected reconnect, call `widget_join` with the original `resumeToken` to restore the same entry, model profile and selected seats. This invalidates the old transport and cancels its pending requests so two connections cannot control the same identity. Observe current state before acting; do not replay an operation whose outcome is uncertain. Each agent conversation keeps its own token; never merge participants by model name.
+Joined participants remain listed as offline after transport disconnection. Users may remove them manually; connected agents may explicitly leave. Unjoined connections leave no picker entries. On reinitialization, the STDIO bridge reads its local recovery record and restores the same player, profile and seats automatically. The previous transport and its pending work lose access. The model does not retain or supply a recovery token. Observe current state before acting; never replay an uncertain operation.
 
-The `resumeToken` is a private recovery credential scoped to one participant, separate from the service credential in `widget-mcp.json`. It is returned only to the joining agent, never in candidate lists or widget data. Keep it in the same agent conversation; do not share it with widgets or other agents. Explicit leave, manual removal and Pudding restart revoke it. Invalid tokens return an error and never silently create another player. If the token is lost, ask the user before joining afresh. Recovery covers client transport loss within the same Pudding process, not a Pudding restart.
+Configure a stable Agent slot with `--identity` (or `PUDDING_WIDGET_MCP_IDENTITY`), for example `gemini-a` and `gemini-b`. A slot represents one player; a replacement connection takes it over. Independent players need different slots. Without an explicit slot, Codex clients use `CODEX_THREAD_ID` when available; otherwise the initialization client name and `--name` form the default slot. MCP does not necessarily identify the current chat, so separate windows in the same client are not automatically separate players. Configure distinct identities for multiplayer use. Self-reported model names never determine recovery identity.
+
+Pudding writes the records under `mcp/widget-identities/`, with user-only directory/file permissions. The adapter only reads them, so sandbox clients still need only read access to mcp/. Never give these files to models or other participants. Model-facing join results contain no recovery token. Failed persistence fails the join; concurrent joins for one slot create only one candidate.
+
+Explicit leave, manual removal and Pudding restart revoke recovery. Reconnecting does not resurrect removed participation; only a later user-requested `widget_join({})` starts fresh participation. Missing, corrupt or invalid recovery records never silently create a replacement player. Recovery covers client transport loss within the same Pudding process, not a Pudding restart. Direct HTTP clients without this managed STDIO adapter may still maintain their own private `resumeToken`, but credentials cannot be transferred between configured identities.
 
 This bridge exposes no Core credential, general file access, session management or widget source editing.
