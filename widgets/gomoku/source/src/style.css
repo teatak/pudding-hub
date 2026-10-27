@@ -547,7 +547,7 @@
   font-size: 11px;
   color: var(--gd-muted);
 }
-.gd-picker-row > span:last-child {
+.gd-picker-row label > span:last-child {
   min-width: 0;
   overflow-wrap: anywhere;
 }
@@ -683,8 +683,18 @@ button {
   height: 16px;
   flex: none;
 }
-.gd-picker-row > span:last-child {
+.gd-picker-row label > span:last-child {
   flex: 1;
+}
+.gd-picker-row label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 1;
+  min-width: 0;
+}
+.gd-picker-row > button {
+  flex: none;
 }
 @media (prefers-reduced-motion: no-preference) {
   .gd-speech {

@@ -4,7 +4,7 @@ import {
   useWidgetInteraction,
   useWidgetState,
   useWidgetLocale,
-  type SessionCandidate,
+  type SessionCandidate as SDKSessionCandidate,
 } from "@pudding/widget";
 import {
   Check,
@@ -44,12 +44,21 @@ import {
 import { t, errorText } from "./text";
 import "./style.css";
 
-type Candidates = Awaited<ReturnType<typeof pudding.interaction.candidates>>;
+// New host metadata and subscription methods are optional on older SDK 1 hosts.
+type SessionCandidate = SDKSessionCandidate & { kind?: "session" | "external"; connected?: boolean };
+type Candidates = Omit<Awaited<ReturnType<typeof pudding.interaction.candidates>>, "sessions"> & { sessions: SessionCandidate[] };
+const interaction = pudding.interaction as typeof pudding.interaction & {
+  onCandidatesChanged?: (listener: () => void) => () => void;
+  removeCandidate?: (input: { id: string }) => Promise<null>;
+};
+const removeCandidate = interaction.removeCandidate;
 type Player = {
   id: string;
   name: string;
   human: boolean;
   model?: SessionCandidate["model"];
+  external?: boolean;
+  connected?: boolean;
 };
 const me = "@me";
 const sideName = (role: Color) =>
@@ -98,6 +107,10 @@ export default function App() {
     p = position(),
     l = lobby();
   const [candidates, setCandidates] = useState<Candidates | null>(null);
+  // Keep display metadata on the retained board after a connection is removed.
+  const knownPlayers = useRef(new Map<string, SessionCandidate>());
+  const candidatesRequest = useRef(0);
+  const selectionInitialized = useRef(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [picker, setPicker] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -145,14 +158,20 @@ export default function App() {
     }
   }
   async function loadCandidates(isLive = () => true) {
+    const requestID = ++candidatesRequest.current;
     try {
       const value = await pudding.interaction.candidates();
-      if (!isLive()) return;
+      if (!isLive() || requestID !== candidatesRequest.current) return;
+      value.sessions.forEach((s) => { if (s.participantID) knownPlayers.current.set(s.participantID, s); });
       setCandidates(value);
-      if (!lobby().round)
+      if (!lobby().round && !selectionInitialized.current) {
+        selectionInitialized.current = true;
         setSelected(
           (value.connectedSessionIDs ?? value.preferredSessionIDs).slice(0, 2),
         );
+      } else {
+        setSelected((current) => current.filter((id) => id === me || value.sessions.some((s) => s.id === id)));
+      }
     } catch (e) {
       if (isLive()) setError({ cause: e, retry: "candidates" });
     }
@@ -160,8 +179,10 @@ export default function App() {
   useEffect(() => {
     let live = true;
     void loadCandidates(() => live);
+    const unsubscribe = interaction.onCandidatesChanged?.(() => void loadCandidates(() => live));
     return () => {
       live = false;
+      unsubscribe?.();
     };
   }, [members, l.round]);
   useEffect(() => {
@@ -197,12 +218,14 @@ export default function App() {
       };
     const candidate = candidates?.sessions.find((s) => s.id === id);
     return candidate
-      ? { id, name: candidate.name, human: false, model: candidate.model }
+      ? { id, name: candidate.name, human: false, model: candidate.model, external: candidate.kind === "external", connected: candidate.connected }
       : undefined;
   };
   const players = l.round
     ? l.players.map((id) => {
         const participant = run?.participants.find((p) => p.id === id);
+        const candidate = candidates?.sessions.find((s) => s.participantID === id);
+        const external = (candidate ?? knownPlayers.current.get(id))?.kind === "external";
         return participant
           ? {
               id,
@@ -211,8 +234,9 @@ export default function App() {
                   ? t("playOnBoard")
                   : participant.name,
               human: participant.kind === "human",
-              model: candidates?.sessions.find((s) => s.participantID === id)
-                ?.model,
+              model: candidate?.model ?? knownPlayers.current.get(id)?.model,
+              external,
+              connected: external ? candidate?.connected ?? false : undefined,
             }
           : undefined;
       })
@@ -223,9 +247,9 @@ export default function App() {
     void perform(async () => {
       // Connections may arrive after the board opened. Refresh only the picker;
       // participant identity and game state still come from the shared run.
-      const current = await pudding.interaction.candidates();
+      const current: Candidates = await pudding.interaction.candidates();
       setCandidates(current);
-      const available = new Set([me, ...current.sessions.map((s) => s.id)]);
+      const available = new Set([me, ...current.sessions.filter((s) => s.connected !== false).map((s) => s.id)]);
       const choice = (l.round
         ? l.players.flatMap((id) =>
             id === human?.id
@@ -445,6 +469,7 @@ export default function App() {
                       </strong>
                       <small title={player?.name}>
                         {player?.name || t("conversationOrYou")}
+                        {player?.connected === false && ` · ${t("connectionOffline")}`}
                       </small>
                     </div>
                   </div>
@@ -833,6 +858,12 @@ export default function App() {
             candidates={candidates?.sessions || []}
             selected={selected}
             setSelected={setSelected}
+            busy={busy}
+            remove={removeCandidate ? (id) => void perform(async () => {
+              await removeCandidate({ id });
+              setSelected((current) => current.filter((value) => value !== id));
+              await loadCandidates();
+            }) : undefined}
             close={() => setPicker(false)}
             start={() => {
               setPicker(false);
@@ -857,6 +888,8 @@ function CandidatePicker({
   close,
   start,
   chosenPlayer,
+  busy,
+  remove,
 }: {
   candidates: SessionCandidate[];
   selected: string[];
@@ -864,6 +897,8 @@ function CandidatePicker({
   close: () => void;
   start: () => void;
   chosenPlayer: (id: string) => Player | undefined;
+  busy: boolean;
+  remove?: (id: string) => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
@@ -882,12 +917,13 @@ function CandidatePicker({
         {[me, ...candidates.map((s) => s.id)].map((id) => {
           const player = chosenPlayer(id)!;
           return (
-            <label className="gd-picker-row" key={id}>
+            <div className="gd-picker-row" key={id}>
+              <label>
               <input
                 type="checkbox"
                 data-session={id}
                 checked={selected.includes(id)}
-                disabled={!selected.includes(id) && selected.length >= 2}
+                disabled={busy || (!selected.includes(id) && (player.connected === false || selected.length >= 2))}
                 onChange={(e) =>
                   setSelected(
                     e.target.checked
@@ -899,16 +935,20 @@ function CandidatePicker({
               <Avatar player={player} />
               <span>
                 {player.human ? t("you") : player.model?.name}
-                <small>{player.name}</small>
+                <small>{player.name}{player.connected === false && ` · ${t("connectionOffline")}`}</small>
               </span>
-            </label>
+              </label>
+              {player.external && remove && <button className="gd-button" disabled={busy}
+                aria-label={t("removeConnectionNamed", { name: player.name })}
+                onClick={() => remove(id)}>{t("removeConnection")}</button>}
+            </div>
           );
         })}
       </div>
       <div className="gd-picker-actions">
         <button
           className="gd-button is-primary"
-          disabled={selected.length !== 2}
+          disabled={busy || selected.length !== 2 || selected.some((id) => !chosenPlayer(id) || chosenPlayer(id)?.connected === false)}
           onClick={start}
         >
           {t("pickerInviteAndPlay")}

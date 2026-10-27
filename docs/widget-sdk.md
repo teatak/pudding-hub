@@ -156,6 +156,8 @@ Visible split conversations can share the current page. Use interaction when the
 
 `interaction.candidates()` returns `{sessions, preferredSessionIDs, connectedSessionIDs, maxSessions}`. Each session contains `{id, name, participantID?, model:{id,name,icon}}`.
 
+External MCP candidates additionally expose `kind: "external"` and `connected: boolean`. They use the host's icon and a self-reported `Model name (MCP)` label, or MCP when no model was reported. Offline entries remain visible until the user removes them or the agent explicitly leaves. Subscribe with `interaction.onCandidatesChanged(listener)` and re-read candidates to reflect connection/profile changes; the returned function unsubscribes. A user-facing removal button may call `interaction.removeCandidate({id})` for an external candidate. Removing a connection does not change the board or run participants. Agents use the separate `widget_disconnect` MCP tool to leave their own connection. Feature-detect these SDK methods for older hosts.
+
 Initialize a selector once with `connectedSessionIDs ?? preferredSessionIDs`: Studio defaults to none, a conversation to itself, and a split to both sides. Preserve an existing empty selection. Do not reapply defaults on focus changes.
 
 `interaction.connect({sessionIDs})` creates or updates a run with up to 15 conversations and one human participant. The host assigns participantIDs; the widget assigns business roles such as stone colors and readiness. Connecting alone does not invoke a model.
@@ -190,6 +192,8 @@ Commit business state before notifying. Use a stable ID and identical content wh
 `pause()` suspends automatic model execution, `resume()` continues it, and `disconnect()` removes participants and cancels pending work while keeping business data. The widget decides whether human edits are allowed during a pause.
 
 After a page refresh or app restart, a run is restored paused. Register `onResume(handler)` to derive fresh outstanding requests from current business state; it returns an unregister function. Do not replay completed results or use a runID as a permanent business identity.
+
+Runs have no elapsed-time pause limit. Manual pause/resume and the limit on 200 automatically started internal model turns remain; external MCP actions do not count toward that turn limit.
 
 ## Language
 

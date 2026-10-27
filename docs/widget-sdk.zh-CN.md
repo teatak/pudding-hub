@@ -156,6 +156,8 @@ run 的第二个参数 context 包含 callID、signal，以及可选的 sessionI
 
 `interaction.candidates()` 返回 `{sessions, preferredSessionIDs, connectedSessionIDs, maxSessions}`。sessions 中每项有 `{id, name, participantID?, model:{id,name,icon}}`。
 
+外部 MCP 候选另有 `kind: "external"` 和 `connected: boolean`。宿主提供模型图标和自报的“模型名称 (MCP)”标签，未自报则显示 MCP。离线项保留，直到用户手动移除或 agent 主动退出。通过 `interaction.onCandidatesChanged(listener)` 订阅连接/模型变化后重新读取候选；返回值用于取消订阅。用户的移除按钮可调用 `interaction.removeCandidate({id})` 移除外部候选，不改变棋盘或运行参与者。agent 使用独立的 `widget_disconnect` MCP 工具退出自身连接。兼容旧宿主时先检查这些 SDK 方法是否存在。
+
 选择器用 `connectedSessionIDs ?? preferredSessionIDs` 初始化一次：Studio 默认不选会话，单会话默认选择自己，分屏默认选择两侧。已有的空选择也要保留，不要在切换焦点时重新套用默认值。
 
 `interaction.connect({sessionIDs})` 创建或更新协作运行，最多支持 15 个会话和一个人类参与者。宿主负责 participantID，组件负责棋手颜色、准备状态等业务角色。连接本身不会启动模型。
@@ -190,6 +192,8 @@ audience 为 all 时包含发送者；selected 只投递给指定 participantID�
 `pause()` 暂停模型自动执行，`resume()` 继续，`disconnect()` 结束参与者连接并取消待执行工作，但保留业务数据。暂停时是否允许人类修改棋盘等行为，由组件的业务规则决定。
 
 页面刷新或应用重启后，协作运行以暂停状态恢复。通过 `onResume(handler)` 根据当前业务状态生成仍需处理的新请求；该方法返回注销函数。不要重播已完成的结果，也不要将一次运行的 runID 当作永久业务 ID。
+
+运行不再按累计时间自动暂停。保留手动暂停/继续，以及自动启动内部模型回合的 200 次上限；外部 MCP 操作不计入该回合上限。
 
 ## 语言
 
