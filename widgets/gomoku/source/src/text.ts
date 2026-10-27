@@ -61,6 +61,7 @@ export const messages = {
     actionResign: "Resign",
 
     // 弹幕与评论
+    playerComments: "Player comments",
     commentPrefix: "Move {number} · ",
     commentPlaceholder: "Say something…",
     commentAria: "Comment on your next move",
@@ -181,6 +182,7 @@ export const messages = {
     actionResign: "认输",
 
     // 弹幕与评论
+    playerComments: "棋手弹幕",
     commentPrefix: "第 {number} 手 · ",
     commentPlaceholder: "这手想说什么？",
     commentAria: "随下一手发言",
@@ -300,6 +302,7 @@ export const messages = {
     actionResign: "認輸",
 
     // 弹幕与评论
+    playerComments: "棋手彈幕",
     commentPrefix: "第 {number} 手 · ",
     commentPlaceholder: "這手想說什麼？",
     commentAria: "隨下一手發言",

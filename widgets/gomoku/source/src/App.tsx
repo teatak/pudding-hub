@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
   pudding,
   useWidgetInteraction,
@@ -99,6 +99,39 @@ function Avatar({ player }: { player?: Player }) {
         <Swords size={20} />
       )}
     </span>
+  );
+}
+function BoardComment({ player, role, quote }: {
+  player: Player;
+  role: Color;
+  quote: { text: string; moveNumber: number };
+}) {
+  const track = useRef<HTMLSpanElement>(null);
+  const text = useRef<HTMLSpanElement>(null);
+  const [overflow, setOverflow] = useState(0);
+  useEffect(() => {
+    const measure = () => setOverflow(Math.max(0, text.current!.scrollWidth - track.current!.clientWidth));
+    const observer = new ResizeObserver(measure);
+    observer.observe(track.current!);
+    observer.observe(text.current!);
+    measure();
+    return () => observer.disconnect();
+  }, []);
+  const identity = `${player.human ? t("you") : player.model?.name || player.name} · ${sideName(role)}`;
+  return (
+    <div className="gd-board-comment" data-speech-move={quote.moveNumber} data-color={role}
+      title={`${identity} · ${t("commentPrefix", { number: quote.moveNumber })}${quote.text}`}>
+      <span className="gd-comment-author" role="img" aria-label={identity}>
+        <Avatar player={player} />
+        <span className={`gd-color-dot gd-${role.toLowerCase()}`} />
+      </span>
+      <span ref={track} className="gd-comment-track" tabIndex={overflow > 0 ? 0 : undefined}>
+        <span ref={text} className={"gd-comment-text" + (overflow > 0 ? " is-scrolling" : "")}
+          style={{ "--gd-scroll-distance": `-${overflow}px`, "--gd-scroll-duration": `${Math.max(8, overflow / 20)}s` } as CSSProperties}>
+          <Comment {...quote} />
+        </span>
+      </span>
+    </div>
   );
 }
 export default function App() {
@@ -421,7 +454,7 @@ export default function App() {
                 l.phase === "playing" &&
                 !p.winner &&
                 role === p.turn;
-              const quote = role && danmaku ? view.comments[role] : undefined;
+              const showBody = !player || !l.round || (!p.winner && (l.phase !== "playing" || player.human));
               const status = replaying
                 ? t("replay")
                 : !l.round
@@ -501,7 +534,7 @@ export default function App() {
                         )}
                     </span>
                   </div>
-                  <div className="gd-card-body">
+                  {showBody && <div className="gd-card-body">
                     {player?.human && l.round && l.phase !== "playing" ? (
                       <div className="gd-card-wait">
                         <small>{openingHint}</small>
@@ -520,19 +553,7 @@ export default function App() {
                       </div>
                     ) : player?.human && l.phase === "playing" && !p.winner ? (
                       <div className="gd-human-body">
-                        <p
-                          className="gd-human-last"
-                          title={quote?.text}
-                          data-speech-move={
-                            quote?.text ? quote.moveNumber : undefined
-                          }
-                        >
-                          {quote?.text ? (
-                            <Comment {...quote} />
-                          ) : (
-                            t("commentHint")
-                          )}
-                        </p>
+                        <small>{t("commentHint")}</small>
                         <label className="gd-comment-compose">
                           <input
                             data-comment
@@ -544,16 +565,6 @@ export default function App() {
                             placeholder={t("commentPlaceholder")}
                           />
                         </label>
-                      </div>
-                    ) : quote?.text ? (
-                      <div
-                        className="gd-speech is-new"
-                        key={quote.moveNumber}
-                        data-speech-move={quote.moveNumber}
-                      >
-                        <span className="gd-speech-text" title={quote.text}>
-                          <Comment {...quote} />
-                        </span>
                       </div>
                     ) : (
                       <div className="gd-card-wait">
@@ -583,7 +594,7 @@ export default function App() {
                         </span>
                       </div>
                     )}
-                  </div>
+                  </div>}
                 </article>
               );
             })}
@@ -596,6 +607,16 @@ export default function App() {
                 role="group"
                 aria-label={t("boardAria")}
               >
+                {danmaku && <div className="gd-board-comments" role="region" aria-label={t("playerComments")} aria-live="polite">
+                  {roles.map((role) => {
+                    const quote = view.comments[role];
+                    const player = players.find((player) => player?.id === l.seats[role]);
+                    return <div className="gd-comment-lane" key={role}>
+                      {quote?.text && player && <BoardComment key={quote.moveNumber} player={player} role={role} quote={quote} />}
+                    </div>;
+                  })}
+                </div>}
+                <div className="gd-board-surface">
                 <svg
                   className="gd-grid"
                   viewBox="0 0 1000 1000"
@@ -737,6 +758,7 @@ export default function App() {
                     )}
                   </div>
                 )}
+                </div>
               </div>
             </div>
             <footer className="gd-board-footer">
