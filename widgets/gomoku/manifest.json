@@ -1,6 +1,8 @@
 {
   "id": "teatak/pudding-hub/widgets/gomoku",
-  "version": "1.0.3",
+  "version": "1.0.4-preview.1",
+  "preview": true,
+  "channel": "preview",
   "title": {
     "zh-CN": "五子棋",
     "zh-TW": "五子棋",

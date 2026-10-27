@@ -40,11 +40,21 @@ test("widget catalog contains all registered widgets with complete, verifiable r
     assert.equal(entry.releases[0].version, manifest.version);
     assert.deepEqual(entry.title, manifest.title);
     assert.equal(entry.icon, await widgetIcon(dir, manifest.icon));
+    const withdrawn = await read(path.join(dir, "withdrawn.json")).catch((error) => {
+      if (error.code === "ENOENT") return { releases: [] };
+      throw error;
+    });
+    for (const release of withdrawn.releases) {
+      assert.ok(release.reason.trim(), "withdrawal needs a reason");
+      assert.ok(!entry.releases.some((listed) => listed.version === release.version), "withdrawn versions must not be offered for installation");
+    }
+    const releases = [...entry.releases, ...withdrawn.releases];
+    assert.equal(new Set(releases.map((release) => release.version)).size, releases.length);
     assert.deepEqual(
       (await fs.readdir(path.join(dir, "releases"))).sort(),
-      entry.releases.map((release) => release.version).sort(),
+      releases.map((release) => release.version).sort(),
     );
-    for (const release of entry.releases) {
+    for (const release of releases) {
       assert.equal(
         release.package,
         `./${name}/releases/${release.version}/${name}.pudding-widget.json`,
@@ -55,6 +65,8 @@ test("widget catalog contains all registered widgets with complete, verifiable r
       assert.equal(pkg.id, manifest.id);
       assert.equal(pkg.version, release.version);
       assert.deepEqual(pkg.requires, release.requires);
+      assert.equal(pkg.preview, release.preview);
+      assert.equal(pkg.channel, release.channel);
       assert.deepEqual(
         Object.keys(pkg.fileHashes).sort(),
         Object.keys(pkg.source.files).sort(),

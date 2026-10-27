@@ -1,0 +1,14 @@
+{
+  "releases": [
+    {
+      "version": "1.0.3",
+      "package": "./gomoku/releases/1.0.3/gomoku.pudding-widget.json",
+      "packageHash": "51c5e9055e2d908df8548fdee6e522bd8fa091bfbd325566b666086899df04a9",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "reason": "Withdrawn because candidate metadata access fails TypeScript compilation with Desktop v0.8.1. Use stable 1.0.2 or 1.0.4-preview.1."
+    }
+  ]
+}

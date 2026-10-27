@@ -163,7 +163,7 @@ export default function App() {
   async function loadCandidates(isLive = () => true) {
     const requestID = ++candidatesRequest.current;
     try {
-      const value = await pudding.interaction.candidates();
+      const value: Candidates = await pudding.interaction.candidates();
       if (!isLive() || requestID !== candidatesRequest.current) return;
       value.sessions.forEach((s) => { if (s.participantID) knownPlayers.current.set(s.participantID, s); });
       setCandidates(value);

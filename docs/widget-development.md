@@ -172,7 +172,11 @@ Packages use pudding.widget.source-package with schemaVersion 2 and contain sour
 
 Update the version in manifest.json before releasing changed content, then run `pnpm package-widget counter`. Use `pnpm package-widgets` for all widget directories. These commands write releases and registry metadata. Existing published packages cannot be overwritten.
 
+Before publishing a stable update, compile the exact package with the oldest supported Desktop SDK/compiler and check its main interactions with that desktop's locked Core. Compilation on the current development host alone does not establish backward compatibility.
+
 For previews, use a distinct version such as 1.1.0-preview.1 and set `"preview": true` in manifest.json. A version suffix or channel alone does not mark a widget as preview. Users enable widget previews in Settings → Advanced; plugin previews have a separate switch. Turning the switch off does not downgrade or uninstall an existing preview.
+
+To withdraw a broken release, move its catalog release record into that widget's `withdrawn.json` (`{"releases": [...]}`) and add a `reason`. Keep the package at its original URL unchanged. Catalog checks verify withdrawn package hashes too and reject versions listed in both places. Withdrawal stops new catalog installations; it does not remove or downgrade installed copies.
 
 ### Updating installed widgets
 

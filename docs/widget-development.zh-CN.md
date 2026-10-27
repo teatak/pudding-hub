@@ -172,7 +172,11 @@ Desktop 的 widget-hub smoke 可通过 PUDDING_HUB_DIR 读取本地源码。运�
 
 发布新内容时先更新 manifest.json 的版本，再运行 `pnpm package-widget counter`。批量打包用 `pnpm package-widgets`。正式命令会写入 releases 和注册表；已有正式发布包不可覆盖。
 
+发布正式更新前，用最低支持版本 Desktop 的 SDK／编译器检查实际发布包，并配合该版本锁定的 Core 验证主要交互。仅在当前开发版宿主上编译通过，不能证明向后兼容。
+
 预览版使用独立版本，例如 1.1.0-preview.1，并在 manifest.json 设置 `"preview": true`。仅添加版本后缀或 channel 不会将小组件标记为预览版。用户在“设置 → 高级”开启小组件预览版；插件预览版是另一个开关。关闭开关不会降级或卸载已有预览版。
+
+撤下有问题的版本时，将其目录发布记录移至该小组件的 `withdrawn.json`（`{"releases": [...]}`），并补充 `reason`。原包保留在原地址，不修改内容。目录测试仍会校验撤回包的哈希，并禁止同一版本同时出现在安装目录和撤回记录中。撤回只停止目录中的新安装，不会移除或降级已安装的版本。
 
 ### 已安装小组件如何更新
 
