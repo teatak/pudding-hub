@@ -1,5 +1,6 @@
 import { pudding } from "@pudding/widget";
 const en = {
+  instructions: "Gmail Board reads the connected mailbox and organizes local cards and reply drafts. No seats, candidate join, readiness or event waiting is required. Start with getBoard to learn the account and storage version, then use listThreads and readThread as needed. updateCards and saveReplyDraft modify Pudding storage only; they do not send email or change Gmail. Use the returned account and expectedStorageVersion for local writes and the latest widget stateVersion for interface calls. Stop when the user’s request is complete.",
   copied: "Copied",
   copyFailed: "Copy unavailable. The text is selected; press ⌘C / Ctrl+C.",
   messageTab: "Messages",
@@ -80,6 +81,7 @@ type Key = keyof typeof en;
 export const messages: Record<"en" | "zh-CN" | "zh-TW", Record<Key, string>> = {
   en,
   "zh-CN": {
+    instructions: "Gmail Board 用于读取已连接邮箱、整理本地卡片和回复草稿。不需要席位、加入候选、准备或持续等待。先调用 getBoard 获取账号和存储版本，再按需调用 listThreads、readThread。updateCards 和 saveReplyDraft 只修改 Pudding 本地存储，不发送邮件、不修改 Gmail。写入使用返回的账号和 expectedStorageVersion，接口调用使用最新小组件 stateVersion。完成用户需求后结束。",
     copied: "已复制",
     copyFailed: "无法自动复制，已选中文字，请按 ⌘C / Ctrl+C。",
     messageTab: "邮件正文",
@@ -153,6 +155,7 @@ export const messages: Record<"en" | "zh-CN" | "zh-TW", Record<Key, string>> = {
       "刷新当前连接账号的 Gmail 读取缓存，返回 getBoard 摘要，不重复返回完整邮件。account 来自 getBoard，本地状态和草稿保留。",
   },
   "zh-TW": {
+    instructions: "Gmail Board 用於讀取已連接信箱、整理本機卡片和回覆草稿。不需要席位、加入候選、準備或持續等待。先呼叫 getBoard 取得帳號和儲存版本，再按需呼叫 listThreads、readThread。updateCards 和 saveReplyDraft 只修改 Pudding 本機儲存，不寄送郵件、不修改 Gmail。寫入使用返回的帳號和 expectedStorageVersion，介面呼叫使用最新小元件 stateVersion。完成使用者需求後結束。",
     copied: "已複製",
     copyFailed: "無法自動複製，已選取文字，請按 ⌘C / Ctrl+C。",
     messageTab: "郵件內文",

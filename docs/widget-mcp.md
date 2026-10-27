@@ -39,46 +39,55 @@ Replace the username and Node path in this macOS example:
 
 For development builds, replace `.pudding` with `.pudding-dev`. On Windows and other platforms, use the actual absolute Node path and script path under the app's home directory. Configuration files generally do not expand `~` or `$HOME`.
 
-Sandboxed clients need to execute Node, read `<home>/mcp/` and connect to the local server. Add read access to that directory rather than the full Pudding data directory. Set tool timeouts longer than `widget_wait`'s 25-second window, for example 60 seconds; the setting name depends on the client.
+Sandboxed clients need to execute Node, read `<home>/mcp/` and connect to the local server. Add read access to that directory rather than the full Pudding data directory. `widget_wait` defaults to 10 seconds and accepts a shorter `timeoutSeconds`, up to 25 seconds. Set client tool timeouts longer than the requested wait, for example 60 seconds; the setting name depends on the client. If the client reports `CLIENT_TIMEOUT`, use a shorter wait (for example 5 seconds). If it also resets the transport, recover participation as described below.
 
 Older versions installed the script directly in the home root. New versions remove those legacy files at startup, so update existing client paths. Reconnect MCP after restarting Pudding to load the new address, credential and tools.
 
-## Participation flow
+## Ordinary widgets
 
-1. Configure and connect MCP. Initialization, tool discovery, heartbeats and model profiles do not create picker entries.
-2. When the user asks to participate, optionally report a known model/provider with `widget_set_profile`, then call `widget_join`. Repeated joins reuse the same entry.
-3. No specific widget is selected yet. Call `widget_targets`; if none are authorized, call `widget_wait` without `targetID` while the user selects participants.
-4. The user selects the agent in a widget and starts participation. Use the returned `targetID` with `widget_observe` to read that instance's `instructions`, page and interface descriptions. Learn its roles, rules and completion conditions there.
-5. Operate through discovered interfaces with the latest `stateVersion`. After acting, call `widget_wait` with `targetID` and the latest `afterSeq`. Timeout means no new event, not completion.
-6. Stop automatic actions when the activity finishes or the user asks to stop. Let the user resume a manual pause. To explicitly leave, call `widget_disconnect`; it removes only the caller's entry and retains activity records.
+Ask the agent directly: “Summarize the mail in the Gmail Board currently open in Pudding.” It calls `widget_targets`, chooses the matching instance, reads `widget_observe` and invokes its interfaces. No candidate registration, player selection, activity run or waiting loop is needed. It completes the user's task in the original agent conversation. If several instances match, clarify which one to use. Hiding or closing an ordinary page revokes access to that target; stale revisions and bindings are also rejected.
 
-MCP cannot itself wake an ended model turn. Continuous participation requires the agent to keep its waiting loop running. Conversations sharing one MCP connection do not automatically get separate identities; two independent connections can be two participants.
+## Multi-participant activities
 
-Example prompt:
+1. Configure MCP. Initialization, discovery, heartbeats and model profiles never create candidate entries.
+2. When asked to participate, optionally report a known model/provider with `widget_set_profile`, then call `widget_join`. Save its `participantID` and private `resumeToken`; repeated joins reuse the entry. The agent can discover a widget first or enter the candidate pool before assignment.
+3. Keep calling `widget_wait` without `targetID` until assigned. `widget_targets` can also list ordinary pages and activities requiring participation; discovering one does not assign a seat or authorize its private state.
+4. The widget reads candidates with `interaction.candidates()`. Gomoku fills vacant choices with newly joined online agents; the user can remove agents, deselect them or supplement with internal conversations or themselves, then click Start. Having enough candidates never starts the activity automatically.
+5. The widget connects the chosen participants and assigns its own roles. Use the assigned `targetID` with `widget_observe` to learn that instance's instructions, roles, rules and completion conditions. Invoke interfaces with the latest `stateVersion`.
+6. External agents call `widget_wait({targetID, afterSeq})` for their next event. A normal `status: "waiting"` timeout means wait again on the same connection, not rejoin or create a new player. Internal conversations retain Pudding's existing notification-driven turns; no persistent internal waiting loop is introduced.
+7. Stop on completion or user stop; let the user resume a manual pause. `widget_disconnect` removes participation, revokes the recovery token and activity access, and cancels pending requests. Records, the MCP transport and ordinary-widget tools remain. A later user-requested `widget_join({})` starts fresh participation without restarting MCP.
 
-> Join Pudding widgets and wait for me to select you. Once selected, read that widget's instructions and interfaces, then participate according to its rules until the activity finishes or I ask you to stop. Keep waiting after a wait timeout.
+Seat counts belong to each widget, not MCP: Gomoku requires 2, a three-player card game requires 3, and a social deduction game may accept 4–6 with the user confirming the roster. The widget validates the count before `interaction.connect`, chooses the roster when too many candidates are available, assigns roles, and handles departure during play. The host supports up to 15 non-human participants plus one human; this is a technical limit, not a game rule. Human presence in the run is not automatically a playing seat.
+
+MCP cannot wake an ended model turn. External agents must remain in their waiting loop for continuous participation. Multiple conversations sharing one MCP transport do not automatically have separate identities.
+
+Example activity prompt:
+
+> Join Pudding's candidate pool and keep waiting for assignment. After I start an activity, read its instructions and interfaces, then participate until it finishes or I stop you. Keep waiting when no event arrives, without joining again. Save your private resumeToken and use it to recover after an unexpected transport reconnect; observe current state before continuing.
 
 ## Tools
 
 | Tool | Purpose |
 | --- | --- |
-| `widget_join` | Register as a candidate participant; does not grant access to a specific widget |
+| `widget_join` | Register a candidate or pass `resumeToken` to restore the original player and seats; fresh players require user selection |
 | `widget_set_profile` | Report model and provider for display only |
-| `widget_targets` | Discover running targets authorized by the user |
+| `widget_targets` | Discover available ordinary widgets and activities; unassigned activities report participation_required |
 | `widget_observe` | Read target instructions, interfaces and page text, with optional controls/screenshots |
 | `widget_invoke` | Invoke a widget-defined operation with its declared arguments |
-| `widget_wait` | Wait up to 25 seconds for selection or new notices addressed to this participant |
+| `widget_wait` | Wait 10 seconds by default, up to 25; no event normally returns `status: "waiting"` |
 | `widget_click` | Click an observed control or coordinate |
 | `widget_type` | Enter text |
 | `widget_scroll` | Scroll a page or container |
-| `widget_disconnect` | Leave and remove the caller's entry |
+| `widget_disconnect` | Leave participation and revoke recovery; keep MCP usable for a later join |
 
 Widget-specific operations are discovered through `widget_observe` and invoked through `widget_invoke`; they do not become separate MCP tools.
 
 ## Widget guidance and connection management
 
-MCP initialization instructions describe the generic join, wait, discovery and exit workflow. Widget authors declare their own purpose and rules with [`pudding.setInstructions(text)`](widget-sdk.md#model-interfaces-and-page-input). `widget_observe` always returns `instructions`, or an empty string when none were supplied. Guidance is scoped to the selected instance and accessible only to authorized participants; it does not override user requests, host permissions or higher-priority instructions.
+MCP initialization instructions describe the generic join, wait, discovery and exit workflow. Widget authors declare their own purpose and rules with [`pudding.setInstructions(text)`](widget-sdk.md#model-interfaces-and-page-input). `widget_observe` always returns `instructions`, or an empty string when none were supplied. Guidance is scoped to the discovered instance; active multi-participant runs still require membership for observation and actions; it does not override user requests, host permissions or higher-priority instructions.
 
-Joined participants remain listed as offline after transport disconnection. Users may remove them manually; connected agents may explicitly leave. Unjoined connections leave no picker entries. Reconnection creates a new identity requiring an explicit join and user selection. Do not merge identities by model name: two participants may use the same model.
+Joined participants remain listed as offline after transport disconnection. Users may remove them manually; connected agents may explicitly leave. Unjoined connections leave no picker entries. After an unexpected reconnect, call `widget_join` with the original `resumeToken` to restore the same entry, model profile and selected seats. This invalidates the old transport and cancels its pending requests so two connections cannot control the same identity. Observe current state before acting; do not replay an operation whose outcome is uncertain. Each agent conversation keeps its own token; never merge participants by model name.
+
+The `resumeToken` is a private recovery credential scoped to one participant, separate from the service credential in `widget-mcp.json`. It is returned only to the joining agent, never in candidate lists or widget data. Keep it in the same agent conversation; do not share it with widgets or other agents. Explicit leave, manual removal and Pudding restart revoke it. Invalid tokens return an error and never silently create another player. If the token is lost, ask the user before joining afresh. Recovery covers client transport loss within the same Pudding process, not a Pudding restart.
 
 This bridge exposes no Core credential, general file access, session management or widget source editing.

@@ -331,6 +331,7 @@ function defineGameInterface<T>(
   });
 }
 function registerInterfaces() {
+  (pudding as typeof pudding & { setInstructions?: (text: string) => void }).setInstructions?.(t("instructions"));
   const coordinates = { error: errorText("Use columns A–O and rows 1–15") };
   return [
     defineGameInterface({

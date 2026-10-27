@@ -21,6 +21,7 @@ import {
   UsersRound,
 } from "lucide-react";
 import { roles } from "./lobby";
+import { fillCandidates } from "./candidates";
 import {
   size,
   letters,
@@ -110,7 +111,7 @@ export default function App() {
   // Keep display metadata on the retained board after a connection is removed.
   const knownPlayers = useRef(new Map<string, SessionCandidate>());
   const candidatesRequest = useRef(0);
-  const selectionInitialized = useRef(false);
+  const seenAgents = useRef(new Set<string>());
   const [selected, setSelected] = useState<string[]>([]);
   const [picker, setPicker] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -147,7 +148,9 @@ export default function App() {
     setBusy(true);
     setError(null);
     try {
-      await fn();
+      // Keep asynchronous page actions in the host's caller scope as well as
+      // interface calls, so an agent cannot become the human after an await.
+      await pudding.interaction.handle(() => fn());
     } catch (e) {
       setError({
         cause: e,
@@ -164,14 +167,9 @@ export default function App() {
       if (!isLive() || requestID !== candidatesRequest.current) return;
       value.sessions.forEach((s) => { if (s.participantID) knownPlayers.current.set(s.participantID, s); });
       setCandidates(value);
-      if (!lobby().round && !selectionInitialized.current) {
-        selectionInitialized.current = true;
-        setSelected(
-          (value.connectedSessionIDs ?? value.preferredSessionIDs).slice(0, 2),
-        );
-      } else {
-        setSelected((current) => current.filter((id) => id === me || value.sessions.some((s) => s.id === id)));
-      }
+      const seen = new Set(seenAgents.current);
+      setSelected((current) => fillCandidates(current, value.sessions, seen));
+      value.sessions.filter(s => s.kind === "external" && s.connected !== false).forEach(s => seenAgents.current.add(s.id));
     } catch (e) {
       if (isLive()) setError({ cause: e, retry: "candidates" });
     }
@@ -250,7 +248,7 @@ export default function App() {
       const current: Candidates = await pudding.interaction.candidates();
       setCandidates(current);
       const available = new Set([me, ...current.sessions.filter((s) => s.connected !== false).map((s) => s.id)]);
-      const choice = (l.round
+      const previous = (l.round
         ? l.players.flatMap((id) =>
             id === human?.id
               ? [me]
@@ -259,6 +257,9 @@ export default function App() {
                   .map((s) => s.id),
           )
         : selected).filter((id) => available.has(id));
+      const choice = fillCandidates(previous, current.sessions, seenAgents.current);
+      current.sessions.filter(s => s.kind === "external" && s.connected !== false).forEach(s => seenAgents.current.add(s.id));
+      setSelected(choice);
       if (choosePlayers || choice.length !== 2) {
         setSelected(choice);
         setPicker(true);
@@ -901,6 +902,7 @@ function CandidatePicker({
   remove?: (id: string) => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const [showConversations, setShowConversations] = useState(selected.length < 2 || selected.some(id => id === me || candidates.some(c => c.id === id && c.kind !== "external")));
   useEffect(() => {
     dialog.current?.showModal();
   }, []);
@@ -913,8 +915,9 @@ function CandidatePicker({
     >
       <h3 id="picker-title">{t("pickerTitle")}</h3>
       <p>{t("pickerSubtitle", { count: selected.length })}</p>
+      <button className="gd-button" aria-expanded={showConversations} onClick={() => setShowConversations(v => !v)}>{t("pickerSupplement")}</button>
       <div className="gd-picker-options">
-        {[me, ...candidates.map((s) => s.id)].map((id) => {
+        {[...candidates.filter(s => s.kind === "external").map(s => s.id), ...(showConversations ? [me, ...candidates.filter(s => s.kind !== "external").map(s => s.id)] : [])].map((id) => {
           const player = chosenPlayer(id)!;
           return (
             <div className="gd-picker-row" key={id}>

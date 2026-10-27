@@ -269,6 +269,7 @@ export function createMailbox(client: QueryClient) {
 }
 export type Mailbox = ReturnType<typeof createMailbox>;
 export function registerInterfaces(mail: Mailbox) {
+  (pudding as typeof pudding & { setInstructions?: (text: string) => void }).setInstructions?.(t("instructions"));
   const account = { account: accountSchema };
   const write = { ...account, expectedStorageVersion: z.number().int().min(0) };
   const wrap =

@@ -43,3 +43,5 @@ PUDDING_CORE_DIR=/path/to/compatible/core node scripts/package-widget.mjs gmail-
 ```
 
 Desktop acceptance: `PUDDING_SMOKE_SCENARIO=gmail-board-live npm run smoke:electron-workspace`, with `PUDDING_HUB_DIR`, a matching `PUDDING_CORE_DIR`/isolated `PUDDING_DAEMON_BIN`, and explicit `PUDDING_MUSIC_PROFILE` / `PUDDING_MUSIC_PROFILES`. It uses real Desktop plugin bindings against two controlled Gmail HTTP fixtures and **DeepSeek Flash** for the model turn. It never accesses a real mailbox or sends mail. OAuth authorization is supplied by the existing Gmail plugin, not exercised by these fixtures.
+
+External MCP agents can discover a visible Gmail Board with `widget_targets`, read its instructions and interfaces with `widget_observe`, and invoke its operations without `widget_join`, a candidate picker or an activity run. Ask in the agent's original conversation, for example “Summarize the Gmail Board open in Pudding.” Internal conversation tools retain their existing page access. Hiding or closing an ordinary page revokes that target. This requires a Desktop version with ordinary-widget MCP discovery; updating the widget alone does not update Desktop.

@@ -71,7 +71,7 @@ export const messages = {
     hintBothReady: "Both players ready; starting soon",
     hintWaitingOpponent: "This player is ready; waiting for the opponent",
     hintWaitingReadiness: "Waiting for this player to confirm readiness",
-    cardInviteOnStart: "Invite this conversation on start",
+    cardInviteOnStart: "Confirm readiness when invited",
     cardCommentsOff: "Comments off",
     cardMatchComplete: "Match complete",
     cardLeaveComment: "One comment with each move",
@@ -85,17 +85,19 @@ export const messages = {
     stoneEmpty: "Empty",
     overlayBothReady: "Both players ready",
     overlayBlackFirst: "Black plays first",
-    footerInviteDirect: "Current conversations · invite on start",
-    footerChooseMissing: "Choose the missing player on start",
+    footerInviteDirect: "Candidates ready · start to assign colors",
+    footerChooseMissing: "Agents can join · add a conversation or yourself to fill a seat",
     footerMatchRetained: "Match complete · board retained",
     footerYourTurn: "Your turn · click an intersection",
     footerWatching: "Watching · players act in their conversations",
 
     // 棋手选择弹窗
-    pickerTitle: "Choose two players",
-    pickerSubtitle: "Selected {count} / 2 · You can join too",
-    pickerInviteAndPlay: "Invite and play",
+    pickerTitle: "Prepare two players",
+    pickerSubtitle: "Candidates {count} / 2 · Joined agents fill empty seats",
+    pickerInviteAndPlay: "Start game",
     pickerBack: "Back",
+    pickerSupplement: "Add a conversation or yourself",
+    instructions: "Gomoku: two players on a 15 × 15 freestyle board. Join the candidate pool and wait for the user to start the game; the widget assigns Black and White. Read readBoard for your assigned seat and the current phase. Confirm readiness with ready; both ready starts a countdown. Black moves first. Use placeStone only on your turn; five or more connected stones wins. Pause stops actions; completion is phase finished. Keep awaiting your own activity events between moves; do not start another round or assign participants yourself.",
 
     // 接口描述
     descReady:
@@ -189,7 +191,7 @@ export const messages = {
     hintBothReady: "双方已准备，即将开局",
     hintWaitingOpponent: "本方已准备，等待对手就绪",
     hintWaitingReadiness: "等待本方确认准备",
-    cardInviteOnStart: "开局后，邀请当前会话",
+    cardInviteOnStart: "分配席位后确认准备",
     cardCommentsOff: "弹幕已关闭",
     cardMatchComplete: "对局已结束",
     cardLeaveComment: "落子时可以留一句话",
@@ -203,17 +205,19 @@ export const messages = {
     stoneEmpty: "空位",
     overlayBothReady: "双方就绪",
     overlayBlackFirst: "黑棋先行",
-    footerInviteDirect: "当前两个会话 · 开局后直接邀请",
-    footerChooseMissing: "开局时补齐两位棋手",
+    footerInviteDirect: "候选已就位 · 开局后分配黑白",
+    footerChooseMissing: "Agent 可加入候选 · 也可补充对话或自己",
     footerMatchRetained: "本局结束 · 棋盘保留供查看",
     footerYourTurn: "轮到你了，点击交叉点落子",
     footerWatching: "观战中 · 棋手在各自会话中行动",
 
     // 棋手选择弹窗
-    pickerTitle: "选择两位棋手",
-    pickerSubtitle: "已选 {count} / 2 · 也可以自己上场",
-    pickerInviteAndPlay: "邀请并开局",
+    pickerTitle: "准备两位棋手",
+    pickerSubtitle: "候选 {count} / 2 · Agent 加入后自动补位",
+    pickerInviteAndPlay: "开始对局",
     pickerBack: "返回",
+    pickerSupplement: "补充对话或自己",
+    instructions: "这是 15×15 自由规则五子棋，需要两位棋手。加入候选后等待用户开局，小组件负责分配黑白。通过 readBoard 读取自己的席位和阶段，再用 ready 确认准备；双方准备后倒计时开局。黑先白后，仅在自己的回合用 placeStone 落子，连续五子或以上获胜。暂停时停止操作，phase 为 finished 表示结束。行动后等待发给自己的对局事件，不要自行重开或分配参与者。",
 
     // 接口描述
     descReady:
@@ -306,7 +310,7 @@ export const messages = {
     hintBothReady: "雙方已準備，即將開局",
     hintWaitingOpponent: "本方已準備，等待對手就緒",
     hintWaitingReadiness: "等待本方確認準備",
-    cardInviteOnStart: "開局後，邀請目前對話",
+    cardInviteOnStart: "分配席位後確認準備",
     cardCommentsOff: "彈幕已關閉",
     cardMatchComplete: "對局已結束",
     cardLeaveComment: "落子時可以留一句話",
@@ -320,17 +324,19 @@ export const messages = {
     stoneEmpty: "空位",
     overlayBothReady: "雙方就緒",
     overlayBlackFirst: "黑棋先行",
-    footerInviteDirect: "目前兩個對話 · 開局後直接邀請",
-    footerChooseMissing: "開局時補齊兩位棋手",
+    footerInviteDirect: "候選已就位 · 開局後分配黑白",
+    footerChooseMissing: "Agent 可加入候選 · 也可補充對話或自己",
     footerMatchRetained: "本局結束 · 保留棋盤供查看",
     footerYourTurn: "輪到你了，點擊交叉點落子",
     footerWatching: "觀戰中 · 棋手在各自對話中行動",
 
     // 棋手选择弹窗
-    pickerTitle: "選擇兩位棋手",
-    pickerSubtitle: "已選 {count} / 2 · 也可以自己上場",
-    pickerInviteAndPlay: "邀請並開局",
+    pickerTitle: "準備兩位棋手",
+    pickerSubtitle: "候選 {count} / 2 · Agent 加入後自動補位",
+    pickerInviteAndPlay: "開始對局",
     pickerBack: "返回",
+    pickerSupplement: "補充對話或自己",
+    instructions: "這是 15×15 自由規則五子棋，需要兩位棋手。加入候選後等待使用者開局，小元件負責分配黑白。透過 readBoard 讀取自己的席位和階段，再用 ready 確認準備；雙方準備後倒數開局。黑先白後，僅在自己的回合用 placeStone 落子，連續五子或以上獲勝。暫停時停止操作，phase 為 finished 表示結束。行動後等待發給自己的對局事件，不要自行重開或分配參與者。",
 
     // 接口描述
     descReady:
@@ -369,6 +375,8 @@ export function t<K extends MessageKey>(
 }
 
 const errors: Record<string, [string, string]> = {
+  "Only the user can assign participants and start an activity": ["请由用户确认棋手并开始对局", "請由使用者確認棋手並開始對局"],
+  "Only the user can remove candidates; MCP agents can use widget_disconnect to leave": ["请由用户移除候选；Agent 可主动退出", "請由使用者移除候選；Agent 可主動退出"],
   "Connect to this game first": ["请先连接棋局", "請先連接棋局"],
   Cancelled: ["操作已取消", "操作已取消"],
   "Game is paused": ["对局已暂停，请先继续对局", "對局已暫停，請先繼續對局"],
