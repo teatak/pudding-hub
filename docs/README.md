@@ -13,6 +13,7 @@ App was the old name for a plugin and is no longer a separate extension type. Ne
 | Let a model use an API or MCP service | [Plugin development](plugin-development.md) |
 | Create an interface people can click and edit | [Widget development](widget-development.md) |
 | Find APIs for storage, model interaction, copying or system notifications | [Widget SDK reference](widget-sdk.md) |
+| Connect an external agent to running Pudding widgets | [Widget MCP setup](widget-mcp.md) |
 
 The development guides provide steps and examples. The SDK reference explains methods, arguments and results by feature. Both are available in full in English and Chinese.
 

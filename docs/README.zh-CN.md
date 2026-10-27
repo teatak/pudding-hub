@@ -13,6 +13,7 @@ App 是插件的旧名称，已不再作为独立扩展类型。新插件统一�
 | 让模型使用某个 API 或 MCP 服务 | [插件开发](plugin-development.zh-CN.md) |
 | 制作一个可点击、可编辑的界面 | [小组件开发](widget-development.zh-CN.md) |
 | 查询小组件如何保存数据、调用模型、复制内容或发送系统通知 | [小组件 SDK 参考](widget-sdk.zh-CN.md) |
+| 让外部 agent 接入正在运行的 Pudding 小组件 | [小组件 MCP 接入](widget-mcp.zh-CN.md) |
 
 开发指南包含步骤和示例。SDK 参考按功能解释方法、参数和返回值。两类文档都提供完整中英文版本。
 

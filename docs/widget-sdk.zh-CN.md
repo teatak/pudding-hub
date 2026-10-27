@@ -124,6 +124,14 @@ Hook 在页面可见且 enabled 不为 false 时发起读取。它不因聚焦�
 
 ## 模型接口与页面输入
 
+通过 `pudding.setInstructions(text)` 声明本小组件的用途、角色、规则、操作流程和完成条件。宿主在每次已授权的 `widget_observe({targetID, ...})` 结果中返回这个 `instructions` 字符串，不受 `include` 影响。MCP 刚连接时还没有选定小组件；外部 agent 只有被用户在小组件中选中并开始参与后，才能读取该目标的说明。加入、等待和退出由 MCP 服务说明，具体小组件只声明自身业务规则。参见[外部小组件 MCP](widget-mcp.zh-CN.md)。
+
+```ts
+pudding.setInstructions('只检查分配给自己角色的条目；全部条目检查完成后结束。');
+```
+
+说明可省略，最多 12,000 字符，按运行页面隔离；未声明时为空字符串，传 `''` 可清除。它是运行时元数据，初始化时声明、语言变化时更新，不修改 state 或 storage。它描述活动，不覆盖用户要求或宿主权限。兼容旧 SDK 1 宿主时先检测 `setInstructions` 是否存在；旧的已编译小组件没有此字段也能继续运行。
+
 模型可以操作页面控件，也可以调用你定义的接口。批量编辑、准确落子等操作适合提供接口；普通按钮不必逐个注册。
 
 `defineInterface({name, description, input, run})` 注册接口并返回注销函数。input 使用 Zod 对象 schema；run 可以返回值或 Promise。组件卸载时应注销在 React effect 中注册的接口。

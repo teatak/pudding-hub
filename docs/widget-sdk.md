@@ -124,6 +124,14 @@ The host's source selector manages accounts independently of a chat's plugin bin
 
 ## Model interfaces and page input
 
+Use `pudding.setInstructions(text)` to describe this widget's purpose, roles, rules, workflow and completion conditions. The host returns that string as `instructions` in every authorized `widget_observe({targetID, ...})` result, independently of `include`. The MCP connection itself has no selected widget; an external agent learns this guidance only after the user selects it in a widget and starts participation. Joining, waiting and leaving are explained by the MCP server, not by individual widgets. See [External widget MCP](widget-mcp.md).
+
+```ts
+pudding.setInstructions('Review only the items assigned to your role. Finish when every item is reviewed.');
+```
+
+Instructions are optional, limited to 12,000 characters, local to the running page and empty when not provided. Passing `''` clears them. They are runtime metadata: declare them at initialization and update on locale changes; they do not modify state or storage. They describe the activity and do not override user instructions or host permissions. Feature-detect `setInstructions` when supporting older SDK 1 hosts; older compiled widgets without this field continue to work.
+
 Models can operate page controls or call interfaces you define. Interfaces are useful for precise or batch operations; every button does not need its own interface.
 
 `defineInterface({name, description, input, run})` registers an operation and returns an unregister function. input is a Zod object schema; run returns a value or Promise. Unregister interfaces created in a React effect when the component unmounts.
