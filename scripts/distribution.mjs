@@ -4,8 +4,9 @@ import {fileURLToPath} from 'node:url';
 
 // Copy immutable public artifacts, never authoring sources or installation data.
 async function copyImmutable(source, target) {
-  const stat = await fs.stat(source).catch(error=>{if(error.code==='ENOENT')return null;throw error});
+  const stat = await fs.lstat(source).catch(error=>{if(error.code==='ENOENT')return null;throw error});
   if (!stat) return;
+  if(stat.isSymbolicLink())throw new Error('Distribution artifacts must not contain symlinks');
   if (stat.isDirectory()) {
     await fs.mkdir(target,{recursive:true});
     for (const entry of await fs.readdir(source)) await copyImmutable(path.join(source,entry),path.join(target,entry));

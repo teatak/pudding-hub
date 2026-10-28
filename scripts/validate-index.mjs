@@ -4,6 +4,7 @@ import path from 'node:path';
 import {parseHubIndex} from '../contracts/hub.mjs';
 const root=path.resolve(import.meta.dirname,'..');
 const index=parseHubIndex(JSON.parse(await fs.readFile(path.join(root,'index.json'),'utf8')));
+if(!index.sources.some(source=>source.id==='teatak/pudding-hub'))throw new Error('The official source ID must remain in the root index');
 for(const source of index.sources) {
  for(const catalog of source.catalogs) {
   const url=new URL(catalog.url);
