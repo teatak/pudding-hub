@@ -126,10 +126,10 @@
   min-height: 192px;
   max-height: 192px;
   min-width: 0;
-  padding: 14px;
+  padding: 12px 14px;
   display: grid;
   grid-template-rows: 20px 44px minmax(0, 1fr);
-  gap: 12px;
+  gap: 10px;
   border: 1px solid var(--gd-edge);
   border-radius: 12px;
   background: var(--gd-panel);
@@ -266,17 +266,19 @@
 }
 .gd-card-wait {
   height: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
   border-radius: 8px;
   background: var(--gd-raised);
   color: var(--gd-muted);
   font-size: 12px;
+  line-height: 1.35;
   text-align: center;
-  padding: 8px;
+  padding: 6px 8px;
 }
 .gd-card-wait small {
   font-size: 11px;
@@ -286,6 +288,11 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+}
+.gd-player-actions .gd-button {
+  min-height: 30px;
+  padding: 0 16px;
+  font-size: 12px;
 }
 .gd-speech-prefix {
   opacity: 0.7;
@@ -628,7 +635,7 @@
 }
 @container gomoku (min-width:680px) {
   .gd-arena {
-    grid-template-columns: minmax(0, 1fr) 236px;
+    grid-template-columns: minmax(0, 1fr) 268px;
     grid-template-areas: "board players";
     gap: 20px;
   }
