@@ -949,10 +949,12 @@ function CandidatePicker({
   remove?: (id: string) => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
-  const [showConversations, setShowConversations] = useState(selected.length < 2 || selected.some(id => id === me || candidates.some(c => c.id === id && c.kind !== "external")));
   useEffect(() => {
     dialog.current?.showModal();
   }, []);
+  const externalAgents = candidates.filter((s) => s.kind === "external").map((s) => s.id);
+  const internalSessions = candidates.filter((s) => s.kind !== "external").map((s) => s.id);
+  const optionIDs = [...externalAgents, me, ...internalSessions];
   return (
     <dialog
       ref={dialog}
@@ -962,9 +964,8 @@ function CandidatePicker({
     >
       <h3 id="picker-title">{t("pickerTitle")}</h3>
       <p>{t("pickerSubtitle", { count: selected.length })}</p>
-      <button className="gd-button" aria-expanded={showConversations} onClick={() => setShowConversations(v => !v)}>{t("pickerSupplement")}</button>
       <div className="gd-picker-options">
-        {[...candidates.filter(s => s.kind === "external").map(s => s.id), ...(showConversations ? [me, ...candidates.filter(s => s.kind !== "external").map(s => s.id)] : [])].map((id) => {
+        {optionIDs.map((id) => {
           const player = chosenPlayer(id)!;
           return (
             <div className="gd-picker-row" key={id}>
