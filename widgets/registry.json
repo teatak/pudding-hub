@@ -238,7 +238,7 @@
         {
           "version": "1.0.4-preview.3",
           "package": "./gomoku/releases/1.0.4-preview.3/gomoku.pudding-widget.json",
-          "packageHash": "93307775100a086560e609843922725fc5d7d4c7a514b6235a40ca24e6195f45",
+          "packageHash": "b280e65bb824f2877636ceefbcbba23946426947db5e10f267335a15e3836d66",
           "requires": {
             "protocolVersion": 24,
             "sdkVersion": "1"

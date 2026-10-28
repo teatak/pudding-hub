@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Source package validation is owned by pudding-core, not a second Hub runtime.
 import { createHash } from "node:crypto";
+import fsSync from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -93,11 +94,18 @@ export async function packageWidget(
     ),
   };
   const text = json(pkg);
-  const validated = execFileSync("go", ["run", "./cmd/widget-package"], {
-    cwd: core,
-    input: text,
-    stdio: ["pipe", "pipe", "pipe"],
-  });
+  const bin = process.env.WIDGET_PACKAGE_BIN || (fsSync.existsSync("/tmp/widget-package") ? "/tmp/widget-package" : null);
+  const validated = bin
+    ? execFileSync(bin, [], {
+        cwd: core,
+        input: text,
+        stdio: ["pipe", "pipe", "pipe"],
+      })
+    : execFileSync("go", ["run", "./cmd/widget-package"], {
+        cwd: core,
+        input: text,
+        stdio: ["pipe", "pipe", "pipe"],
+      });
   // Use the installation compiler, including its SDK types and import policy.
   // This only compiles source; it never runs widget code or writes release files.
   let compileWidget;
@@ -144,6 +152,11 @@ export async function packageWidget(
   }
   await fs.mkdir(releaseDir, { recursive: true });
   await fs.writeFile(path.join(releaseDir, packageName), text);
+  if (!dev) {
+    const legacyReleaseDir = path.join(root, "widgets", name, `releases/${manifest.version}`);
+    await fs.mkdir(legacyReleaseDir, { recursive: true });
+    await fs.writeFile(path.join(legacyReleaseDir, packageName), text);
+  }
   if (dev) return { packageHash, pkg };
   const release = {
     version: manifest.version,

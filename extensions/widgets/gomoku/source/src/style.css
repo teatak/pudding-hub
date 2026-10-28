@@ -122,6 +122,7 @@
   min-width: 0;
 }
 .gd-player {
+  position: relative;
   height: 192px;
   min-height: 192px;
   max-height: 192px;
@@ -141,19 +142,25 @@
   border-color: var(--gd-win);
 }
 .gd-win-stamp {
+  position: absolute;
+  top: -8px;
+  right: -8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 2px 8px;
-  border: 3px double currentColor;
-  border-radius: 4px;
+  padding: 3px 12px;
+  border: 3.5px double currentColor;
+  border-radius: 6px;
   color: var(--gd-win);
   background: var(--gd-win-bg);
-  font-size: 20px;
+  font-size: 30px;
   font-weight: 900;
   line-height: 1;
-  letter-spacing: 0.08em;
-  transform: rotate(-10deg);
+  letter-spacing: 0.1em;
+  transform: rotate(-12deg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 2;
 }
 .gd-player-top {
   grid-row: 1;
@@ -682,11 +689,11 @@
   @keyframes gd-stamp-arrive {
     from {
       opacity: 0;
-      transform: rotate(-10deg) scale(1.35);
+      transform: rotate(-12deg) scale(1.4);
     }
     to {
       opacity: 1;
-      transform: rotate(-10deg) scale(1);
+      transform: rotate(-12deg) scale(1);
     }
   }
   .gd-board-comment {
