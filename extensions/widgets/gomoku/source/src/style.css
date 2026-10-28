@@ -8,6 +8,7 @@
   --gd-accent: light-dark(#333333, #e5e5e5);
   --gd-win: light-dark(#237a4c, #86d4aa);
   --gd-win-bg: light-dark(#237a4c0d, #86d4aa0d);
+  --gd-win-text: light-dark(#ffffff, #0d331e);
   --gd-on-accent: light-dark(#ffffff, #262626);
   --gd-soft: light-dark(#e8e8e8, #363636);
   --gd-wood: light-dark(#e9c98e, #d9b67c);
@@ -145,17 +146,16 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 3px 12px;
-  border: 3.5px double currentColor;
+  padding: 4px 14px;
   border-radius: 6px;
-  color: var(--gd-win);
-  background: var(--gd-win-bg);
-  font-size: 30px;
+  color: var(--gd-win-text);
+  background: var(--gd-win);
+  font-size: 28px;
   font-weight: 900;
   line-height: 1;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   transform: rotate(-12deg);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
   pointer-events: none;
   z-index: 2;
 }
