@@ -307,9 +307,8 @@ export const resign = (context: InteractionContext) =>
     const role = roles.find((r) => l.seats[r] === who.id);
     if (!role) throw new Error("You have no seat");
     await save(l, {
-      ...p,
+      ...pauseClock(p),
       resigned: role,
-      turnStartedAt: null,
     });
     await publish();
     return actionResult();

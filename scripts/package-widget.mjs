@@ -62,8 +62,11 @@ export async function packageWidget(
   const policy = await read(path.join(core, "contracts/widget.json"));
   if (!policy.distribution)
     throw new Error("Core does not support widget source distribution");
-  const dir = path.join(root, "widgets", name),
-    manifest = await read(path.join(dir, "manifest.json"));
+  const extDir = path.join(root, "extensions/widgets", name);
+  const dir = (await fs.stat(path.join(extDir, "source")).catch(() => null))
+    ? extDir
+    : path.join(root, "widgets", name);
+  const manifest = await read(path.join(dir, "manifest.json"));
   if (!manifest.id?.endsWith("/widgets/" + name))
     throw new Error("Widget ID must match its directory");
   if (manifest.preview !== undefined && typeof manifest.preview !== "boolean")
@@ -146,33 +149,47 @@ export async function packageWidget(
   }
   await fs.mkdir(releaseDir, { recursive: true });
   await fs.writeFile(path.join(releaseDir, packageName), text);
+  if (!dev) {
+    const legacyReleaseDir = path.join(root, "widgets", name, `releases/${manifest.version}`);
+    await fs.mkdir(legacyReleaseDir, { recursive: true });
+    await fs.writeFile(path.join(legacyReleaseDir, packageName), text);
+  }
   if (dev) return { packageHash, pkg };
-  const registryPath = path.join(root, "extensions/widgets/registry.json");
-  const registry = await read(registryPath);
-  const previous = registry.items.find((item) => item.id === manifest.id);
   const release = {
     version: manifest.version,
     package: `./${name}/releases/${manifest.version}/${packageName}`,
     packageHash,
     requires: manifest.requires,
   };
-  const releases = [
-    { ...release, ...releaseMetadata },
-    ...(previous?.releases || []).filter((r) => r.version !== manifest.version),
+  const registryPaths = [
+    path.join(root, "extensions/widgets/registry.json"),
+    path.join(root, "widgets/registry.json"),
   ];
-  const item = {
-    id: manifest.id,
-    title: manifest.title,
-    description: manifest.description,
-    icon: pkg.icon,
-    releases,
-  };
-  registry.items = [
-    ...registry.items.filter((item) => item.id !== manifest.id),
-    item,
-  ].sort((a, b) => a.id.localeCompare(b.id));
-  registry.schemaVersion = policy.distribution.schemaVersion;
-  await fs.writeFile(registryPath, json(registry));
+  for (const registryPath of registryPaths) {
+    try {
+      const registry = await read(registryPath);
+      const previous = registry.items.find((item) => item.id === manifest.id);
+      const releases = [
+        { ...release, ...releaseMetadata },
+        ...(previous?.releases || []).filter((r) => r.version !== manifest.version),
+      ];
+      const item = {
+        id: manifest.id,
+        title: manifest.title,
+        description: manifest.description,
+        icon: pkg.icon,
+        releases,
+      };
+      registry.items = [
+        ...registry.items.filter((item) => item.id !== manifest.id),
+        item,
+      ].sort((a, b) => a.id.localeCompare(b.id));
+      registry.schemaVersion = policy.distribution.schemaVersion;
+      await fs.writeFile(registryPath, json(registry));
+    } catch (e) {
+      if (e.code !== "ENOENT") throw e;
+    }
+  }
   console.log(`packaged ${name}@${manifest.version}: ${packageHash}`);
   return { packageHash, pkg };
 }

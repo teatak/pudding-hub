@@ -19,6 +19,7 @@ import {
   pauseClock,
   resumeClock,
   thinkingMS,
+  totalThinkingMS,
 } from "../widgets/gomoku/source/src/rules.ts";
 test("replay seeks derive only visible stones, comments and winning lines without changing the game", () => {
   let p = initial();
@@ -231,6 +232,7 @@ test("letter columns and chronological history are canonical, numeric columns ar
     "resigned",
     "turnStartedAt",
     "turnElapsedMS",
+    "totalElapsedMS",
   ]);
   assert.deepEqual(derive(JSON.parse(JSON.stringify(saved))), next);
   const view = describePosition(next);
@@ -286,4 +288,51 @@ test("board snapshots and action receipts stay bounded while canonical history k
   assert.equal(record(full).history.length, 225);
   assert.equal(record(full).history[0].comment, "好".repeat(40));
   assert.deepEqual(notice.lastMove, full.history.at(-1));
+});
+
+
+test("player totals survive serialization and exclude pauses without double-counting the current turn", () => {
+  const ready = resumeClock(initial(), 1000);
+  assert.equal(totalThinkingMS(ready, "Black", 2500), 1500);
+  assert.equal(totalThinkingMS(ready, "White", 2500), 0);
+  const black = place(ready, 8, "H", "Black", "", 4000);
+  const before = record(black);
+  assert.equal(totalThinkingMS(black, "Black", 6000), 3000);
+  assert.equal(totalThinkingMS(black, "White", 6000), 2000);
+  assert.deepEqual(record(black), before, "reading a clock never writes game state");
+  const paused = pauseClock(black, 6000);
+  assert.equal(totalThinkingMS(paused, "White", 99999), 2000);
+  const resumed = resumeClock(derive(JSON.parse(JSON.stringify(record(paused)))), 10000);
+  const white = place(resumed, 9, "H", "White", "", 11000);
+  const restored = derive(JSON.parse(JSON.stringify(record(white))));
+  assert.equal(totalThinkingMS(restored, "White", 13000), 3000);
+  assert.equal(totalThinkingMS(restored, "Black", 13000), 5000);
+  assert.deepEqual(restored.totalElapsedMS, { Black: 3000, White: 3000 });
+});
+
+test("totals stop on a winning move or resignation and a fresh round resets them", () => {
+  let win = resumeClock(initial(), 1000);
+  for (let c = 1; c <= 5; c++) {
+    win = place(win, 1, letters[c - 1], "Black", "", c * 2000);
+    if (c < 5) win = place(win, 15, letters[c * 2 - 1], "White", "", c * 2000 + 500);
+  }
+  assert.equal(win.winner, "Black");
+  assert.equal(totalThinkingMS(win, "Black", 999999), 7000);
+  assert.equal(totalThinkingMS(win, "White", 999999), 2000);
+  const active = place(resumeClock(initial(), 1000), 8, "H", "Black", "", 4000);
+  const resigned = derive({ ...record(pauseClock(active, 4600)), resigned: "Black" });
+  assert.equal(totalThinkingMS(resigned, "Black", 999999), 3000);
+  assert.equal(totalThinkingMS(resigned, "White", 999999), 600);
+  assert.equal(totalThinkingMS(initial(), "Black", 999999), 0);
+  assert.equal(totalThinkingMS(initial(), "White", 999999), 0);
+});
+
+test("legacy scores remain playable without fabricating missing thinking totals", () => {
+  const legacy = derive({ history: [{ row: 8, column: "H", stone: "B" }], resigned: null, turnStartedAt: 1000, turnElapsedMS: 0 });
+  assert.equal(totalThinkingMS(legacy, "Black", 5000), null);
+  assert.equal(totalThinkingMS(legacy, "White", 5000), null);
+  const next = place(legacy, 9, "H", "White", "", 5000);
+  assert.equal(next.moveCount, 2);
+  assert.equal(totalThinkingMS(next, "White", 6000), null);
+  assert.equal(Object.hasOwn(record(next), "totalElapsedMS"), false);
 });

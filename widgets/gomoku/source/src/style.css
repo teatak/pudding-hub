@@ -6,6 +6,8 @@
   --gd-muted: light-dark(#737373, oklch(0.69 0 0));
   --gd-edge: light-dark(#dddddd, #ffffff1a);
   --gd-accent: light-dark(#333333, #e5e5e5);
+  --gd-win: light-dark(#237a4c, #86d4aa);
+  --gd-win-bg: light-dark(#237a4c0d, #86d4aa0d);
   --gd-on-accent: light-dark(#ffffff, #262626);
   --gd-soft: light-dark(#e8e8e8, #363636);
   --gd-wood: light-dark(#e9c98e, #d9b67c);
@@ -120,10 +122,13 @@
   min-width: 0;
 }
 .gd-player {
+  height: 192px;
+  min-height: 192px;
+  max-height: 192px;
   min-width: 0;
   padding: 14px;
   display: grid;
-  grid-template-rows: 20px 44px;
+  grid-template-rows: 20px 44px minmax(0, 1fr);
   gap: 12px;
   border: 1px solid var(--gd-edge);
   border-radius: 12px;
@@ -131,6 +136,24 @@
 }
 .gd-player.is-turn {
   border-color: var(--gd-accent);
+}
+.gd-player.is-winner {
+  border-color: var(--gd-win);
+}
+.gd-win-stamp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border: 3px double currentColor;
+  border-radius: 4px;
+  color: var(--gd-win);
+  background: var(--gd-win-bg);
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  transform: rotate(-10deg);
 }
 .gd-player-top {
   grid-row: 1;
@@ -219,11 +242,27 @@
   text-overflow: ellipsis;
 }
 .gd-card-body {
-  min-height: 58px;
+  min-height: 0;
   min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+.gd-total-time {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.gd-total-time > span {
+  color: var(--gd-muted);
+  font-size: 11px;
+}
+.gd-total-time time {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
 }
 .gd-card-wait {
   height: 100%;
@@ -287,7 +326,7 @@
 .gd-board-area {
   grid-area: board;
   width: 100%;
-  max-width: min(600px, max(240px, calc(100dvh - 400px)));
+  max-width: min(600px, max(240px, calc(100dvh - 448px)));
   min-width: 0;
   margin: 0 auto;
 }
@@ -298,8 +337,7 @@
 }
 .gd-wood {
   width: 100%;
-  /* Keep two readable comment lanes above the first intersection, even on a small board. */
-  padding-top: max(0px, calc(48px - 5cqw));
+  aspect-ratio: 1;
   position: relative;
   border-radius: 11px;
   border: 5px solid #927044;
@@ -323,24 +361,19 @@
   aspect-ratio: 1;
 }
 .gd-board-comments {
-  position: absolute;
-  top: 2px;
-  left: 8%;
-  right: 8%;
-  display: grid;
-  grid-template-rows: repeat(2, 20px);
-  gap: 2px;
-  color: #49341e;
-  font-size: 12px;
-  line-height: 20px;
-}
-.gd-comment-lane {
-  min-width: 0;
+  height: 40px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  color: var(--gd-text);
+  font-size: 14px;
+  line-height: 24px;
 }
 .gd-board-comment {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  width: 100%;
   min-width: 0;
 }
 .gd-comment-author {
@@ -350,16 +383,16 @@
   flex: none;
 }
 .gd-comment-author .gd-avatar {
+  width: 24px;
+  height: 24px;
+}
+.gd-comment-author .gd-avatar svg {
   width: 18px;
   height: 18px;
 }
-.gd-comment-author .gd-avatar svg {
-  width: 14px;
-  height: 14px;
-}
 .gd-comment-author .gd-color-dot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 .gd-comment-track {
   flex: 1;
@@ -601,9 +634,10 @@
   }
   .gd-players {
     grid-template-columns: minmax(0, 1fr);
+    margin-top: 48px;
   }
   .gd-board-area {
-    max-width: min(600px, max(240px, calc(100dvh - 176px)));
+    max-width: min(600px, max(240px, calc(100dvh - 224px)));
   }
 }
 @container gomoku (max-width:419px) {
@@ -614,7 +648,7 @@
     grid-template-columns: minmax(0, 1fr);
   }
   .gd-board-area {
-    max-width: min(600px, max(240px, calc(100dvh - 604px)));
+    max-width: min(600px, max(240px, calc(100dvh - 652px)));
   }
   .gd-game-actions {
     gap: 6px;
@@ -635,6 +669,32 @@
   }
 }
 @media (prefers-reduced-motion: no-preference) {
+  .gd-win-stamp {
+    animation: gd-stamp-arrive 0.32s ease-out both;
+  }
+  @keyframes gd-stamp-arrive {
+    from {
+      opacity: 0;
+      transform: rotate(-10deg) scale(1.35);
+    }
+    to {
+      opacity: 1;
+      transform: rotate(-10deg) scale(1);
+    }
+  }
+  .gd-board-comment {
+    animation: gd-comment-arrive 0.28s ease-out both;
+  }
+  @keyframes gd-comment-arrive {
+    from {
+      opacity: 0;
+      transform: translateY(5px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
   .gd-comment-text.is-scrolling {
     animation: gd-comment-scroll var(--gd-scroll-duration) linear infinite alternate;
   }

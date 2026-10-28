@@ -27,6 +27,7 @@ import {
   letters,
   replayPosition,
   thinkingMS,
+  totalThinkingMS,
   winningLine,
   type Color,
 } from "./rules";
@@ -272,6 +273,13 @@ export default function App() {
           : undefined;
       })
     : selected.map(chosenPlayer);
+  const commentIndex = view.history.map(move => !!move.comment).lastIndexOf(true);
+  const commentMove = view.history[commentIndex];
+  const latestComment = commentMove?.comment ? {
+    role: (commentMove.stone === "B" ? "Black" : "White") as Color,
+    quote: { text: commentMove.comment, moveNumber: commentIndex + 1 },
+  } : undefined;
+  const commenter = latestComment && players.find(player => player?.id === l.seats[latestComment.role]);
   const act = (ready: boolean) =>
     perform(() => pudding.interaction.handle((c) => changeReadiness(ready, c)));
   function openRound(choosePlayers = false) {
@@ -449,11 +457,13 @@ export default function App() {
               const player = players[index],
                 role = player && roles.find((r) => l.seats[r] === player.id),
                 ready = !!player && l.ready.includes(player.id);
+              const won = !replaying && !!role && p.winner === role;
               const turn =
                 !replaying &&
                 l.phase === "playing" &&
                 !p.winner &&
                 role === p.turn;
+              const totalMS = role ? totalThinkingMS(p, role, now) : null;
               const showBody = !player || !l.round || (!p.winner && (l.phase !== "playing" || player.human));
               const status = replaying
                 ? t("replay")
@@ -484,7 +494,8 @@ export default function App() {
                 <article
                   className={
                     "gd-player" +
-                    (turn && run?.status === "running" ? " is-turn" : "")
+                    (turn && run?.status === "running" ? " is-turn" : "") +
+                    (won ? " is-winner" : "")
                   }
                   key={index}
                   data-player-id={player?.id || ""}
@@ -522,7 +533,11 @@ export default function App() {
                         "gd-player-status" + (ready ? " is-ready" : "")
                       }
                     >
-                      {player ? status : t("statusOpen")}
+                      {won ? (
+                        <span className="gd-win-stamp" aria-label={t("statusWinner")}>
+                          {t("winStamp")}
+                        </span>
+                      ) : player ? status : t("statusOpen")}
                       {turn &&
                         (p.turnStartedAt !== null || p.turnElapsedMS > 0) && (
                           <time
@@ -534,7 +549,7 @@ export default function App() {
                         )}
                     </span>
                   </div>
-                  {showBody && <div className="gd-card-body">
+                  {showBody ? <div className="gd-card-body">
                     {player?.human && l.round && l.phase !== "playing" ? (
                       <div className="gd-card-wait">
                         <small>{openingHint}</small>
@@ -594,28 +609,38 @@ export default function App() {
                         </span>
                       </div>
                     )}
-                  </div>}
+                  </div> : role && (
+                    <div className="gd-card-body">
+                      <div className="gd-total-time">
+                        <span>{t("totalThinkingTime")}</span>
+                        <time title={totalMS === null ? t("totalTimeUnavailable") : undefined}>
+                          {totalMS === null ? "—" : elapsedTime(totalMS)}
+                        </time>
+                      </div>
+                    </div>
+                  )}
                 </article>
               );
             })}
           </section>
           <section className="gd-board-area" aria-label={t("boardSectionAria")}>
             <div className="gd-board-wrap">
+              <div className="gd-board-comments" role="region" aria-label={t("playerComments")} aria-live="polite">
+                {danmaku && latestComment?.quote?.text && commenter && (
+                  <BoardComment
+                    key={`${l.round}-${latestComment.role}-${latestComment.quote.moveNumber}`}
+                    player={commenter}
+                    role={latestComment.role}
+                    quote={latestComment.quote}
+                  />
+                )}
+              </div>
               <div
                 className="gd-wood"
                 data-replaying={replaying}
                 role="group"
                 aria-label={t("boardAria")}
               >
-                {danmaku && <div className="gd-board-comments" role="region" aria-label={t("playerComments")} aria-live="polite">
-                  {roles.map((role) => {
-                    const quote = view.comments[role];
-                    const player = players.find((player) => player?.id === l.seats[role]);
-                    return <div className="gd-comment-lane" key={role}>
-                      {quote?.text && player && <BoardComment key={quote.moveNumber} player={player} role={role} quote={quote} />}
-                    </div>;
-                  })}
-                </div>}
                 <div className="gd-board-surface">
                 <svg
                   className="gd-grid"

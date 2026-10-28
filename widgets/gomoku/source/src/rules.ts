@@ -13,6 +13,7 @@ export type PositionState = {
   resigned: Color | null;
   turnStartedAt: number | null;
   turnElapsedMS: number;
+  totalElapsedMS?: Record<Color, number>;
 };
 export type Position = PositionState & {
   board: number[];
@@ -28,6 +29,7 @@ export function record(p: PositionState): PositionState {
     resigned: p.resigned,
     turnStartedAt: p.turnStartedAt,
     turnElapsedMS: p.turnElapsedMS,
+    ...(p.totalElapsedMS ? { totalElapsedMS: { ...p.totalElapsedMS } } : {}),
   };
 }
 export function initial(): Position {
@@ -36,6 +38,7 @@ export function initial(): Position {
     resigned: null,
     turnStartedAt: null,
     turnElapsedMS: 0,
+    totalElapsedMS: { Black: 0, White: 0 },
   });
 }
 const indexOf = (m: Move) => (m.row - 1) * size + letters.indexOf(m.column);
@@ -167,6 +170,10 @@ export function place(
     throw new Error("Keep your comment within 40 characters");
   const p = derive({
     ...record(old),
+    ...(old.totalElapsedMS ? { totalElapsedMS: {
+      ...old.totalElapsedMS,
+      [color]: old.totalElapsedMS[color] + thinkingMS(old, now),
+    } } : {}),
     history: [
       ...old.history,
       {
@@ -185,6 +192,11 @@ export function place(
 export const thinkingMS = (p: PositionState, now: number) =>
   p.turnElapsedMS +
   (p.turnStartedAt === null ? 0 : Math.max(0, now - p.turnStartedAt));
+// Old scores have no completed-turn durations; never present a partial sum as a total.
+export function totalThinkingMS(p: Position, color: Color, now: number): number | null {
+  if (!p.totalElapsedMS && p.history.length > 0) return null;
+  return (p.totalElapsedMS?.[color] ?? 0) + (p.turn === color ? thinkingMS(p, now) : 0);
+}
 export const pauseClock = (p: Position, now = Date.now()): Position => ({
   ...p,
   turnElapsedMS: thinkingMS(p, now),
