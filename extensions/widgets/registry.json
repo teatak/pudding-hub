@@ -1,0 +1,598 @@
+{
+  "kind": "pudding.widget.registry",
+  "name": "pudding-widgets",
+  "title": {
+    "zh-CN": "Pudding 小组件",
+    "zh-TW": "Pudding 小組件",
+    "en": "Pudding Widgets"
+  },
+  "items": [
+    {
+      "id": "teatak/pudding-hub/widgets/debate",
+      "title": {
+        "zh-CN": "辩论",
+        "zh-TW": "辯論",
+        "en": "AI Debate"
+      },
+      "description": {
+        "zh-CN": "多模型思辨交锋与实时研判，围绕关键议题展开深度对抗论辩。",
+        "zh-TW": "多模型思辨交鋒與即時研判，圍繞關鍵議題展開深度對抗論辯。",
+        "en": "Multi-model AI debate arena with dynamic deliberation and deep conceptual clashes."
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8IS0tIOeah+Wutumdm+iTnS/ntKvlnIbop5LlupXmnb8gLS0+CiAgPHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIyNCIgZmlsbD0iIzRGNDZFNSIvPgogIAogIDwhLS0g6IOM5pmv5b6u5byx5oCd6L6o5aOw5rOi5ZyG546vIC0tPgogIDxjaXJjbGUgY3g9IjY0IiBjeT0iNjQiIHI9IjQ0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS1vcGFjaXR5PSIwLjA4IiBzdHJva2Utd2lkdGg9IjIiLz4KICAKICA8IS0tIOiTneaWueWvueivneawlOazoSAo5q2j5pa5IMK3IOeri+iuuikgLS0+CiAgPGcgZmlsdGVyPSJkcm9wLXNoYWRvdygwIDRweCA4cHggcmdiYSgwLDAsMCwwLjE1KSkiPgogICAgPHBhdGggZD0iTTI0IDMwIEMyNCAyNCAyOCAyMCAzNCAyMCBINzggQzg0IDIwIDg4IDI0IDg4IDMwIFY1NiBDODggNjIgODQgNjYgNzggNjYgSDUwIEwzNCA3OCBWNjYgSDM0IEMyOCA2NiAyNCA2MiAyNCA1NiBaIiBmaWxsPSIjMzhCREY4Ii8+CiAgICA8IS0tIOingueCuee6v+adoSAtLT4KICAgIDxyZWN0IHg9IjM2IiB5PSIzMiIgd2lkdGg9IjM4IiBoZWlnaHQ9IjQuNSIgcng9IjIuMjUiIGZpbGw9IiNGRkZGRkYiLz4KICAgIDxyZWN0IHg9IjM2IiB5PSI0MiIgd2lkdGg9IjI4IiBoZWlnaHQ9IjQuNSIgcng9IjIuMjUiIGZpbGw9IiNGRkZGRkYiIGZpbGwtb3BhY2l0eT0iMC44NSIvPgogICAgPHJlY3QgeD0iMzYiIHk9IjUyIiB3aWR0aD0iMjAiIGhlaWdodD0iNC41IiByeD0iMi4yNSIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjg1Ii8+CiAgPC9nPgoKICA8IS0tIOe6ouaWueWvueivneawlOazoSAo5Y+N5pa5IMK3IOaUu+i+qeWPjempsykgLS0+CiAgPGcgZmlsdGVyPSJkcm9wLXNoYWRvdygwIDZweCAxMnB4IHJnYmEoMCwwLDAsMC4yNSkpIj4KICAgIDxwYXRoIGQ9Ik0xMDQgOTggQzEwNCAxMDQgMTAwIDEwOCA5NCAxMDggSDUwIEM0NCAxMDggNDAgMTA0IDQwIDk4IFY3MiBDNDAgNjYgNDQgNjIgNTAgNjIgSDc4IEw5NCA1MCBWNjIgSDk0IEMxMDAgNjIgMTA0IDY2IDEwNCA3MiBaIiBmaWxsPSIjRkI3MTg1Ii8+CiAgICA8IS0tIOWPjemps+e6v+adoSAtLT4KICAgIDxyZWN0IHg9IjUyIiB5PSI3NCIgd2lkdGg9IjM4IiBoZWlnaHQ9IjQuNSIgcng9IjIuMjUiIGZpbGw9IiNGRkZGRkYiLz4KICAgIDxyZWN0IHg9IjUyIiB5PSI4NCIgd2lkdGg9IjI4IiBoZWlnaHQ9IjQuNSIgcng9IjIuMjUiIGZpbGw9IiNGRkZGRkYiIGZpbGwtb3BhY2l0eT0iMC44NSIvPgogICAgPHJlY3QgeD0iNTIiIHk9Ijk0IiB3aWR0aD0iMTgiIGhlaWdodD0iNC41IiByeD0iMi4yNSIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjg1Ii8+CiAgPC9nPgoKICA8IS0tIOS4remXtOaAnei+qOS6pOmUi+eBq+iKseaYn+iKkiAo5oCd5oOz56Kw5pKe5LmL5YWJKSAtLT4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2NCwgNjQpIj4KICAgIDxwYXRoIGQ9Ik0wIC0xNCBRMCAwIC0xNCAwIFEwIDAgMCAxNCBRMCAwIDE0IDAgUTAgMCAwIC0xNCBaIiBmaWxsPSIjRkJCRjI0Ii8+CiAgICA8Y2lyY2xlIGN4PSIwIiBjeT0iMCIgcj0iMyIgZmlsbD0iI0ZGRkZGRiIvPgogIDwvZz4KPC9zdmc+",
+      "releases": [
+        {
+          "version": "1.0.0",
+          "package": "./debate/releases/1.0.0/debate.pudding-widget.json",
+          "packageHash": "a3de809d1d3fc10c225ab86a708ca30d38846409d92d718db05774bd7f63b389",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/widgets/doudizhu",
+      "title": {
+        "zh-CN": "斗地主",
+        "zh-TW": "鬥地主",
+        "en": "Dou Dizhu"
+      },
+      "description": {
+        "zh-CN": "经典三人扑克斗地主，支持叫抢地主与炸弹翻倍对局。",
+        "zh-TW": "經典三人撲克鬥地主，支援叫搶地主與炸彈翻倍對局。",
+        "en": "Classic 3-player Dou Dizhu poker game with Call/Rob Landlord and bomb multipliers."
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIyNiIgZmlsbD0iI0I5MUMxQyIvPgogIDxyZWN0IHg9IjYiIHk9IjYiIHdpZHRoPSIxMTYiIGhlaWdodD0iMTE2IiByeD0iMjIiIHN0cm9rZT0iI0ZDQTVBNSIgc3Ryb2tlLW9wYWNpdHk9IjAuMjUiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxnIHRyYW5zZm9ybT0icm90YXRlKC0xNCA0NiA2OCkiPgogICAgPHJlY3QgeD0iMjAiIHk9IjI2IiB3aWR0aD0iNTIiIGhlaWdodD0iNzQiIHJ4PSI4IiBmaWxsPSIjRkZGQkVCIiBzdHJva2U9IiNEOTc3MDYiIHN0cm9rZS13aWR0aD0iMiIvPgogICAgPHRleHQgeD0iMjciIHk9IjQ0IiBmaWxsPSIjMUUyOTNCIiBmb250LWZhbWlseT0iLWFwcGxlLXN5c3RlbSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNSIgZm9udC13ZWlnaHQ9IjgwMCI+QTwvdGV4dD4KICAgIDxwYXRoIGQ9Ik00NiA1MkM0NiA1MiAzNiA2MiAzNiA2OEMzNiA3MiAzOSA3NSA0MyA3NUM0NSA3NSA0NiA3NCA0NiA3NEM0NiA3NCA0NyA3NSA0OSA3NUM1MyA3NSA1NiA3MiA1NiA2OEM1NiA2MiA0NiA1MiA0NiA1MloiIGZpbGw9IiMxRTI5M0IiLz4KICA8L2c+CiAgPGcgdHJhbnNmb3JtPSJyb3RhdGUoMTAgNzggNjYpIj4KICAgIDxyZWN0IHg9IjUyIiB5PSIyNCIgd2lkdGg9IjU0IiBoZWlnaHQ9Ijc2IiByeD0iOCIgZmlsbD0iI0ZGRkZGRiIgc3Ryb2tlPSIjRjU5RTBCIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogICAgPHRleHQgeD0iNTkiIHk9IjQyIiBmaWxsPSIjREMyNjI2IiBmb250LWZhbWlseT0iLWFwcGxlLXN5c3RlbSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9IjgwMCI+546LPC90ZXh0PgogICAgPHBhdGggZD0iTTY0IDc0TDY4IDU0TDc5IDYzTDkwIDU0TDk0IDc0SDY0WiIgZmlsbD0iI0Y1OUUwQiIgc3Ryb2tlPSIjQjQ1MzA5IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICAgIDxjaXJjbGUgY3g9IjY4IiBjeT0iNTAiIHI9IjIuNSIgZmlsbD0iI0VGNDQ0NCIvPgogICAgPGNpcmNsZSBjeD0iNzkiIGN5PSI0OCIgcj0iMyIgZmlsbD0iI0VGNDQ0NCIvPgogICAgPGNpcmNsZSBjeD0iOTAiIGN5PSI1MCIgcj0iMi41IiBmaWxsPSIjRUY0NDQ0Ii8+CiAgPC9nPgo8L3N2Zz4K",
+      "releases": [
+        {
+          "version": "1.0.0",
+          "package": "./doudizhu/releases/1.0.0/doudizhu.pudding-widget.json",
+          "packageHash": "8cc29848c3ff7a82efc2747aec4459e94f95deb0c458b25047c4dea6c3b60ecd",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/widgets/github-board",
+      "title": {
+        "zh-CN": "GitHub 看板",
+        "zh-TW": "GitHub 看板",
+        "en": "GitHub Board"
+      },
+      "description": {
+        "zh-CN": "按账号整理 GitHub 仓库、Issue 与 PR 分拣进度、跟进日期和本地评审草稿。",
+        "zh-TW": "依帳號整理 GitHub 倉庫、Issue 與 PR 分揀進度、追蹤日期與本機評審草稿。",
+        "en": "Organize GitHub repositories, issues, pull requests, follow-ups and local review drafts by account."
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiBmaWxsPSJub25lIj4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI4IiBmaWxsPSIjMTgxODFCIi8+CiAgPHJlY3QgeD0iNiIgeT0iNiIgd2lkdGg9IjExNiIgaGVpZ2h0PSIxMTYiIHJ4PSIyMyIgc3Ryb2tlPSIjM0YzRjQ2IiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cGF0aCBmaWxsPSIjRkFGQUZBIiBkPSJNNjQgMjJjLTIzLjIgMC00MiAxOC44LTQyIDQyIDAgMTguNTYgMTIuMDMgMzQuMyAyOC43MiAzOS44NSAyLjEuMzggMi44Ni0uOTIgMi44Ni0yLjAzIDAtMS0uMDQtNC4zLS4wNi03Ljc5LTExLjY4IDIuNTQtMTQuMTUtNC45Ni0xNC4xNS00Ljk2LTEuOS00Ljg1LTQuNjctNi4xNS00LjY3LTYuMTUtMy44Mi0uMTkuMjktMy43NC4yOS0zLjc0IDQuMjIuMyA2LjQ1IDQuMzMgNi40NSA0LjMzIDMuNzYgNi40NCA5Ljg1IDQuNTggMTIuMjYgMy41LjM4LTIuNzMgMS40Ny00LjU4IDIuNjctNS42My05LjMyLTEuMDctMTkuMTMtNC42Ni0xOS4xMy0yMC43MyAwLTQuNTggMS42NC04LjM1IDQuMzMtMTEuMjctLjQ0LTEuMDctMS44Ny01LjM1LjQyLTExLjEzIDAgMCAzLjUzLS4xMyAxMS41NSA0LjNhNDAuMyA0MC4zIDAgMCAxIDIxLjA0IDBjOC4wMi00LjQzIDExLjUzLTQuMyAxMS41My00LjMgMi4yOSA1Ljc4Ljg2IDEwLjA2LjQyIDExLjEzIDIuNjkgMi45MiA0LjMzIDYuNjkgNC4zMyAxMS4yNyAwIDE2LjExLTkuODMgMTkuNjUtMTkuMTkgMjAuNjggMS41MSAxLjMgMi44NiAzLjg2IDIuODYgNy43NyAwIDUuNjEtLjA2IDEwLjE0LS4wNiAxMS41MSAwIDEuMTMuNzYgMi40MyAyLjg4IDIuMDNBNDIuMDIgNDIuMDIgMCAwIDAgMTA2IDY0YzAtMjMuMi0xOC44LTQyLTQyLTQyWiIvPgogIDxjaXJjbGUgY3g9Ijk2IiBjeT0iOTYiIHI9IjE2IiBmaWxsPSIjMjU2M0VCIiBzdHJva2U9IiMxODE4MUIiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxwYXRoIGQ9Ik05MCA5Nmw0IDQgOC04IiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=",
+      "releases": [
+        {
+          "version": "1.0.0-preview.2",
+          "package": "./github-board/releases/1.0.0-preview.2/github-board.pudding-widget.json",
+          "packageHash": "43460d797049c9e6a1301f298b29bd328d2fcf39b42e2b5df32b5908b2674225",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.1",
+          "package": "./github-board/releases/1.0.0-preview.1/github-board.pudding-widget.json",
+          "packageHash": "8dfc9a4ea47dcf40cdea39a162a46e18d6b81750d79da255ee14231df48d4152",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/widgets/gmail-board",
+      "title": {
+        "zh-CN": "Gmail 看板",
+        "zh-TW": "Gmail 看板",
+        "en": "Gmail Board"
+      },
+      "description": {
+        "zh-CN": "按账号整理邮件会话、跟进事项和本地回复草稿。",
+        "zh-TW": "依帳號整理郵件對話、追蹤事項與本機回覆草稿。",
+        "en": "Organize email threads, follow-ups and local reply drafts by account."
+      },
+      "icon": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCEtLSBVcGxvYWRlZCB0bzogU1ZHIFJlcG8sIHd3dy5zdmdyZXBvLmNvbSwgR2VuZXJhdG9yOiBTVkcgUmVwbyBNaXhlciBUb29scyAtLT4KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9Ii01MiAtODMuNSAzNjAgMzYwIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIj4KICAgIDxnPgogICAgICAgIDxwYXRoIGQ9Ik01OC4xODE4MTgyLDE5Mi4wNDk1MTUgTDU4LjE4MTgxODIsOTMuMTQwNDI0NCBMMjcuNTA2NjIzMyw2NS4wNzcwMDg5IEwwLDQ5LjUwNDA2MDggTDAsMTc0LjU5NDk3IEMwLDE4NC4yNTMxNTIgNy44MjU0NTQ1NSwxOTIuMDQ5NTE1IDE3LjQ1NDU0NTUsMTkyLjA0OTUxNSBMNTguMTgxODE4MiwxOTIuMDQ5NTE1IFoiIGZpbGw9IiM0Mjg1RjQiPgoKPC9wYXRoPgogICAgICAgIDxwYXRoIGQ9Ik0xOTcuODE4MTgyLDE5Mi4wNDk1MTUgTDIzOC41NDU0NTUsMTkyLjA0OTUxNSBDMjQ4LjIwMzYzNiwxOTIuMDQ5NTE1IDI1NiwxODQuMjI0MDYxIDI1NiwxNzQuNTk0OTcgTDI1Niw0OS41MDQwNjA4IEwyMjQuODQ0NDE1LDY3LjM0MjI3NjcgTDE5Ny44MTgxODIsOTMuMTQwNDI0NCBMMTk3LjgxODE4MiwxOTIuMDQ5NTE1IFoiIGZpbGw9IiMzNEE4NTMiPgoKPC9wYXRoPgogICAgICAgIDxwb2x5Z29uIGZpbGw9IiNFQTQzMzUiIHBvaW50cz0iNTguMTgxODE4MiA5My4xNDA0MjQ0IDU0LjAwNzc2MTggNTQuNDkzMjgyNyA1OC4xODE4MTgyIDE3LjUwNDA2MDggMTI4IDY5Ljg2NzY5NzIgMTk3LjgxODE4MiAxNy41MDQwNjA4IDIwMi40ODc0ODggNTIuNDk2MDA4OSAxOTcuODE4MTgyIDkzLjE0MDQyNDQgMTI4IDE0NS41MDQwNjEiPgoKPC9wb2x5Z29uPgogICAgICAgIDxwYXRoIGQ9Ik0xOTcuODE4MTgyLDE3LjUwNDA2MDggTDE5Ny44MTgxODIsOTMuMTQwNDI0NCBMMjU2LDQ5LjUwNDA2MDggTDI1NiwyNi4yMzEzMzM1IEMyNTYsNC42NDU4Nzg5NyAyMzEuMzYsLTcuNjU5NTc1NTcgMjE0LjEwOTA5MSw1LjI4NTg3ODk3IEwxOTcuODE4MTgyLDE3LjUwNDA2MDggWiIgZmlsbD0iI0ZCQkMwNCI+Cgo8L3BhdGg+CiAgICAgICAgPHBhdGggZD0iTTAsNDkuNTA0MDYwOCBMMjYuNzU4ODA1MSw2OS41NzMxNjQ2IEw1OC4xODE4MTgyLDkzLjE0MDQyNDQgTDU4LjE4MTgxODIsMTcuNTA0MDYwOCBMNDEuODkwOTA5MSw1LjI4NTg3ODk3IEMyNC42MTA5MDkxLC03LjY1OTU3NTU3IDAsNC42NDU4Nzg5NyAwLDI2LjIzMTMzMzUgTDAsNDkuNTA0MDYwOCBaIiBmaWxsPSIjQzUyMjFGIj4KCjwvcGF0aD4KICAgIDwvZz4KPC9zdmc+Cg==",
+      "releases": [
+        {
+          "version": "1.0.0-preview.10",
+          "package": "./gmail-board/releases/1.0.0-preview.10/gmail-board.pudding-widget.json",
+          "packageHash": "5b84ee47591da76b9001acd48215b6eb2eaaa54ccaf4af03bcc6810eece17e53",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.9",
+          "package": "./gmail-board/releases/1.0.0-preview.9/gmail-board.pudding-widget.json",
+          "packageHash": "616a30067d4459205e13d45c21f30817f1505a62470d0a882a51c79f404273ac",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.8",
+          "package": "./gmail-board/releases/1.0.0-preview.8/gmail-board.pudding-widget.json",
+          "packageHash": "e2f2ea2ac25cda180edd5a14f83e6254f1241beee2e51f877ca43e2094964742",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.7",
+          "package": "./gmail-board/releases/1.0.0-preview.7/gmail-board.pudding-widget.json",
+          "packageHash": "59cc9feee56548154b11c357a2e34a198c5ce68817fd0bc9703608b211a5b082",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.6",
+          "package": "./gmail-board/releases/1.0.0-preview.6/gmail-board.pudding-widget.json",
+          "packageHash": "60b5d0df8e64ba5c64636266d05ea3d379b7d181521cbb2ddbcaab6c1bd55706",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.5",
+          "package": "./gmail-board/releases/1.0.0-preview.5/gmail-board.pudding-widget.json",
+          "packageHash": "8a1d1dfaac4c78ed810e0c2793137980c86b9ac8a33a53d3f33bc1612923d386",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.4",
+          "package": "./gmail-board/releases/1.0.0-preview.4/gmail-board.pudding-widget.json",
+          "packageHash": "d485459ec02b7d8a4c4e340da319fe350580d47e2d62176ec017dde4415f3b2b",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.3",
+          "package": "./gmail-board/releases/1.0.0-preview.3/gmail-board.pudding-widget.json",
+          "packageHash": "96a8578423ceda49d34ad78a354a018e0a5b3028673e9d088f043eab113c34af",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.2",
+          "package": "./gmail-board/releases/1.0.0-preview.2/gmail-board.pudding-widget.json",
+          "packageHash": "edaf0383598adc16e4ed07085b629cf0e2836db4459ed8cf4babdf8f87846d98",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.1",
+          "package": "./gmail-board/releases/1.0.0-preview.1/gmail-board.pudding-widget.json",
+          "packageHash": "b2e54e499c7df0da3c7b01085862fab914fa28673c84b6aee077e84e1e721c8c",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/widgets/gomoku",
+      "title": {
+        "zh-CN": "五子棋",
+        "zh-TW": "五子棋",
+        "en": "Gomoku"
+      },
+      "description": {
+        "en": "Human and session participants share one board.",
+        "zh-CN": "人类与会话参与者共用同一棋盘。",
+        "zh-TW": "使用者與對話參與者共用同一棋盤。"
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjIwIiBmaWxsPSIjMTZBMzRBIi8+CiAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CiAgICA8cmVjdCB4PSIyOCIgeT0iMjgiIHdpZHRoPSI3MiIgaGVpZ2h0PSI3MiIgcng9IjgiLz4KICAgIDxwYXRoIGQ9Ik00NiAyOHY3Mk02NCAyOHY3Mk04MiAyOHY3Mk0yOCA0Nmg3Mk0yOCA2NGg3Mk0yOCA4Mmg3MiIvPgogIDwvZz4KICA8Y2lyY2xlIGN4PSI0NiIgY3k9IjQ2IiByPSI4IiBmaWxsPSIjZmZmZmZmIi8+CiAgPGNpcmNsZSBjeD0iODIiIGN5PSI2NCIgcj0iOCIgZmlsbD0iI2ZmZmZmZiIvPgogIDxjaXJjbGUgY3g9IjY0IiBjeT0iODIiIHI9IjgiIGZpbGw9IiMxMTE4MjciLz4KICA8Y2lyY2xlIGN4PSI2NCIgY3k9IjgyIiByPSI2IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIvPgo8L3N2Zz4K",
+      "releases": [
+        {
+          "version": "1.0.4-preview.2",
+          "package": "./gomoku/releases/1.0.4-preview.2/gomoku.pudding-widget.json",
+          "packageHash": "3ae88c8a27784aae8a788990bf7fc7897a31a43d4ce27ab497db9b11562feb16",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.4-preview.1",
+          "package": "./gomoku/releases/1.0.4-preview.1/gomoku.pudding-widget.json",
+          "packageHash": "af7bc6ca2441c93915d93bfc0cb87c4929113bc6770e455ab070f96b58f07ecf",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.2",
+          "package": "./gomoku/releases/1.0.2/gomoku.pudding-widget.json",
+          "packageHash": "8eb6c25f7deaaaf0838c60af99fd1e253894c05b0d993a51c68a771e5db31cf1",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          }
+        },
+        {
+          "version": "1.0.1",
+          "package": "./gomoku/releases/1.0.1/gomoku.pudding-widget.json",
+          "packageHash": "8f95f81a6ebc41c4f3bcac79276a36314bdb1fe70bb9082264c6593aa09d4ef6",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          }
+        },
+        {
+          "version": "1.0.0",
+          "package": "./gomoku/releases/1.0.0/gomoku.pudding-widget.json",
+          "packageHash": "533c6cd42249bd62dce5ea0847172f87f4f0670580566d4039d215002d0373ce",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/widgets/kanban",
+      "title": {
+        "zh-CN": "看板",
+        "zh-TW": "看板",
+        "en": "Kanban"
+      },
+      "description": {
+        "en": "Organize tasks across workflow columns.",
+        "zh-CN": "多泳道任务流转，整理与推进日常工作。",
+        "zh-TW": "多泳道任務流轉，整理與推進日常工作。"
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjIwIiBmaWxsPSIjRUE1ODBDIi8+CiAgPGcgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4yNSI+CiAgICA8cmVjdCB4PSIyMiIgeT0iMjQiIHdpZHRoPSIyNCIgaGVpZ2h0PSI4MCIgcng9IjQiLz4KICAgIDxyZWN0IHg9IjUyIiB5PSIyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjgwIiByeD0iNCIvPgogICAgPHJlY3QgeD0iODIiIHk9IjI0IiB3aWR0aD0iMjQiIGhlaWdodD0iODAiIHJ4PSI0Ii8+CiAgPC9nPgogIDxnIGZpbGw9IiNmZmZmZmYiPgogICAgPHJlY3QgeD0iMjUiIHk9IjI4IiB3aWR0aD0iMTgiIGhlaWdodD0iMjIiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSIyNSIgeT0iNTYiIHdpZHRoPSIxOCIgaGVpZ2h0PSIzMCIgcng9IjMiLz4KICAgIDxyZWN0IHg9IjU1IiB5PSIyOCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjM2IiByeD0iMyIvPgogICAgPHJlY3QgeD0iODUiIHk9IjI4IiB3aWR0aD0iMTgiIGhlaWdodD0iMjAiIHJ4PSIzIi8+CiAgICA8cmVjdCB4PSI4NSIgeT0iNTQiIHdpZHRoPSIxOCIgaGVpZ2h0PSIyMCIgcng9IjMiLz4KICAgIDxyZWN0IHg9Ijg1IiB5PSI4MCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiByeD0iMyIvPgogIDwvZz4KPC9zdmc+Cg==",
+      "releases": [
+        {
+          "version": "1.0.0",
+          "package": "./kanban/releases/1.0.0/kanban.pudding-widget.json",
+          "packageHash": "a2c5617f108968d0141c0ed502fccef066d51642c6dfe98dc4792029b7ce2240",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/widgets/notes",
+      "title": {
+        "zh-CN": "便签",
+        "zh-TW": "便簽",
+        "en": "Sticky Notes"
+      },
+      "description": {
+        "zh-CN": "轻量便签贴纸，记录灵感与备忘待办。",
+        "zh-TW": "輕量便簽貼紙，記錄靈感與備忘待辦。",
+        "en": "Color-coded sticky notes for quick memos and ideas."
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI0IiBmaWxsPSIjRjU5RTBCIi8+CiAgPCEtLSDkvr/nrb7kuLvkvZPvvIzlj7PkuIvop5LluKbmnInmipjop5LmlYjmnpwgLS0+CiAgPHBhdGggZD0iTTMwIDI2IEg5OCBWNzQgTDc0IDk4IEgzMCBaIiBmaWxsPSIjRkVGM0M3IiBvcGFjaXR5PSIwLjk1Ii8+CiAgPCEtLSDmipjop5LkuInop5IgLS0+CiAgPHBhdGggZD0iTTc0IDc0IEg5OCBMNzQgOTggWiIgZmlsbD0iI0ZERTY4QSIvPgogIDwhLS0g5L6/562+5qiq57q/IC0tPgogIDxyZWN0IHg9IjQyIiB5PSI0MiIgd2lkdGg9IjQ0IiBoZWlnaHQ9IjYiIHJ4PSIzIiBmaWxsPSIjRDk3NzA2Ii8+CiAgPHJlY3QgeD0iNDIiIHk9IjU2IiB3aWR0aD0iMzQiIGhlaWdodD0iNiIgcng9IjMiIGZpbGw9IiNGNTlFMEIiLz4KICA8cmVjdCB4PSI0MiIgeT0iNzAiIHdpZHRoPSIyNCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iI0Y1OUUwQiIvPgogIDwhLS0g5Zu+6ZKJ54K557yAIC0tPgogIDxjaXJjbGUgY3g9IjY0IiBjeT0iMjIiIHI9IjUiIGZpbGw9IiNEQzI2MjYiLz4KICA8Y2lyY2xlIGN4PSI2NCIgY3k9IjIyIiByPSIyLjUiIGZpbGw9IiNFRjQ0NDQiLz4KPC9zdmc+Cg==",
+      "releases": [
+        {
+          "version": "1.0.0",
+          "package": "./notes/releases/1.0.0/notes.pudding-widget.json",
+          "packageHash": "d4371ceb446652cb6627e5c7627a4c12a650a7bf48d5510e4b3d789b79b18c55",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/widgets/pocket-studio",
+      "title": {
+        "zh-CN": "音乐工坊",
+        "zh-TW": "音樂工坊",
+        "en": "Pocket Studio"
+      },
+      "description": {
+        "zh-CN": "发光矩阵音乐创作小组件，支持乐器自由编辑与 AI 智能编曲。",
+        "zh-TW": "發光矩陣音樂創作小組件，支援樂器自由編輯與 AI 智慧編曲。",
+        "en": "Step matrix music workstation with customizable instruments and AI composition."
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI0IiBmaWxsPSIjNEY0NkU1Ii8+CiAgPGNpcmNsZSBjeD0iNjQiIGN5PSI2NCIgcj0iNDgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLW9wYWNpdHk9IjAuMDgiIHN0cm9rZS13aWR0aD0iMiIvPgogIAogIDwhLS0gMngyIOWPkeWFieefqemYteaJk+WHu+WeqyAtLT4KICA8ZyBmaWx0ZXI9ImRyb3Atc2hhZG93KDAgNHB4IDhweCByZ2JhKDAsMCwwLDAuMjUpKSI+CiAgICA8cmVjdCB4PSIyOCIgeT0iMjgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgcng9IjciIGZpbGw9IiNGRjMzNjYiLz4KICAgIDxyZWN0IHg9IjY4IiB5PSIyOCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNyIgZmlsbD0iIzAwRDJGRiIvPgogICAgPHJlY3QgeD0iMjgiIHk9IjY4IiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHJ4PSI3IiBmaWxsPSIjRkZCNzAzIi8+CiAgICA8cmVjdCB4PSI2OCIgeT0iNjgiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgcng9IjciIGZpbGw9IiMxMEI5ODEiLz4KICAgIAogICAgPCEtLSDmjInplK7lvq7pq5jlhYkgLS0+CiAgICA8cmVjdCB4PSIzMyIgeT0iMzMiIHdpZHRoPSIyMiIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+CiAgICA8cmVjdCB4PSI3MyIgeT0iMzMiIHdpZHRoPSIyMiIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+CiAgICA8cmVjdCB4PSIzMyIgeT0iNzMiIHdpZHRoPSIyMiIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+CiAgICA8cmVjdCB4PSI3MyIgeT0iNzMiIHdpZHRoPSIyMiIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+CiAgPC9nPgoKICA8IS0tIOS4reWkrumfs+S5kOi3g+WKqOiEieWGsue6v+adoSAtLT4KICA8cGF0aCBkPSJNMjIgNjQgTDM4IDY0IEw0NiA0OCBMNTYgODAgTDY2IDQwIEw3NiA4OCBMODYgNTQgTDk0IDY0IEwxMDYgNjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIzLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K",
+      "releases": [
+        {
+          "version": "1.0.1",
+          "package": "./pocket-studio/releases/1.0.1/pocket-studio.pudding-widget.json",
+          "packageHash": "0d1797e01eaf7322862de037e75a48dc4dede9d100f37192c592d4d720f58e90",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          }
+        },
+        {
+          "version": "1.0.0",
+          "package": "./pocket-studio/releases/1.0.0/pocket-studio.pudding-widget.json",
+          "packageHash": "b77a0e80cca7902f875f4895e4c2aed99d4ae397376621c0ed3f6f1380b9e235",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/widgets/reversi",
+      "title": {
+        "zh-CN": "黑白棋",
+        "zh-TW": "黑白棋",
+        "en": "Reversi"
+      },
+      "description": {
+        "zh-CN": "8×8 经典翻转棋，支持人机对弈或双大模型对决。",
+        "zh-TW": "8×8 經典翻轉棋，支援人機對弈或雙大模型對決。",
+        "en": "Classic 8×8 Reversi with human vs model and model vs model play."
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjIwIiBmaWxsPSIjMjJDNTVFIi8+CiAgPCEtLSDmo4vnm5jmtYXoibLnvZHmoLznur8gLS0+CiAgPGcgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utb3BhY2l0eT0iMC4yNSIgc3Ryb2tlLXdpZHRoPSIyIj4KICAgIDxsaW5lIHgxPSIyMCIgeTE9IjY0IiB4Mj0iMTA4IiB5Mj0iNjQiLz4KICAgIDxsaW5lIHgxPSI2NCIgeTE9IjIwIiB4Mj0iNjQiIHkyPSIxMDgiLz4KICAgIDxyZWN0IHg9IjI0IiB5PSIyNCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8L2c+CiAgPCEtLSDpu5Hmo4vlrZAgKOW4pueri+S9k+a4kOWPmOS4juaKleW9sSkgLS0+CiAgPGcgZmlsdGVyPSJkcm9wLXNoYWRvdygwcHggNHB4IDZweCByZ2JhKDAsMCwwLDAuMzUpKSI+CiAgICA8Y2lyY2xlIGN4PSI0OCIgY3k9IjY0IiByPSIyNCIgZmlsbD0iIzE4MTgxQiIvPgogICAgPGNpcmNsZSBjeD0iNDgiIGN5PSI2NCIgcj0iMjIuNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjM0YzRjQ2IiBzdHJva2Utd2lkdGg9IjEuNSIvPgogICAgPGVsbGlwc2UgY3g9IjQ0IiBjeT0iNTYiIHJ4PSI4IiByeT0iNCIgZmlsbD0iIzUyNTI1QiIgb3BhY2l0eT0iMC40Ii8+CiAgPC9nPgogIDwhLS0g55m95qOL5a2QICjluKbnq4vkvZPotKjmhJ/kuI7ovrnnvJjlhYkpIC0tPgogIDxnIGZpbHRlcj0iZHJvcC1zaGFkb3coMHB4IDRweCA2cHggcmdiYSgwLDAsMCwwLjMpKSI+CiAgICA8Y2lyY2xlIGN4PSI4MCIgY3k9IjY0IiByPSIyNCIgZmlsbD0iI0Y0RjRGNSIvPgogICAgPGNpcmNsZSBjeD0iODAiIGN5PSI2NCIgcj0iMjIuNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRTRFNEU3IiBzdHJva2Utd2lkdGg9IjEuNSIvPgogICAgPGVsbGlwc2UgY3g9Ijc2IiBjeT0iNTYiIHJ4PSI4IiByeT0iNCIgZmlsbD0iI0ZGRkZGRiIgb3BhY2l0eT0iMC44Ii8+CiAgPC9nPgo8L3N2Zz4K",
+      "releases": [
+        {
+          "version": "1.0.1",
+          "package": "./reversi/releases/1.0.1/reversi.pudding-widget.json",
+          "packageHash": "3e91a0c73a126538f39804e17a1d2a4a483827e6f10b3bc7f4dea74318425c55",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          }
+        },
+        {
+          "version": "1.0.0",
+          "package": "./reversi/releases/1.0.0/reversi.pudding-widget.json",
+          "packageHash": "c7a353cc9decc7edf53727c018521a3c959b8456893160d8d6b80202ae5238e6",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/widgets/shared-todo",
+      "title": {
+        "zh-CN": "待办",
+        "zh-TW": "待辦",
+        "en": "Todo"
+      },
+      "description": {
+        "en": "Keep track of tasks and organize your day.",
+        "zh-CN": "记录任务，安排日常事项。",
+        "zh-TW": "記錄任務，安排日常事項。"
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjIwIiBmaWxsPSIjMjU2M0VCIi8+CiAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CiAgICA8cGF0aCBkPSJtMjggMzcgNyA3IDEyLTE0bS0xOSAzNiA3IDcgMTItMTRNNjIgMzdoMzZNNjIgNjZoMzZNNjIgOTVoMzYiLz4KICAgIDxjaXJjbGUgY3g9IjM2IiBjeT0iOTUiIHI9IjMiLz4KICA8L2c+Cjwvc3ZnPgo=",
+      "releases": [
+        {
+          "version": "1.0.0",
+          "package": "./shared-todo/releases/1.0.0/shared-todo.pudding-widget.json",
+          "packageHash": "b7680cc5d54a4b02c4c50d912baad7a75e926c2bbd7ddfe709cc3805e479a876",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/widgets/synology-files",
+      "title": {
+        "zh-CN": "群晖文件",
+        "zh-TW": "Synology 檔案",
+        "en": "Synology Files"
+      },
+      "description": {
+        "zh-CN": "浏览群晖共享文件夹与目录结构，支持多条件快速检索、文件详情查看与直链下载。",
+        "zh-TW": "瀏覽 Synology 共用資料夾與目錄架構，支援多條件快速搜尋、檔案詳細資訊檢視與直接下載。",
+        "en": "Browse Synology NAS shared folders and directory trees, with fast search and file download links."
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiBmaWxsPSJub25lIj4KICA8ZGVmcz4KICAgIDwhLS0gVmlicmFudCBSb3lhbCAvIFRlY2ggQmx1ZSBHcmFkaWVudCAtLT4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ic3luby1maWxlcy1iZyIgeDE9IjE2IiB5MT0iMTIiIHgyPSIxMTIiIHkyPSIxMTYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzNCODJGNiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjQwJSIgc3RvcC1jb2xvcj0iIzI1NjNFQiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxRDRFRDgiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImZvbGRlci1mcm9udC1ncmFkIiB4MT0iMjAiIHkxPSI0NiIgeDI9IjEwOCIgeTI9IjEwMCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjRkZGRkZGIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI0YxRjVGOSIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDwhLS0gU29mdCBkZXB0aCBzaGFkb3cgLS0+CiAgICA8ZmlsdGVyIGlkPSJmb2xkZXItc2hhZG93IiB4PSIxMiIgeT0iMjQiIHdpZHRoPSIxMDQiIGhlaWdodD0iODQiIGZpbHRlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzPSJzUkdCIj4KICAgICAgPGZlRHJvcFNoYWRvdyBkeD0iMCIgZHk9IjQiIHN0ZERldmlhdGlvbj0iNC41IiBmbG9vZC1jb2xvcj0iIzBGMTcyQSIgZmxvb2Qtb3BhY2l0eT0iMC4zMiIvPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgoKICA8IS0tIEFwcCBJY29uIEJhY2tncm91bmQgLS0+CiAgPHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIyOCIgZmlsbD0idXJsKCNzeW5vLWZpbGVzLWJnKSIvPgoKICA8IS0tIFRvcCBBbWJpZW50IEhpZ2hsaWdodCBDdXJ2ZSAtLT4KICA8cGF0aCBkPSJNMjggMkMxMy42NCAyIDIgMTMuNjQgMiAyOEMyIDMxLjggMi44IDM1LjQgNC4zIDM4LjZDMTIuOCAxNy44IDMzLjIgMyA1NyAzSDcxQzk0LjggMyAxMTUuMiAxNy44IDEyMy43IDM4LjZDMTI1LjIgMzUuNCAxMjYgMzEuOCAxMjYgMjhDMTI2IDEzLjY0IDExNC4zNiAyIDEwMCAySDI4WiIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1vcGFjaXR5PSIwLjE4Ii8+CgogIDwhLS0gRm9sZGVyICYgU3RvcmFnZSBHcm91cCB3aXRoIFNoYWRvdyAtLT4KICA8ZyBmaWx0ZXI9InVybCgjZm9sZGVyLXNoYWRvdykiPgogICAgPCEtLSBGb2xkZXIgQmFjayBUYWIgLS0+CiAgICA8cGF0aCBkPSJNMjQgNDBDMjQgMzUuNTggMjcuNTggMzIgMzIgMzJINTFDNTMuOCAzMiA1Ni41IDMzLjMgNTguMiAzNS41TDYyLjIgNDAuNUM2My45IDQyLjcgNjYuNiA0NCA2OS40IDQ0SDk2QzEwMC40MiA0NCAxMDQgNDcuNTggMTA0IDUyVjg4QzEwNCA5Mi40MiAxMDAuNDIgOTYgOTYgOTZIMzJDMjcuNTggOTYgMjQgOTIuNDIgMjQgODhWNDBaIiBmaWxsPSIjOTNDNUZEIiBmaWxsLW9wYWNpdHk9IjAuNTUiLz4KCiAgICA8IS0tIERvY3VtZW50IFNoZWV0IHBlZWtpbmcgb3V0IC0tPgogICAgPHJlY3QgeD0iMzYiIHk9IjM4IiB3aWR0aD0iNTYiIGhlaWdodD0iMzAiIHJ4PSI0IiBmaWxsPSIjRkZGRkZGIiBmaWxsLW9wYWNpdHk9IjAuOSIvPgogICAgPGxpbmUgeDE9IjQ0IiB5MT0iNDYiIHgyPSI2OCIgeTI9IjQ2IiBzdHJva2U9IiM5NEEzQjgiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICAgIDxsaW5lIHgxPSI0NCIgeTE9IjUyIiB4Mj0iNTgiIHkyPSI1MiIgc3Ryb2tlPSIjQ0JENUUxIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CgogICAgPCEtLSBGb2xkZXIgRnJvbnQgQ292ZXIgKENyaXNwIHB1cmUgd2hpdGUgbW9kZXJuIGNhcmQpIC0tPgogICAgPHBhdGggZD0iTTIyIDUwQzIyIDQ1LjU4IDI1LjU4IDQyIDMwIDQySDk4QzEwMi40MiA0MiAxMDYgNDUuNTggMTA2IDUwVjkwQzEwNiA5NC40MiAxMDIuNDIgOTggOTggOThIMzBDMjUuNTggOTggMjIgOTQuNDIgMjIgOTBWNTBaIiBmaWxsPSJ1cmwoI2ZvbGRlci1mcm9udC1ncmFkKSIvPgoKICAgIDwhLS0gTkFTIFN0b3JhZ2UgQmF5cyBCYWRnZSAoQ2VudGVyZWQgb24gdGhlIGZvbGRlcikgLS0+CiAgICA8cmVjdCB4PSIzOCIgeT0iNTUiIHdpZHRoPSI1MiIgaGVpZ2h0PSIzNCIgcng9IjYiIGZpbGw9IiMwRjE3MkEiLz4KCiAgICA8IS0tIERyaXZlIFNsb3QgMSAtLT4KICAgIDxyZWN0IHg9IjQzIiB5PSI1OSIgd2lkdGg9IjExIiBoZWlnaHQ9IjI2IiByeD0iMi41IiBmaWxsPSIjMUUyOTNCIi8+CiAgICA8Y2lyY2xlIGN4PSI0OC41IiBjeT0iNjQiIHI9IjEuMyIgZmlsbD0iIzRBREU4MCIvPgogICAgPHJlY3QgeD0iNDYiIHk9Ijc5IiB3aWR0aD0iNSIgaGVpZ2h0PSIyIiByeD0iMSIgZmlsbD0iIzY0NzQ4QiIvPgoKICAgIDwhLS0gRHJpdmUgU2xvdCAyIC0tPgogICAgPHJlY3QgeD0iNTguNSIgeT0iNTkiIHdpZHRoPSIxMSIgaGVpZ2h0PSIyNiIgcng9IjIuNSIgZmlsbD0iIzFFMjkzQiIvPgogICAgPGNpcmNsZSBjeD0iNjQiIGN5PSI2NCIgcj0iMS4zIiBmaWxsPSIjNEFERTgwIi8+CiAgICA8cmVjdCB4PSI2MS41IiB5PSI3OSIgd2lkdGg9IjUiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9IiM2NDc0OEIiLz4KCiAgICA8IS0tIERyaXZlIFNsb3QgMyAtLT4KICAgIDxyZWN0IHg9Ijc0IiB5PSI1OSIgd2lkdGg9IjExIiBoZWlnaHQ9IjI2IiByeD0iMi41IiBmaWxsPSIjMUUyOTNCIi8+CiAgICA8Y2lyY2xlIGN4PSI3OS41IiBjeT0iNjQiIHI9IjEuMyIgZmlsbD0iIzRBREU4MCIvPgogICAgPHJlY3QgeD0iNzciIHk9Ijc5IiB3aWR0aD0iNSIgaGVpZ2h0PSIyIiByeD0iMSIgZmlsbD0iIzY0NzQ4QiIvPgogIDwvZz4KPC9zdmc+Cg==",
+      "releases": [
+        {
+          "version": "1.1.0-preview.1",
+          "package": "./synology-files/releases/1.1.0-preview.1/synology-files.pudding-widget.json",
+          "packageHash": "aa58754fb1856bae602f5d56de1223df7d90ff544093cff8c223f088dd8bdbe0",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        }
+      ]
+    },
+    {
+      "id": "teatak/pudding-hub/widgets/undercover",
+      "title": {
+        "zh-CN": "谁是卧底",
+        "zh-TW": "誰是臥底",
+        "en": "Who is the Undercover"
+      },
+      "description": {
+        "zh-CN": "暗金侦探圆桌推理博弈，支持 4/6 人自由组局、近义词题库与发言指认。",
+        "zh-TW": "暗金偵探圓桌推理博弈，支援 4/6 人自由組局、近義詞題庫與發言指認。",
+        "en": "Noir detective social deduction game supporting 4 or 6 players, curated word pairs, clues, and voting."
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIyNiIgZmlsbD0iIzBGMTcyQSIvPgogIDxyZWN0IHg9IjYiIHk9IjYiIHdpZHRoPSIxMTYiIGhlaWdodD0iMTE2IiByeD0iMjIiIHN0cm9rZT0iI0Y1OUUwQiIgc3Ryb2tlLW9wYWNpdHk9IjAuMzUiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxjaXJjbGUgY3g9IjY0IiBjeT0iNjQiIHI9IjQ2IiBmaWxsPSIjMUUyOTNCIiBzdHJva2U9IiNEOTc3MDYiIHN0cm9rZS1vcGFjaXR5PSIwLjQiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPCEtLSBOb2lyIEZlZG9yYSBIYXQgQnJpbSAmIENyb3duIC0tPgogIDxwYXRoIGQ9Ik0yMiA2MEMzNCA1NSA5NCA1NSAxMDYgNjBDOTYgNjYgMzIgNjYgMjIgNjBaIiBmaWxsPSIjRjU5RTBCIi8+CiAgPHBhdGggZD0iTTM2IDU4TDQzIDMyQzQ0IDI4IDUxIDI2IDU3IDI5TDY0IDMzTDcxIDI5Qzc3IDI2IDg0IDI4IDg1IDMyTDkyIDU4SDM2WiIgZmlsbD0iI0ZCQkYyNCIvPgogIDxwYXRoIGQ9Ik0zNyA1Mkg5MVY1N0gzN1Y1MloiIGZpbGw9IiNCNDUzMDkiLz4KICA8IS0tIERldGVjdGl2ZSBTdW5nbGFzc2VzIC8gTWFzayAtLT4KICA8cmVjdCB4PSIzNCIgeT0iNjkiIHdpZHRoPSIyNiIgaGVpZ2h0PSIxNiIgcng9IjYiIGZpbGw9IiMwRjE3MkEiIHN0cm9rZT0iI0ZERTA0NyIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8cmVjdCB4PSI2OCIgeT0iNjkiIHdpZHRoPSIyNiIgaGVpZ2h0PSIxNiIgcng9IjYiIGZpbGw9IiMwRjE3MkEiIHN0cm9rZT0iI0ZERTA0NyIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8cGF0aCBkPSJNNjAgNzVINjgiIHN0cm9rZT0iI0ZERTA0NyIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0zOSA3M0w0NSA4MSIgc3Ryb2tlPSIjMzhCREY4IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik03MyA3M0w3OSA4MSIgc3Ryb2tlPSIjMzhCREY4IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDwhLS0gQ3JpbXNvbiBNYWduaWZ5aW5nIEdsYXNzIC8gVGFyZ2V0IEFjY2VudCAtLT4KICA8Y2lyY2xlIGN4PSI5MiIgY3k9IjkyIiByPSIxMyIgZmlsbD0iI0RDMjYyNiIgc3Ryb2tlPSIjRkVGMDhBIiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDxwYXRoIGQ9Ik04OCA5Mkg5Nk05MiA4OFY5NiIgc3Ryb2tlPSIjRkVGMDhBIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K",
+      "releases": [
+        {
+          "version": "1.0.0-preview.11",
+          "package": "./undercover/releases/1.0.0-preview.11/undercover.pudding-widget.json",
+          "packageHash": "669ebf2f9f05a766b7476796970d33b53b98e8bbed20d7215b019bf7e529ccdc",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.10",
+          "package": "./undercover/releases/1.0.0-preview.10/undercover.pudding-widget.json",
+          "packageHash": "438608f4e4207b4b55e972b2ec2a904d152b94a880c3b3a7916a720e26f82fd7",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.9",
+          "package": "./undercover/releases/1.0.0-preview.9/undercover.pudding-widget.json",
+          "packageHash": "bd63c378c79396729d61024c5bd50b6c9aff9213e2a38d6185277b6b07ff95ef",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.8",
+          "package": "./undercover/releases/1.0.0-preview.8/undercover.pudding-widget.json",
+          "packageHash": "1e8921ffc71558479ded415baecc810f09039a860c64967af8666476a39cab69",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.7",
+          "package": "./undercover/releases/1.0.0-preview.7/undercover.pudding-widget.json",
+          "packageHash": "d3a7d81587fb91b8e7d49ae24ac27e24aae288189f89008364c54761dcf0c33d",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.6",
+          "package": "./undercover/releases/1.0.0-preview.6/undercover.pudding-widget.json",
+          "packageHash": "3b0420a0aa74d7b40fe6e95cbd50fccdc4a7cc2e438a35ed8cd2a868de73ca31",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.5",
+          "package": "./undercover/releases/1.0.0-preview.5/undercover.pudding-widget.json",
+          "packageHash": "9b2de52b2ddfa36602c55561619009276d1c069c865b32bb58e90c86e4625d89",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.4",
+          "package": "./undercover/releases/1.0.0-preview.4/undercover.pudding-widget.json",
+          "packageHash": "a1ba19cd265c739080ddada1967971eb54d8bff0af4c03368dd65613295bec3f",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.3",
+          "package": "./undercover/releases/1.0.0-preview.3/undercover.pudding-widget.json",
+          "packageHash": "49a3ddb3400232f5c5e402f1137bcc3c589c1c333bb8c274120ced8542d78287",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.2",
+          "package": "./undercover/releases/1.0.0-preview.2/undercover.pudding-widget.json",
+          "packageHash": "9fd061c48ff392dbae992dd89f81a93d88e4e9a0b43c22892c208a3252115f35",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
+          "version": "1.0.0-preview.1",
+          "package": "./undercover/releases/1.0.0-preview.1/undercover.pudding-widget.json",
+          "packageHash": "836ef07c86c36dde94636a9dee7af6434a19a5fdd590b4fab40077556b61fb84",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 2
+}

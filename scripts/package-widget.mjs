@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { prepareDistribution } from "./distribution.mjs";
 // Source package validation is owned by pudding-core, not a second Hub runtime.
 import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
@@ -102,7 +103,7 @@ export async function packageWidget(
   // This only compiles source; it never runs widget code or writes release files.
   let compileWidget;
   try {
-    ({ compileWidget } = require(path.join(desktop, "electron/widget-build.cjs")));
+    ({ compileWidget } = require(path.resolve(desktop, "electron/widget-build.cjs")));
   } catch (error) {
     throw new Error("Widget compiler unavailable. Set PUDDING_DESKTOP_DIR to a prepared pudding-desktop checkout (install web dependencies and run core:prepare).", { cause: error });
   }
@@ -117,8 +118,9 @@ export async function packageWidget(
     throw new Error(`Widget compilation failed (${name}):\n${diagnostics}`);
   }
   const packageHash = hash(text);
+  if (!dev) await prepareDistribution(root);
   const releaseDir = path.join(
-    dir,
+    dev ? dir : path.join(root, "extensions/widgets", name),
     dev ? "dev" : `releases/${manifest.version}`,
   );
   const packageName = `${name}.pudding-widget.json`;
@@ -145,7 +147,7 @@ export async function packageWidget(
   await fs.mkdir(releaseDir, { recursive: true });
   await fs.writeFile(path.join(releaseDir, packageName), text);
   if (dev) return { packageHash, pkg };
-  const registryPath = path.join(root, "widgets/registry.json");
+  const registryPath = path.join(root, "extensions/widgets/registry.json");
   const registry = await read(registryPath);
   const previous = registry.items.find((item) => item.id === manifest.id);
   const release = {

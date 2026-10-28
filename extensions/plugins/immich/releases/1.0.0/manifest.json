@@ -1,0 +1,24 @@
+{
+  "kind": "pudding.plugin.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/plugins/immich",
+  "name": "immich",
+  "title": {
+    "zh-CN": "Immich",
+    "zh-TW": "Immich",
+    "en": "Immich"
+  },
+  "version": "1.0.0",
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "background": {
+      "light": "#F6F7FA",
+      "dark": "#1D1F24"
+    }
+  },
+  "package": "./immich.pudding-plugin.json",
+  "package_sha256": "8427009a8cc1166cd526664b2f536af5c701599e7c1f7588b7539d8fa02d7f05",
+  "requires": {
+    "pudding_plugin": "^1.0.0"
+  }
+}

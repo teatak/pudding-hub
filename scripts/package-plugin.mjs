@@ -1,12 +1,18 @@
 #!/usr/bin/env node
+import { prepareDistribution } from "./distribution.mjs";
 import crypto from "node:crypto";
 import fsSync from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 import { parse as parseYAML } from "yaml";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const require = createRequire(import.meta.url);
+const CORE = path.resolve(process.env.PUDDING_CORE_DIR || path.join(ROOT, "../pudding-core"));
+const { parseVersion, supportsPluginAPI } = require(path.join(CORE, "contracts/compatibility.mjs"));
+const pluginPolicy = require(path.join(CORE, "contracts/plugin.json"));
 const PACKAGE_KIND = "pudding.plugin.package";
 const PACKAGE_SCHEMA_VERSION = 1;
 const PLUGIN_MANIFEST_KIND = "pudding.plugin.manifest";
@@ -65,17 +71,10 @@ function todayISODate() {
   return local.toISOString().slice(0, 10);
 }
 
-function registryPluginPath(name, value) {
-  if (typeof value !== "string") return value;
-  const rel = value.trim();
-  if (!rel || rel.startsWith("/") || rel.startsWith("//") || /^[a-z][a-z0-9+.-]*:/i.test(rel)) return value;
-  return `./${name}/${rel.replace(/^\.\//, "")}`;
-}
-
 function releaseFileExists(value) {
   if (typeof value !== "string") return false;
   const rel = value.replace(/^\.\//, "");
-  return fsSync.existsSync(path.join(ROOT, "plugins", rel));
+  return fsSync.existsSync(path.join(ROOT, "extensions/plugins", rel));
 }
 
 function iconSVGPath(icon) {
@@ -85,13 +84,14 @@ function iconSVGPath(icon) {
   return "";
 }
 
-function rewriteRegistryIcon(name, icon) {
+function rewriteRegistryIcon(name, icon, version) {
+  const artifactPath = value => `./${name}/releases/${version}/${value.replace(/^\.\//, "")}`;
   if (!icon) return undefined;
-  if (typeof icon === "string") return registryPluginPath(name, icon);
+  if (typeof icon === "string") return artifactPath(icon);
   if (typeof icon === "object" && !Array.isArray(icon)) {
     return {
       ...icon,
-      svg: typeof icon.svg === "string" ? registryPluginPath(name, icon.svg) : icon.svg,
+      svg: typeof icon.svg === "string" ? artifactPath(icon.svg) : icon.svg,
     };
   }
   return undefined;
@@ -179,17 +179,27 @@ async function packagePlugin(name) {
   if (!pluginDefinition || typeof pluginDefinition !== "object" || Array.isArray(pluginDefinition)) {
     throw new Error(`plugin ${name} plugin.yaml must contain an object`);
   }
+  const apiVersion = pluginDefinition.api_version;
+  const wanted = manifest.requires?.pudding_plugin;
+  if (apiVersion !== undefined) {
+    if (!parseVersion(apiVersion) || !supportsPluginAPI(apiVersion, pluginPolicy.apiVersion)) throw new Error(`Unsupported Plugin API ${apiVersion}`);
+    if (wanted !== undefined && JSON.stringify(parseVersion(wanted.replace(/^\^/, ""))) !== JSON.stringify(parseVersion(apiVersion))) throw new Error("Plugin API requirements differ between manifest and plugin.yaml");
+  } else if (wanted !== undefined && !["^1.0.0", "1.0.0"].includes(wanted)) {
+    throw new Error("Declare api_version in plugin.yaml for versioned Plugin API requirements");
+  }
   const sourceManifest = {
     ...manifest,
+    ...(apiVersion ? { requires: { ...manifest.requires, pudding_plugin: apiVersion } } : {}),
     icon: normalizeManifestIcon(pluginDefinition.icon),
   };
 
   const targets = normalizedTargets(manifest);
   const pkg = {
     kind: PACKAGE_KIND,
-    schema_version: PACKAGE_SCHEMA_VERSION,
+    schema_version: apiVersion ? 2 : PACKAGE_SCHEMA_VERSION,
     plugin: {
       id: pluginID,
+      ...(apiVersion ? { api_version: apiVersion } : {}),
       name: manifest.title?.en || manifest.title?.["zh-CN"] || pluginID,
       version,
       description: manifest.description?.en || manifest.description?.["zh-CN"] || "",
@@ -198,7 +208,13 @@ async function packagePlugin(name) {
   };
   if (targets) pkg.plugin.targets = targets;
   const packageFilename = `${name}.pudding-plugin.json`;
-  const releaseDir = path.join(pluginDir, "releases", version);
+  await prepareDistribution(ROOT);
+  const releaseDir = path.join(ROOT, "extensions/plugins", name, "releases", version);
+  const packageText = JSON.stringify(pkg, null, 2) + "\n";
+  try {
+    const existing = await fs.readFile(path.join(releaseDir, packageFilename), "utf8");
+    if (existing !== packageText) throw new Error(`Immutable plugin release ${name}@${version}: bump the version`);
+  } catch (error) { if (error.code !== "ENOENT") throw error; }
   await fs.mkdir(releaseDir, { recursive: true });
   const iconRelRaw = iconSVGPath(sourceManifest.icon);
   let iconHash = "";
@@ -209,7 +225,6 @@ async function packagePlugin(name) {
     iconHash = crypto.createHash("sha256").update(iconData).digest("hex");
     await fs.writeFile(path.join(releaseDir, iconRel), iconData);
   }
-  const packageText = JSON.stringify(pkg, null, 2) + "\n";
   const packageHash = sha256Text(packageText);
   await fs.writeFile(path.join(releaseDir, packageFilename), packageText, "utf8");
 
@@ -233,8 +248,8 @@ function buildRootManifest(name, manifest, version, packageFilename, packageHash
     description: manifest.description || {},
     icon: manifest.icon,
     files: manifest.files || [],
-    manifest: `./releases/${version}/manifest.json`,
-    package: `./releases/${version}/${packageFilename}`,
+    manifest: `../../extensions/plugins/${name}/releases/${version}/manifest.json`,
+    package: `../../extensions/plugins/${name}/releases/${version}/${packageFilename}`,
     package_sha256: packageHash,
     requires: manifest.requires || { pudding_plugin: "^1.0.0" },
     tags: manifest.tags || [],
@@ -259,15 +274,16 @@ function buildReleaseManifest(manifest, packageFilename, packageHash) {
 }
 
 async function updateRegistry(name, manifest, packageHash, iconHash) {
-  const registryPath = path.join(ROOT, "plugins/registry.json");
+  const registryPath = path.join(ROOT, "extensions/plugins/registry.json");
   let registry;
   try {
     registry = await readJSON(registryPath);
-  } catch {
-    registry = { kind: REGISTRY_KIND, schema_version: 1, name: REGISTRY_NAME, title: REGISTRY_TITLE, items: [] };
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+    registry = { kind: REGISTRY_KIND, schema_version: 2, name: REGISTRY_NAME, title: REGISTRY_TITLE, items: [] };
   }
   registry.kind = REGISTRY_KIND;
-  registry.schema_version = 1;
+  registry.schema_version = 2;
   if (typeof registry.name !== "string" || !registry.name.trim()) registry.name = REGISTRY_NAME;
   if (!registry.title || typeof registry.title !== "object" || Array.isArray(registry.title)) registry.title = REGISTRY_TITLE;
 
@@ -280,7 +296,7 @@ async function updateRegistry(name, manifest, packageHash, iconHash) {
     name: manifest.name,
     title: manifest.title,
     description: manifest.description || {},
-    icon: rewriteRegistryIcon(name, manifest.icon),
+    icon: rewriteRegistryIcon(name, manifest.icon, manifest.version),
     ...(iconHash ? { icon_sha256: iconHash } : {}),
     ...(targets ? { targets } : {}),
     tags: manifest.tags || [],

@@ -26,6 +26,7 @@ Pudding reads plugin.yaml at runtime. This example declares a REST endpoint with
 id: example-service
 name: Example Service
 version: 1.0.0
+api_version: 1.1.0
 description: Read Example Service records.
 auth:
   required: true
@@ -62,7 +63,7 @@ Source maintained in Hub also needs manifest.json. It lists installed files and 
   "title": {"en": "Example Service", "zh-CN": "示例服务", "zh-TW": "範例服務"},
   "description": {"en": "Read service records.", "zh-CN": "读取服务记录。", "zh-TW": "讀取服務記錄。"},
   "files": ["plugin.yaml", "skills/records/SKILL.md", "assets/icon.svg"],
-  "requires": {"pudding_plugin": "^1.0.0"}
+  "requires": {"pudding_plugin": "1.1.0"}
 }
 ```
 
@@ -311,7 +312,7 @@ These commands create releases and update registries. Plugin packaging has no --
 
 The packager reads UTF-8 files listed in manifest.files, checks basic YAML/package structure and generates pudding.plugin.package format 1 with SHA-256 metadata. Core performs complete endpoint, authentication and Skill validation on installation. Packaging success therefore still needs installation verification.
 
-Releases live in `plugins/<name>/releases/<version>/`. Plugin packages use schema_version and package_sha256; widget packages use schemaVersion and packageSHA256. Keep the formats distinct, and exclude credentials, installation locks and private MCP configuration from files.
+Releases live in `extensions/plugins/<name>/releases/<version>/`. Plugin packages use schema_version and package_sha256; widget packages use schemaVersion and packageSHA256. Keep the formats distinct, and exclude credentials, installation locks and private MCP configuration from files.
 
 For previews, use a distinct version such as 1.1.0-preview.1 and set preview: true in manifest.json; channel: preview may also be supplied. A version suffix alone is insufficient. Users enable plugin previews in Settings → Advanced; widget previews have their own switch.
 
@@ -324,3 +325,19 @@ Install and test in a separate Pudding data directory. Check IDs, versions, file
 Test external writes within the user's authorized task. Sending real mail or deleting production data is not an ordinary installation check. Built-in and runtime-provided plugins are maintained in their implementation repositories rather than replaced by Hub packages.
 
 Exact fields and validation live in the [Core plugin types](https://github.com/teatak/pudding-core/blob/main/internal/plugin/types.go) and [loader](https://github.com/teatak/pudding-core/blob/main/internal/plugin/loader.go). Widget integration is covered by the [SDK reference](widget-sdk.md).
+
+## Plugin API compatibility
+
+The current Plugin API is **1.1.0**, independent from the Widget SDK. New plugins
+declare their minimum stable version with `api_version` in `plugin.yaml` and the
+same value in Hub `requires.pudding_plugin`. A declaration uses `MAJOR.MINOR.PATCH`;
+the legacy caret declaration remains readable. The host accepts compatible older
+minor/patch versions within its major. Do not bind a plugin to a Pudding version.
+
+Versioned package format 2 records `plugin.api_version`; Core checks it against
+the YAML before replacing any files. Existing format-1 packages without an API
+declaration stay supported. Unsupported updates preserve the installed plugin,
+connections and settings. Installed incompatible plugins remain visible, disabled
+at execution time, and show an update instruction. New formal releases go to
+`extensions/plugins/`; the legacy catalog is not updated. Configure
+`PUDDING_CORE_DIR` to the matching Core checkout when packaging.

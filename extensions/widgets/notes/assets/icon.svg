@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="24" fill="#F59E0B"/>
+  <!-- 便签主体，右下角带有折角效果 -->
+  <path d="M30 26 H98 V74 L74 98 H30 Z" fill="#FEF3C7" opacity="0.95"/>
+  <!-- 折角三角 -->
+  <path d="M74 74 H98 L74 98 Z" fill="#FDE68A"/>
+  <!-- 便签横线 -->
+  <rect x="42" y="42" width="44" height="6" rx="3" fill="#D97706"/>
+  <rect x="42" y="56" width="34" height="6" rx="3" fill="#F59E0B"/>
+  <rect x="42" y="70" width="24" height="6" rx="3" fill="#F59E0B"/>
+  <!-- 图钉点缀 -->
+  <circle cx="64" cy="22" r="5" fill="#DC2626"/>
+  <circle cx="64" cy="22" r="2.5" fill="#EF4444"/>
+</svg>

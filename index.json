@@ -1,0 +1,27 @@
+{
+  "kind": "pudding.hub.index",
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "id": "teatak/pudding-hub",
+      "title": {
+        "zh-CN": "Pudding 官方",
+        "zh-TW": "Pudding 官方",
+        "en": "Pudding Official"
+      },
+      "repository": "https://github.com/teatak/pudding-hub",
+      "catalogs": [
+        {
+          "type": "widget",
+          "schemaVersion": 2,
+          "url": "https://teatak.github.io/pudding-hub/extensions/widgets/registry.json"
+        },
+        {
+          "type": "plugin",
+          "schemaVersion": 2,
+          "url": "https://teatak.github.io/pudding-hub/extensions/plugins/registry.json"
+        }
+      ]
+    }
+  ]
+}

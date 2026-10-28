@@ -1,0 +1,24 @@
+{
+  "kind": "pudding.plugin.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/plugins/feishu",
+  "name": "feishu",
+  "title": {
+    "zh-CN": "飞书",
+    "zh-TW": "飛書",
+    "en": "Feishu"
+  },
+  "version": "1.0.0",
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "background": {
+      "light": "#F2F6FF",
+      "dark": "#101A33"
+    }
+  },
+  "package": "./feishu.pudding-plugin.json",
+  "package_sha256": "b61b25cc57ea021a467748a695d22a40c40747261d78c766e1d65df435b3dd24",
+  "requires": {
+    "pudding_plugin": "^1.0.0"
+  }
+}

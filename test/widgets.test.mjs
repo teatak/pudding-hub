@@ -128,7 +128,7 @@ test("packages use Core validation and releases cannot be overwritten", async ()
     const dev = await packageWidget("shared-todo", { root, dev: true });
     assert.notEqual(dev.packageHash, one.packageHash);
     let registry = JSON.parse(
-      await fs.readFile(path.join(root, "widgets/registry.json")),
+      await fs.readFile(path.join(root, "extensions/widgets/registry.json")),
     );
     assert.equal(registry.items[0].releases[0].packageHash, one.packageHash);
     assert.equal(registry.items[0].icon, one.pkg.icon);
@@ -147,7 +147,7 @@ test("packages use Core validation and releases cannot be overwritten", async ()
     assert.equal(preview.pkg.preview, true);
     assert.equal(preview.pkg.channel, "preview");
     registry = JSON.parse(
-      await fs.readFile(path.join(root, "widgets/registry.json"), "utf8"),
+      await fs.readFile(path.join(root, "extensions/widgets/registry.json"), "utf8"),
     );
     assert.equal(registry.items[0].releases.length, 2);
     assert.equal(registry.items[0].releases[0].preview, true);

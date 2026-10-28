@@ -89,7 +89,7 @@ await pudding.state.write({
 ```json
 {
   "schemaVersion": 1,
-  "sdkVersion": "1",
+  "sdkVersion": "1.1.0",
   "entry": "src/App.tsx",
   "sources": {"gh": {"pluginID": "github", "endpoint": "github_rest"}},
   "operations": {
@@ -290,3 +290,12 @@ source 对应已声明的来源名，宿主补全插件和账号身份。保存�
 宿主管理页面文档。更新 React 渲染内容即可，不要调用 `document.open/write/writeln` 替换整页。表单原生提交被禁止，应阻止默认提交并调用业务处理函数。
 
 源码、构建和运行错误由顶部错误条显示，详情可展开、滚动、复制、关闭。业务校验请返回具体字段和允许范围，避免整段 JSON。关闭错误提示不会重载页面；出现不同的新错误时仍会提示。
+
+## SDK 版本兼容
+
+当前小组件 SDK 为 **1.1.0**。`widget.json.sdkVersion` 和分发 manifest 的
+`requires.sdkVersion` 声明同一个最低稳定 SDK 版本。宿主接受同一主版本下不高于自身的
+次版本／修订版本；要求更新版本或不同主版本时不兼容。宿主发生不兼容的 SDK 升级后，
+已安装小组件会停止运行并明确提示更新，源码和数据保留。兼容新增接口不会强迫老小组件
+更新。历史 `"1"` 作为 1.0.0 继续识别，新内容使用完整语义版本。
+不声明最低 Pudding 应用版本；SDK、目录格式和扩展发布版本分别管理。

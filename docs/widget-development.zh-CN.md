@@ -33,7 +33,7 @@ manifest.json 说明小组件的 ID、版本、显示名称及最低宿主要求
   "version": "1.0.0",
   "title": {"en": "Counter", "zh-CN": "计数器", "zh-TW": "計數器"},
   "description": {"en": "A page counter.", "zh-CN": "页面计数器。", "zh-TW": "頁面計數器。"},
-  "requires": {"protocolVersion": 24, "sdkVersion": "1"}
+  "requires": {"protocolVersion": 24, "sdkVersion": "1.1.0"}
 }
 ```
 
@@ -43,7 +43,7 @@ source/widget.json 告诉 Pudding 从哪个文件开始运行。计数器不访�
 
 ```json
 {
-  "schemaVersion": 1, "sdkVersion": "1", "entry": "src/App.tsx",
+  "schemaVersion": 1, "sdkVersion": "1.1.0", "entry": "src/App.tsx",
   "sources": {}, "operations": {}
 }
 ```
@@ -183,3 +183,5 @@ Desktop 的 widget-hub smoke 可通过 PUDDING_HUB_DIR 读取本地源码。运�
 重复安装会打开原条目。通过模型首次编辑下载原版时，会复制源码和当时的 storage；原版和副本此后独立。
 
 更新不会覆盖本地修改过的源码。通过校验并启用的新版本成为默认版本，已经打开的页面仍运行原版本，重载后才切换。storage 保留，state 按页面和源码版本区分。安装条目的图标由包提供，名称的语言切换由宿主管理。
+
+正式包与目录写入 `extensions/widgets/`；历史路径保留。兼容声明遵循 [SDK 版本规则](widget-sdk.zh-CN.md#sdk-版本兼容)，不声明最低 Pudding 版本。

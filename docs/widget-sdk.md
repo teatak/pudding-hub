@@ -89,7 +89,7 @@ Give a plugin endpoint a local name in widget.json sources, then declare callabl
 ```json
 {
   "schemaVersion": 1,
-  "sdkVersion": "1",
+  "sdkVersion": "1.1.0",
   "entry": "src/App.tsx",
   "sources": {"gh": {"pluginID": "github", "endpoint": "github_rest"}},
   "operations": {
@@ -290,3 +290,15 @@ Use declared plugin operations for services and SDK methods for file saving, cop
 The host owns the page document. Update React content rather than replacing the page with `document.open/write/writeln`. Native form submission is blocked; prevent the default submission and call your handler.
 
 Source, build and runtime failures appear in the top error bar, with expandable, scrollable, copyable and dismissible details. For business validation, return the field and allowed range rather than a large JSON dump. Closing the bar does not reload the page; a different new error may appear again.
+
+## SDK version compatibility
+
+The current Widget SDK is **1.1.0**. `widget.json.sdkVersion` and the distribution
+manifest's `requires.sdkVersion` declare the same minimum stable SDK version.
+The host supports older minor/patch requirements within the same major; a newer
+requirement or a different major is incompatible. A breaking host SDK upgrade
+blocks an installed incompatible widget and asks the user to update it, preserving
+its source and data. Compatible SDK additions do not require updating old widgets.
+Legacy `"1"` stays readable as 1.0.0. New work should use a semantic version.
+Do not declare a minimum Pudding application version. SDK, catalog format and
+extension release versions are independent.

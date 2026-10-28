@@ -33,7 +33,7 @@ manifest.json declares the ID, version, display name and minimum host requiremen
   "version": "1.0.0",
   "title": {"en": "Counter", "zh-CN": "计数器", "zh-TW": "計數器"},
   "description": {"en": "A page counter.", "zh-CN": "页面计数器。", "zh-TW": "頁面計數器。"},
-  "requires": {"protocolVersion": 24, "sdkVersion": "1"}
+  "requires": {"protocolVersion": 24, "sdkVersion": "1.1.0"}
 }
 ```
 
@@ -43,7 +43,7 @@ source/widget.json tells Pudding which file to run. The counter has no external 
 
 ```json
 {
-  "schemaVersion": 1, "sdkVersion": "1", "entry": "src/App.tsx",
+  "schemaVersion": 1, "sdkVersion": "1.1.0", "entry": "src/App.tsx",
   "sources": {}, "operations": {}
 }
 ```
@@ -183,3 +183,5 @@ To withdraw a broken release, move its catalog release record into that widget's
 Repeated installation opens the original item. A model's first edit of a downloaded original copies its source and current storage. The original and copy then remain independent.
 
 Updates do not overwrite locally edited source. A validated, activated version becomes the default, while existing pages continue their original revision until reloaded. Storage persists; state is scoped to its page and source revision. The package supplies installed icons, and the host manages localized item names.
+
+Formal packages and catalogs are written to `extensions/widgets/`; legacy paths remain available. Follow the [SDK version rules](widget-sdk.md#sdk-version-compatibility), without a minimum Pudding version.

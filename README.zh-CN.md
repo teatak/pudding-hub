@@ -71,3 +71,20 @@ name 是稳定标识，title 是显示名称的语言映射。items 记录资源
 ## 历史兼容
 
 App 已被插件替代，不再作为独立开发类型。apps 目录和[历史注册表](https://teatak.github.io/pudding-hub/apps/registry.json)仅用于旧客户端兼容，新集成使用 plugin.yaml。
+
+## 根索引与当前分发目录
+
+新版客户端通过 [`index.json`](index.json) 发现来源。每个来源包含稳定 ID、多语言名称、
+仓库地址，以及每种类型唯一的当前目录。官方目录和安装包统一放在
+`extensions/widgets/`、`extensions/plugins/`；路径不随 SDK、API 或扩展版本变化。
+原有 `widgets/`、`plugins/` 的公开目录和历史包继续保留给老客户端，开发源码也仍在原目录。
+
+第三方维护者可以提交 PR，在 `index.json` 新增来源。目录使用 HTTPS 地址；迁移仓库或
+目录时保留来源 ID。索引只负责发现，用户自行选择添加来源和安装扩展。
+运行 `node scripts/validate-index.mjs` 校验，CI 使用同一份公开契约。
+
+新正式包只写入 `extensions/`，`--dev` 开发包的行为不变。
+`scripts/distribution.mjs` 按原始字节迁移历史产物，不重写已有包。清理旧公开路径需另行
+决定：先确认受支持客户端都能读取根索引，当前目录也不再引用旧路径。不要删除开发源码
+或用户已安装的数据。将来要恢复原公开路径，先准备好对应目录和包，再只修改索引中的
+URL；来源 ID、包字节及哈希保持不变。本次不设置清理日期或自动删除机制。

@@ -26,6 +26,7 @@ plugin.yaml 是 Pudding 运行插件时读取的文件。示例声明了一个 R
 id: example-service
 name: Example Service
 version: 1.0.0
+api_version: 1.1.0
 description: Read Example Service records.
 auth:
   required: true
@@ -62,7 +63,7 @@ example_rest 是端点名，模型和小组件通过这个名称选择服务。�
   "title": {"en": "Example Service", "zh-CN": "示例服务", "zh-TW": "範例服務"},
   "description": {"en": "Read service records.", "zh-CN": "读取服务记录。", "zh-TW": "讀取服務記錄。"},
   "files": ["plugin.yaml", "skills/records/SKILL.md", "assets/icon.svg"],
-  "requires": {"pudding_plugin": "^1.0.0"}
+  "requires": {"pudding_plugin": "1.1.0"}
 }
 ```
 
@@ -311,7 +312,7 @@ pnpm package-plugins
 
 打包器读取 manifest.files 中的 UTF-8 文件，检查基本 YAML 和包结构，生成 pudding.plugin.package 格式 1 及 SHA-256 信息。完整的端点、认证和 Skill 校验由 Core 安装时执行，所以打包成功后还要安装验证。
 
-发布目录是 `plugins/<name>/releases/<version>/`。插件包使用 schema_version、package_sha256 等下划线字段；小组件包使用 schemaVersion、packageSHA256。不要混用两种包格式，也不要将凭据、安装 lock 或私有 MCP 配置加入 files。
+发布目录是 `extensions/plugins/<name>/releases/<version>/`。插件包使用 schema_version、package_sha256 等下划线字段；小组件包使用 schemaVersion、packageSHA256。不要混用两种包格式，也不要将凭据、安装 lock 或私有 MCP 配置加入 files。
 
 预览版使用独立版本，例如 1.1.0-preview.1，并在 manifest.json 设置 preview: true；可附带 channel: preview。仅版本后缀不够。用户在“设置 → 高级”开启插件预览版，小组件预览版是独立开关。
 
@@ -324,3 +325,16 @@ pnpm package-plugins
 外部写入根据用户已经授权的任务测试；不要把发送真实邮件或删除生产数据作为普通安装检查。内置和宿主提供的插件通过对应仓库维护，不由 Hub 包覆盖。
 
 准确字段和校验见 [Core 插件类型](https://github.com/teatak/pudding-core/blob/main/internal/plugin/types.go)、[加载器](https://github.com/teatak/pudding-core/blob/main/internal/plugin/loader.go)。小组件接入见 [SDK 参考](widget-sdk.zh-CN.md)。
+
+## Plugin API 兼容
+
+当前 Plugin API 为 **1.1.0**，与小组件 SDK 独立。新插件在 `plugin.yaml` 中用
+`api_version` 声明最低稳定版本，Hub 的 `requires.pudding_plugin` 使用相同值。
+使用 `主版本.次版本.修订版本`；旧目录中的 caret 写法仍可读取。宿主接受同一主版本
+内不高于自身的次版本／修订版本。不绑定 Pudding 应用版本。
+
+新版包格式 2 在 `plugin.api_version` 记录声明，Core 会在替换文件前检查它与 YAML
+一致。没有 API 声明的旧格式 1 包继续支持。不兼容更新不会覆盖旧插件、连接或设置；
+已安装的不兼容插件仍显示在列表中，但不能启用或执行，并提示更新。
+新正式包发布到 `extensions/plugins/`，不再更新旧目录。打包时设置
+`PUDDING_CORE_DIR` 指向匹配的 Core 源码目录。

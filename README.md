@@ -71,3 +71,27 @@ GitHub Pages hosts the repository from the root of the main branch. Pudding veri
 ## Legacy compatibility
 
 Plugins replaced Apps, which are no longer a separate development type. The apps directory and [historical registry](https://teatak.github.io/pudding-hub/apps/registry.json) remain for older clients. New integrations use plugin.yaml.
+
+## Root index and current distribution
+
+New clients discover sources through [`index.json`](index.json). Each source has
+a stable ID, localized title, repository URL and one current catalog per type.
+The official catalogs and immutable packages are served from
+`extensions/widgets/` and `extensions/plugins/`. These paths do not track SDK,
+API or extension release versions. Existing `widgets/` and `plugins/` public
+catalogs/packages remain available to old clients; authoring sources also remain
+in those source directories.
+
+Third-party maintainers can submit a PR adding one source entry to `index.json`.
+Use HTTPS catalog URLs and keep the source ID stable when moving a repository or
+catalog. Source discovery does not automatically add or install it for users.
+Run `node scripts/validate-index.mjs`; CI validates the same public contract.
+
+New formal packages are written only to `extensions/`; `--dev` remains local.
+`scripts/distribution.mjs` seeds historical artifacts byte-for-byte and never
+rewrites an existing package. Retiring old public paths is a separate decision:
+first verify that supported clients use the index and current catalogs no longer
+reference legacy artifacts. Do not delete authoring sources or installed data.
+To return to the original public paths later, prepare those catalogs/packages and
+change only their URLs in the index; preserve source IDs and existing package
+bytes. No retirement date or automatic deletion is configured.
