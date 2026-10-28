@@ -1,0 +1,19 @@
+{
+  "id": "teatak/pudding-hub/widgets/reversi",
+  "version": "1.0.1",
+  "title": {
+    "zh-CN": "黑白棋",
+    "zh-TW": "黑白棋",
+    "en": "Reversi"
+  },
+  "description": {
+    "zh-CN": "8×8 经典翻转棋，支持人机对弈或双大模型对决。",
+    "zh-TW": "8×8 經典翻轉棋，支援人機對弈或雙大模型對決。",
+    "en": "Classic 8×8 Reversi with human vs model and model vs model play."
+  },
+  "requires": {
+    "protocolVersion": 24,
+    "sdkVersion": "1"
+  },
+  "icon": "./assets/icon.svg"
+}

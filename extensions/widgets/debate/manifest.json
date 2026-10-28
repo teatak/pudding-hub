@@ -1,0 +1,19 @@
+{
+  "id": "teatak/pudding-hub/widgets/debate",
+  "version": "1.0.0",
+  "title": {
+    "zh-CN": "辩论",
+    "zh-TW": "辯論",
+    "en": "AI Debate"
+  },
+  "description": {
+    "zh-CN": "多模型思辨交锋与实时研判，围绕关键议题展开深度对抗论辩。",
+    "zh-TW": "多模型思辨交鋒與即時研判，圍繞關鍵議題展開深度對抗論辯。",
+    "en": "Multi-model AI debate arena with dynamic deliberation and deep conceptual clashes."
+  },
+  "requires": {
+    "protocolVersion": 24,
+    "sdkVersion": "1"
+  },
+  "icon": "./assets/icon.svg"
+}

@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-import { prepareDistribution } from "./distribution.mjs";
 // Source package validation is owned by pudding-core, not a second Hub runtime.
 import { createHash } from "node:crypto";
 import fs from "node:fs/promises";
@@ -62,10 +61,7 @@ export async function packageWidget(
   const policy = await read(path.join(core, "contracts/widget.json"));
   if (!policy.distribution)
     throw new Error("Core does not support widget source distribution");
-  const extDir = path.join(root, "extensions/widgets", name);
-  const dir = (await fs.stat(path.join(extDir, "source")).catch(() => null))
-    ? extDir
-    : path.join(root, "widgets", name);
+  const dir = path.join(root, "extensions/widgets", name);
   const manifest = await read(path.join(dir, "manifest.json"));
   if (!manifest.id?.endsWith("/widgets/" + name))
     throw new Error("Widget ID must match its directory");
@@ -121,7 +117,6 @@ export async function packageWidget(
     throw new Error(`Widget compilation failed (${name}):\n${diagnostics}`);
   }
   const packageHash = hash(text);
-  if (!dev) await prepareDistribution(root);
   const releaseDir = path.join(
     dev ? dir : path.join(root, "extensions/widgets", name),
     dev ? "dev" : `releases/${manifest.version}`,
@@ -149,11 +144,6 @@ export async function packageWidget(
   }
   await fs.mkdir(releaseDir, { recursive: true });
   await fs.writeFile(path.join(releaseDir, packageName), text);
-  if (!dev) {
-    const legacyReleaseDir = path.join(root, "widgets", name, `releases/${manifest.version}`);
-    await fs.mkdir(legacyReleaseDir, { recursive: true });
-    await fs.writeFile(path.join(legacyReleaseDir, packageName), text);
-  }
   if (dev) return { packageHash, pkg };
   const release = {
     version: manifest.version,
@@ -161,34 +151,29 @@ export async function packageWidget(
     packageHash,
     requires: manifest.requires,
   };
-  const registryPaths = [
-    path.join(root, "extensions/widgets/registry.json"),
-    path.join(root, "widgets/registry.json"),
-  ];
-  for (const registryPath of registryPaths) {
-    try {
-      const registry = await read(registryPath);
-      const previous = registry.items.find((item) => item.id === manifest.id);
-      const releases = [
-        { ...release, ...releaseMetadata },
-        ...(previous?.releases || []).filter((r) => r.version !== manifest.version),
-      ];
-      const item = {
-        id: manifest.id,
-        title: manifest.title,
-        description: manifest.description,
-        icon: pkg.icon,
-        releases,
-      };
-      registry.items = [
-        ...registry.items.filter((item) => item.id !== manifest.id),
-        item,
-      ].sort((a, b) => a.id.localeCompare(b.id));
-      registry.schemaVersion = policy.distribution.schemaVersion;
-      await fs.writeFile(registryPath, json(registry));
-    } catch (e) {
-      if (e.code !== "ENOENT") throw e;
-    }
+  const registryPath = path.join(root, "extensions/widgets/registry.json");
+  try {
+    const registry = await read(registryPath);
+    const previous = registry.items.find((item) => item.id === manifest.id);
+    const releases = [
+      { ...release, ...releaseMetadata },
+      ...(previous?.releases || []).filter((r) => r.version !== manifest.version),
+    ];
+    const item = {
+      id: manifest.id,
+      title: manifest.title,
+      description: manifest.description,
+      icon: pkg.icon,
+      releases,
+    };
+    registry.items = [
+      ...registry.items.filter((item) => item.id !== manifest.id),
+      item,
+    ].sort((a, b) => a.id.localeCompare(b.id));
+    registry.schemaVersion = policy.distribution.schemaVersion;
+    await fs.writeFile(registryPath, json(registry));
+  } catch (e) {
+    if (e.code !== "ENOENT") throw e;
   }
   console.log(`packaged ${name}@${manifest.version}: ${packageHash}`);
   return { packageHash, pkg };
@@ -205,7 +190,7 @@ if (
     );
   else {
     const names = args.includes("--all")
-      ? (await fs.readdir(path.join(ROOT, "widgets"), { withFileTypes: true }))
+      ? (await fs.readdir(path.join(ROOT, "extensions/widgets"), { withFileTypes: true }))
           .filter((e) => e.isDirectory())
           .map((e) => e.name)
       : [args.find((a) => !a.startsWith("--"))];

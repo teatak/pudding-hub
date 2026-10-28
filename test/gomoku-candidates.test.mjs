@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { fillCandidates } from '../widgets/gomoku/source/src/candidates.ts';
+import { fillCandidates } from '../extensions/widgets/gomoku/source/src/candidates.ts';
 const agent = (id, connected = true) => ({ id, kind: 'external', connected });
 const session = { id: 'conversation', kind: 'session' };
 test('agents fill vacancies; conversations and human require manual choice', () => {

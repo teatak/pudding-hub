@@ -11,7 +11,7 @@ App 已被插件替代，新插件使用 plugin.yaml。先创建服务定义和 
 以下示例使用虚构的 Example Service 地址来说明文件结构。实际开发时，用服务文档中的真实地址、认证方式和接口替换。
 
 ```text
-plugins/example-service/
+extensions/plugins/example-service/
   manifest.json
   plugin.yaml
   assets/icon.svg
@@ -124,7 +124,7 @@ Ask／Auto 模式会确认这次安装内容的写入，Full Access 直接保存
 | HTTP MCP | kind: mcp、transport: streamable_http、url | 远程 MCP 服务 |
 | stdio MCP | kind: mcp、transport: stdio、command，可选 args／env | 按需启动本地 MCP 进程，需要 Code 能力 |
 
-REST／GraphQL 默认使用固定地址。用户需要填写自己的服务器地址时，再加 url_config，见[连接地址](#连接地址与-tls)。不同系统使用不同 MCP 启动命令时，配置 platforms，参考 [Sequential Thinking](../plugins/sequential-thinking/plugin.yaml)。
+REST／GraphQL 默认使用固定地址。用户需要填写自己的服务器地址时，再加 url_config，见[连接地址](#连接地址与-tls)。不同系统使用不同 MCP 启动命令时，配置 platforms，参考 [Sequential Thinking](../extensions/plugins/sequential-thinking/plugin.yaml)。
 
 小组件读取端点时使用 `{pluginID:'example-service', endpoint:'example_rest'}`。需要允许小组件修改外部数据时，在相应端点设置 widget_writes: true；实际执行仍由宿主确认。
 
@@ -147,7 +147,7 @@ auth.methods 描述用户可以选择的认证方式，凭据在连接设置中�
 | token_exchange | 用连接字段换取短期访问 token |
 | session | 用户在设置中登录，保存服务返回的会话凭据 |
 
-oauth2 的 provider 必须由宿主实现；只填写一个新名称并不能接入新的 OAuth 服务。参考 [GitHub 定义](../plugins/github/plugin.yaml)和 [Gmail Skill](../plugins/gmail/skills/mailbox/SKILL.md)。
+oauth2 的 provider 必须由宿主实现；只填写一个新名称并不能接入新的 OAuth 服务。参考 [GitHub 定义](../extensions/plugins/github/plugin.yaml)和 [Gmail Skill](../extensions/plugins/gmail/skills/mailbox/SKILL.md)。
 
 更新插件声明不会扩大已有 token 的权限。需要新 scope 时，用户必须重新授权。例如，当前 Gmail 的读取和发送 scope 不包含编辑草稿、归档或修改标签。
 
@@ -173,7 +173,7 @@ connection:
     - {id: clientSecret, required: true, secret: true}
 ```
 
-body_fields 的左侧是 token 请求中的参数名，右侧是 connection.fields 中的字段 ID。access_token_field、expires_in_field 指定响应中读取结果的位置，支持点分隔路径。Core 在 REST／GraphQL 请求前完成交换，并在接近过期时刷新缓存。模型不需要自行读取密钥或执行 token 请求。参考[飞书插件](../plugins/feishu/plugin.yaml)。
+body_fields 的左侧是 token 请求中的参数名，右侧是 connection.fields 中的字段 ID。access_token_field、expires_in_field 指定响应中读取结果的位置，支持点分隔路径。Core 在 REST／GraphQL 请求前完成交换，并在接近过期时刷新缓存。模型不需要自行读取密钥或执行 token 请求。参考[飞书插件](../extensions/plugins/feishu/plugin.yaml)。
 
 ### 交互式会话登录
 
@@ -227,7 +227,7 @@ endpoints:
 
 至少要有一个必填的凭据输出。可选的 expires_in_field 表示有效秒数，必须为正且不超过一年。密码等输入保留原始字符，包括首尾空格。
 
-登录由用户在设置中操作，不提供给模型作为工具。验证码要求再次提交表单；宿主不保存未完成登录的密码或挑战。登录失败保留原连接，并发修改会报冲突。当前不支持 cookie 登录、自动重新登录或任意登录脚本。完整示例见 [Synology](../plugins/synology/plugin.yaml)。
+登录由用户在设置中操作，不提供给模型作为工具。验证码要求再次提交表单；宿主不保存未完成登录的密码或挑战。登录失败保留原连接，并发修改会报冲突。当前不支持 cookie 登录、自动重新登录或任意登录脚本。完整示例见 [Synology](../extensions/plugins/synology/plugin.yaml)。
 
 ## 连接与账号选择
 
@@ -316,7 +316,7 @@ pnpm package-plugins
 
 预览版使用独立版本，例如 1.1.0-preview.1，并在 manifest.json 设置 preview: true；可附带 channel: preview。仅版本后缀不够。用户在“设置 → 高级”开启插件预览版，小组件预览版是独立开关。
 
-第三方分发使用 plugins/registry.json。Pudding 保留包的来源信息，不允许另一个来源静默替换已安装插件。
+第三方目录可使用自己的公开路径，例如 extensions/plugins/registry.json。Pudding 保留包的来源信息，不允许另一个来源静默替换已安装插件。
 
 ## 验证与参考
 

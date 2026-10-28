@@ -14,7 +14,7 @@ const hook = registerHooks({
   },
 });
 const { messages, t, errorText } =
-  await import("../widgets/shared-todo/source/src/text.ts");
+  await import("../extensions/widgets/shared-todo/source/src/text.ts");
 const { setLocale } = await import(url);
 hook.deregister();
 test("Todo translations have matching keys/placeholders and follow the current host locale", () => {

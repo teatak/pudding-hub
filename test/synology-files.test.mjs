@@ -4,7 +4,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const root = fileURLToPath(new URL("../widgets/synology-files/", import.meta.url));
+const root = fileURLToPath(new URL("../extensions/widgets/synology-files/", import.meta.url));
 const readJSON = async (file) => JSON.parse(await fs.readFile(file, "utf8"));
 
 test("synology-files manifest, widget.json and release package are valid and verifiable", async () => {

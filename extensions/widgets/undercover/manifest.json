@@ -1,0 +1,21 @@
+{
+  "id": "teatak/pudding-hub/widgets/undercover",
+  "version": "1.0.0-preview.11",
+  "preview": true,
+  "channel": "preview",
+  "title": {
+    "zh-CN": "谁是卧底",
+    "zh-TW": "誰是臥底",
+    "en": "Who is the Undercover"
+  },
+  "description": {
+    "zh-CN": "暗金侦探圆桌推理博弈，支持 4/6 人自由组局、近义词题库与发言指认。",
+    "zh-TW": "暗金偵探圓桌推理博弈，支援 4/6 人自由組局、近義詞題庫與發言指認。",
+    "en": "Noir detective social deduction game supporting 4 or 6 players, curated word pairs, clues, and voting."
+  },
+  "requires": {
+    "protocolVersion": 24,
+    "sdkVersion": "1"
+  },
+  "icon": "./assets/icon.svg"
+}

@@ -16,9 +16,9 @@ import {
   applyVote,
   chooseBotSpeech,
   chooseBotVote,
-} from "../widgets/undercover/source/src/rules.ts";
+} from "../extensions/widgets/undercover/source/src/rules.ts";
 
-const root = fileURLToPath(new URL("../widgets/undercover", import.meta.url));
+const root = fileURLToPath(new URL("../extensions/widgets/undercover", import.meta.url));
 
 function assertStrictJsonValue(val, pathPrefix = "root") {
   assert.notEqual(

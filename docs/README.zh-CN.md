@@ -32,11 +32,11 @@ App 是插件的旧名称，已不再作为独立扩展类型。新插件统一�
 
 | 示例 | 适合参考的内容 |
 | --- | --- |
-| [共享待办](../widgets/shared-todo/source/src/App.tsx) | 保存数据、向模型提供操作接口 |
-| [Gmail 看板](../widgets/gmail-board/source/widget.json) | 声明插件数据来源和查询 |
-| [GitHub 插件](../plugins/github/plugin.yaml) | REST 端点和认证 |
-| [Synology 插件](../plugins/synology/plugin.yaml) | 自定义服务地址和账号登录 |
-| [Sequential Thinking](../plugins/sequential-thinking/plugin.yaml) | MCP 端点和不同系统下的启动方式 |
+| [共享待办](../extensions/widgets/shared-todo/source/src/App.tsx) | 保存数据、向模型提供操作接口 |
+| [Gmail 看板](../extensions/widgets/gmail-board/source/widget.json) | 声明插件数据来源和查询 |
+| [GitHub 插件](../extensions/plugins/github/plugin.yaml) | REST 端点和认证 |
+| [Synology 插件](../extensions/plugins/synology/plugin.yaml) | 自定义服务地址和账号登录 |
+| [Sequential Thinking](../extensions/plugins/sequential-thinking/plugin.yaml) | MCP 端点和不同系统下的启动方式 |
 
 ## 版本与维护
 

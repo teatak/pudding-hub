@@ -11,7 +11,7 @@ Plugins replaced Apps; new definitions use plugin.yaml. First create the service
 This example uses a fictional Example Service to illustrate the files. Replace the address, authentication and operations with the real service's documented API.
 
 ```text
-plugins/example-service/
+extensions/plugins/example-service/
   manifest.json
   plugin.yaml
   assets/icon.svg
@@ -124,7 +124,7 @@ Ask/Auto modes confirm changes to installed packages; Full Access saves directly
 | HTTP MCP | kind: mcp, transport: streamable_http, url | Remote MCP service |
 | stdio MCP | kind: mcp, transport: stdio, command, optional args/env | Local MCP process started on demand; requires Code capability |
 
-REST/GraphQL use fixed addresses by default. Add url_config when users must supply their own server; see [connection addresses](#per-connection-addresses-and-tls). Use platforms for MCP commands that differ by operating system, as in [Sequential Thinking](../plugins/sequential-thinking/plugin.yaml).
+REST/GraphQL use fixed addresses by default. Add url_config when users must supply their own server; see [connection addresses](#per-connection-addresses-and-tls). Use platforms for MCP commands that differ by operating system, as in [Sequential Thinking](../extensions/plugins/sequential-thinking/plugin.yaml).
 
 Widgets identify an endpoint with `{pluginID:'example-service', endpoint:'example_rest'}`. Set widget_writes: true on an endpoint if widgets need to change its data. The host still asks for confirmation before execution.
 
@@ -147,7 +147,7 @@ auth.methods declares the choices shown in connection settings. Packages contain
 | token_exchange | Exchange connection fields for a short-lived token |
 | session | User signs in through settings; store returned session credentials |
 
-An oauth2 provider must be implemented by the host. A new name alone does not add a new OAuth integration. See the [GitHub definition](../plugins/github/plugin.yaml) and [Gmail Skill](../plugins/gmail/skills/mailbox/SKILL.md).
+An oauth2 provider must be implemented by the host. A new name alone does not add a new OAuth integration. See the [GitHub definition](../extensions/plugins/github/plugin.yaml) and [Gmail Skill](../extensions/plugins/gmail/skills/mailbox/SKILL.md).
 
 Updating a plugin cannot expand an existing token's scopes. Users must reauthorize when new scopes are needed. For example, current Gmail read/send scopes do not cover editing drafts, archiving or changing labels.
 
@@ -173,7 +173,7 @@ connection:
     - {id: clientSecret, required: true, secret: true}
 ```
 
-body_fields maps request parameter names on the left to connection.fields IDs on the right. access_token_field and expires_in_field locate values in the response and support dotted paths. Core performs the exchange before REST/GraphQL requests and refreshes its cache near expiry. Models need not read secrets or make token requests themselves. See [Feishu](../plugins/feishu/plugin.yaml).
+body_fields maps request parameter names on the left to connection.fields IDs on the right. access_token_field and expires_in_field locate values in the response and support dotted paths. Core performs the exchange before REST/GraphQL requests and refreshes its cache near expiry. Models need not read secrets or make token requests themselves. See [Feishu](../extensions/plugins/feishu/plugin.yaml).
 
 ### Interactive session login
 
@@ -227,7 +227,7 @@ Supported from protocol 52. The main fields are:
 
 At least one credential output must be required. Optional expires_in_field gives positive lifetime seconds, up to one year. Inputs preserve their exact characters, including password whitespace.
 
-Login is performed by the user in settings, not exposed as a model tool. A challenge requires another form submission; the host retains neither unfinished login passwords nor challenges. Failure preserves the previous connection, and concurrent edits cause a conflict. Cookie sessions, automatic re-login and arbitrary login scripts are unsupported. See [Synology](../plugins/synology/plugin.yaml) for a complete example.
+Login is performed by the user in settings, not exposed as a model tool. A challenge requires another form submission; the host retains neither unfinished login passwords nor challenges. Failure preserves the previous connection, and concurrent edits cause a conflict. Cookie sessions, automatic re-login and arbitrary login scripts are unsupported. See [Synology](../extensions/plugins/synology/plugin.yaml) for a complete example.
 
 ## Connections and account selection
 
@@ -316,7 +316,7 @@ Releases live in `extensions/plugins/<name>/releases/<version>/`. Plugin package
 
 For previews, use a distinct version such as 1.1.0-preview.1 and set preview: true in manifest.json; channel: preview may also be supplied. A version suffix alone is insufficient. Users enable plugin previews in Settings → Advanced; widget previews have their own switch.
 
-Third-party distribution uses plugins/registry.json. Pudding retains package source information and rejects silent replacement of an installed package by another source.
+Third-party catalogs may use their own public path (for example, extensions/plugins/registry.json). Pudding retains package source information and rejects silent replacement of an installed package by another source.
 
 ## Validation and references
 

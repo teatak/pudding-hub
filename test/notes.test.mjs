@@ -4,7 +4,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const root = fileURLToPath(new URL("../widgets/notes", import.meta.url));
+const root = fileURLToPath(new URL("../extensions/widgets/notes", import.meta.url));
 
 test("Sticky Notes release package exists, is verified, and contains valid source files", async () => {
   const pkgPath = path.join(root, "releases/1.0.0/notes.pudding-widget.json");

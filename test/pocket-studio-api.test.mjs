@@ -6,7 +6,7 @@ import path from "node:path";
 
 const desktop = process.env.PUDDING_DESKTOP_DIR || fileURLToPath(new URL("../../pudding-desktop", import.meta.url));
 const require = createRequire(path.join(desktop, "web/package.json"));
-const source = new URL("../widgets/pocket-studio/source/src/", import.meta.url);
+const source = new URL("../extensions/widgets/pocket-studio/source/src/", import.meta.url);
 const interfaces = new Map();
 let stored, writes, locale = "en", localeChanged, failWrite = false, readGate;
 let exported = [], exportSaved = true;

@@ -1,0 +1,18 @@
+{
+  "id": "teatak/pudding-hub/widgets/gmail-board",
+  "version": "1.0.0-preview.10",
+  "preview": true,
+  "channel": "preview",
+  "title": {
+    "zh-CN": "Gmail 看板",
+    "zh-TW": "Gmail 看板",
+    "en": "Gmail Board"
+  },
+  "description": {
+    "zh-CN": "按账号整理邮件会话、跟进事项和本地回复草稿。",
+    "zh-TW": "依帳號整理郵件對話、追蹤事項與本機回覆草稿。",
+    "en": "Organize email threads, follow-ups and local reply drafts by account."
+  },
+  "requires": { "protocolVersion": 24, "sdkVersion": "1" },
+  "icon": "./assets/icon.svg"
+}

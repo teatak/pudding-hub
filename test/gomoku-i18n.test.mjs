@@ -15,7 +15,7 @@ const hook = registerHooks({
       : next(specifier, context);
   },
 });
-const { messages, t, errorText } = await import("../widgets/gomoku/source/src/text.ts");
+const { messages, t, errorText } = await import("../extensions/widgets/gomoku/source/src/text.ts");
 const { setLocale } = await import(sdkURL);
 hook.deregister();
 

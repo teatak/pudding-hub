@@ -10,7 +10,7 @@ const require = createRequire(
     "web/package.json",
   ),
 );
-const source = new URL("../widgets/github-board/source/src/", import.meta.url);
+const source = new URL("../extensions/widgets/github-board/source/src/", import.meta.url);
 
 let saved,
   account,

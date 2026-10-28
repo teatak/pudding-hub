@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-import { prepareDistribution } from "./distribution.mjs";
 import crypto from "node:crypto";
 import fsSync from "node:fs";
 import fs from "node:fs/promises";
@@ -149,7 +148,7 @@ function normalizedTargets(manifest) {
 }
 
 async function packagePlugin(name) {
-  const pluginDir = path.join(ROOT, "plugins", name);
+  const pluginDir = path.join(ROOT, "extensions/plugins", name);
   const manifest = await readJSON(path.join(pluginDir, "manifest.json"));
   if (manifest.kind && manifest.kind !== PLUGIN_MANIFEST_KIND) {
     throw new Error(`unsupported plugin manifest kind: ${manifest.kind}`);
@@ -208,7 +207,6 @@ async function packagePlugin(name) {
   };
   if (targets) pkg.plugin.targets = targets;
   const packageFilename = `${name}.pudding-plugin.json`;
-  await prepareDistribution(ROOT);
   const releaseDir = path.join(ROOT, "extensions/plugins", name, "releases", version);
   const packageText = JSON.stringify(pkg, null, 2) + "\n";
   try {
@@ -248,8 +246,8 @@ function buildRootManifest(name, manifest, version, packageFilename, packageHash
     description: manifest.description || {},
     icon: manifest.icon,
     files: manifest.files || [],
-    manifest: `../../extensions/plugins/${name}/releases/${version}/manifest.json`,
-    package: `../../extensions/plugins/${name}/releases/${version}/${packageFilename}`,
+    manifest: `./releases/${version}/manifest.json`,
+    package: `./releases/${version}/${packageFilename}`,
     package_sha256: packageHash,
     requires: manifest.requires || { pudding_plugin: "^1.0.0" },
     tags: manifest.tags || [],
@@ -341,7 +339,7 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   let names = [];
   if (args.all) {
-    names = (await fs.readdir(path.join(ROOT, "plugins"), { withFileTypes: true }))
+    names = (await fs.readdir(path.join(ROOT, "extensions/plugins"), { withFileTypes: true }))
       .filter((entry) => entry.isDirectory())
       .map((entry) => entry.name);
   } else if (args.name) {

@@ -1,0 +1,19 @@
+{
+  "id": "teatak/pudding-hub/widgets/shared-todo",
+  "version": "1.0.0",
+  "title": {
+    "zh-CN": "待办",
+    "zh-TW": "待辦",
+    "en": "Todo"
+  },
+  "description": {
+    "en": "Keep track of tasks and organize your day.",
+    "zh-CN": "记录任务，安排日常事项。",
+    "zh-TW": "記錄任務，安排日常事項。"
+  },
+  "requires": {
+    "protocolVersion": 24,
+    "sdkVersion": "1"
+  },
+  "icon": "./assets/icon.svg"
+}

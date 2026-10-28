@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import { sourceFiles, widgetIcon } from "../scripts/package-widget.mjs";
 
-const root = fileURLToPath(new URL("../widgets/", import.meta.url));
+const root = fileURLToPath(new URL("../extensions/widgets/", import.meta.url));
 const read = async (file) => JSON.parse(await fs.readFile(file, "utf8"));
 const hash = (value) => createHash("sha256").update(value).digest("hex");
 

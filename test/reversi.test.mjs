@@ -4,7 +4,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const root = fileURLToPath(new URL("../widgets/reversi", import.meta.url));
+const root = fileURLToPath(new URL("../extensions/widgets/reversi", import.meta.url));
 
 test("Reversi release package exists, is verified, and contains valid source files", async () => {
   const pkgPath = path.join(

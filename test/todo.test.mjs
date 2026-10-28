@@ -4,7 +4,7 @@ import {
   readTasks,
   editTasks,
   taskPage,
-} from "../widgets/shared-todo/source/src/tasks.ts";
+} from "../extensions/widgets/shared-todo/source/src/tasks.ts";
 const legacy = [
   { id: "old-1", title: "原任务 $& {count}", done: false },
   { id: "old-2", title: "已完成任务", done: true },

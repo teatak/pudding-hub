@@ -17,7 +17,7 @@
 在 Hub 中创建以下文件：
 
 ```text
-widgets/counter/
+extensions/widgets/counter/
   manifest.json
   source/widget.json
   source/src/App.tsx
@@ -127,7 +127,7 @@ PUDDING_CORE_DIR=../pudding-core PUDDING_DESKTOP_DIR=../pudding-desktop pnpm pac
 
 ## 接入插件数据
 
-先查看已安装插件的真实端点和 Skill，再在 widget.json 中声明 sources 和 operations。sources 指明插件和端点，operations 定义查询或写入请求。完整示例见 [SDK 数据接入](widget-sdk.zh-CN.md#插件数据与操作)和 [Gmail 看板](../widgets/gmail-board/source/widget.json)。
+先查看已安装插件的真实端点和 Skill，再在 widget.json 中声明 sources 和 operations。sources 指明插件和端点，operations 定义查询或写入请求。完整示例见 [SDK 数据接入](widget-sdk.zh-CN.md#插件数据与操作)和 [Gmail 看板](../extensions/widgets/gmail-board/source/widget.json)。
 
 账号和凭据由 Pudding 的来源选择器管理，小组件无需接触 token。小组件使用的账号与聊天会话中的插件账号独立。按账号分别保存草稿和处理状态；切换后清理当前选中项，并忽略前一个账号尚未返回的请求。
 

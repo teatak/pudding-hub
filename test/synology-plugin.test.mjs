@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import { parse as parseYAML } from "yaml";
 
-const root = fileURLToPath(new URL("../plugins/", import.meta.url));
+const root = fileURLToPath(new URL("../extensions/plugins/", import.meta.url));
 const readJSON = async (file) => JSON.parse(await fs.readFile(file, "utf8"));
 const hash = (value) => createHash("sha256").update(value).digest("hex");
 

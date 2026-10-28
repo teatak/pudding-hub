@@ -1,0 +1,41 @@
+{
+  "kind": "pudding.plugin.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/plugins/immich",
+  "name": "immich",
+  "title": {
+    "zh-CN": "Immich",
+    "zh-TW": "Immich",
+    "en": "Immich"
+  },
+  "version": "1.0.0",
+  "description": {
+    "zh-CN": "连接自托管 Immich，在照片和视频中进行智能搜索、人物与地点查找、OCR 和元数据筛选，并将缩略图展示到小组件。",
+    "zh-TW": "連接自架 Immich，在照片和影片中進行智慧搜尋、人物與地點查找、OCR 和中繼資料篩選，並將縮圖展示到小工具。",
+    "en": "Connect a self-hosted Immich library for smart photo and video search, people and place lookup, OCR and metadata filtering, with thumbnail results on a widget."
+  },
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "background": {
+      "light": "#F6F7FA",
+      "dark": "#1D1F24"
+    }
+  },
+  "files": [
+    "plugin.yaml",
+    "skills/photo-search/SKILL.md",
+    "assets/icon.svg"
+  ],
+  "manifest": "./releases/1.0.0/manifest.json",
+  "package": "./releases/1.0.0/immich.pudding-plugin.json",
+  "package_sha256": "8427009a8cc1166cd526664b2f536af5c701599e7c1f7588b7539d8fa02d7f05",
+  "requires": {
+    "pudding_plugin": "^1.0.0"
+  },
+  "tags": [
+    "photos",
+    "search",
+    "self-hosted",
+    "immich"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "id": "teatak/pudding-hub/widgets/github-board",
+  "version": "1.0.0-preview.2",
+  "preview": true,
+  "channel": "preview",
+  "title": {
+    "zh-CN": "GitHub 看板",
+    "zh-TW": "GitHub 看板",
+    "en": "GitHub Board"
+  },
+  "description": {
+    "zh-CN": "按账号整理 GitHub 仓库、Issue 与 PR 分拣进度、跟进日期和本地评审草稿。",
+    "zh-TW": "依帳號整理 GitHub 倉庫、Issue 與 PR 分揀進度、追蹤日期與本機評審草稿。",
+    "en": "Organize GitHub repositories, issues, pull requests, follow-ups and local review drafts by account."
+  },
+  "requires": {
+    "protocolVersion": 24,
+    "sdkVersion": "1"
+  },
+  "icon": "./assets/icon.svg"
+}

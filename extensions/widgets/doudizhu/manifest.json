@@ -1,0 +1,19 @@
+{
+  "id": "teatak/pudding-hub/widgets/doudizhu",
+  "version": "1.0.0",
+  "title": {
+    "zh-CN": "斗地主",
+    "zh-TW": "鬥地主",
+    "en": "Dou Dizhu"
+  },
+  "description": {
+    "zh-CN": "经典三人扑克斗地主，支持叫抢地主与炸弹翻倍对局。",
+    "zh-TW": "經典三人撲克鬥地主，支援叫搶地主與炸彈翻倍對局。",
+    "en": "Classic 3-player Dou Dizhu poker game with Call/Rob Landlord and bomb multipliers."
+  },
+  "requires": {
+    "protocolVersion": 24,
+    "sdkVersion": "1"
+  },
+  "icon": "./assets/icon.svg"
+}

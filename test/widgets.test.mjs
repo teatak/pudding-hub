@@ -8,7 +8,7 @@ import {
   place,
   describePosition,
   letters,
-} from "../widgets/gomoku/source/src/rules.ts";
+} from "../extensions/widgets/gomoku/source/src/rules.ts";
 import {
   packageWidget,
   sourceFiles,
@@ -87,14 +87,14 @@ test("Gomoku tool view preserves row/column orientation, history and last move w
 test("packages use Core validation and releases cannot be overwritten", async () => {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), "pudding-hub-package-"));
   try {
-    await fs.mkdir(path.join(root, "widgets"), { recursive: true });
+    await fs.mkdir(path.join(root, "extensions/widgets"), { recursive: true });
     await fs.cp(
-      new URL("../widgets/shared-todo", import.meta.url),
-      path.join(root, "widgets/shared-todo"),
+      new URL("../extensions/widgets/shared-todo", import.meta.url),
+      path.join(root, "extensions/widgets/shared-todo"),
       { recursive: true, filter: (file) => !file.includes("/releases") },
     );
     await fs.writeFile(
-      path.join(root, "widgets/registry.json"),
+      path.join(root, "extensions/widgets/registry.json"),
       JSON.stringify({
         kind: "pudding.widget.registry",
         schemaVersion: 2,
@@ -103,22 +103,27 @@ test("packages use Core validation and releases cannot be overwritten", async ()
         items: [],
       }),
     );
+    // A retired catalog is unrelated to new releases and must stay frozen.
+    const legacy = path.join(root, "widgets");
+    await fs.mkdir(legacy);
+    const legacyCatalog = '{"items":[]}\n';
+    await fs.writeFile(path.join(legacy, "registry.json"), legacyCatalog);
     const one = await packageWidget("shared-todo", { root });
     const two = await packageWidget("shared-todo", { root });
     assert.equal(one.packageHash, two.packageHash);
     const svg = await fs.readFile(
-      path.join(root, "widgets/shared-todo/assets/icon.svg"),
+      path.join(root, "extensions/widgets/shared-todo/assets/icon.svg"),
     );
     assert.equal(
       one.pkg.icon,
       "data:image/svg+xml;base64," + svg.toString("base64"),
     );
     await assert.rejects(
-      widgetIcon(path.join(root, "widgets/shared-todo"), "../icon.svg"),
+      widgetIcon(path.join(root, "extensions/widgets/shared-todo"), "../icon.svg"),
       /Widget icon/,
     );
     await fs.appendFile(
-      path.join(root, "widgets/shared-todo/source/src/App.tsx"),
+      path.join(root, "extensions/widgets/shared-todo/source/src/App.tsx"),
       "\n// local edit\n",
     );
     await assert.rejects(
@@ -132,7 +137,7 @@ test("packages use Core validation and releases cannot be overwritten", async ()
     );
     assert.equal(registry.items[0].releases[0].packageHash, one.packageHash);
     assert.equal(registry.items[0].icon, one.pkg.icon);
-    const manifestPath = path.join(root, "widgets/shared-todo/manifest.json");
+    const manifestPath = path.join(root, "extensions/widgets/shared-todo/manifest.json");
     const manifest = JSON.parse(await fs.readFile(manifestPath, "utf8"));
     await fs.writeFile(
       manifestPath,
@@ -153,6 +158,8 @@ test("packages use Core validation and releases cannot be overwritten", async ()
     assert.equal(registry.items[0].releases[0].preview, true);
     assert.equal(registry.items[0].releases[0].channel, "preview");
     assert.equal(registry.items[0].releases[1].packageHash, one.packageHash);
+    assert.equal(await fs.readFile(path.join(legacy, "registry.json"), "utf8"), legacyCatalog);
+    assert.deepEqual(await fs.readdir(legacy), ["registry.json"]);
     await fs.writeFile(
       manifestPath,
       JSON.stringify({ ...manifest, preview: "true" }),
@@ -163,10 +170,10 @@ test("packages use Core validation and releases cannot be overwritten", async ()
     );
     await fs.symlink(
       "/tmp",
-      path.join(root, "widgets/shared-todo/source/link"),
+      path.join(root, "extensions/widgets/shared-todo/source/link"),
     );
     await assert.rejects(
-      sourceFiles(path.join(root, "widgets/shared-todo/source")),
+      sourceFiles(path.join(root, "extensions/widgets/shared-todo/source")),
       /Symlinks/,
     );
   } finally {
@@ -177,11 +184,11 @@ test("packages use Core validation and releases cannot be overwritten", async ()
 test("packaging rejects type and bundling errors without writing packages or registry", async () => {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), "pudding-hub-compile-"));
   try {
-    const dir = path.join(root, "widgets/shared-todo");
-    await fs.cp(new URL("../widgets/shared-todo", import.meta.url), dir, {
+    const dir = path.join(root, "extensions/widgets/shared-todo");
+    await fs.cp(new URL("../extensions/widgets/shared-todo", import.meta.url), dir, {
       recursive: true, filter: (file) => !file.includes("/releases") && !file.includes("/dev"),
     });
-    const registryPath = path.join(root, "widgets/registry.json");
+    const registryPath = path.join(root, "extensions/widgets/registry.json");
     const registry = '{"items":[]}\n';
     await fs.writeFile(registryPath, registry);
     const app = path.join(dir, "source/src/App.tsx");

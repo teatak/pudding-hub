@@ -5,7 +5,7 @@ import {
   emptyLobby,
   setReady,
   beginPlay,
-} from "../widgets/gomoku/source/src/lobby.ts";
+} from "../extensions/widgets/gomoku/source/src/lobby.ts";
 import {
   initial,
   place,
@@ -20,7 +20,7 @@ import {
   resumeClock,
   thinkingMS,
   totalThinkingMS,
-} from "../widgets/gomoku/source/src/rules.ts";
+} from "../extensions/widgets/gomoku/source/src/rules.ts";
 test("replay seeks derive only visible stones, comments and winning lines without changing the game", () => {
   let p = initial();
   for (let c = 0; c < 5; c++) {

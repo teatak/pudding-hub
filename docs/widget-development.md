@@ -17,7 +17,7 @@ A widget that displays supplied data or runs a local game needs no plugin. To ac
 Create these files in Hub:
 
 ```text
-widgets/counter/
+extensions/widgets/counter/
   manifest.json
   source/widget.json
   source/src/App.tsx
@@ -127,7 +127,7 @@ Import local CSS from the entry. Support narrow panels, both themes and keyboard
 
 ## Connect plugin data
 
-Read the installed plugin's real endpoints and Skill before declaring sources and operations in widget.json. Sources identify plugins and endpoints; operations describe queries or writes. See the [SDK data example](widget-sdk.md#plugin-data-and-actions) and [Gmail Board](../widgets/gmail-board/source/widget.json).
+Read the installed plugin's real endpoints and Skill before declaring sources and operations in widget.json. Sources identify plugins and endpoints; operations describe queries or writes. See the [SDK data example](widget-sdk.md#plugin-data-and-actions) and [Gmail Board](../extensions/widgets/gmail-board/source/widget.json).
 
 Pudding's source selector manages accounts and credentials, so the widget does not handle tokens. Its account is independent of the chat's plugin account. Keep drafts and workflow state separate per account. Clear selections on changes and ignore unfinished requests from the previous account.
 

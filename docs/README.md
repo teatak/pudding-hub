@@ -32,11 +32,11 @@ Selecting an account chooses the data source. Granting clipboard or system notif
 
 | Example | What it demonstrates |
 | --- | --- |
-| [Shared Todo](../widgets/shared-todo/source/src/App.tsx) | Persistence and model-callable operations |
-| [Gmail Board](../widgets/gmail-board/source/widget.json) | Plugin sources and queries |
-| [GitHub plugin](../plugins/github/plugin.yaml) | REST endpoints and authentication |
-| [Synology plugin](../plugins/synology/plugin.yaml) | Custom service addresses and account login |
-| [Sequential Thinking](../plugins/sequential-thinking/plugin.yaml) | MCP endpoints and platform-specific commands |
+| [Shared Todo](../extensions/widgets/shared-todo/source/src/App.tsx) | Persistence and model-callable operations |
+| [Gmail Board](../extensions/widgets/gmail-board/source/widget.json) | Plugin sources and queries |
+| [GitHub plugin](../extensions/plugins/github/plugin.yaml) | REST endpoints and authentication |
+| [Synology plugin](../extensions/plugins/synology/plugin.yaml) | Custom service addresses and account login |
+| [Sequential Thinking](../extensions/plugins/sequential-thinking/plugin.yaml) | MCP endpoints and platform-specific commands |
 
 ## Versions and maintenance
 

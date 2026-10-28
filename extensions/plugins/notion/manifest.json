@@ -1,0 +1,49 @@
+{
+  "kind": "pudding.plugin.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/plugins/notion",
+  "name": "notion",
+  "title": {
+    "zh-CN": "Notion",
+    "zh-TW": "Notion",
+    "en": "Notion"
+  },
+  "version": "1.0.2",
+  "targets": [
+    "desktop",
+    "mobile"
+  ],
+  "description": {
+    "zh-CN": "连接 Notion REST API，用于页面、块、数据源、数据库、用户、评论和搜索。",
+    "zh-TW": "連接 Notion REST API，用於頁面、區塊、資料來源、資料庫、使用者、留言和搜尋。",
+    "en": "Connect Notion's REST API for pages, blocks, data sources, databases, users, comments, and search."
+  },
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "color": {
+      "light": "#111111",
+      "dark": "#FFFFFF"
+    },
+    "background": {
+      "light": "#FFFFFF",
+      "dark": "#111111"
+    }
+  },
+  "files": [
+    "plugin.yaml",
+    "skills/pages/SKILL.md",
+    "skills/data-sources/SKILL.md",
+    "assets/icon.svg"
+  ],
+  "manifest": "./releases/1.0.2/manifest.json",
+  "package": "./releases/1.0.2/notion.pudding-plugin.json",
+  "package_sha256": "4d642888f950f9ea1979dc82f7039b65511e6159b85bf340acca0fe463f9622e",
+  "requires": {
+    "pudding_plugin": "^1.0.0"
+  },
+  "tags": [
+    "notion",
+    "docs",
+    "knowledge"
+  ]
+}

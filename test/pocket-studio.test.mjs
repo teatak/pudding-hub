@@ -4,7 +4,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const root = fileURLToPath(new URL("../widgets/pocket-studio", import.meta.url));
+const root = fileURLToPath(new URL("../extensions/widgets/pocket-studio", import.meta.url));
 
 test("Pocket Studio release package exists, is verified, and contains Mario & Donkey Kong presets", async () => {
   const pkgPath = path.join(

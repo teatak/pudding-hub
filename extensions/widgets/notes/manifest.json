@@ -1,0 +1,19 @@
+{
+  "id": "teatak/pudding-hub/widgets/notes",
+  "version": "1.0.0",
+  "title": {
+    "zh-CN": "便签",
+    "zh-TW": "便簽",
+    "en": "Sticky Notes"
+  },
+  "description": {
+    "zh-CN": "轻量便签贴纸，记录灵感与备忘待办。",
+    "zh-TW": "輕量便簽貼紙，記錄靈感與備忘待辦。",
+    "en": "Color-coded sticky notes for quick memos and ideas."
+  },
+  "requires": {
+    "protocolVersion": 24,
+    "sdkVersion": "1"
+  },
+  "icon": "./assets/icon.svg"
+}

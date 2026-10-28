@@ -25,20 +25,20 @@ Pudding 从注册表读取可安装资源及版本。官方地址：
 
 | 类型 | 注册表 |
 | --- | --- |
-| 插件 | https://teatak.github.io/pudding-hub/plugins/registry.json |
-| 小组件 | https://teatak.github.io/pudding-hub/widgets/registry.json |
+| 插件 | https://teatak.github.io/pudding-hub/extensions/plugins/registry.json |
+| 小组件 | https://teatak.github.io/pudding-hub/extensions/widgets/registry.json |
 
 在对应的来源管理中使用这些地址。小组件从 Studio 的小组件库安装；预览版本需要在“设置 → 高级”开启相应开关。
 
 ## 源码和发布包放在哪里
 
 ```text
-plugins/<name>/
+extensions/plugins/<name>/
   plugin.yaml             # 服务、认证、连接和 Skill 路径
   manifest.json           # Hub 发布信息与文件列表
   skills/                 # 交给模型的使用说明
   releases/<version>/     # 已打包的安装内容
-widgets/<name>/
+extensions/widgets/<name>/
   manifest.json           # Hub 发布信息与宿主要求
   source/widget.json      # 小组件运行入口和数据操作
   source/src/             # React、TypeScript 和样式
@@ -52,7 +52,7 @@ scripts/                  # 打包脚本
 
 ## 注册表与托管
 
-plugins/registry.json 和 widgets/registry.json 是 Pudding 读取的安装清单。小组件注册表的基本结构：
+extensions/plugins/registry.json 和 extensions/widgets/registry.json 是 Pudding 读取的安装清单。小组件注册表的基本结构：
 
 ```json
 {
@@ -77,14 +77,13 @@ App 已被插件替代，不再作为独立开发类型。apps 目录和[历史�
 新版客户端通过 [`index.json`](index.json) 发现来源。每个来源包含稳定 ID、多语言名称、
 仓库地址，以及每种类型唯一的当前目录。官方目录和安装包统一放在
 `extensions/widgets/`、`extensions/plugins/`；路径不随 SDK、API 或扩展版本变化。
-原有 `widgets/`、`plugins/` 的公开目录和历史包继续保留给老客户端，开发源码也仍在原目录。
+所有开发源码、manifest、Skill 和测试入口均使用 `extensions/`。原有 `widgets/`、`plugins/`
+只保留冻结的公开清单、元数据、图标和历史包，供旧客户端过渡使用，不再更新。
 
 第三方维护者可以提交 PR，在 `index.json` 新增来源。目录使用 HTTPS 地址；迁移仓库或
 目录时保留来源 ID。索引只负责发现，用户自行选择添加来源和安装扩展。
 运行 `node scripts/validate-index.mjs` 校验，CI 使用同一份公开契约。
 
-新正式包只写入 `extensions/`，`--dev` 开发包的行为不变。
-`scripts/distribution.mjs` 按原始字节迁移历史产物，不重写已有包。清理旧公开路径需另行
-决定：先确认受支持客户端都能读取根索引，当前目录也不再引用旧路径。不要删除开发源码
-或用户已安装的数据。将来要恢复原公开路径，先准备好对应目录和包，再只修改索引中的
-URL；来源 ID、包字节及哈希保持不变。本次不设置清理日期或自动删除机制。
+新正式包、目录清单和 `--dev` 开发包都只写入 `extensions/`，打包不再读取或同步旧目录。
+源码路径迁移不改变扩展 ID、版本、历史包字节或哈希，也不影响用户已安装的数据。
+旧公开路径将另行下线；本次不设置自动删除或下线日期。

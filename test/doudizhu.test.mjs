@@ -18,9 +18,9 @@ import {
   applyPass,
   chooseBotBidWithComment,
   chooseBotPlayWithComment,
-} from "../widgets/doudizhu/source/src/rules.ts";
+} from "../extensions/widgets/doudizhu/source/src/rules.ts";
 
-const root = fileURLToPath(new URL("../widgets/doudizhu", import.meta.url));
+const root = fileURLToPath(new URL("../extensions/widgets/doudizhu", import.meta.url));
 
 function assertStrictJsonValue(val, pathPrefix = "root") {
   assert.notEqual(

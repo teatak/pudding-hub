@@ -4,7 +4,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const root = fileURLToPath(new URL("../widgets/debate", import.meta.url));
+const root = fileURLToPath(new URL("../extensions/widgets/debate", import.meta.url));
 
 test("Debate release package exists, is verified, and contains valid source files", async () => {
   const pkgPath = path.join(

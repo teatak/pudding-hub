@@ -9,7 +9,7 @@ const require = createRequire(
     "web/package.json",
   ),
 );
-const source = new URL("../widgets/gmail-board/source/src/", import.meta.url);
+const source = new URL("../extensions/widgets/gmail-board/source/src/", import.meta.url);
 let saved,
   account,
   requests,
