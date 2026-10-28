@@ -138,9 +138,6 @@
 .gd-player.is-turn {
   border-color: var(--gd-accent);
 }
-.gd-player.is-winner {
-  border-color: var(--gd-win);
-}
 .gd-win-stamp {
   position: absolute;
   top: -8px;
