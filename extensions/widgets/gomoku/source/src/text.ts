@@ -105,7 +105,7 @@ export const messages = {
     pickerInviteAndPlay: "Start game",
     pickerBack: "Back",
     pickerSupplement: "Add a conversation or yourself",
-    instructions: "Gomoku: two players on a 15 × 15 freestyle board. Join the candidate pool and wait for the user to start the game; the widget assigns Black and White. Read readBoard for your assigned seat and the current phase. Confirm readiness with ready; both ready starts a countdown. Black moves first. Use placeStone only on your turn; five or more connected stones wins. Pause stops actions; completion is phase finished. Keep awaiting your own activity events between moves; do not start another round or assign participants yourself.",
+    instructions: "Gomoku: two players on a 15 × 15 freestyle board. Join the candidate pool and wait for the user to start the game; the widget assigns Black and White. Use the latest invitation for your assigned seat and current phase; call readBoard only if context is missing. After reading these rules, confirm readiness with ready; both ready starts a countdown. Black moves first. Use placeStone only on your turn; five or more connected stones wins. Pause stops actions; completion is phase finished. Keep awaiting your own activity events between moves; do not start another round or assign participants yourself.",
 
     // 接口描述
     descReady:
@@ -233,7 +233,7 @@ export const messages = {
     pickerInviteAndPlay: "开始对局",
     pickerBack: "返回",
     pickerSupplement: "补充对话或自己",
-    instructions: "这是 15×15 自由规则五子棋，需要两位棋手。加入候选后等待用户开局，小组件负责分配黑白。通过 readBoard 读取自己的席位和阶段，再用 ready 确认准备；双方准备后倒计时开局。黑先白后，仅在自己的回合用 placeStone 落子，连续五子或以上获胜。暂停时停止操作，phase 为 finished 表示结束。行动后等待发给自己的对局事件，不要自行重开或分配参与者。",
+    instructions: "这是 15×15 自由规则五子棋，需要两位棋手。加入候选后等待用户开局，小组件负责分配黑白。从最新邀请通知获取自己的席位和阶段，信息不足时才调用 readBoard。读完规则后用 ready 确认准备；双方准备后倒计时开局。黑先白后，仅在自己的回合用 placeStone 落子，连续五子或以上获胜。暂停时停止操作，phase 为 finished 表示结束。行动后等待发给自己的对局事件，不要自行重开或分配参与者。",
 
     // 接口描述
     descReady:
@@ -360,7 +360,7 @@ export const messages = {
     pickerInviteAndPlay: "開始對局",
     pickerBack: "返回",
     pickerSupplement: "補充對話或自己",
-    instructions: "這是 15×15 自由規則五子棋，需要兩位棋手。加入候選後等待使用者開局，小元件負責分配黑白。透過 readBoard 讀取自己的席位和階段，再用 ready 確認準備；雙方準備後倒數開局。黑先白後，僅在自己的回合用 placeStone 落子，連續五子或以上獲勝。暫停時停止操作，phase 為 finished 表示結束。行動後等待發給自己的對局事件，不要自行重開或分配參與者。",
+    instructions: "這是 15×15 自由規則五子棋，需要兩位棋手。加入候選後等待使用者開局，小元件負責分配黑白。從最新邀請通知取得自己的席位和階段，資訊不足時才呼叫 readBoard。讀完規則後用 ready 確認準備；雙方準備後倒數開局。黑先白後，僅在自己的回合用 placeStone 落子，連續五子或以上獲勝。暫停時停止操作，phase 為 finished 表示結束。行動後等待發給自己的對局事件，不要自行重開或分配參與者。",
 
     // 接口描述
     descReady:
