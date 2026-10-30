@@ -8,33 +8,6 @@
   },
   "items": [
     {
-      "id": "teatak/pudding-hub/widgets/blackjack",
-      "title": {
-        "zh-CN": "21点",
-        "zh-TW": "21點",
-        "en": "Blackjack"
-      },
-      "description": {
-        "zh-CN": "经典绿绒布21点牌桌，支持要牌、停牌、加倍、软17庄家规则与筹码博弈。",
-        "zh-TW": "經典綠絨布21點牌桌，支援要牌、停牌、加倍、軟17莊家規則與籌碼博弈。",
-        "en": "Classic casino Blackjack table with Hit, Stand, Double Down, dealer soft 17 rules, and chip wagering."
-      },
-      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZmVsdEdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjMDY0RTNCIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAyMkMyMiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ29sZEdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjRkNEMzREIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI0Q5NzcwNiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxmaWx0ZXIgaWQ9ImNhcmRTaGFkb3ciIHg9Ii0yMCUiIHk9Ii0yMCUiIHdpZHRoPSIxNDAlIiBoZWlnaHQ9IjE0MCUiPgogICAgICA8ZmVEcm9wU2hhZG93IGR4PSIwIiBkeT0iNCIgc3RkRGV2aWF0aW9uPSI0IiBmbG9vZC1vcGFjaXR5PSIwLjUiLz4KICAgIDwvZmlsdGVyPgogIDwvZGVmcz4KCiAgPCEtLSDnu7/nu5LluIPlj7DpnaLlupXmnb8gLS0+CiAgPHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIyOCIgZmlsbD0idXJsKCNmZWx0R3JhZCkiLz4KICA8cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iMTI0IiBoZWlnaHQ9IjEyNCIgcng9IjI2IiBmaWxsPSJub25lIiBzdHJva2U9InVybCgjZ29sZEdyYWQpIiBzdHJva2Utd2lkdGg9IjIiLz4KCiAgPCEtLSDlj7DpnaLlvKflvaLoo4XppbDnur8gLS0+CiAgPHBhdGggZD0iTSAxNiA5NiBBIDU2IDU2IDAgMCAxIDExMiA5NiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDQ3ODU3IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1kYXNoYXJyYXk9IjQgNCIvPgoKICA8IS0tIOesrOS4gOW8oOeJjO+8mum7keahgyBBICjlgL7mlpwgLTEyIOW6pikgLS0+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMzgsIDUyKSByb3RhdGUoLTE0KSIgZmlsdGVyPSJ1cmwoI2NhcmRTaGFkb3cpIj4KICAgIDxyZWN0IHg9Ii0yNCIgeT0iLTM2IiB3aWR0aD0iNDgiIGhlaWdodD0iNzIiIHJ4PSI1IiBmaWxsPSIjRkZGRkZGIiBzdHJva2U9IiNFMkU4RjAiIHN0cm9rZS13aWR0aD0iMSIvPgogICAgPCEtLSDpu5HmoYPmoIflv5cgLS0+CiAgICA8cGF0aCBkPSJNMCAtMTQgQy01IC03IC0xMiAyIC03IDggQy0zIDEyIDAgMTAgMCAxNCBDMCAxMCAzIDEyIDcgOCBDMTIgMiA1IC03IDAgLTE0IFoiIGZpbGw9IiMwRjE3MkEiLz4KICAgIDx0ZXh0IHg9Ii0xOCIgeT0iLTIwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjMEYxNzJBIj5BPC90ZXh0PgogICAgPHRleHQgeD0iLTE5IiB5PSItOCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjkiIGZpbGw9IiMwRjE3MkEiPuKZoDwvdGV4dD4KICA8L2c+CgogIDwhLS0g56ys5LqM5byg54mM77ya57qi5qGDIEogLyAxMCAo5YC+5pacIDEyIOW6pikgLS0+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNzQsIDU2KSByb3RhdGUoMTIpIiBmaWx0ZXI9InVybCgjY2FyZFNoYWRvdykiPgogICAgPHJlY3QgeD0iLTI0IiB5PSItMzYiIHdpZHRoPSI0OCIgaGVpZ2h0PSI3MiIgcng9IjUiIGZpbGw9IiNGRkZGRkYiIHN0cm9rZT0iI0UyRThGMCIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgICA8IS0tIOe6ouahg+agh+W/lyAtLT4KICAgIDxwYXRoIGQ9Ik0wIC02IEMtMyAtMTQgLTEyIC0xMiAtMTIgLTUgQy0xMiAzIDAgMTEgMCAxNSBDMCAxMSAxMiAzIDEyIC01IEMxMiAtMTIgMyAtMTQgMCAtNiBaIiBmaWxsPSIjREMyNjI2Ii8+CiAgICA8dGV4dCB4PSItMTkiIHk9Ii0yMCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI0RDMjYyNiI+SjwvdGV4dD4KICAgIDx0ZXh0IHg9Ii0xOSIgeT0iLTgiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI5IiBmaWxsPSIjREMyNjI2Ij7imaU8L3RleHQ+CiAgPC9nPgoKICA8IS0tIOWJjeaZr+etueeggSAo6YeR6ImyIDIxIOetueeggSkgLS0+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoODYsIDk0KSIgZmlsdGVyPSJ1cmwoI2NhcmRTaGFkb3cpIj4KICAgIDxjaXJjbGUgY3g9IjAiIGN5PSIwIiByPSIxOCIgZmlsbD0idXJsKCNnb2xkR3JhZCkiIHN0cm9rZT0iI0I0NTMwOSIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgICA8Y2lyY2xlIGN4PSIwIiBjeT0iMCIgcj0iMTQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1kYXNoYXJyYXk9IjMgMyIvPgogICAgPHRleHQgeD0iMCIgeT0iNSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjEzIiBmb250LXdlaWdodD0iOTAwIiBmaWxsPSIjNzgzNTBGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4yMTwvdGV4dD4KICA8L2c+Cjwvc3ZnPgo=",
-      "releases": [
-        {
-          "version": "1.0.0-preview.1",
-          "package": "./blackjack/releases/1.0.0-preview.1/blackjack.pudding-widget.json",
-          "packageHash": "35b9a0d9e90f342410c2b7dc00b97fc0756a030c28af182ef472a6c37383a88b",
-          "requires": {
-            "protocolVersion": 24,
-            "sdkVersion": "1"
-          },
-          "channel": "preview",
-          "preview": true
-        }
-      ]
-    },
-    {
       "id": "teatak/pudding-hub/widgets/debate",
       "title": {
         "zh-CN": "辩论",
