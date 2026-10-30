@@ -156,6 +156,35 @@ run 的第二个参数 context 包含 callID、signal，以及可选的 sessionI
 
 接口限制：名称以字母开头，最多 64 个字母、数字或下划线；最多 64 个接口；说明最多 2000 字符；输入 schema 序列化后最多 16,000 字符；返回值最多 256 KiB。
 
+### 声明模型正文（SDK 1.2.0）
+
+使用 `modelOutput` 时，将 `widget.json.sdkVersion` 设为 `"1.2.0"`。它是宿主展示
+元数据，不属于工具输入。开发者设置「工具结果文本展开」默认关闭；开启后，宿主在
+同一条工具结果内展开指定字符串，并附 ID、来源路径及可选标题。原结果和 stateVersion
+仍保留，不另造模型消息。
+
+```ts
+pudding.defineInterface({
+  name: 'readBoard', description: '读取当前棋盘。',
+  input: z.object({}).strict(),
+  modelOutput: { version: 1, textFields: [
+    { path: '/board/text', title: '棋盘', overflow: 'whole' },
+  ] },
+  run: () => ({ board: { text: 'A B\n. .\n' } }),
+});
+```
+
+路径采用 JSON Pointer（RFC 6901），相对 run 返回值；SDK 自动加上 `/result` 前缀。
+可以声明多个字段，`each: '/items', path: '/text'` 按数组顺序展开每项。`optional: true`
+只允许缺失，不接受 null 或错误类型。`overflow: 'whole'` 保证全文展示或整体省略并给出
+回读入口；默认 `'excerpt'` 允许带标记的预览。展示声明出错不会把已经执行的操作变成失败。
+
+通知在 `interaction.notify` 参数中与 data 并列声明，棋盘路径写 `/data/board/text`。
+内部通知保留原消息角色和触发机制；外部 `widget_wait` 自动重定位到
+`/notifications/<index>/data/board/text`，多条通知各有来源。不要自行替换 `\n`：
+实际换行只解码一次，字面量转义序列保持原样。自有 MCP 提供可读 text 并保留原始
+structuredContent，其他客户端如何组合两者由其自身决定。
+
 ## 参与者与模型通知
 
 ### 选择参与会话
@@ -293,7 +322,7 @@ source 对应已声明的来源名，宿主补全插件和账号身份。保存�
 
 ## SDK 版本兼容
 
-当前小组件 SDK 为 **1.1.0**。`widget.json.sdkVersion` 和分发 manifest 的
+当前小组件 SDK 为 **1.2.0**。`widget.json.sdkVersion` 和分发 manifest 的
 `requires.sdkVersion` 声明同一个最低稳定 SDK 版本。宿主接受同一主版本下不高于自身的
 次版本／修订版本；要求更新版本或不同主版本时不兼容。宿主发生不兼容的 SDK 升级后，
 已安装小组件会停止运行并明确提示更新，源码和数据保留。兼容新增接口不会强迫老小组件

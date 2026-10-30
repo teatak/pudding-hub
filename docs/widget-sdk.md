@@ -156,6 +156,40 @@ Models may also use `widget_observe/click/type/scroll`. Observe omits controls a
 
 Limits: names start with a letter and contain at most 64 letters, digits or underscores; at most 64 interfaces; descriptions up to 2000 characters; serialized input schemas up to 16,000 characters; results up to 256 KiB.
 
+### Declaring model-visible text (SDK 1.2.0)
+
+Set `widget.json.sdkVersion` to `"1.2.0"` when using `modelOutput`. It is host
+presentation metadata, not an input argument. The developer setting **Tool result
+text expansion** defaults off; when enabled, the host expands declared strings
+inside the same tool result, with an ID, source pointer and optional title. Raw
+results and `stateVersion` remain available. No extra model message is created.
+
+```ts
+pudding.defineInterface({
+  name: 'readBoard', description: 'Read the current board.',
+  input: z.object({}).strict(),
+  modelOutput: { version: 1, textFields: [
+    { path: '/board/text', title: 'Board', overflow: 'whole' },
+  ] },
+  run: () => ({ board: { text: 'A B\n. .\n' } }),
+});
+```
+
+Paths use JSON Pointer (RFC 6901), relative to the handler's returned value. The
+SDK rebases them under `/result`. Multiple fields may be declared; `each: '/items',
+path: '/text'` expands one field per array item. `optional: true` allows absence,
+not null or the wrong type. `overflow: 'whole'` displays the entire text or an
+explicit omission with readback; the default `'excerpt'` permits a marked preview.
+Declaration errors do not turn an already-completed action into a failed action.
+
+For notifications, put the declaration next to `data` in the notice passed to
+`interaction.notify`, using `path: '/data/board/text'` for the same board. Internal
+notices retain their original message role and trigger; external `widget_wait`
+rebases each declaration to `/notifications/<index>/data/board/text`. Do not parse
+or replace `\n` yourself: real line breaks are decoded once, while literal escape
+sequences stay literal. Standard MCP text is readable, and raw structured data is
+retained; another client's final text/structured-content combination is its choice.
+
 ## Participants and model notifications
 
 ### Select conversations
@@ -293,7 +327,7 @@ Source, build and runtime failures appear in the top error bar, with expandable,
 
 ## SDK version compatibility
 
-The current Widget SDK is **1.1.0**. `widget.json.sdkVersion` and the distribution
+The current Widget SDK is **1.2.0**. `widget.json.sdkVersion` and the distribution
 manifest's `requires.sdkVersion` declare the same minimum stable SDK version.
 The host supports older minor/patch requirements within the same major; a newer
 requirement or a different major is incompatible. A breaking host SDK upgrade

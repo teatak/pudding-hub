@@ -1,6 +1,6 @@
 {
   "id": "teatak/pudding-hub/widgets/gomoku",
-  "version": "1.0.4-preview.5",
+  "version": "1.0.4-preview.6",
   "preview": true,
   "channel": "preview",
   "title": {
@@ -14,8 +14,8 @@
     "zh-TW": "使用者與對話參與者共用同一棋盤。"
   },
   "requires": {
-    "protocolVersion": 24,
-    "sdkVersion": "1"
+    "protocolVersion": 55,
+    "sdkVersion": "1.2.0"
   },
   "icon": "./assets/icon.svg"
 }

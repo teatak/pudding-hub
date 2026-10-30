@@ -226,6 +226,7 @@ export async function publish(retry = false) {
         message,
         // A self-contained board survives context compaction; history is opt-in
         // through readBoard instead of growing every notification.
+        modelOutput: { version: 1, textFields: [{ path: "/data/board/text", title: "Board", overflow: "whole" }] },
         data: {
           ...describePosition(p),
           ...(assignedColor ? { assignedColor } : {}),
@@ -361,6 +362,7 @@ function registerInterfaces() {
     }),
     defineGameInterface({
       name: "readBoard",
+      modelOutput: { version: 1, textFields: [{ path: "/board/text", title: "Board", overflow: "whole" }] },
       description: t("descReadBoard"),
       input: z.object({ includeHistory: z.boolean().optional() }).strict(),
       run: (i, c) => readBoard(c, i.includeHistory),

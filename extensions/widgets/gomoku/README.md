@@ -22,8 +22,17 @@ Notifications contain the current board, last move, move count, turn, winner, ro
 
 Player identity precedes side and status in document reading order, while the visual card layout remains unchanged. Opening hints distinguish the assigned color, waiting for that player's readiness, waiting for the opponent, and both players ready.
 
-Requires source-package format 2, protocol 24 (host locale and candidate model metadata) and SDK 1. See [development guide](../../../docs/widget-development.md). The initial public package is 1.0.0. Version 1.0.1 refreshes player candidates and accepts host-provided external participants; its existing human/conversation workflow was verified against Desktop v0.8.1 and that release's locked Core. Unreleased history was reset before production; installed development items are untouched. Future formal releases remain immutable; each source revision has its own page state.
+The current preview requires source-package format 2, protocol 55 and SDK 1.2.0. Earlier releases retain their published requirements. See [development guide](../../../docs/widget-development.md). The initial public package is 1.0.0. Version 1.0.1 refreshes player candidates and accepts host-provided external participants; its existing human/conversation workflow was verified against Desktop v0.8.1 and that release's locked Core. Unreleased history was reset before production; installed development items are untouched. Future formal releases remain immutable; each source revision has its own page state.
 
 Version 1.0.4-preview.1 changes candidate preparation: newly joined online agents fill empty slots, while conversations and the human are selected explicitly. It adds per-instance rules for discovery without changing the move engine, readiness or internal notification delivery. Enable widget previews in Settings → Advanced to install it.
 
 Version 1.0.3 has been withdrawn from the install catalog: its candidate metadata access fails TypeScript compilation on Desktop v0.8.1. Its published package is retained unchanged. The preview fixes the optional metadata typing; 1.0.2 remains the stable catalog version. Installing the preview does not add MCP support to an older desktop host.
+
+Version 1.0.4-preview.6 requires protocol 55 and Widget SDK 1.2.0. `readBoard` declares `/board/text`
+and notifications declare `/data/board/text` as whole text blocks. Enabling the
+host's default-off developer text-expansion setting gives internal model requests
+and external MCP text real board line breaks while preserving raw data and
+stateVersion. Update the desktop host first, enable widget previews in Settings →
+Advanced, then update Gomoku from Studio's widget library. Finish the current game
+before reloading the updated widget; the new source revision starts its own board.
+Earlier published packages remain unchanged, and stable users keep 1.0.2.
