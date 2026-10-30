@@ -232,25 +232,24 @@ function TerrainBushArt() {
       className="br-terrain-svg is-bush"
       aria-hidden="true"
     >
-      <rect
-        x="2"
-        y="2"
-        width="44"
-        height="44"
-        rx="6"
+      <ellipse
+        cx="24"
+        cy="33"
+        rx="18"
+        ry="8.5"
         fill="#052e16"
-        fillOpacity="0.42"
+        fillOpacity="0.48"
       />
       {/* Back dark foliage blades */}
       <path
         d="M10 36C8 27 13 18 22 14C19 22 19 29 22 36H10Z"
         fill="#14532d"
-        fillOpacity="0.65"
+        fillOpacity="0.68"
       />
       <path
         d="M38 36C40 27 35 18 26 14C29 22 29 29 26 36H38Z"
         fill="#14532d"
-        fillOpacity="0.65"
+        fillOpacity="0.68"
       />
       {/* Mid emerald leaf cluster */}
       <path
@@ -1126,7 +1125,9 @@ export default function App() {
         } ${!ag.alive ? "is-eliminated" : ""}`}
         style={{
           borderColor: isCurrent ? theme.border : undefined,
-          boxShadow: isCurrent ? `0 0 18px ${theme.glow}` : undefined,
+          boxShadow: isCurrent
+            ? `0 6px 16px rgba(0, 0, 0, 0.42), inset 0 0 14px ${theme.glow}`
+            : undefined,
         }}
       >
         <div className="br-agent-top">
@@ -1439,14 +1440,10 @@ export default function App() {
                     <div
                       className="br-safe-perimeter-box"
                       style={{
-                        left: `calc(${safeMinX} * (var(--tile-size) + 2px))`,
-                        top: `calc(${safeMinY} * (var(--tile-size) + 2px))`,
-                        width: `calc(${safeColSpan} * var(--tile-size) + ${
-                          safeColSpan - 1
-                        } * 2px)`,
-                        height: `calc(${safeRowSpan} * var(--tile-size) + ${
-                          safeRowSpan - 1
-                        } * 2px)`,
+                        left: `calc(${safeMinX} * var(--tile-size))`,
+                        top: `calc(${safeMinY} * var(--tile-size))`,
+                        width: `calc(${safeColSpan} * var(--tile-size))`,
+                        height: `calc(${safeRowSpan} * var(--tile-size))`,
                       }}
                       aria-hidden="true"
                     >
