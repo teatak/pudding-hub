@@ -1879,6 +1879,7 @@ export default function App() {
                   // Interactive highlight for human turn
                   let isMoveTarget = false;
                   let isAttackTarget = false;
+                  let isCqbPenalty = false;
                   if (myTurn && humanSeat) {
                     if (l.phase === "dropping") {
                       isMoveTarget = true;
@@ -1901,6 +1902,15 @@ export default function App() {
                         );
                         if (hasEnemy && d <= range) {
                           isAttackTarget = true;
+                          if (
+                            !useGrenadeMode &&
+                            d === 1 &&
+                            (meAg.weapon === "sniper" ||
+                              meAg.weapon === "awm" ||
+                              meAg.weapon === "rifle")
+                          ) {
+                            isCqbPenalty = true;
+                          }
                         } else if (d === 1) {
                           isMoveTarget = true;
                         }
@@ -1910,6 +1920,12 @@ export default function App() {
 
                   const isDamagedTile =
                     showTracer && ev?.toCoord === tile.coord && ev.damage;
+
+                  const tileTargetTip = isAttackTarget
+                    ? isCqbPenalty
+                      ? ` · ${t("cqbPenaltyWarning")}`
+                      : ` · ${t("optimalRangeTarget")}`
+                    : "";
 
                   return (
                     <button
@@ -1921,8 +1937,8 @@ export default function App() {
                         !visibleInFog ? "is-fog" : ""
                       } ${isMoveTarget ? "is-move-target" : ""} ${
                         isAttackTarget ? "is-attack-target" : ""
-                      }`}
-                      title={`${tile.coord} · ${terrainLabel(tile.terrain)}`}
+                      } ${isCqbPenalty ? "is-cqb-penalized" : ""}`}
+                      title={`${tile.coord} · ${terrainLabel(tile.terrain)}${tileTargetTip}`}
                       onClick={() =>
                         handleTileClick(tile.coord, tile.x, tile.y)
                       }
