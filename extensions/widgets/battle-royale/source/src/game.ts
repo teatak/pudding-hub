@@ -32,7 +32,7 @@ import {
   chooseBotDrop,
   chooseBotCombatAction,
 } from "./rules";
-import { t, seatLabel, seatShortLabel, botNameForSeat } from "./text";
+import { t, seatLabel, seatShortLabel, botNameForSeat, getLang } from "./text";
 
 /**
  * Recursively converts any `undefined` values to `null` so objects strictly conform
@@ -230,15 +230,15 @@ export function describeRadarFor(
           .slice(-6)
           .map((ping) => {
             const dist = chebyshevDist(myAgent.x!, myAgent.y!, ping.x, ping.y);
-            const dir = compassDirection(myAgent.x!, myAgent.y!, ping.x, ping.y);
+            const dir = compassDirection(myAgent.x!, myAgent.y!, ping.x, ping.y, getLang());
             const soundLabel =
               ping.kind === "airdrop"
-                ? `黄金空投降落在 ${ping.coord} (${dir} ${dist} 格)`
+                ? t("radar_sound_airdrop", { coord: ping.coord, dir, dist })
                 : ping.kind === "explosion"
-                  ? `${dir}约 ${dist} 格处传来手雷剧烈爆炸声`
+                  ? t("radar_sound_grenade", { dir, dist })
                   : ping.kind === "sniper"
-                    ? `${dir}约 ${dist} 格处传来重型狙击枪声`
-                    : `${dir}约 ${dist} 格处传来交火声`;
+                    ? t("radar_sound_sniper", { dir, dist })
+                    : t("radar_sound_gunfire", { dir, dist });
             return {
               cycle: ping.cycle,
               kind: ping.kind,
@@ -283,8 +283,7 @@ export function describeRadarFor(
       currentPhaseOrder: p.turnOrder,
       cycle1CombatOrder,
       nextCycleCombatOrder,
-      balanceRule:
-        "盲降跳伞落点全员保密；第1轮战斗按跳伞逆序行动（后跳者先动），后续轮次按蛇形轮转，且第1轮未行动者享有40%减伤空降护盾。",
+      balanceRule: t("radar_balance_rule"),
     },
     grid: {
       columns: "A–H (8 columns)",

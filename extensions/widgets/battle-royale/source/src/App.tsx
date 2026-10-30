@@ -414,7 +414,7 @@ function SeatSelectorDropdown({
                 <strong className="br-select-title">{t("playerYou")}</strong>
                 <small className="br-select-sub">
                   {meOccupiedBy
-                    ? `(已分配给 ${seatLabel(meOccupiedBy)})`
+                    ? t("alreadyAssignedTo", { seat: seatLabel(meOccupiedBy) })
                     : t("humanSubTag")}
                 </small>
               </div>
@@ -481,7 +481,7 @@ function SeatSelectorDropdown({
                     <strong className="br-select-title">{sess.name}</strong>
                     <small className="br-select-sub">
                       {occ
-                        ? `(已分配给 ${seatLabel(occ)})`
+                        ? t("alreadyAssignedTo", { seat: seatLabel(occ) })
                         : sess.model?.name || "AI Session"}
                     </small>
                   </div>
@@ -952,7 +952,7 @@ function weaponBadgeCode(w: WeaponId): string {
   if (w === "rifle") return "M416";
   if (w === "shotgun") return "S12K";
   if (w === "smg") return "UMP";
-  return "匕首";
+  return t("weapon_fists_short");
 }
 
 export default function App() {
@@ -1529,7 +1529,7 @@ export default function App() {
               style={{ width: `${shieldPercent}%` }}
             />
             <span className="br-bar-label">
-              Lv.{ag.armorLevel} 甲 {ag.shield}
+              {t("armorBarLabel", { level: ag.armorLevel, shield: ag.shield })}
             </span>
           </div>
         </div>
@@ -1539,7 +1539,10 @@ export default function App() {
           {latestWhisper && latestWhisper.fromSeat === seat ? (
             <p
               className="br-whisper-quote"
-              title={`[密电 → ${seatShortLabel(latestWhisper.toSeat)}] ${latestWhisper.text}`}
+              title={t("whisperQuoteTitle", {
+                to: seatShortLabel(latestWhisper.toSeat),
+                text: latestWhisper.text,
+              })}
             >
               <Lock size={10} className="br-whisper-icon" />
               <span>
@@ -1556,7 +1559,7 @@ export default function App() {
               {ag.lastActionSummary}
             </p>
           ) : (
-            <p className="br-action-placeholder">等待盲降指令...</p>
+            <p className="br-action-placeholder">{t("statusWaitingDrop")}</p>
           )}
         </div>
 
@@ -1634,7 +1637,10 @@ export default function App() {
               {isFinished && p.winner ? (
                 <span className="br-winner-pill">
                   <Trophy size={13} className="br-trophy-icon" />
-                  胜者：{seatShortLabel(p.winner)} · {getPlayerInfo(p.winner).name}
+                  {t("winnerBar", {
+                    seat: seatShortLabel(p.winner),
+                    name: getPlayerInfo(p.winner).name,
+                  })}
                 </span>
               ) : p.turn && l.phase !== "lobby" ? (
                 <span className="br-turn-pill">
@@ -1800,7 +1806,7 @@ export default function App() {
                         <span className="br-safe-corner is-tr" />
                         <span className="br-safe-corner is-bl" />
                         <span className="br-safe-corner is-br" />
-                        <span className="br-safe-perimeter-tag">安全区</span>
+                        <span className="br-safe-perimeter-tag">{t("tagSafeZone")}</span>
                       </div>
                     );
                   })()}
@@ -1945,14 +1951,14 @@ export default function App() {
 
                       {/* Storm Center Beacon */}
                       {isStormCenter && (
-                        <div className="br-storm-center-marker" title="安全区中心">
+                        <div className="br-storm-center-marker" title={t("tipSafeCenter")}>
                           <StormCenterBeaconArt />
                         </div>
                       )}
 
                       {/* Close Quarters Combat Clash Indicator when 2+ operatives share tile */}
                       {visibleInFog && agentsOnTile.length >= 2 && (
-                        <div className="br-cqb-clash-badge" title="近身拼枪交火对峙！">
+                        <div className="br-cqb-clash-badge" title={t("tipCqbClash")}>
                           <ClashBadgeArt />
                         </div>
                       )}
@@ -1967,10 +1973,10 @@ export default function App() {
                           }`}
                           title={
                             tile.crate === "airdrop"
-                              ? "黄金空投箱 (高阶武器与护甲)"
+                              ? t("crate_airdrop_tip")
                               : tile.crate === "supply"
-                                ? "军备补给箱 (弹药与装备)"
-                                : "战术战利品密封箱"
+                                ? t("crate_supply_tip")
+                                : t("crate_deathbox_tip")
                           }
                         >
                           <div className="br-loot-box-art">
@@ -2001,7 +2007,7 @@ export default function App() {
                       )}
 
                       {!visibleInFog && recentPing && (
-                        <div className="br-ping-sonar" title="探测到战场声纹">
+                        <div className="br-ping-sonar" title={t("tipSonarPing")}>
                           <SonarPingArt />
                         </div>
                       )}
@@ -2031,7 +2037,7 @@ export default function App() {
 
                               {/* Guarding Holo Shield */}
                               {ag.guarding && (
-                                <div className="br-token-guard-aura" title="架枪防御中">
+                                <div className="br-token-guard-aura" title={t("tipGuarding")}>
                                   <Shield size={11} />
                                 </div>
                               )}
@@ -2319,7 +2325,7 @@ export default function App() {
                   {hasConflict && (
                     <div className="br-modal-warn-text">
                       <AlertTriangle size={13} className="br-warn-icon" />
-                      <span>同一会话或“我”不可重复分配给多个特工席位</span>
+                      <span>{t("seatConflictWarning")}</span>
                     </div>
                   )}
                   <div className="br-modal-footer">

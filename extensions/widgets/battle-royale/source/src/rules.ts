@@ -179,10 +179,20 @@ export function compassDirection(
   fromY: number,
   toX: number,
   toY: number,
+  lang?: string,
 ): string {
   const dx = toX - fromX;
   const dy = toY - fromY;
-  if (dx === 0 && dy === 0) return "同格";
+  if (dx === 0 && dy === 0) {
+    if (lang === "en") return "same tile";
+    return "同格";
+  }
+  if (lang === "en") {
+    const ns = dy < 0 ? "North" : dy > 0 ? "South" : "";
+    const ew = dx > 0 ? "East" : dx < 0 ? "West" : "";
+    if (ns && ew) return `${ns}-${ew}`;
+    return ns || ew;
+  }
   const ns = dy < 0 ? "北" : dy > 0 ? "南" : "";
   const ew = dx > 0 ? "东" : dx < 0 ? "西" : "";
   return `${ew}${ns}方向`;

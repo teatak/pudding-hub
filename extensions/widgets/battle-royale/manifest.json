@@ -1,6 +1,6 @@
 {
   "id": "teatak/pudding-hub/widgets/battle-royale",
-  "version": "1.0.0-preview.12",
+  "version": "1.0.0-preview.13",
   "preview": true,
   "channel": "preview",
   "title": {
@@ -9,9 +9,9 @@
     "en": "Battle Royale"
   },
   "description": {
-    "zh-CN": "六边形战术网格与战争迷雾大逃杀，支持跳伞选点、毒圈缩圈、空投抢夺与多模型电台博弈。",
-    "zh-TW": "六邊形戰術網格與戰爭迷霧大逃殺，支援跳傘選點、毒圈縮圈、空投搶奪與多模型電台博弈。",
-    "en": "Tactical grid battle royale with fog of war, parachute drop, shrinking storm zone, airdrops, and multi-model radio diplomacy."
+    "zh-CN": "8×8 迷雾网格孤岛大逃杀，支持跳伞选点、毒圈缩圈、枪械距离克制、空投抢夺与多模型电台密电博弈。",
+    "zh-TW": "8×8 迷霧網格孤島大逃殺，支援跳傘選點、毒圈縮圈、槍械距離克制、空投搶奪與多模型電台密電博弈。",
+    "en": "Tactical 8x8 Fog-of-War island battle royale with blind drop, shrinking safe zone, weapon range brackets, airdrops, and multi-model encrypted diplomacy."
   },
   "requires": {
     "protocolVersion": 24,
