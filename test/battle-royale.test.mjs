@@ -56,16 +56,16 @@ function assertStrictJsonValue(val, pathPrefix = "root") {
   assert.fail(`Unsupported type ${typeof val} at ${pathPrefix}`);
 }
 
-test("Battle Royale 1.0.0-preview.21 release package exists and contains verified source files", async () => {
+test("Battle Royale 1.0.0-preview.22 release package exists and contains verified source files", async () => {
   const pkgPath = path.join(
     root,
-    "releases/1.0.0-preview.21/battle-royale.pudding-widget.json",
+    "releases/1.0.0-preview.22/battle-royale.pudding-widget.json",
   );
   const raw = await fs.readFile(pkgPath, "utf8");
   const pkg = JSON.parse(raw);
 
   assert.equal(pkg.id, "teatak/pudding-hub/widgets/battle-royale");
-  assert.equal(pkg.version, "1.0.0-preview.21");
+  assert.equal(pkg.version, "1.0.0-preview.22");
   assert.equal(pkg.requires.protocolVersion, 24);
   assert.equal(pkg.requires.sdkVersion, "1");
 
@@ -123,12 +123,18 @@ test("Streamlined Battle Royale: drop -> auto-loot move -> attack kill -> storm 
   assertStrictJsonValue(l, "lobby.initial");
   assertStrictJsonValue(p, "position.initial");
 
-  // Drop phase for 4 players (land on plains without crates)
+  // Drop phase for 4 players (bots pick unoccupied non-crate tiles so everyone starts with fists)
   const drops = ["D3", "E3", "D2", "E2"];
   for (let i = 0; i < 4; i++) {
     const seat = p.turn;
     const botChoice = chooseBotDrop(p, seat);
     assert.ok(botChoice.coord.length >= 2);
+    const botTile = p.tiles.find((t) => t.coord === botChoice.coord);
+    assert.equal(
+      botTile.crate,
+      "none",
+      "Bot drop should not vacuum up crates on Turn 0",
+    );
     ({ lobby: l, position: p } = applyDropIn(l, p, seat, drops[i]));
     assertStrictJsonValue(p, `position.afterDrop.${seat}`);
   }
@@ -136,6 +142,12 @@ test("Streamlined Battle Royale: drop -> auto-loot move -> attack kill -> storm 
   // All landed -> transition to combat round 1
   assert.equal(l.phase, "combat");
   assert.equal(p.turn, "Seat1");
+
+  // Attempting to move onto an occupied tile (E3 is occupied by Seat2) throws an error
+  assert.throws(
+    () => applyCombatAction(l, p, "Seat1", { kind: "move", to: "E3" }),
+    /已有其他特工驻守/,
+  );
 
   // Seat1 is at D3, moves to adjacent D4 (which has a supply crate)
   // Stepping on crate automatically equips rifle!

@@ -76,15 +76,22 @@ async function change<T>(fn: () => Promise<T>): Promise<T> {
 }
 
 function actor(context: InteractionContext) {
+  if (context.signal.aborted) throw new Error("Cancelled");
   const run = pudding.interaction.read();
+  if (run && run.status !== "running") throw new Error("Game is paused");
   const participant = run?.participants.find(
     (p) => p.id === context.actor?.participantID,
   );
-  if (!run || context.actor?.runID !== run.id || !participant)
-    throw new Error("Connect to this Battle Royale game first");
-  if (run.status !== "running") throw new Error("Game is paused");
-  if (context.signal.aborted) throw new Error("Cancelled");
-  return participant;
+  if (participant && run && context.actor?.runID === run.id) {
+    return participant;
+  }
+  const l = lobby();
+  const active = seatsForCount(l.playerCount);
+  const localHumanSeat = active.find((s) => l.seats[s] === "@me");
+  if (!context.sessionID && localHumanSeat) {
+    return { id: "@me", name: t("playerYou"), kind: "human" as const };
+  }
+  throw new Error("Connect to this Battle Royale game first");
 }
 
 function seatForParticipant(
@@ -93,7 +100,17 @@ function seatForParticipant(
 ): Seat | null {
   if (!participantID) return null;
   const active = seatsForCount(l.playerCount);
-  return active.find((s) => l.seats[s] === participantID) || null;
+  const direct = active.find((s) => l.seats[s] === participantID);
+  if (direct) return direct;
+  const run = pudding.interaction.read();
+  const humanPart = run?.participants.find((p) => p.kind === "human");
+  if (participantID === "@me" && humanPart) {
+    return active.find((s) => l.seats[s] === humanPart.id) || null;
+  }
+  if (humanPart && participantID === humanPart.id) {
+    return active.find((s) => l.seats[s] === "@me") || null;
+  }
+  return null;
 }
 
 async function save(l: BattleRoyaleLobby, p: BattleRoyalePosition) {
@@ -203,9 +220,12 @@ export function describeRadarFor(
         const isBot = isBotParticipant(pid);
         const partName = isBot
           ? botNameForSeat(s)
-          : run?.participants.find((part) => part.id === pid)?.name ||
-            seatShortLabel(s);
+          : pid === "@me"
+            ? t("playerYou")
+            : run?.participants.find((part) => part.id === pid)?.name ||
+              seatShortLabel(s);
         const ag = p.agents[s];
+        const hideDropWeapon = l.phase === "dropping" && s !== mySeat;
         return [
           s,
           {
@@ -214,14 +234,16 @@ export function describeRadarFor(
             isBot,
             alive: ag.alive,
             hp: ag.hp,
-            weapon: ag.weapon,
+            weapon: hideDropWeapon ? "fists" : ag.weapon,
             kills: ag.kills,
             placement: ag.placement ?? null,
           },
         ];
       }),
     ),
-    history: p.history.slice(-8),
+    history: p.history
+      .filter((ev) => !(l.phase === "dropping" && ev.kind === "drop" && ev.actor !== mySeat))
+      .slice(-8),
   };
 
   return sanitizeJsonValue(snapshot);
@@ -232,7 +254,9 @@ export function readRadar(context: InteractionContext) {
   const actorID =
     run && run.id === context.actor?.runID
       ? context.actor?.participantID
-      : null;
+      : !context.sessionID
+        ? "@me"
+        : null;
   return describeRadarFor(lobby(), position(), actorID);
 }
 
@@ -272,18 +296,20 @@ export async function publish(retry = false) {
   const base = `round-${l.round}-cycle-${p.cycle}-${l.phase}-step-${p.stepCount}`;
 
   const realParticipants = run.participants.map((part) => part.id);
-  const recipients = isFinished
-    ? realParticipants
-    : l.phase === "lobby"
-      ? (Object.values(l.seats).filter(
-          (id): id is string =>
-            Boolean(id) &&
-            !isBotParticipant(id) &&
-            !l.ready.includes(id as string),
-        ) as string[])
-      : activeParticipantID && !isBotParticipant(activeParticipantID)
-        ? [activeParticipantID]
-        : [];
+  const recipients = (
+    isFinished
+      ? realParticipants
+      : l.phase === "lobby"
+        ? (Object.values(l.seats).filter(
+            (id): id is string =>
+              Boolean(id) &&
+              !isBotParticipant(id) &&
+              !l.ready.includes(id as string),
+          ) as string[])
+        : activeParticipantID && !isBotParticipant(activeParticipantID)
+          ? [activeParticipantID]
+          : []
+  ).filter((id) => realParticipants.includes(id));
 
   const previous = run.receipts.filter(
     (n) => n.id === base || n.id.startsWith(base + "-"),
@@ -414,7 +440,7 @@ export const start = (options: StartBattleOptions) =>
         return `@bot:${seat}`;
       }
       if (chosenID === "@me") {
-        return humanPart?.id || `@bot:${seat}`;
+        return humanPart?.id || "@me";
       }
       const byDirectSessionID = run.participants.find(
         (p) =>

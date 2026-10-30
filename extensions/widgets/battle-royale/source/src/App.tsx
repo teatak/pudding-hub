@@ -826,7 +826,10 @@ export default function App() {
   const human = run?.participants?.find((part) => part.kind === "human");
   const currentPartID = human?.id;
   const humanSeat =
-    activeSeats.find((s) => l.seats[s] === currentPartID) || null;
+    activeSeats.find(
+      (s) =>
+        l.seats[s] === "@me" || (currentPartID && l.seats[s] === currentPartID),
+    ) || null;
   const isPaused = run?.status === "paused";
   const isMyTurn = Boolean(
     !isPaused && humanSeat && p.turn === humanSeat && !p.winner,
@@ -1003,7 +1006,7 @@ export default function App() {
 
   function resolveSeatChoice(pid: string | null | undefined): string {
     if (!pid || isBotParticipant(pid)) return "@bot";
-    if (currentPartID && pid === currentPartID) return "@me";
+    if (pid === "@me" || (currentPartID && pid === currentPartID)) return "@me";
     const matched = candidates?.sessions.find(
       (s) =>
         s.participantID === pid ||
@@ -1058,7 +1061,7 @@ export default function App() {
         await perform((c) =>
           takeAction({ kind: "attack", target: enemiesOnTile[0].seat }, c),
         );
-      } else if (dist === 1) {
+      } else if (dist === 1 && enemiesOnTile.length === 0) {
         await perform((c) => takeAction({ kind: "move", to: coord }, c));
       }
     }
@@ -1509,7 +1512,7 @@ export default function App() {
 
                         if (hasEnemy && dist <= wep.range) {
                           isAttackTarget = true;
-                        } else if (dist === 1) {
+                        } else if (dist === 1 && !hasEnemy) {
                           isMoveTarget = true;
                         }
                       }

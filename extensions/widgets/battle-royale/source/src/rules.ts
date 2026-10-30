@@ -282,9 +282,41 @@ export function applyDropIn(
   if (p.turn !== seat) {
     throw new Error(`当前尚未轮到 ${seat} 跳伞`);
   }
-  const dest = parseCoord(rawCoord);
+  let dest = parseCoord(rawCoord);
   const nextAgents = { ...p.agents };
   const ag = { ...nextAgents[seat] };
+
+  // Prevent two operatives from stacking on the exact same tile during blind drop
+  const occupiedCoords = new Set(
+    p.activeSeats
+      .filter(
+        (s) =>
+          s !== seat &&
+          nextAgents[s].alive &&
+          nextAgents[s].dropped &&
+          nextAgents[s].coord,
+      )
+      .map((s) => nextAgents[s].coord as string),
+  );
+  if (occupiedCoords.has(dest.coord)) {
+    const fallbackTiles = p.tiles
+      .filter((t) => !occupiedCoords.has(t.coord))
+      .sort((a, b) => {
+        const dA = chebyshevDist(dest.x, dest.y, a.x, a.y);
+        const dB = chebyshevDist(dest.x, dest.y, b.x, b.y);
+        if (dA !== dB) return dA - dB;
+        const sA = isInStorm(a.x, a.y, p.stormCenter, p.stormRadius) ? 1 : 0;
+        const sB = isInStorm(b.x, b.y, p.stormCenter, p.stormRadius) ? 1 : 0;
+        return sA - sB;
+      });
+    if (fallbackTiles.length > 0) {
+      dest = {
+        x: fallbackTiles[0].x,
+        y: fallbackTiles[0].y,
+        coord: fallbackTiles[0].coord,
+      };
+    }
+  }
 
   ag.dropped = true;
   ag.coord = dest.coord;
@@ -308,12 +340,13 @@ export function applyDropIn(
     }
   }
 
-  ag.lastActionSummary = `降落 ${dest.coord} ${lootMsg}`;
+  ag.lastActionSummary = `降落 ${dest.coord}${lootMsg ? ` ${lootMsg}` : ""}`;
   nextAgents[seat] = ag;
 
   // Next dropper
   const dropIdx = p.turnOrder.indexOf(seat);
-  const nextDropSeat = dropIdx + 1 < p.turnOrder.length ? p.turnOrder[dropIdx + 1] : null;
+  const nextDropSeat =
+    dropIdx + 1 < p.turnOrder.length ? p.turnOrder[dropIdx + 1] : null;
 
   let nextPhase: GamePhase = l.phase;
   let nextTurn: Seat | null = nextDropSeat;
@@ -336,7 +369,7 @@ export function applyDropIn(
     weapon: ag.weapon,
     damage: null,
     winner: null,
-    summary: `${seat} 空降落点 ${dest.coord} ${lootMsg}`,
+    summary: `${seat} 空降落点 ${dest.coord}${lootMsg ? ` ${lootMsg}` : ""}`,
   };
 
   return {
@@ -382,6 +415,14 @@ export function applyCombatAction(
     if (dist !== 1) {
       throw new Error(`移动只能前往相邻 1 格（目标 ${dest.coord} 距离为 ${dist}）`);
     }
+    const occupiedBy = p.aliveSeats.find(
+      (s) => s !== seat && nextAgents[s].alive && nextAgents[s].coord === dest.coord,
+    );
+    if (occupiedBy) {
+      throw new Error(
+        `目标格 ${dest.coord} 已有其他特工驻守，无法重叠进入，请发起攻击或选择其他相邻格`,
+      );
+    }
 
     const fromCoord = ag.coord;
     ag.coord = dest.coord;
@@ -421,6 +462,9 @@ export function applyCombatAction(
     };
   } else if (action.kind === "attack") {
     const targetSeat = action.target as Seat;
+    if (targetSeat === seat) {
+      throw new Error("不能攻击自己");
+    }
     const targetAg = { ...nextAgents[targetSeat] };
     if (!targetAg.alive || targetAg.x === null || targetAg.y === null) {
       throw new Error(`目标 ${targetSeat} 已被淘汰或不可攻击`);
@@ -429,7 +473,9 @@ export function applyCombatAction(
     const dist = chebyshevDist(ag.x, ag.y, targetAg.x, targetAg.y);
     const wep = WEAPONS[ag.weapon];
     if (dist > wep.range) {
-      throw new Error(`目标超出射程（当前武器射程 ${wep.range} 格，目标距离 ${dist} 格）`);
+      throw new Error(
+        `目标超出射程（当前武器射程 ${wep.range} 格，目标距离 ${dist} 格）`,
+      );
     }
 
     // Bush stealth check: if enemy is in bush and dist > 1, concealed
@@ -517,7 +563,9 @@ export function applyCombatAction(
 
   let nextCycle = p.cycle;
   let nextStormRadius = p.stormRadius;
-  let nextTurn: Seat | null = isRoundEnd ? nextAlive[0] : nextAlive[currentAliveIdx + 1];
+  let nextTurn: Seat | null = isRoundEnd
+    ? nextAlive[0]
+    : nextAlive[currentAliveIdx + 1];
 
   // If round ended: shrink storm and apply radiation damage
   if (isRoundEnd) {
@@ -529,7 +577,9 @@ export function applyCombatAction(
     // Spawn an airdrop on cycle 3 in safe zone if available
     if (nextCycle === 3) {
       const safeTiles = nextTiles.filter(
-        (t) => !isInStorm(t.x, t.y, p.stormCenter, nextStormRadius) && t.crate === "none",
+        (t) =>
+          !isInStorm(t.x, t.y, p.stormCenter, nextStormRadius) &&
+          t.crate === "none",
       );
       if (safeTiles.length > 0) {
         const dropTile = safeTiles[safeTiles.length - 1];
@@ -610,18 +660,43 @@ export function applyCombatAction(
   };
 }
 
-export function chooseBotDrop(p: BattleRoyalePosition, seat: Seat): { coord: string } {
-  // Prioritize landing on supply crates near safe zone
-  const safeCrates = p.tiles.filter(
-    (t) => t.crate !== "none" && !isInStorm(t.x, t.y, p.stormCenter, p.stormRadius),
+export function chooseBotDrop(
+  p: BattleRoyalePosition,
+  seat: Seat,
+): { coord: string } {
+  const occupiedCoords = new Set(
+    p.activeSeats
+      .filter((s) => p.agents[s].dropped && p.agents[s].coord)
+      .map((s) => p.agents[s].coord as string),
   );
-  if (safeCrates.length > 0) {
-    const idx = (p.stepCount + seat.charCodeAt(4)) % safeCrates.length;
-    return { coord: safeCrates[idx].coord };
+  const crateTiles = p.tiles.filter((t) => t.crate !== "none");
+
+  // Land on an unoccupied safe-zone tile adjacent to a supply crate so operatives
+  // start with their tactical knife and race to loot crates during Round 1.
+  const tacticalDropSpots = p.tiles.filter((t) => {
+    if (occupiedCoords.has(t.coord)) return false;
+    if (t.crate !== "none") return false;
+    if (isInStorm(t.x, t.y, p.stormCenter, p.stormRadius)) return false;
+    return crateTiles.some((c) => chebyshevDist(t.x, t.y, c.x, c.y) === 1);
+  });
+
+  if (tacticalDropSpots.length > 0) {
+    const seatIdx = Math.max(0, allSeats.indexOf(seat));
+    const idx = (seatIdx * 3 + p.stepCount) % tacticalDropSpots.length;
+    return { coord: tacticalDropSpots[idx].coord };
   }
-  // Otherwise land near safe center
-  const centerCoord = p.stormCenter.coord;
-  return { coord: centerCoord };
+
+  const fallbackSpots = p.tiles.filter(
+    (t) =>
+      !occupiedCoords.has(t.coord) &&
+      !isInStorm(t.x, t.y, p.stormCenter, p.stormRadius),
+  );
+  if (fallbackSpots.length > 0) {
+    const idx = (p.stepCount + seat.charCodeAt(4)) % fallbackSpots.length;
+    return { coord: fallbackSpots[idx].coord };
+  }
+
+  return { coord: p.stormCenter.coord };
 }
 
 export function chooseBotCombatAction(
@@ -635,49 +710,104 @@ export function chooseBotCombatAction(
 
   const wep = WEAPONS[ag.weapon];
 
-  // 1. Attack any enemy in range
+  // 1. Attack any visible enemy within weapon range
   const enemiesInRange = p.aliveSeats
     .filter((s) => s !== seat)
     .map((s) => p.agents[s])
     .filter((e) => {
       if (!e.alive || e.x === null || e.y === null) return false;
       const d = chebyshevDist(ag.x!, ag.y!, e.x, e.y);
-      if (d > wep.range) return false;
-      // Bush check
-      const tile = p.tiles.find((t) => t.coord === e.coord);
-      if (tile && tile.terrain === "bush" && d > 1) return false;
-      return true;
+      if (d < 1 || d > wep.range) return false;
+      return canAgentSeeAgent(p, seat, e.seat);
     });
 
   if (enemiesInRange.length > 0) {
-    // Attack lowest HP enemy
-    enemiesInRange.sort((a, b) => a.hp - b.hp);
+    enemiesInRange.sort((a, b) => {
+      if (a.hp !== b.hp) return a.hp - b.hp;
+      return (
+        chebyshevDist(ag.x!, ag.y!, a.x!, a.y!) -
+        chebyshevDist(ag.x!, ag.y!, b.x!, b.y!)
+      );
+    });
     return { kind: "attack", target: enemiesInRange[0].seat };
   }
 
-  // 2. Move towards nearest crate or safe center
-  const crates = p.tiles.filter((t) => t.crate !== "none");
+  // 2. Determine tactical destination (upgrade weapon crate vs hunt remaining enemies)
+  const safeCrates = p.tiles.filter(
+    (t) =>
+      t.crate !== "none" &&
+      !isInStorm(t.x, t.y, p.stormCenter, p.stormRadius) &&
+      (ag.weapon === "fists" ||
+        (t.crate === "airdrop" && (ag.weapon !== "sniper" || ag.hp < 85))),
+  );
+
   let targetX = p.stormCenter.x;
   let targetY = p.stormCenter.y;
 
-  if (crates.length > 0) {
-    crates.sort((a, b) => chebyshevDist(ag.x!, ag.y!, a.x, a.y) - chebyshevDist(ag.x!, ag.y!, b.x, b.y));
-    targetX = crates[0].x;
-    targetY = crates[0].y;
+  if (safeCrates.length > 0) {
+    safeCrates.sort(
+      (a, b) =>
+        chebyshevDist(ag.x!, ag.y!, a.x, a.y) -
+        chebyshevDist(ag.x!, ag.y!, b.x, b.y),
+    );
+    targetX = safeCrates[0].x;
+    targetY = safeCrates[0].y;
+  } else {
+    const aliveEnemies = p.aliveSeats
+      .filter((s) => s !== seat)
+      .map((s) => p.agents[s])
+      .filter((e) => e.alive && e.x !== null && e.y !== null);
+
+    if (aliveEnemies.length > 0) {
+      aliveEnemies.sort(
+        (a, b) =>
+          chebyshevDist(ag.x!, ag.y!, a.x!, a.y!) -
+          chebyshevDist(ag.x!, ag.y!, b.x!, b.y!),
+      );
+      targetX = aliveEnemies[0].x!;
+      targetY = aliveEnemies[0].y!;
+    }
   }
 
-  // Choose adjacent step minimizing distance to target
-  const dx = Math.sign(targetX - ag.x);
-  const dy = Math.sign(targetY - ag.y);
+  // 3. Evaluate all valid 8-directional neighbor tiles (dist === 1, unoccupied)
+  const occupiedCoords = new Set(
+    p.aliveSeats
+      .filter((s) => s !== seat && p.agents[s].alive && p.agents[s].coord)
+      .map((s) => p.agents[s].coord as string),
+  );
 
-  const nextX = Math.max(0, Math.min(GRID_WIDTH - 1, ag.x + dx));
-  const nextY = Math.max(0, Math.min(GRID_HEIGHT - 1, ag.y + dy));
+  const candidates: { coord: string; score: number }[] = [];
+  for (let dy = -1; dy <= 1; dy++) {
+    for (let dx = -1; dx <= 1; dx++) {
+      if (dx === 0 && dy === 0) continue;
+      const nx = ag.x + dx;
+      const ny = ag.y + dy;
+      if (nx < 0 || nx >= GRID_WIDTH || ny < 0 || ny >= GRID_HEIGHT) continue;
+      const coord = toCoord(nx, ny);
+      if (occupiedCoords.has(coord)) continue;
 
-  if (nextX === ag.x && nextY === ag.y) {
-    // Stay or step right
-    const altX = Math.min(GRID_WIDTH - 1, ag.x + 1);
-    return { kind: "move", to: toCoord(altX, ag.y) };
+      const tile = p.tiles.find((t) => t.coord === coord);
+      const inStormNow = isInStorm(nx, ny, p.stormCenter, p.stormRadius);
+      const distToTarget = chebyshevDist(nx, ny, targetX, targetY);
+      const manhattanToTarget =
+        Math.abs(nx - targetX) + Math.abs(ny - targetY);
+
+      let score = distToTarget * 10 + manhattanToTarget;
+      if (inStormNow) score += 80;
+      if (tile?.crate === "airdrop") score -= 6;
+      else if (tile?.crate === "supply" && ag.weapon === "fists") score -= 4;
+      if (tile?.terrain === "bush") score -= 1;
+
+      candidates.push({ coord, score });
+    }
   }
 
-  return { kind: "move", to: toCoord(nextX, nextY) };
+  if (candidates.length > 0) {
+    candidates.sort((a, b) => a.score - b.score);
+    return { kind: "move", to: candidates[0].coord };
+  }
+
+  // Fallback to any in-bounds adjacent coordinate
+  const fallbackX = ag.x > 0 ? ag.x - 1 : ag.x + 1;
+  return { kind: "move", to: toCoord(fallbackX, ag.y) };
 }
