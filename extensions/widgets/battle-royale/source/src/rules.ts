@@ -6,6 +6,7 @@ import type {
   TileState,
   AgentState,
   ActionStepInput,
+  WhisperInput,
   BattleRoyaleLobby,
   BattleRoyalePosition,
 } from "./types";
@@ -31,19 +32,33 @@ export function isBotParticipant(id: string | null | undefined): boolean {
   return !id || id.startsWith("@bot");
 }
 
+/**
+ * Weapon specs with Distance Counter-Play (距离克制) & Ammo Economy (弹药限制):
+ * - Shotgun (S12K): Lethal at dist=1 (45 dmg), range 1, 4 shells.
+ * - SMG (UMP45): Reliable at dist=1..2 (30 dmg), 6 rounds.
+ * - Rifle (M416): Optimal at dist=2..3 (36 dmg), CQB penalty at dist=1 (0.75x = 27 dmg), 5 rounds.
+ * - Sniper (98K): Optimal at dist=2..3 (+1 on Tower) (50 dmg), severe CQB penalty at dist=1 (0.5x = 25 dmg), 4 rounds.
+ * - AWM: Optimal at dist=2..4 (+1 on Tower) (66 dmg), severe CQB penalty at dist=1 (0.5x = 33 dmg), 3 rounds.
+ */
 export const WEAPONS: Record<WeaponId, WeaponSpec> = {
   fists: {
     id: "fists",
-    damage: 18,
+    damage: 20,
     range: 1,
+    optimalMinRange: 1,
+    closeRangeMultiplier: 1.0,
+    maxAmmo: 99,
     visionBonus: 0,
     soundRange: 1,
     tier: 0,
   },
   shotgun: {
     id: "shotgun",
-    damage: 44,
+    damage: 45,
     range: 1,
+    optimalMinRange: 1,
+    closeRangeMultiplier: 1.0,
+    maxAmmo: 4,
     visionBonus: 0,
     soundRange: 3,
     tier: 2,
@@ -52,6 +67,9 @@ export const WEAPONS: Record<WeaponId, WeaponSpec> = {
     id: "smg",
     damage: 30,
     range: 2,
+    optimalMinRange: 1,
+    closeRangeMultiplier: 1.0,
+    maxAmmo: 6,
     visionBonus: 0,
     soundRange: 3,
     tier: 1,
@@ -59,15 +77,21 @@ export const WEAPONS: Record<WeaponId, WeaponSpec> = {
   rifle: {
     id: "rifle",
     damage: 36,
-    range: 2,
+    range: 3,
+    optimalMinRange: 2,
+    closeRangeMultiplier: 0.75,
+    maxAmmo: 5,
     visionBonus: 0,
     soundRange: 4,
     tier: 3,
   },
   sniper: {
     id: "sniper",
-    damage: 48,
+    damage: 50,
     range: 3,
+    optimalMinRange: 2,
+    closeRangeMultiplier: 0.5,
+    maxAmmo: 4,
     visionBonus: 1,
     soundRange: 6,
     tier: 4,
@@ -76,11 +100,55 @@ export const WEAPONS: Record<WeaponId, WeaponSpec> = {
     id: "awm",
     damage: 66,
     range: 4,
+    optimalMinRange: 2,
+    closeRangeMultiplier: 0.5,
+    maxAmmo: 3,
     visionBonus: 1,
     soundRange: 7,
     tier: 5,
   },
 };
+
+/**
+ * Computes weapon base damage at a given Chebyshev distance, applying close-quarters scope penalty
+ * when a long-range rifle/sniper is fired at point-blank range (`dist < optimalMinRange`).
+ */
+export function computeWeaponDamage(
+  weapon: WeaponId,
+  dist: number,
+): { baseDamage: number; isOptimalRange: boolean; cqbPenaltyApplied: boolean } {
+  const spec = WEAPONS[weapon];
+  if (dist < spec.optimalMinRange) {
+    return {
+      baseDamage: Math.round(spec.damage * spec.closeRangeMultiplier),
+      isOptimalRange: false,
+      cqbPenaltyApplied: spec.closeRangeMultiplier < 1,
+    };
+  }
+  return {
+    baseDamage: spec.damage,
+    isOptimalRange: true,
+    cqbPenaltyApplied: false,
+  };
+}
+
+/**
+ * Computes fair Snake + Rotated combat turn order for each cycle so no seat monopolizes first-move initiative:
+ * - Cycle 1: Exact reverse of `dropOrder` (the operative who dropped last acts first in Cycle 1).
+ * - Cycle c >= 2: Rotates the starting operative by `(c - 1) % N` and alternates direction (Snake order).
+ */
+export function computeCycleTurnOrder(
+  dropOrder: Seat[],
+  aliveSeats: Seat[],
+  cycle: number,
+): Seat[] {
+  const n = dropOrder.length;
+  if (n === 0) return [];
+  const shift = (cycle - 1) % n;
+  const rotated = [...dropOrder.slice(shift), ...dropOrder.slice(0, shift)];
+  const ordered = cycle % 2 === 1 ? [...rotated].reverse() : rotated;
+  return ordered.filter((s) => aliveSeats.includes(s));
+}
 
 export function toCoord(x: number, y: number): string {
   return `${COL_LETTERS[x] || "A"}${y + 1}`;
@@ -139,11 +207,11 @@ export function initialLobby(): BattleRoyaleLobby {
 }
 
 /**
- * Generates an 8×6 tactical battlefield island with balanced POIs:
+ * Generates a 180-degree rotationally symmetric 8×6 tactical battlefield island:
  * - Central Military Base tiles ("base") with high supply density
- * - Radar High Towers ("tower") for vision/range advantage
- * - Stealth Bushes ("bush") for concealment
- * - Concrete Bunkers ("bunker") for cover
+ * - 4 Symmetric Radar High Towers ("tower") for vision/range advantage
+ * - 6 Symmetric Stealth Bushes ("bush") for concealment
+ * - 4 Symmetric Concrete Bunkers ("bunker") for cover
  */
 export function createInitialPosition(
   round: number,
@@ -160,6 +228,10 @@ export function createInitialPosition(
       let terrain: TerrainType = "plain";
       let crate: TileState["crate"] = "none";
 
+      // Symmetrical canon coordinates for 180-degree rotational fairness
+      const canonX = y < 3 ? x : GRID_WIDTH - 1 - x;
+      const canonY = y < 3 ? y : GRID_HEIGHT - 1 - y;
+
       // Central military base cluster
       if ((x === 3 || x === 4) && (y === 2 || y === 3)) {
         terrain = "base";
@@ -171,7 +243,7 @@ export function createInitialPosition(
         (x === 6 && y === 4)
       ) {
         terrain = "tower";
-        if ((x + y + seed) % 2 === 0) crate = "supply";
+        crate = "supply";
       } else if (
         (x === 2 && y === 2) ||
         (x === 5 && y === 3) ||
@@ -189,7 +261,7 @@ export function createInitialPosition(
       ) {
         terrain = "bunker";
         crate = "supply";
-      } else if ((x * 7 + y * 13 + seed) % 5 === 0) {
+      } else if ((canonX * 7 + canonY * 13 + seed) % 5 === 0) {
         crate = "supply";
       }
 
@@ -210,15 +282,20 @@ export function createInitialPosition(
     maxShield: 25,
     armorLevel: 1,
     weapon: "fists",
+    ammo: 99,
+    maxAmmo: 99,
     medkits: 1,
     grenades: 0,
     guarding: false,
+    spawnProtected: true,
     kills: 0,
     damageDealt: 0,
+    tacticalScore: 0,
     placement: null,
     eliminatedBy: null,
     eliminatedCycle: null,
     lastRadio: null,
+    tacticalNote: null,
     lastActionSummary: null,
   });
 
@@ -241,19 +318,20 @@ export function createInitialPosition(
   };
 
   const shift = round > 0 ? (round - 1) % activeSeats.length : 0;
-  const turnOrder = [
+  const dropOrder = [
     ...activeSeats.slice(shift),
     ...activeSeats.slice(0, shift),
   ];
 
   return {
     cycle: 1,
-    turn: round > 0 ? turnOrder[0] : null,
+    turn: round > 0 ? dropOrder[0] : null,
     turnAp: 1,
     turnStartedAt: round > 0 ? Date.now() : null,
     activeSeats,
     aliveSeats: [...activeSeats],
-    turnOrder,
+    dropOrder,
+    turnOrder: [...dropOrder],
     completedTurnSeats: [],
     gridWidth: GRID_WIDTH,
     gridHeight: GRID_HEIGHT,
@@ -265,19 +343,21 @@ export function createInitialPosition(
     soundPings: [],
     killFeed: [],
     radioLogs: [],
+    whisperLogs: [],
     lastEvent:
       round > 0
         ? {
             step: 0,
             kind: "start",
-            actor: turnOrder[0],
+            actor: dropOrder[0],
             targetSeat: null,
             fromCoord: null,
             toCoord: null,
             weapon: null,
             damage: null,
             winner: null,
-            summary: "运输机已进入孤岛航线，请各特工选择空降坐标！",
+            summary:
+              "运输机进入孤岛航线（盲降模式：全员跳伞落地前坐标相互保密，后跳伞者将在第1轮优先行动）！",
           }
         : null,
     stepCount: 0,
@@ -320,7 +400,7 @@ export function visionRadiusFor(
 }
 
 /**
- * Computes effective weapon range (weapon base range + 1 if standing on Radar Tower).
+ * Computes effective weapon range (weapon base range + 1 if standing on Radar Tower; falls back to range 1 if out of ammo).
  */
 export function attackRangeFor(
   p: BattleRoyalePosition,
@@ -330,6 +410,7 @@ export function attackRangeFor(
   const ag = p.agents[seat];
   if (!ag || !ag.alive || ag.x === null || ag.y === null) return 1;
   if (useGrenade) return 2;
+  if (ag.weapon !== "fists" && ag.ammo <= 0) return 1;
   const tile = getTile(p, ag.x, ag.y);
   const terrainBonus = tile?.terrain === "tower" ? 1 : 0;
   return WEAPONS[ag.weapon].range + terrainBonus;
@@ -384,6 +465,11 @@ export function canAgentSeeTile(
 
 /**
  * Handles the Parachute Drop-In (`dropping` phase) for a seat.
+ * - Anti-first-mover-advantage:
+ *   1. Drop coordinates are kept blind from other agents until everyone lands.
+ *   2. Once all players land, Cycle 1 combat order is set to the REVERSE of `dropOrder`
+ *      (`computeCycleTurnOrder(dropOrder, aliveSeats, 1)`), so the last dropper acts first!
+ *   3. All operatives start with `spawnProtected: true` (-40% incoming damage until they complete their first combat turn).
  */
 export function applyDropIn(
   l: BattleRoyaleLobby,
@@ -391,6 +477,7 @@ export function applyDropIn(
   seat: Seat,
   rawCoord: string,
   rawRadio?: string | null,
+  rawNote?: string | null,
 ): { lobby: BattleRoyaleLobby; position: BattleRoyalePosition } {
   if (l.phase !== "dropping") {
     throw new Error("当前不是跳伞降落阶段");
@@ -401,6 +488,7 @@ export function applyDropIn(
   const { x, y, coord } = parseCoord(rawCoord);
   const nextStep = p.stepCount + 1;
   const radio = rawRadio?.trim() ? rawRadio.trim().slice(0, 80) : null;
+  const note = rawNote?.trim() ? rawNote.trim().slice(0, 200) : null;
 
   const tile = getTile(p, x, y)!;
   let weapon: WeaponId = "smg";
@@ -428,6 +516,8 @@ export function applyDropIn(
     nextTiles[y * p.gridWidth + x] = { ...tile, crate: "none" };
   }
 
+  const maxAmmo = WEAPONS[weapon].maxAmmo;
+
   const nextAgent: AgentState = {
     ...p.agents[seat],
     dropped: true,
@@ -435,12 +525,20 @@ export function applyDropIn(
     x,
     y,
     weapon,
+    ammo: maxAmmo,
+    maxAmmo,
     armorLevel,
     shield,
     maxShield,
     medkits,
     grenades,
+    spawnProtected: true,
+    tacticalScore:
+      p.agents[seat].tacticalScore +
+      (tile.terrain !== "plain" ? 5 : 0) +
+      (note ? 3 : 0),
     lastRadio: radio ?? p.agents[seat].lastRadio,
+    tacticalNote: note ?? p.agents[seat].tacticalNote,
     lastActionSummary: `空降落点 ${coord}`,
   };
 
@@ -462,7 +560,8 @@ export function applyDropIn(
     },
   ].slice(-18);
 
-  const remainingDroppers = p.turnOrder.filter(
+  const baseDropOrder = p.dropOrder?.length ? p.dropOrder : p.turnOrder;
+  const remainingDroppers = baseDropOrder.filter(
     (s) => !nextCompleted.includes(s),
   );
 
@@ -489,14 +588,16 @@ export function applyDropIn(
           weapon: null,
           damage: null,
           winner: null,
-          summary: `${seat} 空降落入 ${coord}`,
+          summary: `${seat} 已锁定盲降航线坐标`,
         },
         stepCount: nextStep,
       },
     };
   }
 
-  // All players have parachuted in -> Transition to Combat Round 1!
+  // All players have parachuted in -> Transition to Combat Cycle 1 with REVERSE Snake Turn Order!
+  const cycle1Order = computeCycleTurnOrder(baseDropOrder, p.aliveSeats, 1);
+
   return {
     lobby: {
       ...l,
@@ -505,9 +606,10 @@ export function applyDropIn(
     position: {
       ...p,
       cycle: 1,
-      turn: p.turnOrder[0],
+      turn: cycle1Order[0],
       turnAp: 2,
       turnStartedAt: Date.now(),
+      turnOrder: cycle1Order,
       completedTurnSeats: [],
       tiles: nextTiles,
       agents: nextAgents,
@@ -523,7 +625,7 @@ export function applyDropIn(
         weapon: null,
         damage: null,
         winner: null,
-        summary: `全员空降完毕，第 1 轮战术交火正式开始！`,
+        summary: `全员空降完毕！后跳伞者 ${cycle1Order[0]} 率先进攻（未行动干员享有空降护盾减伤）！`,
       },
       stepCount: nextStep,
     },
@@ -565,12 +667,22 @@ function executeSingleStep(
       );
     }
     const fromCoord = ag.coord;
+    const destTile = getTile(p, dest.x, dest.y);
+    const moveTacticalBonus =
+      (isInStorm(p, ag.x, ag.y) && !isInStorm(p, dest.x, dest.y) ? 8 : 0) +
+      (destTile?.terrain === "bush" ||
+      destTile?.terrain === "bunker" ||
+      destTile?.terrain === "tower"
+        ? 4
+        : 0);
+
     nextAgents[seat] = {
       ...ag,
       coord: dest.coord,
       x: dest.x,
       y: dest.y,
       guarding: false,
+      tacticalScore: ag.tacticalScore + moveTacticalBonus,
       lastActionSummary: `移动 ${fromCoord} ➔ ${dest.coord}`,
     };
     lastEv = {
@@ -595,16 +707,22 @@ function executeSingleStep(
     let newMaxShield = ag.maxShield;
     let newMedkits = ag.medkits;
     let newGrenades = ag.grenades;
+    let newMaxAmmo = ag.maxAmmo;
+    let newAmmo = ag.ammo;
+    let lootScoreBonus = 4;
 
     if (tile.crate === "airdrop") {
       newWeapon = "awm";
+      newMaxAmmo = WEAPONS.awm.maxAmmo;
+      newAmmo = newMaxAmmo;
       newArmor = 3;
       newMaxShield = 75;
       newShield = 75;
       newMedkits = Math.min(3, ag.medkits + 2);
       newGrenades = Math.min(3, ag.grenades + 1);
+      lootScoreBonus = 15;
       nextTiles[tileIdx] = { ...tile, crate: "none" };
-      summaryText = `${seat} 开启黄金空投！获得 [AWM重狙 + 三级甲 + 急救包]`;
+      summaryText = `${seat} 开启黄金空投！获得 [AWM重狙(3发) + 三级甲 + 急救包]`;
     } else if (tile.crate === "supply" || tile.crate === "deathbox") {
       const roll = (ag.x * 3 + ag.y * 5 + nextStep) % 3;
       const candidateWeapon: WeaponId =
@@ -612,6 +730,8 @@ function executeSingleStep(
       if (WEAPONS[candidateWeapon].tier > WEAPONS[ag.weapon].tier) {
         newWeapon = candidateWeapon;
       }
+      newMaxAmmo = WEAPONS[newWeapon].maxAmmo;
+      newAmmo = newMaxAmmo;
       if (ag.armorLevel < 2) {
         newArmor = 2;
         newMaxShield = 50;
@@ -623,22 +743,30 @@ function executeSingleStep(
       if (roll !== 2) {
         newGrenades = Math.min(3, ag.grenades + 1);
       }
+      lootScoreBonus = 8;
       nextTiles[tileIdx] = { ...tile, crate: "none" };
-      summaryText = `${seat} 搜刮物资箱，装备升级为 [${newWeapon.toUpperCase()}]`;
+      summaryText = `${seat} 搜刮物资箱，装备 [${newWeapon.toUpperCase()} · 弹药满(${newAmmo})]`;
     } else {
-      // Even on a tile without a crate, scavenging finds minor shield/bandage
+      // Even on a tile without a crate, scavenging finds minor shield + 2 ammo rounds
       newShield = Math.min(ag.maxShield, ag.shield + 15);
-      summaryText = `${seat} 在 ${ag.coord} 搜索零散补给（护甲+15）`;
+      newAmmo =
+        newWeapon === "fists"
+          ? 99
+          : Math.min(newMaxAmmo, ag.ammo + 2);
+      summaryText = `${seat} 在 ${ag.coord} 搜索零散补给（护甲+15，弹药+2）`;
     }
 
     nextAgents[seat] = {
       ...ag,
       weapon: newWeapon,
+      ammo: newAmmo,
+      maxAmmo: newMaxAmmo,
       armorLevel: newArmor,
       shield: newShield,
       maxShield: newMaxShield,
       medkits: newMedkits,
       grenades: newGrenades,
+      tacticalScore: ag.tacticalScore + lootScoreBonus,
       lastActionSummary: summaryText,
     };
     lastEv = {
@@ -667,6 +795,7 @@ function executeSingleStep(
       hp: nextHp,
       shield: nextShield,
       medkits: useKit ? ag.medkits - 1 : 0,
+      tacticalScore: ag.tacticalScore + (ag.hp <= 60 ? 8 : 3),
       lastActionSummary: `使用医疗补给 (HP ${nextHp}, 护甲 ${nextShield})`,
     };
     lastEv = {
@@ -685,6 +814,7 @@ function executeSingleStep(
     nextAgents[seat] = {
       ...ag,
       guarding: true,
+      tacticalScore: ag.tacticalScore + 5,
       lastActionSummary: `在 ${ag.coord} 架枪警戒 (-35%受伤)`,
     };
     endTurnNow = true;
@@ -703,7 +833,7 @@ function executeSingleStep(
   } else if (stepInput.kind === "attack") {
     const rawTarget = stepInput.target.trim();
     const useGrenade = Boolean(stepInput.useGrenade && ag.grenades > 0);
-    const maxRange = attackRangeFor(p, seat, useGrenade);
+    const outOfAmmo = !useGrenade && ag.weapon !== "fists" && ag.ammo <= 0;
 
     // Resolve target by Seat name (e.g. "Seat2") or coordinate (e.g. "E4")
     let targetAgent: AgentState | null = null;
@@ -721,19 +851,34 @@ function executeSingleStep(
       targetAgent = victimsOnTile[0] || null;
     }
 
-    if (!targetAgent || targetAgent.x === null || targetAgent.y === null || !targetAgent.coord) {
+    if (
+      !targetAgent ||
+      targetAgent.x === null ||
+      targetAgent.y === null ||
+      !targetAgent.coord
+    ) {
       throw new Error(`目标 "${rawTarget}" 上没有可攻击的存活敌人`);
     }
 
     const dist = chebyshevDist(ag.x, ag.y, targetAgent.x, targetAgent.y);
-    if (dist > maxRange) {
+    if (outOfAmmo && dist > 1) {
       throw new Error(
-        `目标 ${targetAgent.seat} (${targetAgent.coord}) 距离为 ${dist}，超出你当前武器射程 (${maxRange})`,
+        `当前枪械 [${ag.weapon.toUpperCase()}] 弹药已耗尽（0发），无法远程射击距离 ${dist} 的目标；请先执行 loot 补充弹药或贴近至 1 格使用战术匕首`,
       );
     }
 
+    const maxRange = attackRangeFor(p, seat, useGrenade);
+    if (dist > maxRange) {
+      throw new Error(
+        `目标 ${targetAgent.seat} (${targetAgent.coord}) 距离为 ${dist}，超出你当前射程 (${maxRange})`,
+      );
+    }
+
+    const attackerTile = getTile(p, ag.x, ag.y);
     const tgtTile = getTile(p, targetAgent.x, targetAgent.y);
-    let rawDmg = useGrenade ? 44 : WEAPONS[ag.weapon].damage;
+    const effectiveWeapon: WeaponId = outOfAmmo ? "fists" : ag.weapon;
+    const dmgCalc = computeWeaponDamage(effectiveWeapon, dist);
+    let rawDmg = useGrenade ? 44 : dmgCalc.baseDamage;
 
     // Cover & Guard mitigation (Grenades ignore bunker cover!)
     if (!useGrenade && tgtTile?.terrain === "bunker") {
@@ -742,31 +887,68 @@ function executeSingleStep(
     if (targetAgent.guarding) {
       rawDmg = Math.round(rawDmg * 0.65);
     }
+    // Anti-First-Mover Spawn Protection: 40% damage reduction & cannot be one-shot if target has not completed their first combat turn!
+    const targetSpawnShieldActive = Boolean(targetAgent.spawnProtected);
+    if (targetSpawnShieldActive) {
+      rawDmg = Math.round(rawDmg * 0.6);
+    }
 
     // Apply damage to shield first, then HP
     const shieldAbsorbed = Math.min(targetAgent.shield, rawDmg);
     const hpDamage = rawDmg - shieldAbsorbed;
     const nextTargetShield = targetAgent.shield - shieldAbsorbed;
-    const nextTargetHp = Math.max(0, targetAgent.hp - hpDamage);
+    let nextTargetHp = Math.max(0, targetAgent.hp - hpDamage);
+    if (targetSpawnShieldActive && nextTargetHp === 0 && targetAgent.hp > 15) {
+      nextTargetHp = 15;
+    }
     const killed = nextTargetHp === 0;
+
+    // Calculate tactical intelligence bonus for attacker
+    let tacticalGain = Math.round(rawDmg / 2);
+    if (dmgCalc.isOptimalRange && dist >= 2) tacticalGain += 10;
+    if (effectiveWeapon === "shotgun" && dist === 1) tacticalGain += 10;
+    if (attackerTile?.terrain === "tower" || attackerTile?.terrain === "bush") {
+      tacticalGain += 8;
+    }
+    if (killed) tacticalGain += 25;
+
+    const nextAmmo =
+      useGrenade || effectiveWeapon === "fists"
+        ? ag.ammo
+        : Math.max(0, ag.ammo - 1);
 
     const updatedAttacker: AgentState = {
       ...nextAgents[seat],
+      ammo: nextAmmo,
       grenades: useGrenade ? ag.grenades - 1 : ag.grenades,
       kills: killed ? ag.kills + 1 : ag.kills,
       damageDealt: ag.damageDealt + rawDmg,
+      tacticalScore: ag.tacticalScore + tacticalGain,
       guarding: false,
-      lastActionSummary: `${useGrenade ? "投掷手雷轰炸" : "开火命中"} ${
-        targetAgent.seat
-      } (-${rawDmg})`,
+      spawnProtected: false, // Attacking immediately drops your own spawn protection
+      lastActionSummary: `${
+        useGrenade
+          ? "投掷手雷轰炸"
+          : dmgCalc.cqbPenaltyApplied
+            ? "贴脸受限开火"
+            : "精准开火命中"
+      } ${targetAgent.seat} (-${rawDmg}${
+        targetSpawnShieldActive ? "·空降护盾减伤" : ""
+      })`,
     };
     nextAgents[seat] = updatedAttacker;
+
+    // Defender gains tacticalScore if they mitigated damage via Bunker or Guard
+    const defenderMitigationBonus =
+      (!useGrenade && tgtTile?.terrain === "bunker" ? 6 : 0) +
+      (targetAgent.guarding ? 8 : 0);
 
     const placementIfKilled = nextAlive.length;
     nextAgents[targetAgent.seat] = {
       ...targetAgent,
       hp: nextTargetHp,
       shield: nextTargetShield,
+      tacticalScore: targetAgent.tacticalScore + defenderMitigationBonus,
       alive: !killed,
       placement: killed ? placementIfKilled : null,
       eliminatedBy: killed ? seat : null,
@@ -775,7 +957,7 @@ function executeSingleStep(
 
     const pingKind = useGrenade
       ? ("explosion" as const)
-      : ag.weapon === "sniper" || ag.weapon === "awm"
+      : effectiveWeapon === "sniper" || effectiveWeapon === "awm"
         ? ("sniper" as const)
         : ("gunfire" as const);
 
@@ -792,7 +974,9 @@ function executeSingleStep(
       },
     ].slice(-18);
 
-    const weaponUsed: WeaponId | "grenade" = useGrenade ? "grenade" : ag.weapon;
+    const weaponUsed: WeaponId | "grenade" = useGrenade
+      ? "grenade"
+      : effectiveWeapon;
 
     if (killed) {
       nextAlive = nextAlive.filter((s) => s !== targetAgent!.seat);
@@ -837,7 +1021,9 @@ function executeSingleStep(
         weapon: weaponUsed,
         damage: rawDmg,
         winner: null,
-        summary: `💥 ${seat} 攻击 ${targetAgent.seat} 造成 ${rawDmg} 点伤害`,
+        summary: `💥 ${seat} 攻击 ${targetAgent.seat} 造成 ${rawDmg} 点伤害${
+          dmgCalc.cqbPenaltyApplied ? "（远距枪贴脸衰减）" : ""
+        }`,
       };
     }
   }
@@ -865,24 +1051,38 @@ function advanceTurnOrCycle(
   p: BattleRoyalePosition,
   actorSeat: Seat,
 ): { lobby: BattleRoyaleLobby; position: BattleRoyalePosition } {
+  // Actor has now completed their combat turn, so their first-turn spawn protection ends
+  const actorClearedAgents = {
+    ...p.agents,
+    [actorSeat]: {
+      ...p.agents[actorSeat],
+      spawnProtected: false,
+    },
+  };
+  const pWithCleared = { ...p, agents: actorClearedAgents };
+
   // Check immediate victory if only 1 (or 0) alive
-  if (p.aliveSeats.length <= 1) {
-    const winSeat = p.aliveSeats[0] || actorSeat;
-    const nextAgents = { ...p.agents };
+  if (pWithCleared.aliveSeats.length <= 1) {
+    const winSeat = pWithCleared.aliveSeats[0] || actorSeat;
+    const nextAgents = { ...pWithCleared.agents };
     if (nextAgents[winSeat]) {
-      nextAgents[winSeat] = { ...nextAgents[winSeat], placement: 1 };
+      nextAgents[winSeat] = {
+        ...nextAgents[winSeat],
+        placement: 1,
+        tacticalScore: nextAgents[winSeat].tacticalScore + 35,
+      };
     }
     return {
       lobby: { ...l, phase: "finished" },
       position: {
-        ...p,
+        ...pWithCleared,
         turn: null,
         turnAp: 0,
         turnStartedAt: null,
         agents: nextAgents,
         winner: winSeat,
         lastEvent: {
-          step: p.stepCount,
+          step: pWithCleared.stepCount,
           kind: "victory",
           actor: winSeat,
           targetSeat: null,
@@ -897,25 +1097,25 @@ function advanceTurnOrCycle(
     };
   }
 
-  const nextCompleted = p.completedTurnSeats.includes(actorSeat)
-    ? p.completedTurnSeats
-    : [...p.completedTurnSeats, actorSeat];
+  const nextCompleted = pWithCleared.completedTurnSeats.includes(actorSeat)
+    ? pWithCleared.completedTurnSeats
+    : [...pWithCleared.completedTurnSeats, actorSeat];
 
-  const remainingInCycle = p.turnOrder.filter(
-    (s) => p.aliveSeats.includes(s) && !nextCompleted.includes(s),
+  const remainingInCycle = pWithCleared.turnOrder.filter(
+    (s) => pWithCleared.aliveSeats.includes(s) && !nextCompleted.includes(s),
   );
 
   if (remainingInCycle.length > 0) {
     const nextTurn = remainingInCycle[0];
     // Reset guarding status at the start of the next player's own turn
     const nextAgents = {
-      ...p.agents,
-      [nextTurn]: { ...p.agents[nextTurn], guarding: false },
+      ...pWithCleared.agents,
+      [nextTurn]: { ...pWithCleared.agents[nextTurn], guarding: false },
     };
     return {
       lobby: l,
       position: {
-        ...p,
+        ...pWithCleared,
         turn: nextTurn,
         turnAp: 2,
         turnStartedAt: Date.now(),
@@ -926,26 +1126,26 @@ function advanceTurnOrCycle(
   }
 
   // End of Cycle! Resolve Storm Damage, Storm Shrinking, and Golden Airdrop!
-  const nextCycle = p.cycle + 1;
-  let nextRadius = p.stormRadius;
+  const nextCycle = pWithCleared.cycle + 1;
+  let nextRadius = pWithCleared.stormRadius;
   if (nextCycle === 2) nextRadius = 3;
   else if (nextCycle === 3) nextRadius = 2;
   else if (nextCycle === 4) nextRadius = 1;
   else if (nextCycle >= 5) nextRadius = 0;
 
   const nextNextRadius = Math.max(0, nextRadius - 1);
-  const stormDmg = 12 + p.cycle * 6;
-  const nextAgents = { ...p.agents };
-  let nextAlive = [...p.aliveSeats];
-  const nextKills = [...p.killFeed];
-  const nextTiles = [...p.tiles];
-  let nextPings = [...p.soundPings];
+  const stormDmg = 12 + pWithCleared.cycle * 6;
+  const nextAgents = { ...pWithCleared.agents };
+  let nextAlive = [...pWithCleared.aliveSeats];
+  const nextKills = [...pWithCleared.killFeed];
+  const nextTiles = [...pWithCleared.tiles];
+  let nextPings = [...pWithCleared.soundPings];
 
-  // Apply Storm damage to anyone standing outside current stormRadius
+  // Clear any leftover spawnProtected flags at end of Cycle 1 and apply Storm damage
   for (const s of [...nextAlive]) {
-    const ag = nextAgents[s];
-    if (ag.x !== null && ag.y !== null && isInStorm(p, ag.x, ag.y)) {
-      // Don't eliminate the very last survivor by storm if only 1 left
+    const ag = { ...nextAgents[s], spawnProtected: false };
+    nextAgents[s] = ag;
+    if (ag.x !== null && ag.y !== null && isInStorm(pWithCleared, ag.x, ag.y)) {
       if (nextAlive.length <= 1) break;
       const newHp = Math.max(0, ag.hp - stormDmg);
       const died = newHp === 0;
@@ -953,10 +1153,11 @@ function advanceTurnOrCycle(
       nextAgents[s] = {
         ...ag,
         hp: newHp,
+        tacticalScore: Math.max(0, ag.tacticalScore - 6),
         alive: !died,
         placement: died ? rank : null,
         eliminatedBy: died ? "storm" : null,
-        eliminatedCycle: died ? p.cycle : null,
+        eliminatedCycle: died ? pWithCleared.cycle : null,
         lastActionSummary: died
           ? `在 ${ag.coord} 被电磁毒圈吞噬出局`
           : `在毒圈外受损 (-${stormDmg} HP)`,
@@ -964,26 +1165,36 @@ function advanceTurnOrCycle(
       if (died) {
         nextAlive = nextAlive.filter((id) => id !== s);
         nextKills.push({
-          step: p.stepCount,
-          cycle: p.cycle,
+          step: pWithCleared.stepCount,
+          cycle: pWithCleared.cycle,
           killerSeat: null,
           victimSeat: s,
           weapon: "storm",
           placement: rank,
         });
       }
+    } else if (ag.x !== null && ag.y !== null) {
+      // Safe zone survival bonus
+      nextAgents[s] = {
+        ...ag,
+        tacticalScore: ag.tacticalScore + 4,
+      };
     }
   }
 
   if (nextAlive.length <= 1) {
     const winSeat = nextAlive[0] || actorSeat;
     if (nextAgents[winSeat]) {
-      nextAgents[winSeat] = { ...nextAgents[winSeat], placement: 1 };
+      nextAgents[winSeat] = {
+        ...nextAgents[winSeat],
+        placement: 1,
+        tacticalScore: nextAgents[winSeat].tacticalScore + 35,
+      };
     }
     return {
       lobby: { ...l, phase: "finished" },
       position: {
-        ...p,
+        ...pWithCleared,
         cycle: nextCycle,
         turn: null,
         turnAp: 0,
@@ -993,7 +1204,7 @@ function advanceTurnOrCycle(
         killFeed: nextKills,
         winner: winSeat,
         lastEvent: {
-          step: p.stepCount,
+          step: pWithCleared.stepCount,
           kind: "victory",
           actor: winSeat,
           targetSeat: null,
@@ -1010,15 +1221,15 @@ function advanceTurnOrCycle(
 
   // Spawn a Golden Airdrop near the Safe Zone center on cycles 2 and 4
   if (nextCycle === 2 || nextCycle === 4) {
-    const dropX = p.stormCenter.x;
-    const dropY = p.stormCenter.y;
+    const dropX = pWithCleared.stormCenter.x;
+    const dropY = pWithCleared.stormCenter.y;
     const dropCoord = toCoord(dropX, dropY);
-    const idx = dropY * p.gridWidth + dropX;
+    const idx = dropY * pWithCleared.gridWidth + dropX;
     nextTiles[idx] = { ...nextTiles[idx], crate: "airdrop" };
     nextPings = [
       ...nextPings,
       {
-        step: p.stepCount,
+        step: pWithCleared.stepCount,
         cycle: nextCycle,
         sourceSeat: null,
         coord: dropCoord,
@@ -1029,15 +1240,22 @@ function advanceTurnOrCycle(
     ].slice(-18);
   }
 
-  // Rotate turn order slightly each cycle among alive players
-  const nextTurnOrder = [...nextAlive];
+  // Fair Snake + Rotated turn order for the new cycle!
+  const baseDropOrder = pWithCleared.dropOrder?.length
+    ? pWithCleared.dropOrder
+    : pWithCleared.activeSeats;
+  const nextTurnOrder = computeCycleTurnOrder(
+    baseDropOrder,
+    nextAlive,
+    nextCycle,
+  );
   const firstTurn = nextTurnOrder[0];
   nextAgents[firstTurn] = { ...nextAgents[firstTurn], guarding: false };
 
   return {
     lobby: l,
     position: {
-      ...p,
+      ...pWithCleared,
       cycle: nextCycle,
       turn: firstTurn,
       turnAp: 2,
@@ -1056,9 +1274,8 @@ function advanceTurnOrCycle(
 }
 
 /**
- * Applies a 1-to-2 step tactical action for `seat` during `combat` phase.
- * Also supports executing a single 1-AP step from the UI (`finishTurn = false`) so human players
- * can click to move (1 AP) and then click to fire/loot (1 AP)!
+ * Applies a 1-to-2 step tactical action for `seat` during `combat` phase,
+ * including optional public `radio`, private encrypted `whisper`, and private `tacticalNote`.
  */
 export function applyCombatAction(
   l: BattleRoyaleLobby,
@@ -1067,6 +1284,8 @@ export function applyCombatAction(
   steps: ActionStepInput[],
   rawRadio?: string | null,
   finishTurn = true,
+  rawWhisper?: WhisperInput | null,
+  rawNote?: string | null,
 ): { lobby: BattleRoyaleLobby; position: BattleRoyalePosition } {
   if (l.phase !== "combat") {
     throw new Error("当前不是战术交火阶段");
@@ -1083,22 +1302,56 @@ export function applyCombatAction(
   let forceEnd = false;
 
   const radio = rawRadio?.trim() ? rawRadio.trim().slice(0, 80) : null;
-  if (radio) {
+  const note = rawNote?.trim() ? rawNote.trim().slice(0, 200) : null;
+  const whisperMsg = rawWhisper?.message?.trim()
+    ? rawWhisper.message.trim().slice(0, 100)
+    : null;
+  const whisperTo =
+    rawWhisper?.to &&
+    allSeats.includes(rawWhisper.to) &&
+    rawWhisper.to !== seat
+      ? rawWhisper.to
+      : null;
+
+  if (radio || note || (whisperMsg && whisperTo)) {
+    const prevAg = currPos.agents[seat];
+    const noteBonus = note && note !== prevAg.tacticalNote ? 3 : 0;
+    const whisperBonus = whisperMsg && whisperTo ? 3 : 0;
     currPos = {
       ...currPos,
       agents: {
         ...currPos.agents,
-        [seat]: { ...currPos.agents[seat], lastRadio: radio },
-      },
-      radioLogs: [
-        ...currPos.radioLogs,
-        {
-          step: currPos.stepCount + 1,
-          cycle: currPos.cycle,
-          seat,
-          text: radio,
+        [seat]: {
+          ...prevAg,
+          lastRadio: radio ?? prevAg.lastRadio,
+          tacticalNote: note ?? prevAg.tacticalNote,
+          tacticalScore: prevAg.tacticalScore + noteBonus + whisperBonus,
         },
-      ].slice(-20),
+      },
+      radioLogs: radio
+        ? [
+            ...currPos.radioLogs,
+            {
+              step: currPos.stepCount + 1,
+              cycle: currPos.cycle,
+              seat,
+              text: radio,
+            },
+          ].slice(-20)
+        : currPos.radioLogs,
+      whisperLogs:
+        whisperMsg && whisperTo
+          ? [
+              ...(currPos.whisperLogs || []),
+              {
+                step: currPos.stepCount + 1,
+                cycle: currPos.cycle,
+                fromSeat: seat,
+                toSeat: whisperTo,
+                text: whisperMsg,
+              },
+            ].slice(-24)
+          : currPos.whisperLogs || [],
     };
   }
 
@@ -1136,12 +1389,12 @@ export function applyCombatAction(
 
 /**
  * Smart Tactical Bot AI for Parachute Drop:
- * Picks a high-value supply crate or military base coordinate not already occupied.
+ * Picks a high-value supply crate or military base coordinate and writes an initial tactical note.
  */
 export function chooseBotDrop(
   p: BattleRoyalePosition,
   seat: Seat,
-): { coord: string; radio: string } {
+): { coord: string; radio: string; note: string } {
   const occupied = new Set(
     Object.values(p.agents)
       .filter((a) => a.dropped && a.coord)
@@ -1169,24 +1422,35 @@ export function chooseBotDrop(
     `航线不错，落 ${chosen} 先拿二级甲！`,
     `特种兵就位，准备清空这片区域！`,
   ];
-  const radio = dropRadios[(p.stepCount + allSeats.indexOf(seat)) % dropRadios.length];
-  return { coord: chosen, radio };
+  const radio =
+    dropRadios[(p.stepCount + allSeats.indexOf(seat)) % dropRadios.length];
+  const note = `空降 ${chosen}，优先搜集高阶步枪/狙击枪并向安全区中心 ${p.stormCenter.coord} 靠拢。`;
+  return { coord: chosen, radio, note };
 }
 
 /**
- * Smart Tactical Bot AI for Combat Turn (2 AP):
- * - Heals if HP <= 55 and has medkit;
- * - Moves into Safe Zone if outside stormRadius;
- * - Loots airdrop/supply crate if standing on one;
- * - Attacks visible enemy in range (or moves toward closest crate/safe center and attacks/loots/guards).
+ * High-IQ Tactical Bot AI for Combat Turn (2 AP):
+ * - Evaluates optimal weapon range (kites away to dist>=2 when holding Sniper/AWM/Rifle; closes in to dist=1 with Shotgun)
+ * - Checks ammo depletion and prioritizes looting crates when ammo <= 1
+ * - Sends strategic encrypted whispers to propose temporary alliances against the current kill/HP leader
+ * - Maintains a private `tacticalNote`
  */
 export function chooseBotCombatAction(
   p: BattleRoyalePosition,
   seat: Seat,
-): { steps: ActionStepInput[]; radio: string } {
+): {
+  steps: ActionStepInput[];
+  radio: string;
+  whisper?: WhisperInput;
+  note: string;
+} {
   const ag = p.agents[seat];
   if (!ag || !ag.alive || ag.x === null || ag.y === null || !ag.coord) {
-    return { steps: [{ kind: "guard" }], radio: "原地警戒！" };
+    return {
+      steps: [{ kind: "guard" }],
+      radio: "原地警戒！",
+      note: "待命状态",
+    };
   }
 
   const steps: ActionStepInput[] = [];
@@ -1194,128 +1458,233 @@ export function chooseBotCombatAction(
   let simY = ag.y;
   let simHp = ag.hp;
   let simMedkits = ag.medkits;
+  let simGrenades = ag.grenades;
+  let simAmmo = ag.ammo;
   const simDamageTaken: Record<string, number> = {};
-  let radio = "保持战术机动，搜索目标！";
 
-  for (let apIndex = 0; apIndex < p.turnAp; apIndex++) {
-    // 1. Emergency heal if low HP
-    if (simHp <= 55 && simMedkits > 0) {
-      steps.push({ kind: "heal" });
-      simHp += 45;
-      simMedkits -= 1;
-      radio = "先打个急救包回口血，谁也别想偷袭我！";
-      continue;
+  const getNeighbors = (cx: number, cy: number) => {
+    const list: TileState[] = [];
+    for (let dy = -1; dy <= 1; dy++) {
+      for (let dx = -1; dx <= 1; dx++) {
+        if (dx === 0 && dy === 0) continue;
+        const t = getTile(p, cx + dx, cy + dy);
+        if (t) list.push(t);
+      }
     }
+    return list;
+  };
 
-    // 2. If outside Safe Zone, move toward stormCenter immediately!
-    if (isInStorm(p, simX, simY)) {
-      const dx = Math.sign(p.stormCenter.x - simX);
-      const dy = Math.sign(p.stormCenter.y - simY);
-      const nextX = Math.max(0, Math.min(p.gridWidth - 1, simX + dx));
-      const nextY = Math.max(0, Math.min(p.gridHeight - 1, simY + dy));
-      if (nextX !== simX || nextY !== simY) {
-        simX = nextX;
-        simY = nextY;
-        steps.push({ kind: "move", to: toCoord(simX, simY) });
-        radio = "毒圈刷了，赶紧进安全区！";
+  const visibleEnemiesFrom = (cx: number, cy: number) => {
+    const tile = getTile(p, cx, cy);
+    const vRad =
+      2 +
+      (tile?.terrain === "tower" ? 1 : 0) +
+      (WEAPONS[ag.weapon]?.visionBonus || 0);
+    return p.aliveSeats
+      .filter((s) => s !== seat)
+      .map((s) => p.agents[s])
+      .filter((e) => {
+        if (!e.alive || e.x === null || e.y === null) return false;
+        const alreadyDealt = simDamageTaken[e.seat] || 0;
+        if (e.hp + e.shield - alreadyDealt <= 0) return false;
+        const d = chebyshevDist(cx, cy, e.x, e.y);
+        const eTile = getTile(p, e.x, e.y);
+        if (eTile?.terrain === "bush") return d <= 1;
+        return d <= vRad;
+      });
+  };
+
+  for (let ap = 0; ap < 2; ap++) {
+    const currTile = getTile(p, simX, simY)!;
+    const inDangerZone = isInStorm(p, simX, simY);
+
+    // Priority 1: If outside Safe Zone, move toward stormCenter immediately!
+    if (inDangerZone) {
+      const neighbors = getNeighbors(simX, simY);
+      neighbors.sort(
+        (a, b) =>
+          chebyshevDist(a.x, a.y, p.stormCenter.x, p.stormCenter.y) -
+          chebyshevDist(b.x, b.y, p.stormCenter.x, p.stormCenter.y),
+      );
+      if (neighbors[0]) {
+        steps.push({ kind: "move", to: neighbors[0].coord });
+        simX = neighbors[0].x;
+        simY = neighbors[0].y;
         continue;
       }
     }
 
-    // 3. Check if standing on an unlooted crate
-    const currTile = getTile(p, simX, simY);
-    if (
-      currTile &&
-      currTile.crate !== "none" &&
-      !steps.some((s) => s.kind === "loot")
-    ) {
-      steps.push({ kind: "loot" });
-      radio =
-        currTile.crate === "airdrop"
-          ? "黄金空投归我了，AWM 在手天下我有！"
-          : "搜刮物资箱，火力全面升级！";
+    // Priority 2: If HP <= 55 and has medkit, heal!
+    if (simHp <= 55 && simMedkits > 0) {
+      steps.push({ kind: "heal" });
+      simHp = Math.min(100, simHp + 45);
+      simMedkits -= 1;
       continue;
     }
 
-    // 4. Check for enemies within weapon range from current simulated position
-    const weaponRange =
-      WEAPONS[ag.weapon].range + (currTile?.terrain === "tower" ? 1 : 0);
-    const enemiesInRange = p.aliveSeats
-      .filter((s) => s !== seat)
-      .map((s) => p.agents[s])
-      .filter(
+    // Priority 3: If standing on a crate (or low on ammo on a crate) and haven't looted it yet, loot!
+    if (
+      currTile.crate !== "none" &&
+      !steps.some((st) => st.kind === "loot")
+    ) {
+      steps.push({ kind: "loot" });
+      simAmmo = WEAPONS[ag.weapon].maxAmmo;
+      continue;
+    }
+
+    // Priority 4: Range-Aware Combat Kiting & Attack!
+    const enemies = visibleEnemiesFrom(simX, simY);
+    const wRange =
+      (ag.weapon !== "fists" && simAmmo <= 0 ? 1 : WEAPONS[ag.weapon].range) +
+      (currTile.terrain === "tower" ? 1 : 0);
+    const optMin = WEAPONS[ag.weapon].optimalMinRange;
+
+    // If holding a Sniper/AWM/Rifle (optMin >= 2), still have 2 AP (ap === 0), and an enemy is at point-blank dist=1,
+    // kite back to a tile at dist=2 so we get full Sniper/Rifle damage on the second AP!
+    if (
+      ap === 0 &&
+      optMin >= 2 &&
+      simAmmo > 0 &&
+      enemies.some(
         (e) =>
-          e.alive &&
           e.x !== null &&
           e.y !== null &&
-          e.hp + e.shield - (simDamageTaken[e.seat] || 0) > 0 &&
-          chebyshevDist(simX, simY, e.x, e.y) <= weaponRange &&
-          canAgentSeeAgent(p, seat, e.seat),
+          chebyshevDist(simX, simY, e.x, e.y) === 1,
       )
-      .sort(
+    ) {
+      const closeEnemy = enemies.find(
+        (e) =>
+          e.x !== null &&
+          e.y !== null &&
+          chebyshevDist(simX, simY, e.x, e.y) === 1,
+      )!;
+      const kiteCandidates = getNeighbors(simX, simY).filter(
+        (t) =>
+          !isInStorm(p, t.x, t.y) &&
+          chebyshevDist(t.x, t.y, closeEnemy.x!, closeEnemy.y!) === 2,
+      );
+      if (kiteCandidates.length > 0) {
+        kiteCandidates.sort((a, b) => {
+          const scoreT = (t: TileState) =>
+            (t.terrain === "tower" ? 15 : 0) +
+            (t.terrain === "bunker" ? 12 : 0) +
+            (t.terrain === "bush" ? 10 : 0);
+          return scoreT(b) - scoreT(a);
+        });
+        steps.push({ kind: "move", to: kiteCandidates[0].coord });
+        simX = kiteCandidates[0].x;
+        simY = kiteCandidates[0].y;
+        continue;
+      }
+    }
+
+    const attackable = enemies.filter((e) => {
+      const d = chebyshevDist(simX, simY, e.x!, e.y!);
+      const maxR = simGrenades > 0 ? Math.max(wRange, 2) : wRange;
+      return d <= maxR;
+    });
+
+    if (attackable.length > 0) {
+      // Pick lowest HP+shield target
+      attackable.sort(
         (a, b) =>
           a.hp +
           a.shield -
           (simDamageTaken[a.seat] || 0) -
           (b.hp + b.shield - (simDamageTaken[b.seat] || 0)),
       );
+      const tgt = attackable[0];
+      const d = chebyshevDist(simX, simY, tgt.x!, tgt.y!);
+      const useGrenade =
+        simGrenades > 0 &&
+        d <= 2 &&
+        (getTile(p, tgt.x!, tgt.y!)?.terrain === "bunker" ||
+          WEAPONS[ag.weapon].damage < 40);
+      if (useGrenade) simGrenades -= 1;
+      else if (ag.weapon !== "fists" && simAmmo > 0) simAmmo -= 1;
 
-    if (enemiesInRange.length > 0) {
-      const target = enemiesInRange[0];
-      const useGrenade = ag.grenades > 0 && apIndex === 0;
-      const estDmg = useGrenade ? 44 : WEAPONS[ag.weapon].damage;
-      simDamageTaken[target.seat] =
-        (simDamageTaken[target.seat] || 0) + estDmg;
+      const estDmg = useGrenade
+        ? 44
+        : computeWeaponDamage(simAmmo >= 0 ? ag.weapon : "fists", d).baseDamage;
+      simDamageTaken[tgt.seat] = (simDamageTaken[tgt.seat] || 0) + estDmg;
       steps.push({
         kind: "attack",
-        target: target.seat,
-        useGrenade,
+        target: tgt.seat,
+        ...(useGrenade ? { useGrenade: true } : {}),
       });
-      radio =
-        target.hp <= 40
-          ? `锁定残血 ${target.seat}，直接带走！`
-          : `发现 ${target.seat}，果断压枪开火！`;
       continue;
     }
 
-    // 5. Move toward nearest Airdrop, Supply Crate inside safe zone, or stormCenter
-    const targetTiles = p.tiles.filter(
-      (t) =>
-        !isInStorm(p, t.x, t.y) &&
-        (t.x !== simX || t.y !== simY) &&
-        (t.crate === "airdrop" || t.crate === "supply" || t.terrain === "base"),
-    );
-
-    let goalX = p.stormCenter.x;
-    let goalY = p.stormCenter.y;
-    if (targetTiles.length > 0) {
-      targetTiles.sort(
-        (a, b) =>
-          chebyshevDist(simX, simY, a.x, a.y) -
-          chebyshevDist(simX, simY, b.x, b.y),
+    // Priority 5: If first AP, move toward nearest supply/airdrop crate or safe zone center
+    if (ap === 0) {
+      const neighbors = getNeighbors(simX, simY).filter(
+        (t) => !isInStorm(p, t.x, t.y),
       );
-      goalX = targetTiles[0].x;
-      goalY = targetTiles[0].y;
+      const pool = neighbors.length > 0 ? neighbors : getNeighbors(simX, simY);
+      const scored = pool.map((t) => {
+        let s = 0;
+        if (t.crate === "airdrop") s += 50;
+        else if (t.crate === "supply" || t.crate === "deathbox") s += 25;
+        if (t.terrain === "tower") s += 12;
+        if (t.terrain === "bunker") s += 10;
+        if (t.terrain === "bush") s += 8;
+        const dCenter = chebyshevDist(
+          t.x,
+          t.y,
+          p.stormCenter.x,
+          p.stormCenter.y,
+        );
+        s -= dCenter * 5;
+        return { tile: t, s };
+      });
+      scored.sort((a, b) => b.s - a.s);
+      if (scored[0]) {
+        steps.push({ kind: "move", to: scored[0].tile.coord });
+        simX = scored[0].tile.x;
+        simY = scored[0].tile.y;
+        continue;
+      }
     }
 
-    const dx = Math.sign(goalX - simX);
-    const dy = Math.sign(goalY - simY);
-    const nextX = Math.max(0, Math.min(p.gridWidth - 1, simX + dx));
-    const nextY = Math.max(0, Math.min(p.gridHeight - 1, simY + dy));
-
-    if (nextX !== simX || nextY !== simY) {
-      simX = nextX;
-      simY = nextY;
-      steps.push({ kind: "move", to: toCoord(simX, simY) });
-    } else {
-      steps.push({ kind: "guard" });
-      radio = "占住有利地形架枪，坐山观虎斗！";
-      break;
-    }
-  }
-
-  if (steps.length === 0) {
+    // Priority 6: End turn with Guard (Overwatch)
     steps.push({ kind: "guard" });
+    break;
   }
-  return { steps, radio };
+
+  const hasAttack = steps.some((st) => st.kind === "attack");
+  const hasHeal = steps.some((st) => st.kind === "heal");
+  const hasLoot = steps.some((st) => st.kind === "loot");
+
+  const radio = hasAttack
+    ? "锁定目标，拉开最佳射程火力压制！"
+    : hasHeal
+      ? "掩体后打药修甲，谁也别想偷袭我！"
+      : hasLoot
+        ? "装备与弹药补给完毕，向安全区中心推进！"
+        : "卡住安全区有利地形架枪警戒！";
+
+  // Propose a private whisper alliance if 3+ players are alive
+  let whisper: WhisperInput | undefined;
+  const rivals = p.aliveSeats.filter((s) => s !== seat);
+  if (rivals.length >= 2) {
+    const sortedByThreat = [...rivals].sort(
+      (a, b) =>
+        p.agents[b].hp +
+        p.agents[b].shield +
+        p.agents[b].kills * 30 -
+        (p.agents[a].hp + p.agents[a].shield + p.agents[a].kills * 30),
+    );
+    const leader = sortedByThreat[0];
+    const allyCandidate = sortedByThreat[sortedByThreat.length - 1];
+    if (allyCandidate && leader && allyCandidate !== leader) {
+      whisper = {
+        to: allyCandidate,
+        message: `${leader} 目前状态最强，我们先互不侵犯，优先集火淘汰 ${leader}！`,
+      };
+    }
+  }
+
+  const note = `当前坐标 ${toCoord(simX, simY)}，武器 ${ag.weapon.toUpperCase()}(余弹 ${simAmmo})，安全区中心 ${p.stormCenter.coord}(R=${p.stormRadius})。`;
+
+  return { steps, radio, whisper, note };
 }

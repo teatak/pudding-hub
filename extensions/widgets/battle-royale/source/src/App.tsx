@@ -505,6 +505,7 @@ export default function App() {
   const [godView, setGodView] = useState(false);
   const [useGrenadeMode, setUseGrenadeMode] = useState(false);
   const [draftRadio, setDraftRadio] = useState("");
+  const [whisperTarget, setWhisperTarget] = useState<"public" | Seat>("public");
 
   const prevRoundRef = useRef<number>(l.round);
   const prevStepRef = useRef<number>(p.stepCount);
@@ -735,6 +736,18 @@ export default function App() {
     });
   }
 
+  function buildCommsPayload() {
+    const text = draftRadio.trim();
+    if (!text) return { radio: undefined, whisper: undefined };
+    if (whisperTarget !== "public" && whisperTarget !== humanSeat) {
+      return {
+        radio: undefined,
+        whisper: { to: whisperTarget, message: text },
+      };
+    }
+    return { radio: text, whisper: undefined };
+  }
+
   function handleTileClick(coord: string, x: number, y: number) {
     if (busy || !myTurn || !humanSeat) return;
 
@@ -777,6 +790,7 @@ export default function App() {
         );
 
       if (enemyOnTile && dist <= maxRange) {
+        const comms = buildCommsPayload();
         void perform(async (c) => {
           await takeAction(
             {
@@ -787,7 +801,8 @@ export default function App() {
                   useGrenade: useGrenadeMode && meAg.grenades > 0,
                 },
               ],
-              radio: draftRadio.trim() || undefined,
+              radio: comms.radio,
+              whisper: comms.whisper,
               finishTurn: p.turnAp <= 1,
             },
             c,
@@ -800,11 +815,13 @@ export default function App() {
 
       // If clicking current tile -> loot crate!
       if (dist === 0) {
+        const comms = buildCommsPayload();
         void perform(async (c) => {
           await takeAction(
             {
               steps: [{ kind: "loot" }],
-              radio: draftRadio.trim() || undefined,
+              radio: comms.radio,
+              whisper: comms.whisper,
               finishTurn: p.turnAp <= 1,
             },
             c,
@@ -816,11 +833,13 @@ export default function App() {
 
       // If clicking adjacent tile -> move 1 step (consuming 1 AP)!
       if (dist === 1) {
+        const comms = buildCommsPayload();
         void perform(async (c) => {
           await takeAction(
             {
               steps: [{ kind: "move", to: coord }],
-              radio: draftRadio.trim() || undefined,
+              radio: comms.radio,
+              whisper: comms.whisper,
               finishTurn: p.turnAp <= 1,
             },
             c,
@@ -838,11 +857,13 @@ export default function App() {
       | { kind: "guard" },
   ) {
     if (busy || !myTurn || !humanSeat || !run || !humanPart) return;
+    const comms = buildCommsPayload();
     void perform(async (c) => {
       await takeAction(
         {
           steps: [step],
-          radio: draftRadio.trim() || undefined,
+          radio: comms.radio,
+          whisper: comms.whisper,
           finishTurn: step.kind === "guard" || p.turnAp <= 1,
         },
         c,
@@ -862,15 +883,26 @@ export default function App() {
     const visibleToObserver =
       godView ||
       isFinished ||
-      l.phase !== "combat" ||
-      !observerAgent?.alive ||
-      canAgentSeeAgent(p, observerSeat, seat);
+      seat === observerSeat ||
+      (l.phase === "combat" &&
+        (!observerAgent?.alive || canAgentSeeAgent(p, observerSeat, seat)));
 
     const hpPercent = Math.max(0, Math.min(100, Math.round((ag.hp / ag.maxHp) * 100)));
     const shieldPercent =
       ag.maxShield > 0
         ? Math.max(0, Math.min(100, Math.round((ag.shield / ag.maxShield) * 100)))
         : 0;
+
+    const latestWhisper = (p.whisperLogs || [])
+      .filter(
+        (w) =>
+          (w.fromSeat === seat || w.toSeat === seat) &&
+          (godView ||
+            isFinished ||
+            w.fromSeat === observerSeat ||
+            w.toSeat === observerSeat),
+      )
+      .at(-1);
 
     return (
       <article
@@ -892,10 +924,18 @@ export default function App() {
               <strong className="br-agent-name" title={info.name}>
                 {info.name}
               </strong>
-              <span className="br-kill-badge" title="Kills">
-                <Skull size={11} />
-                {ag.kills}
-              </span>
+              <div className="br-agent-badges">
+                <span
+                  className="br-iq-badge"
+                  title={t("iqBadge", { score: ag.tacticalScore || 0 })}
+                >
+                  ⚡{ag.tacticalScore || 0}
+                </span>
+                <span className="br-kill-badge" title="Kills">
+                  <Skull size={11} />
+                  {ag.kills}
+                </span>
+              </div>
             </div>
 
             <div className="br-agent-sub-row">
@@ -903,10 +943,17 @@ export default function App() {
                 <span className="br-weapon-pill">
                   <Swords size={11} />
                   {weaponLabel(ag.weapon)}
+                  {ag.weapon !== "fists" ? ` · ${ag.ammo}/${ag.maxAmmo}` : ""}
                 </span>
               ) : (
                 <span className="br-out-pill">
                   {t("statusEliminated", { rank: ag.placement || "-" })}
+                </span>
+              )}
+
+              {ag.alive && ag.spawnProtected && l.phase === "combat" && (
+                <span className="br-spawn-pill" title={t("spawnShieldBadge")}>
+                  🛡️-40%
                 </span>
               )}
 
@@ -947,9 +994,18 @@ export default function App() {
           </div>
         </div>
 
-        {/* Fixed-Height Radio & Tactical Log Slot */}
+        {/* Fixed-Height Radio, Encrypted Whisper & Tactical Log Slot */}
         <div className="br-agent-radio-slot">
-          {ag.lastRadio ? (
+          {latestWhisper && latestWhisper.fromSeat === seat ? (
+            <p
+              className="br-whisper-quote"
+              title={`[密电 ➔ ${seatShortLabel(latestWhisper.toSeat)}] ${latestWhisper.text}`}
+            >
+              <span>
+                🔒➔{seatShortLabel(latestWhisper.toSeat)}: “{latestWhisper.text}”
+              </span>
+            </p>
+          ) : ag.lastRadio ? (
             <p className="br-radio-quote" title={ag.lastRadio}>
               <Radio size={11} className="br-radio-icon" />
               <span>“{ag.lastRadio}”</span>
@@ -959,7 +1015,7 @@ export default function App() {
               {ag.lastActionSummary}
             </p>
           ) : (
-            <p className="br-action-placeholder">等待空降指令...</p>
+            <p className="br-action-placeholder">等待盲降指令...</p>
           )}
         </div>
 
@@ -1138,6 +1194,7 @@ export default function App() {
                         getPlayerInfo(p.winner).name
                       }`,
                       kills: p.agents[p.winner]?.kills || 0,
+                      score: p.agents[p.winner]?.tacticalScore || 0,
                     })
                   : p.lastEvent
                     ? p.lastEvent.summary
@@ -1235,7 +1292,7 @@ export default function App() {
                     !observerAgent?.alive ||
                     canAgentSeeTile(p, observerSeat, tile.x, tile.y);
 
-                  // Operatives standing on this tile that are visible to the current view
+                  // Operatives standing on this tile that are visible to the current view (honors Blind Drop during dropping)
                   const agentsOnTile = p.aliveSeats
                     .map((s) => p.agents[s])
                     .filter(
@@ -1245,9 +1302,10 @@ export default function App() {
                         a.y === tile.y &&
                         (godView ||
                           isFinished ||
-                          l.phase !== "combat" ||
-                          !observerAgent?.alive ||
-                          canAgentSeeAgent(p, observerSeat, a.seat)),
+                          a.seat === observerSeat ||
+                          (l.phase === "combat" &&
+                            (!observerAgent?.alive ||
+                              canAgentSeeAgent(p, observerSeat, a.seat)))),
                     );
 
                   // Sound ping on this tile if in fog
@@ -1469,6 +1527,24 @@ export default function App() {
                     <span>{t("actGuard")}</span>
                   </button>
 
+                  <select
+                    className="br-whisper-select"
+                    value={whisperTarget}
+                    onChange={(e) =>
+                      setWhisperTarget(e.target.value as "public" | Seat)
+                    }
+                  >
+                    <option value="public">{t("whisperPublicOpt")}</option>
+                    {p.aliveSeats
+                      .filter((s) => s !== humanSeat)
+                      .map((s) => (
+                        <option key={s} value={s}>
+                          {t("whisperToPrefix")}
+                          {seatShortLabel(s)}
+                        </option>
+                      ))}
+                  </select>
+
                   <input
                     type="text"
                     className="br-radio-input"
@@ -1490,6 +1566,7 @@ export default function App() {
                           getPlayerInfo(p.winner).name
                         }`,
                         kills: p.agents[p.winner]?.kills || 0,
+                        score: p.agents[p.winner]?.tacticalScore || 0,
                       })}
                     </strong>
                     <button

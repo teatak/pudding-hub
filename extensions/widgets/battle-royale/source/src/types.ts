@@ -18,6 +18,9 @@ export interface WeaponSpec {
   id: WeaponId;
   damage: number;
   range: number;
+  optimalMinRange: number;
+  closeRangeMultiplier: number; // Multiplier when dist < optimalMinRange (e.g. 0.5 for Sniper at dist=1)
+  maxAmmo: number; // 99 for fists
   visionBonus: number;
   soundRange: number;
   tier: number;
@@ -44,15 +47,20 @@ export interface AgentState {
   maxShield: number;
   armorLevel: 0 | 1 | 2 | 3;
   weapon: WeaponId;
+  ammo: number;
+  maxAmmo: number;
   medkits: number;
   grenades: number;
   guarding: boolean;
+  spawnProtected: boolean; // True until the agent takes their first combat turn (reduces incoming damage by 40%)
   kills: number;
   damageDealt: number;
+  tacticalScore: number; // Composite intelligence score (optimal range hits, bush/tower/bunker mastery, storm avoidance, kills)
   placement: number | null; // 1 = Winner, 2..6
   eliminatedBy: string | null; // Seat or "storm"
   eliminatedCycle: number | null;
   lastRadio: string | null;
+  tacticalNote: string | null; // Private reasoning scratchpad visible only to this agent
   lastActionSummary: string | null;
 }
 
@@ -80,6 +88,19 @@ export interface RadioLogItem {
   cycle: number;
   seat: Seat;
   text: string;
+}
+
+export interface WhisperLogItem {
+  step: number;
+  cycle: number;
+  fromSeat: Seat;
+  toSeat: Seat;
+  text: string;
+}
+
+export interface WhisperInput {
+  to: Seat;
+  message: string;
 }
 
 export interface BattleEvent {
@@ -130,7 +151,8 @@ export interface BattleRoyalePosition {
   turnStartedAt: number | null;
   activeSeats: Seat[];
   aliveSeats: Seat[];
-  turnOrder: Seat[];
+  dropOrder: Seat[]; // Initial parachute order
+  turnOrder: Seat[]; // Current cycle's snake/rotated combat turn order
   completedTurnSeats: Seat[];
   gridWidth: number; // 8 (A..H)
   gridHeight: number; // 6 (1..6)
@@ -142,6 +164,7 @@ export interface BattleRoyalePosition {
   soundPings: SoundPing[];
   killFeed: KillFeedItem[];
   radioLogs: RadioLogItem[];
+  whisperLogs: WhisperLogItem[];
   lastEvent: BattleEvent | null;
   stepCount: number;
   winner: Seat | null;

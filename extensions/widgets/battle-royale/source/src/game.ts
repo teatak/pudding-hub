@@ -7,6 +7,7 @@ import { z } from "zod";
 import type {
   Seat,
   ActionStepInput,
+  WhisperInput,
   BattleRoyaleLobby,
   BattleRoyalePosition,
 } from "./types";
@@ -17,6 +18,8 @@ import {
   createInitialPosition,
   isBotParticipant,
   WEAPONS,
+  computeWeaponDamage,
+  computeCycleTurnOrder,
   visionRadiusFor,
   attackRangeFor,
   canAgentSeeAgent,
@@ -110,13 +113,13 @@ async function save(l: BattleRoyaleLobby, p: BattleRoyalePosition) {
 }
 
 /**
- * Strictly Fog-of-War isolated view of the battlefield.
- * - During `combat`, an agent ONLY sees tiles within `visionRadiusFor(p, mySeat)`
+ * Strictly Fog-of-War & Privacy isolated view of the battlefield:
+ * - During `dropping`: Blind parachute mode — other agents' landing coordinates and crate consumption
+ *   are kept hidden so later droppers cannot snipe or counter-pick earlier droppers!
+ * - During `combat`: An agent ONLY sees tiles within `visionRadiusFor(p, mySeat)`
  *   and ONLY sees enemies where `canAgentSeeAgent(p, mySeat, enemy)` is true!
- * - Enemies hiding in a Stealth Bush ("bush" > 1 tile away) or outside vision range
- *   are NEVER exposed.
- * - Gunfire, explosions, and airdrops outside vision range are reported as directional
- *   acoustic bearings (`acousticPings`).
+ * - `privateWhispers` ONLY includes whispers sent by or to `mySeat` (unless the game is finished).
+ * - `myStatus.tacticalNote` is ONLY visible to `mySeat`.
  */
 export function describeRadarFor(
   l: BattleRoyaleLobby,
@@ -128,12 +131,24 @@ export function describeRadarFor(
   const isFinished = l.phase === "finished" && Boolean(p.winner);
   const myAgent = mySeat ? p.agents[mySeat] : null;
 
+  // During blind dropping, restore crate display on tiles where OTHER players landed so no one can deduce landing spots
+  const otherDroppedCoords = new Set(
+    l.phase === "dropping"
+      ? p.activeSeats
+          .filter((s) => s !== mySeat && p.agents[s]?.dropped && p.agents[s]?.coord)
+          .map((s) => p.agents[s].coord!)
+      : [],
+  );
+
   const visibleTiles =
     l.phase === "dropping" || isFinished
       ? p.tiles.map((tile) => ({
           coord: tile.coord,
           terrain: tile.terrain,
-          crate: tile.crate,
+          crate:
+            l.phase === "dropping" && otherDroppedCoords.has(tile.coord)
+              ? ("supply" as const)
+              : tile.crate,
           inStorm: isInStorm(p, tile.x, tile.y),
         }))
       : mySeat && myAgent && myAgent.alive
@@ -153,20 +168,30 @@ export function describeRadarFor(
           .filter((s) => s !== mySeat && canAgentSeeAgent(p, mySeat, s))
           .map((s) => {
             const e = p.agents[s];
+            const dist =
+              myAgent.x !== null &&
+              myAgent.y !== null &&
+              e.x !== null &&
+              e.y !== null
+                ? chebyshevDist(myAgent.x, myAgent.y, e.x, e.y)
+                : 1;
+            const estDmg = computeWeaponDamage(
+              myAgent.weapon !== "fists" && myAgent.ammo <= 0
+                ? "fists"
+                : myAgent.weapon,
+              dist,
+            );
             return {
               seat: s,
               coord: e.coord,
-              distance:
-                myAgent.x !== null &&
-                myAgent.y !== null &&
-                e.x !== null &&
-                e.y !== null
-                  ? chebyshevDist(myAgent.x, myAgent.y, e.x, e.y)
-                  : null,
+              distance: dist,
               hp: e.hp,
               shield: e.shield,
               weapon: e.weapon,
               guarding: e.guarding,
+              spawnProtected: Boolean(e.spawnProtected),
+              expectedAttackDamage: estDmg.baseDamage,
+              cqbPenaltyIfAttackNow: estDmg.cqbPenaltyApplied,
             };
           })
       : isFinished
@@ -180,19 +205,28 @@ export function describeRadarFor(
               shield: e.shield,
               weapon: e.weapon,
               guarding: e.guarding,
+              spawnProtected: false,
+              expectedAttackDamage: 0,
+              cqbPenaltyIfAttackNow: false,
             };
           })
         : [];
 
-  // Directional acoustic pings for gunfire/explosions/airdrops
+  // Directional acoustic pings for gunfire/explosions/airdrops (hidden during blind dropping)
   const acousticPings =
+    l.phase === "combat" &&
     mySeat &&
     myAgent &&
     myAgent.alive &&
     myAgent.x !== null &&
     myAgent.y !== null
       ? p.soundPings
-          .filter((ping) => ping.cycle >= p.cycle - 1 && ping.sourceSeat !== mySeat)
+          .filter(
+            (ping) =>
+              ping.kind !== "drop" &&
+              ping.cycle >= p.cycle - 1 &&
+              ping.sourceSeat !== mySeat,
+          )
           .slice(-6)
           .map((ping) => {
             const dist = chebyshevDist(myAgent.x!, myAgent.y!, ping.x, ping.y);
@@ -216,6 +250,27 @@ export function describeRadarFor(
           })
       : [];
 
+  // Encrypted 1-on-1 whispers: strictly visible ONLY to sender or recipient (or after match finishes)
+  const privateWhispers = (p.whisperLogs || [])
+    .filter(
+      (w) =>
+        isFinished ||
+        (mySeat && (w.fromSeat === mySeat || w.toSeat === mySeat)),
+    )
+    .slice(-10);
+
+  const baseDropOrder = p.dropOrder?.length ? p.dropOrder : p.activeSeats;
+  const cycle1CombatOrder = computeCycleTurnOrder(
+    baseDropOrder,
+    p.aliveSeats,
+    1,
+  );
+  const nextCycleCombatOrder = computeCycleTurnOrder(
+    baseDropOrder,
+    p.aliveSeats,
+    l.phase === "dropping" ? 1 : p.cycle + 1,
+  );
+
   const snapshot = {
     round: l.round,
     phase: l.phase,
@@ -224,6 +279,13 @@ export function describeRadarFor(
     turnAp: p.turnAp,
     yourSeat: mySeat ?? null,
     yourTurn: Boolean(mySeat && p.turn === mySeat && !p.winner),
+    turnOrderInfo: {
+      currentPhaseOrder: p.turnOrder,
+      cycle1CombatOrder,
+      nextCycleCombatOrder,
+      balanceRule:
+        "盲降跳伞落点全员保密；第1轮战斗按跳伞逆序行动（后跳者先动），后续轮次按蛇形轮转，且第1轮未行动者享有40%减伤空降护盾。",
+    },
     grid: {
       columns: "A–H (8 columns)",
       rows: "1–6 (6 rows)",
@@ -253,20 +315,28 @@ export function describeRadarFor(
             maxShield: myAgent.maxShield,
             armorLevel: myAgent.armorLevel,
             weapon: myAgent.weapon,
+            ammo: myAgent.ammo,
+            maxAmmo: myAgent.maxAmmo,
             weaponDamage: WEAPONS[myAgent.weapon].damage,
+            optimalMinRange: WEAPONS[myAgent.weapon].optimalMinRange,
+            closeRangeMultiplier: WEAPONS[myAgent.weapon].closeRangeMultiplier,
             attackRange: attackRangeFor(p, mySeat, false),
             visionRadius: visionRadiusFor(p, mySeat),
             medkits: myAgent.medkits,
             grenades: myAgent.grenades,
             guarding: myAgent.guarding,
+            spawnProtected: Boolean(myAgent.spawnProtected),
             kills: myAgent.kills,
             damageDealt: myAgent.damageDealt,
+            tacticalScore: myAgent.tacticalScore,
+            tacticalNote: myAgent.tacticalNote ?? null,
             placement: myAgent.placement ?? null,
           }
         : null,
     visibleTiles,
     visibleEnemies,
     acousticPings,
+    privateWhispers,
     roster: Object.fromEntries(
       p.activeSeats.map((s) => {
         const pid = l.seats[s];
@@ -283,7 +353,9 @@ export function describeRadarFor(
             name: partName,
             isBot,
             alive: ag.alive,
+            spawnProtected: Boolean(ag.spawnProtected),
             kills: ag.kills,
+            tacticalScore: ag.tacticalScore,
             placement: ag.placement ?? null,
             lastRadio: ag.lastRadio ?? null,
           },
@@ -563,7 +635,7 @@ export const changeReadiness = (ready: boolean, context: InteractionContext) =>
   });
 
 export const dropIn = (
-  input: { coord: string; radio?: string },
+  input: { coord: string; radio?: string; note?: string },
   context: InteractionContext,
 ) =>
   change(async () => {
@@ -572,7 +644,14 @@ export const dropIn = (
     const p = position();
     const mySeat = seatForParticipant(l, who.id);
     if (!mySeat) throw new Error("You do not occupy an active seat in this round");
-    const res = applyDropIn(l, p, mySeat, input.coord, input.radio);
+    const res = applyDropIn(
+      l,
+      p,
+      mySeat,
+      input.coord,
+      input.radio,
+      input.note,
+    );
     await save(res.lobby, res.position);
     await publish();
     return describeRadarFor(res.lobby, res.position, who.id);
@@ -582,6 +661,8 @@ export const takeAction = (
   input: {
     steps: ActionStepInput[];
     radio?: string;
+    whisper?: WhisperInput;
+    note?: string;
     finishTurn?: boolean;
   },
   context: InteractionContext,
@@ -599,6 +680,8 @@ export const takeAction = (
       input.steps,
       input.radio,
       input.finishTurn !== false,
+      input.whisper,
+      input.note,
     );
     await save(res.lobby, res.position);
     await publish();
@@ -619,12 +702,24 @@ export const stepBotTurn = () =>
 
     let res: { lobby: BattleRoyaleLobby; position: BattleRoyalePosition };
     if (l.phase === "dropping") {
-      const { coord, radio } = chooseBotDrop(p, p.turn);
-      res = applyDropIn(l, p, p.turn, coord, radio);
+      const { coord, radio, note } = chooseBotDrop(p, p.turn);
+      res = applyDropIn(l, p, p.turn, coord, radio, note);
     } else {
       try {
-        const { steps, radio } = chooseBotCombatAction(p, p.turn);
-        res = applyCombatAction(l, p, p.turn, steps, radio, true);
+        const { steps, radio, whisper, note } = chooseBotCombatAction(
+          p,
+          p.turn,
+        );
+        res = applyCombatAction(
+          l,
+          p,
+          p.turn,
+          steps,
+          radio,
+          true,
+          whisper,
+          note,
+        );
       } catch {
         res = applyCombatAction(l, p, p.turn, [{ kind: "guard" }], null, true);
       }
@@ -678,6 +773,13 @@ const stepSchema = z.discriminatedUnion("kind", [
     .strict(),
 ]);
 
+const whisperSchema = z
+  .object({
+    to: z.enum(["Seat1", "Seat2", "Seat3", "Seat4", "Seat5", "Seat6"]),
+    message: z.string().trim().min(1).max(100),
+  })
+  .strict();
+
 function registerInterfaces() {
   (
     pudding as typeof pudding & { setInstructions?: (text: string) => void }
@@ -703,6 +805,7 @@ function registerInterfaces() {
         .object({
           coord: z.string().trim().min(2).max(4),
           radio: z.string().trim().max(80).optional(),
+          note: z.string().trim().max(200).optional(),
         })
         .strict(),
       run: dropIn,
@@ -714,10 +817,21 @@ function registerInterfaces() {
         .object({
           steps: z.array(stepSchema).min(1).max(2),
           radio: z.string().trim().max(80).optional(),
+          whisper: whisperSchema.optional(),
+          note: z.string().trim().max(200).optional(),
         })
         .strict(),
       run: (i, c) =>
-        takeAction({ steps: i.steps, radio: i.radio, finishTurn: true }, c),
+        takeAction(
+          {
+            steps: i.steps,
+            radio: i.radio,
+            whisper: i.whisper,
+            note: i.note,
+            finishTurn: true,
+          },
+          c,
+        ),
     }),
   ];
 }
