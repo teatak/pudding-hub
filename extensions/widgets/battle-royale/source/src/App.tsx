@@ -261,11 +261,15 @@ function SeatSelectorDropdown({
   value,
   onChange,
   sessions,
+  activeSeats,
+  allSlots,
 }: {
   seat: Seat;
   value: string;
   onChange: (val: string) => void;
   sessions: SessionCandidate[];
+  activeSeats: Seat[];
+  allSlots: Record<Seat, string>;
 }) {
   const [open, setOpen] = useState(false);
   const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
@@ -317,11 +321,19 @@ function SeatSelectorDropdown({
     };
   }, [open]);
 
+  function getOccupiedSeat(id: string): Seat | null {
+    if (!id || id.startsWith("@bot")) return null;
+    const found = activeSeats.find((s) => s !== seat && allSlots[s] === id);
+    return found || null;
+  }
+
   const isMe = value === "@me";
   const isBot = value === "@bot" || value.startsWith("@bot");
   const currentSession = sessions.find(
     (s) => s.id === value || s.participantID === value,
   );
+
+  const meOccupiedBy = getOccupiedSeat("@me");
 
   return (
     <div className="br-select-wrap" ref={wrapRef}>
@@ -376,10 +388,15 @@ function SeatSelectorDropdown({
 
       {open && (
         <div className="br-select-menu" style={menuStyle}>
+          {/* Option: @me (You) */}
           <button
             type="button"
-            className={`br-select-option ${isMe ? "is-selected" : ""}`}
+            disabled={Boolean(meOccupiedBy)}
+            className={`br-select-option ${isMe ? "is-selected" : ""} ${
+              meOccupiedBy ? "is-disabled" : ""
+            }`}
             onClick={() => {
+              if (meOccupiedBy) return;
               onChange("@me");
               setOpen(false);
             }}
@@ -390,12 +407,17 @@ function SeatSelectorDropdown({
               </span>
               <div className="br-select-texts">
                 <strong className="br-select-title">{t("playerYou")}</strong>
-                <small className="br-select-sub">{t("humanSubTag")}</small>
+                <small className="br-select-sub">
+                  {meOccupiedBy
+                    ? `(已分配给 ${seatLabel(meOccupiedBy)})`
+                    : t("humanSubTag")}
+                </small>
               </div>
             </div>
             {isMe && <Check size={14} className="br-select-check" />}
           </button>
 
+          {/* Option: @bot (Built-in Bot) */}
           <button
             type="button"
             className={`br-select-option ${isBot ? "is-selected" : ""}`}
@@ -418,14 +440,22 @@ function SeatSelectorDropdown({
             {isBot && <Check size={14} className="br-select-check" />}
           </button>
 
+          {/* Sessions Options */}
           {sessions.map((sess) => {
             const selected = value === sess.id || value === sess.participantID;
+            const occ =
+              getOccupiedSeat(sess.id) ||
+              (sess.participantID ? getOccupiedSeat(sess.participantID) : null);
             return (
               <button
                 key={sess.id}
                 type="button"
-                className={`br-select-option ${selected ? "is-selected" : ""}`}
+                disabled={Boolean(occ)}
+                className={`br-select-option ${selected ? "is-selected" : ""} ${
+                  occ ? "is-disabled" : ""
+                }`}
                 onClick={() => {
+                  if (occ) return;
                   onChange(sess.id);
                   setOpen(false);
                 }}
@@ -445,7 +475,9 @@ function SeatSelectorDropdown({
                   <div className="br-select-texts">
                     <strong className="br-select-title">{sess.name}</strong>
                     <small className="br-select-sub">
-                      {sess.model?.name || "AI Session"}
+                      {occ
+                        ? `(已分配给 ${seatLabel(occ)})`
+                        : sess.model?.name || "AI Session"}
                     </small>
                   </div>
                 </div>
@@ -458,6 +490,18 @@ function SeatSelectorDropdown({
     </div>
   );
 }
+
+const SEAT_THEMES: Record<
+  Seat,
+  { color: string; bg: string; border: string; glow: string }
+> = {
+  Seat1: { color: "#38bdf8", bg: "rgba(56, 189, 248, 0.18)", border: "#38bdf8", glow: "rgba(56, 189, 248, 0.55)" },
+  Seat2: { color: "#f59e0b", bg: "rgba(245, 158, 11, 0.18)", border: "#f59e0b", glow: "rgba(245, 158, 11, 0.55)" },
+  Seat3: { color: "#a855f7", bg: "rgba(168, 85, 247, 0.18)", border: "#a855f7", glow: "rgba(168, 85, 247, 0.55)" },
+  Seat4: { color: "#22c55e", bg: "rgba(34, 197, 94, 0.18)", border: "#22c55e", glow: "rgba(34, 197, 94, 0.55)" },
+  Seat5: { color: "#06b6d4", bg: "rgba(6, 182, 212, 0.18)", border: "#06b6d4", glow: "rgba(6, 182, 212, 0.55)" },
+  Seat6: { color: "#ec4899", bg: "rgba(236, 72, 153, 0.18)", border: "#ec4899", glow: "rgba(236, 72, 153, 0.55)" },
+};
 
 function terrainShortIcon(ter: TerrainType): string {
   if (ter === "base") return "🏰";
@@ -586,13 +630,25 @@ export default function App() {
     const pool = Array.from(
       new Set([...externals, ...preferred, ...sessions.map((s) => s.id)]),
     );
+
+    const assigned = new Set<string>(["@me"]);
+    const nextSlot = () => {
+      for (const id of pool) {
+        if (!assigned.has(id)) {
+          assigned.add(id);
+          return id;
+        }
+      }
+      return "@bot";
+    };
+
     setPickerSlots({
       Seat1: "@me",
-      Seat2: pool[0] || "@bot",
-      Seat3: pool[1] || "@bot",
-      Seat4: pool[2] || "@bot",
-      Seat5: pool[3] || "@bot",
-      Seat6: pool[4] || "@bot",
+      Seat2: nextSlot(),
+      Seat3: nextSlot(),
+      Seat4: nextSlot(),
+      Seat5: nextSlot(),
+      Seat6: nextSlot(),
     });
   }
 
@@ -940,10 +996,17 @@ export default function App() {
 
             <div className="br-agent-sub-row">
               {ag.alive ? (
-                <span className="br-weapon-pill">
-                  <Swords size={11} />
-                  {weaponLabel(ag.weapon)}
-                  {ag.weapon !== "fists" ? ` · ${ag.ammo}/${ag.maxAmmo}` : ""}
+                <span
+                  className="br-weapon-pill"
+                  title={`${weaponLabel(ag.weapon)}${
+                    ag.weapon !== "fists" ? ` · ${ag.ammo}/${ag.maxAmmo}` : ""
+                  }`}
+                >
+                  <Swords size={10} className="br-wep-icon" />
+                  <span className="br-wep-name">
+                    {weaponLabel(ag.weapon)}
+                    {ag.weapon !== "fists" ? ` · ${ag.ammo}/${ag.maxAmmo}` : ""}
+                  </span>
                 </span>
               ) : (
                 <span className="br-out-pill">
@@ -1232,27 +1295,28 @@ export default function App() {
             ) : null}
 
             {/* Column Letters Header (A..H) */}
-            <div className="br-col-headers" aria-hidden="true">
-              <span className="br-corner-spacer" />
-              {COL_LETTERS.map((col) => (
-                <span key={col} className="br-col-label">
-                  {col}
-                </span>
-              ))}
-            </div>
-
-            <div className="br-grid-body">
-              {/* Row Numbers (1..6) */}
-              <div className="br-row-headers" aria-hidden="true">
-                {[1, 2, 3, 4, 5, 6].map((rNum) => (
-                  <span key={rNum} className="br-row-label">
-                    {rNum}
+            <div className="br-board-box">
+              <div className="br-col-headers" aria-hidden="true">
+                <span className="br-corner-spacer" />
+                {COL_LETTERS.map((col) => (
+                  <span key={col} className="br-col-label">
+                    {col}
                   </span>
                 ))}
               </div>
 
-              {/* 8x6 Tactical Tiles */}
-              <div className="br-tiles-grid">
+              <div className="br-grid-body">
+                {/* Row Numbers (1..6) */}
+                <div className="br-row-headers" aria-hidden="true">
+                  {[1, 2, 3, 4, 5, 6].map((rNum) => (
+                    <span key={rNum} className="br-row-label">
+                      {rNum}
+                    </span>
+                  ))}
+                </div>
+
+                {/* 8x6 Tactical Tiles */}
+                <div className="br-tiles-grid">
                 {/* Animated Bullet / Laser Tracer SVG Overlay */}
                 {tracerPoints && (
                   <svg
@@ -1359,9 +1423,11 @@ export default function App() {
                       type="button"
                       className={`br-tile is-ter-${tile.terrain} ${
                         inStorm ? "is-storm" : "is-safe"
-                      } ${!visibleInFog ? "is-fog" : ""} ${
-                        isMoveTarget ? "is-move-target" : ""
-                      } ${isAttackTarget ? "is-attack-target" : ""}`}
+                      } ${isStormCenter ? "is-storm-center" : ""} ${
+                        !visibleInFog ? "is-fog" : ""
+                      } ${isMoveTarget ? "is-move-target" : ""} ${
+                        isAttackTarget ? "is-attack-target" : ""
+                      }`}
                       title={`${tile.coord} · ${terrainLabel(tile.terrain)}`}
                       onClick={() =>
                         handleTileClick(tile.coord, tile.x, tile.y)
@@ -1372,59 +1438,130 @@ export default function App() {
                         <span className="br-tile-coord">{tile.coord}</span>
                         <span className="br-tile-icons">
                           {isStormCenter && (
-                            <span title="安全区中心">🎯</span>
+                            <span title="安全区中心" className="br-storm-center-marker">
+                              🎯
+                            </span>
                           )}
-                          {terrainShortIcon(tile.terrain)}
+                          {terrainShortIcon(tile.terrain) && (
+                            <span
+                              className="br-ter-icon"
+                              title={terrainLabel(tile.terrain)}
+                            >
+                              {terrainShortIcon(tile.terrain)}
+                            </span>
+                          )}
                         </span>
                       </div>
 
-                      {/* Crate / Airdrop / Acoustic Ping Badge */}
-                      <div className="br-tile-mid">
-                        {visibleInFog && tile.crate === "airdrop" && (
-                          <span className="br-crate-badge is-airdrop">
-                            🪂 空投
+                      {/* Tactical Crates / Airdrops */}
+                      {visibleInFog && tile.crate && (
+                        <div
+                          className={`br-loot-box is-${tile.crate} ${
+                            agentsOnTile.length > 0 ? "is-compact" : "is-prominent"
+                          }`}
+                          title={
+                            tile.crate === "airdrop"
+                              ? "黄金空投箱 (高阶武器与护甲)"
+                              : tile.crate === "supply"
+                                ? "军备补给箱 (弹药与装备)"
+                                : "淘汰战利品盒"
+                          }
+                        >
+                          <div className="br-loot-box-art">
+                            {tile.crate === "airdrop" ? (
+                              <span className="br-airdrop-emoji">🪂</span>
+                            ) : tile.crate === "supply" ? (
+                              <Package size={agentsOnTile.length > 0 ? 12 : 18} />
+                            ) : (
+                              <span className="br-deathbox-emoji">💼</span>
+                            )}
+                          </div>
+                          <span className="br-loot-box-tag">
+                            {tile.crate === "airdrop"
+                              ? "空投"
+                              : tile.crate === "supply"
+                                ? "补给"
+                                : "战利品"}
                           </span>
-                        )}
-                        {visibleInFog && tile.crate === "supply" && (
-                          <span className="br-crate-badge is-supply">
-                            📦 物资
-                          </span>
-                        )}
-                        {visibleInFog && tile.crate === "deathbox" && (
-                          <span className="br-crate-badge is-deathbox">
-                            ⚰️ 战利品
-                          </span>
-                        )}
-                        {!visibleInFog && recentPing && (
-                          <span className="br-ping-blip">🔊 声纹</span>
-                        )}
-                      </div>
+                        </div>
+                      )}
+
+                      {!visibleInFog && recentPing && (
+                        <div className="br-ping-sonar" title="探测到战场声纹">
+                          <span className="br-sonar-ring" />
+                          <span className="br-sonar-core">🔊</span>
+                        </div>
+                      )}
 
                       {/* Operatives tokens on this tile */}
-                      <div className="br-tile-agents">
+                      <div className={`br-tile-agents count-${agentsOnTile.length}`}>
                         {agentsOnTile.map((ag) => {
                           const pInfo = getPlayerInfo(ag.seat);
                           const isMe = ag.seat === observerSeat;
+                          const theme = SEAT_THEMES[ag.seat];
                           return (
                             <div
                               key={ag.seat}
-                              className={`br-map-token ${
+                              className={`br-board-token ${
                                 isMe ? "is-self" : "is-enemy"
-                              } ${p.turn === ag.seat ? "is-active-turn" : ""}`}
+                              } ${p.turn === ag.seat ? "is-active-turn" : ""} ${
+                                ag.guarding ? "is-guarding" : ""
+                              } ${ag.spawnProtected ? "is-protected" : ""}`}
+                              title={`${seatLabel(ag.seat)} · ${pInfo.name} (${ag.hp}HP, ${weaponLabel(ag.weapon)})`}
                             >
-                              <OperativeAvatar
-                                info={pInfo}
-                                seat={ag.seat}
-                                isWinner={p.winner === ag.seat}
-                                isTurn={p.turn === ag.seat}
-                                isAlive={ag.alive}
-                                size="token"
-                              />
-                              <span
-                                className="br-token-wep"
-                                aria-hidden="true"
-                                data-wep={weaponBadgeCode(ag.weapon)}
-                              />
+                              {/* Active Turn Radar Ring */}
+                              {p.turn === ag.seat && (
+                                <span className="br-token-ping-ring" />
+                              )}
+
+                              {/* Guarding Holo Shield */}
+                              {ag.guarding && (
+                                <div className="br-token-guard-aura" title="架枪防御中">
+                                  <Shield size={11} />
+                                </div>
+                              )}
+
+                              {/* Token Avatar Disc */}
+                              <div
+                                className="br-token-disc"
+                                style={{
+                                  borderColor: theme.border,
+                                  boxShadow: `0 0 10px ${theme.glow}`,
+                                }}
+                              >
+                                <OperativeAvatar
+                                  info={pInfo}
+                                  seat={ag.seat}
+                                  isWinner={p.winner === ag.seat}
+                                  isTurn={p.turn === ag.seat}
+                                  isAlive={ag.alive}
+                                  size="token"
+                                />
+                                <span
+                                  className="br-token-seat-badge"
+                                  style={{
+                                    backgroundColor: theme.border,
+                                  }}
+                                >
+                                  {seatShortLabel(ag.seat)}
+                                </span>
+                              </div>
+
+                              {/* Weapon Tag */}
+                              <div className={`br-token-weapon-badge is-${ag.weapon}`}>
+                                <span className="br-token-wep-code">
+                                  {weaponBadgeCode(ag.weapon)}
+                                </span>
+                                {ag.weapon !== "fists" && (
+                                  <span
+                                    className={`br-token-ammo-text ${
+                                      ag.ammo === 0 ? "is-empty" : ""
+                                    }`}
+                                  >
+                                    {ag.ammo}
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           );
                         })}
@@ -1446,6 +1583,7 @@ export default function App() {
               </div>
             </div>
           </div>
+        </div>
 
           {/* Bottom Tactical Control Dock */}
           <div className="br-control-dock">
@@ -1671,31 +1809,49 @@ export default function App() {
                         setPickerSlots((prev) => ({ ...prev, [seat]: val }))
                       }
                       sessions={candidates?.sessions || []}
+                      activeSeats={seatsForCount(pickerPlayerCount)}
+                      allSlots={pickerSlots}
                     />
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="br-modal-footer">
-              <button
-                type="button"
-                className="br-modal-btn is-ghost"
-                disabled={busy}
-                onClick={() => setPicker(false)}
-              >
-                {t("cancel")}
-              </button>
-              <button
-                type="button"
-                className="br-modal-btn is-confirm"
-                disabled={busy}
-                onClick={handleQuickStart}
-              >
-                <Sparkles size={15} />
-                <span>{t("confirmStart")}</span>
-              </button>
-            </div>
+            {(() => {
+              const activeSeats = seatsForCount(pickerPlayerCount);
+              const nonBots = activeSeats
+                .map((s) => pickerSlots[s])
+                .filter((id) => id && !id.startsWith("@bot"));
+              const hasConflict = new Set(nonBots).size !== nonBots.length;
+              return (
+                <>
+                  {hasConflict && (
+                    <div className="br-modal-warn-text">
+                      ⚠️ 同一会话或“我”不可重复分配给多个特工席位
+                    </div>
+                  )}
+                  <div className="br-modal-footer">
+                    <button
+                      type="button"
+                      className="br-modal-btn is-ghost"
+                      disabled={busy}
+                      onClick={() => setPicker(false)}
+                    >
+                      {t("cancel")}
+                    </button>
+                    <button
+                      type="button"
+                      className="br-modal-btn is-confirm"
+                      disabled={busy || hasConflict}
+                      onClick={handleQuickStart}
+                    >
+                      <Sparkles size={15} />
+                      <span>{t("confirmStart")}</span>
+                    </button>
+                  </div>
+                </>
+              );
+            })()}
           </div>
         </div>
       )}
