@@ -33,31 +33,6 @@
       ]
     },
     {
-      "id": "teatak/pudding-hub/widgets/decision-matrix",
-      "title": {
-        "zh-CN": "决策罗盘",
-        "zh-TW": "決策羅盤",
-        "en": "Decision Matrix"
-      },
-      "description": {
-        "zh-CN": "六顶思考帽多视角决策罗盘，汇聚事实、收益、风险与直觉，自动收敛行动矩阵与建议清单。",
-        "zh-TW": "六頂思考帽多視角決策羅盤，匯聚事實、收益、風險與直覺，自動收斂行動矩陣與建議清單。",
-        "en": "Multi-perspective decision matrix based on Six Thinking Hats, distilling facts, gains, risks, and gut feelings into clear action plans."
-      },
-      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYmdHcmFkIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzFFMjkzQiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwRjE3MkEiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9Im5lZWRsZU5vcnRoIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzM4QkRGOCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMyNTYzRUIiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9Im5lZWRsZVNvdXRoIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI0Y1OUUwQiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNEOTc3MDYiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgoKICA8IS0tIOiDjOaZr+W6leadvyAtLT4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI4IiBmaWxsPSJ1cmwoI2JnR3JhZCkiLz4KICA8cmVjdCB4PSIxIiB5PSIxIiB3aWR0aD0iMTI2IiBoZWlnaHQ9IjEyNiIgcng9IjI3IiBmaWxsPSJub25lIiBzdHJva2U9IiMzMzQxNTUiIHN0cm9rZS13aWR0aD0iMiIvPgoKICA8IS0tIOWkluWbtOe9l+ebmOWIu+W6puWciCAtLT4KICA8Y2lyY2xlIGN4PSI2NCIgY3k9IjY0IiByPSI0OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMUUyOTNCIiBzdHJva2Utd2lkdGg9IjYiLz4KICA8Y2lyY2xlIGN4PSI2NCIgY3k9IjY0IiByPSI0NiIgZmlsbD0iIzBCMEYxNyIgc3Ryb2tlPSIjMzhCREY4IiBzdHJva2Utb3BhY2l0eT0iMC4yNSIgc3Ryb2tlLXdpZHRoPSIyIi8+CgogIDwhLS0g5Zub6LGh6ZmQ5b2p6Imy5b6u5YWJ54K5ICjku6PooajkuI3lkIzmgJ3ogIPluL3vvJrnmb3jgIHpu4TjgIHpu5Ev57qi44CB57u/KSAtLT4KICA8IS0tIOWMl++8muiTneW4vee7n+etuSAtLT4KICA8Y2lyY2xlIGN4PSI2NCIgY3k9IjI2IiByPSI0IiBmaWxsPSIjMzhCREY4Ii8+CiAgPCEtLSDkuJzvvJrpu4TluL3mlLbnm4ogLS0+CiAgPGNpcmNsZSBjeD0iMTAyIiBjeT0iNjQiIHI9IjQiIGZpbGw9IiNGQkJGMjQiLz4KICA8IS0tIOWNl++8mue6oi/pu5HluL3lrqHmhY7kuI7nm7Top4kgLS0+CiAgPGNpcmNsZSBjeD0iNjQiIGN5PSIxMDIiIHI9IjQiIGZpbGw9IiNGNDNGNUUiLz4KICA8IS0tIOilv++8mue7v+W4veWIm+aWsCAtLT4KICA8Y2lyY2xlIGN4PSIyNiIgY3k9IjY0IiByPSI0IiBmaWxsPSIjMTBCOTgxIi8+CgogIDwhLS0g572X55uY6L27572R5qC85Y2B5a2X57q/IC0tPgogIDxsaW5lIHgxPSI2NCIgeTE9IjMyIiB4Mj0iNjQiIHkyPSI5NiIgc3Ryb2tlPSIjMUUyOTNCIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1kYXNoYXJyYXk9IjMgMyIvPgogIDxsaW5lIHgxPSIzMiIgeTE9IjY0IiB4Mj0iOTYiIHkyPSI2NCIgc3Ryb2tlPSIjMUUyOTNCIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1kYXNoYXJyYXk9IjMgMyIvPgoKICA8IS0tIOe9l+ebmOS4reW/g+aYn+iKki/mjIfpkoggLS0+CiAgPGcgdHJhbnNmb3JtPSJyb3RhdGUoMjggNjQgNjQpIj4KICAgIDwhLS0g5YyX5ZCR5Yaz562W5oyH6ZKIICjnp5HmioDok50pIC0tPgogICAgPHBvbHlnb24gcG9pbnRzPSI2NCwyOCA3Miw2NCA2NCw2MSA1Niw2NCIgZmlsbD0idXJsKCNuZWVkbGVOb3J0aCkiLz4KICAgIDwhLS0g5Y2X5ZCR5pS255uK5oyH6ZKIICjmmbrmhafph5EpIC0tPgogICAgPHBvbHlnb24gcG9pbnRzPSI2NCwxMDAgNzIsNjQgNjQsNjcgNTYsNjQiIGZpbGw9InVybCgjbmVlZGxlU291dGgpIi8+CiAgICA8IS0tIOS4nOWQkee7v+e+vSAo5a+5562WKSAtLT4KICAgIDxwb2x5Z29uIHBvaW50cz0iMTAwLDY0IDY0LDU2IDY3LDY0IDY0LDcyIiBmaWxsPSIjMTBCOTgxIiBvcGFjaXR5PSIwLjkiLz4KICAgIDwhLS0g6KW/5ZCR55m95769ICjkuovlrp4pIC0tPgogICAgPHBvbHlnb24gcG9pbnRzPSIyOCw2NCA2NCw1NiA2MSw2NCA2NCw3MiIgZmlsbD0iI0UyRThGMCIgb3BhY2l0eT0iMC45Ii8+CiAgPC9nPgoKICA8IS0tIOaguOW/g+i9tOW/g+S4jumrmOWFiSAtLT4KICA8Y2lyY2xlIGN4PSI2NCIgY3k9IjY0IiByPSI4IiBmaWxsPSIjMEYxNzJBIiBzdHJva2U9IiNFMkU4RjAiIHN0cm9rZS13aWR0aD0iMi41Ii8+CiAgPGNpcmNsZSBjeD0iNjQiIGN5PSI2NCIgcj0iMy41IiBmaWxsPSIjMzhCREY4Ii8+Cjwvc3ZnPgo=",
-      "releases": [
-        {
-          "version": "1.0.0",
-          "package": "./decision-matrix/releases/1.0.0/decision-matrix.pudding-widget.json",
-          "packageHash": "9bfff45b1357e6ac67fe54fdca37d93f4eeebf8c472dcb55dd543e11f248da22",
-          "requires": {
-            "protocolVersion": 24,
-            "sdkVersion": "1"
-          }
-        }
-      ]
-    },
-    {
       "id": "teatak/pudding-hub/widgets/doudizhu",
       "title": {
         "zh-CN": "斗地主",
