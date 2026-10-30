@@ -222,7 +222,7 @@ body,
 .br-wing {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-evenly;
   gap: 6px;
 }
 
@@ -859,20 +859,20 @@ body,
 
 /* Terrain Subtle Textures */
 .br-tile.is-ter-base {
-  background: radial-gradient(circle, rgba(180, 83, 9, 0.32) 0%, rgba(120, 53, 15, 0.2) 100%);
-  border-color: rgba(245, 158, 11, 0.25);
+  background: radial-gradient(circle, rgba(180, 83, 9, 0.35) 0%, rgba(120, 53, 15, 0.22) 100%);
+  border-color: rgba(245, 158, 11, 0.28);
 }
 .br-tile.is-ter-tower {
-  background: radial-gradient(circle, rgba(14, 116, 144, 0.32) 0%, rgba(8, 51, 68, 0.2) 100%);
-  border-color: rgba(56, 189, 248, 0.22);
+  background: radial-gradient(circle, rgba(14, 116, 144, 0.35) 0%, rgba(8, 51, 68, 0.25) 100%);
+  border-color: rgba(56, 189, 248, 0.28);
 }
 .br-tile.is-ter-bush {
-  background: rgba(20, 83, 45, 0.32);
-  border-color: rgba(34, 197, 94, 0.18);
+  background: #064e3b;
+  border-color: rgba(34, 197, 94, 0.3);
 }
 .br-tile.is-ter-bunker {
-  background: rgba(51, 65, 85, 0.45);
-  border-color: rgba(148, 163, 184, 0.2);
+  background: rgba(30, 41, 59, 0.65);
+  border-color: rgba(148, 163, 184, 0.3);
 }
 
 /* Electromagnetic Storm (Continuous Deep Radiation Veil across battlefield) */
@@ -1037,16 +1037,43 @@ body,
   }
 }
 
-/* Tactical Crates Presentation (Prominent in Empty Cells, Compact when Occupied) */
+/* Holographic Safe Zone Forcefield & Ballistics FX Layer */
+.br-board-fx-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.br-storm-forcefield {
+  fill: none;
+  stroke: rgba(56, 189, 248, 0.65);
+  stroke-width: 0.65;
+  stroke-dasharray: 2.5 1.5;
+  filter: drop-shadow(0 0 5px rgba(56, 189, 248, 0.6));
+  animation: brForcefieldRotate 18s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes brForcefieldRotate {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: 40;
+  }
+}
+
+/* Tactical Crates Presentation (Pure Micro-models, Zero text noise) */
 .br-loot-box {
   position: relative;
   z-index: 3;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .br-loot-box.is-prominent {
@@ -1055,105 +1082,51 @@ body,
 
 .br-loot-box.is-compact {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 3px;
+  right: 3px;
   transform-origin: top right;
   transform: scale(0.85);
 }
 
-/* Supply Crate (军备物资箱) */
-.br-loot-box.is-supply .br-loot-box-art {
-  width: 28px;
-  height: 24px;
-  border-radius: 6px;
-  background: linear-gradient(135deg, #b45309 0%, #78350f 100%);
-  border: 1.5px solid #fbbf24;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), 0 0 8px rgba(245, 158, 11, 0.35);
+.br-loot-box:hover {
+  transform: translateY(-2px) scale(1.08);
+}
+
+.br-loot-box-art {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fef08a;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.6));
 }
 
-.br-loot-box.is-supply .br-loot-box-tag {
-  font-size: 8.5px;
-  font-weight: 800;
-  padding: 0 4px;
-  border-radius: 4px;
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(245, 158, 11, 0.5);
-  color: #fde047;
-  white-space: nowrap;
-}
-
-/* Golden Airdrop (黄金空投箱) */
 .br-loot-box.is-airdrop .br-loot-box-art {
-  width: 32px;
-  height: 26px;
-  border-radius: 6px;
-  background: linear-gradient(135deg, #dc2626 0%, #991b1b 50%, #1e40af 50%, #1e3a8a 100%);
-  border: 1.5px solid #fde047;
-  box-shadow:
-    0 4px 14px rgba(220, 38, 38, 0.45),
-    0 0 12px rgba(250, 204, 21, 0.65);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: brAirdropHover 1.5s ease-in-out infinite alternate;
+  animation: brAirdropHover 1.6s ease-in-out infinite alternate;
 }
 
 @keyframes brAirdropHover {
   from {
     transform: translateY(0);
-    box-shadow: 0 4px 12px rgba(250, 204, 21, 0.4);
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 6px rgba(250, 204, 21, 0.35));
   }
   to {
     transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(250, 204, 21, 0.85);
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 10px rgba(250, 204, 21, 0.65));
   }
 }
 
-.br-airdrop-emoji {
-  font-size: 15px;
-  line-height: 1;
+.br-airdrop-beacon {
+  animation: brAirdropBeaconPulse 1s ease-in-out infinite alternate;
 }
 
-.br-loot-box.is-airdrop .br-loot-box-tag {
-  font-size: 8.5px;
-  font-weight: 900;
-  padding: 0 5px;
-  border-radius: 4px;
-  background: rgba(153, 27, 27, 0.9);
-  border: 1px solid #fde047;
-  color: #fef08a;
-  letter-spacing: 0.5px;
-}
-
-/* Death Box (战利品淘汰箱) */
-.br-loot-box.is-deathbox .br-loot-box-art {
-  width: 28px;
-  height: 24px;
-  border-radius: 6px;
-  background: linear-gradient(135deg, #334155 0%, #0f172a 100%);
-  border: 1.5px solid #94a3b8;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.55), 0 0 8px rgba(56, 189, 248, 0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.br-deathbox-emoji {
-  font-size: 13px;
-}
-
-.br-loot-box.is-deathbox .br-loot-box-tag {
-  font-size: 8.5px;
-  font-weight: 800;
-  padding: 0 4px;
-  border-radius: 4px;
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(148, 163, 184, 0.4);
-  color: #cbd5e1;
+@keyframes brAirdropBeaconPulse {
+  from {
+    opacity: 0.3;
+    r: 2.5;
+  }
+  to {
+    opacity: 1;
+    r: 4.5;
+  }
 }
 
 /* Sonar Ping Blip */
@@ -1247,22 +1220,45 @@ body,
   }
 }
 
-/* Guarding Holo Shield */
+/* Guarding Holo Shield & Forcefield Perimeter */
 .br-token-guard-aura {
   position: absolute;
-  top: -8px;
+  top: -7px;
   right: -5px;
   z-index: 7;
   width: 17px;
   height: 17px;
   border-radius: 50%;
-  background: rgba(14, 116, 144, 0.9);
-  border: 1px solid #38bdf8;
-  box-shadow: 0 0 8px rgba(56, 189, 248, 0.7);
+  background: rgba(15, 23, 42, 0.95);
+  border: 1.2px solid #38bdf8;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #bae6fd;
+  color: #38bdf8;
+  animation: brGuardPulse 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes brGuardPulse {
+  from {
+    transform: scale(1);
+    box-shadow: 0 0 6px rgba(56, 189, 248, 0.6);
+  }
+  to {
+    transform: scale(1.15);
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.95);
+  }
+}
+
+.br-board-token.is-guarding .br-token-disc::before {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 1.5px dashed #38bdf8;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+  animation: brForcefieldRotate 10s linear infinite;
+  pointer-events: none;
 }
 
 /* Token Avatar Disc */
@@ -1916,5 +1912,28 @@ body,
   font-weight: 600;
   outline: none;
   cursor: pointer;
+}
+
+/* Tactical Inline Icons */
+.br-iq-icon,
+.br-shield-icon,
+.br-turn-icon,
+.br-trophy-icon,
+.br-whisper-icon,
+.br-warn-icon,
+.br-ap-icon {
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.br-winner-pill,
+.br-turn-pill,
+.br-storm-pill,
+.br-alive-pill,
+.br-modal-warn-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 

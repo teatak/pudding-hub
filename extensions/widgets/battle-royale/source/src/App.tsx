@@ -7,6 +7,7 @@ import {
   type SessionCandidate as SDKSessionCandidate,
 } from "@pudding/widget";
 import {
+  AlertTriangle,
   Bot,
   Check,
   ChevronDown,
@@ -15,6 +16,7 @@ import {
   EyeOff,
   Flame,
   HeartPulse,
+  Lock,
   Package,
   Pause,
   Play,
@@ -22,6 +24,7 @@ import {
   RotateCcw,
   Shield,
   ShieldAlert,
+  ShieldCheck,
   Skull,
   Sparkles,
   Swords,
@@ -503,7 +506,7 @@ const SEAT_THEMES: Record<
   Seat6: { color: "#ec4899", bg: "rgba(236, 72, 153, 0.18)", border: "#ec4899", glow: "rgba(236, 72, 153, 0.55)" },
 };
 
-/* Tactical SVG Terrain Micro-Landscapes (Replacing emojis with physical sandtable terrain) */
+/* Tactical SVG Terrain Micro-Landscapes (Seamless physical sandtable terrain) */
 function TerrainBushArt() {
   return (
     <svg
@@ -513,17 +516,33 @@ function TerrainBushArt() {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      <ellipse cx="24" cy="27" rx="19" ry="14" fill="#052E16" fillOpacity="0.75" />
-      <circle cx="16" cy="24" r="10" fill="#14532D" />
-      <circle cx="15" cy="22" r="7" fill="#166534" />
-      <circle cx="32" cy="25" r="9.5" fill="#14532D" />
-      <circle cx="33" cy="23" r="7" fill="#166534" />
-      <circle cx="24" cy="18" r="9" fill="#15803D" />
-      <circle cx="23" cy="16" r="6.5" fill="#22C55E" fillOpacity="0.85" />
-      <circle cx="21" cy="15" r="1.5" fill="#86EFAC" fillOpacity="0.75" />
-      <circle cx="14" cy="21" r="1.5" fill="#86EFAC" fillOpacity="0.6" />
-      <circle cx="34" cy="22" r="1.5" fill="#86EFAC" fillOpacity="0.6" />
-      <circle cx="26" cy="26" r="1.5" fill="#86EFAC" fillOpacity="0.5" />
+      {/* 铺满全格的茂盛草甸底色 */}
+      <rect width="48" height="48" rx="4" fill="#064E3B" fillOpacity="0.65" />
+      {/* 深层丛林阴影层，覆盖四角与边缘 */}
+      <circle cx="10" cy="10" r="12" fill="#022c22" fillOpacity="0.6" />
+      <circle cx="38" cy="10" r="12" fill="#022c22" fillOpacity="0.6" />
+      <circle cx="10" cy="38" r="12" fill="#022c22" fillOpacity="0.6" />
+      <circle cx="38" cy="38" r="12" fill="#022c22" fillOpacity="0.6" />
+      <ellipse cx="24" cy="24" rx="20" ry="18" fill="#064E3B" fillOpacity="0.8" />
+
+      {/* 密集的高草与灌木群落 (填满 48x48 整个方格) */}
+      <circle cx="8" cy="20" r="9" fill="#047857" />
+      <circle cx="20" cy="12" r="10" fill="#065F46" />
+      <circle cx="36" cy="16" r="9.5" fill="#047857" />
+      <circle cx="40" cy="32" r="9" fill="#065F46" />
+      <circle cx="26" cy="38" r="10.5" fill="#047857" />
+      <circle cx="12" cy="36" r="8.5" fill="#065F46" />
+      <circle cx="24" cy="24" r="11" fill="#059669" />
+
+      {/* 草丛前沿灌木层次与高光 */}
+      <circle cx="18" cy="20" r="7" fill="#10B981" fillOpacity="0.75" />
+      <circle cx="30" cy="22" r="6.5" fill="#10B981" fillOpacity="0.75" />
+      <circle cx="24" cy="30" r="6" fill="#34D399" fillOpacity="0.6" />
+
+      {/* 茂密草叶尖刺细节 (遍布整个方格各角) */}
+      <path d="M4 12L7 6L9 13M15 6L17 2L20 7M28 6L31 1L33 6M40 7L43 3L44 9" stroke="#6EE7B7" strokeWidth="1" strokeLinecap="round" />
+      <path d="M5 40L8 45L10 39M21 41L24 47L26 40M34 40L37 46L39 39" stroke="#6EE7B7" strokeWidth="1" strokeLinecap="round" />
+      <path d="M2 24L7 22M46 22L41 24M22 22L24 17L26 22" stroke="#A7F3D0" strokeWidth="1.2" strokeLinecap="round" />
     </svg>
   );
 }
@@ -537,29 +556,44 @@ function TerrainBunkerArt() {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      <rect x="7" y="10" width="34" height="28" rx="6" fill="#1E293B" stroke="#64748B" strokeWidth="1.2" />
-      {/* Fortified Sandbags Outer Line */}
+      {/* 阵地地基钢网与夯土地坪 */}
+      <rect x="2" y="2" width="44" height="44" rx="4" fill="#0F172A" fillOpacity="0.7" stroke="#475569" strokeWidth="1" strokeDasharray="3 2" />
+
+      {/* 外圈层叠双层加固沙袋堑壕 (Sandbag Emplacement) */}
+      <rect x="7" y="6" width="9" height="5" rx="1.5" fill="#92400E" stroke="#D97706" strokeWidth="0.8" />
+      <rect x="17" y="6" width="9" height="5" rx="1.5" fill="#78350F" stroke="#B45309" strokeWidth="0.8" />
+      <rect x="27" y="6" width="9" height="5" rx="1.5" fill="#92400E" stroke="#D97706" strokeWidth="0.8" />
+      <rect x="5" y="12" width="6" height="8" rx="1.5" fill="#78350F" stroke="#B45309" strokeWidth="0.8" />
+      <rect x="5" y="21" width="6" height="8" rx="1.5" fill="#92400E" stroke="#D97706" strokeWidth="0.8" />
+      <rect x="5" y="30" width="6" height="8" rx="1.5" fill="#78350F" stroke="#B45309" strokeWidth="0.8" />
+      <rect x="37" y="12" width="6" height="8" rx="1.5" fill="#78350F" stroke="#B45309" strokeWidth="0.8" />
+      <rect x="37" y="21" width="6" height="8" rx="1.5" fill="#92400E" stroke="#D97706" strokeWidth="0.8" />
+      <rect x="37" y="30" width="6" height="8" rx="1.5" fill="#78350F" stroke="#B45309" strokeWidth="0.8" />
+
+      {/* 倒U型厚重防爆混凝土掩体墙 (Blast Concrete Bunker Wall) */}
       <path
-        d="M9 33C9 21 19 13 33 13"
-        stroke="#B45309"
-        strokeWidth="3.4"
-        strokeDasharray="4 1.5"
+        d="M12 36V16C12 13.5 13.5 12 16 12H32C34.5 12 36 13.5 36 16V36"
+        fill="#1E293B"
+        stroke="#64748B"
+        strokeWidth="3.5"
         strokeLinecap="round"
       />
-      {/* Heavy Armor Parapet */}
+      {/* 掩体防弹装甲胸墙内衬 */}
       <path
-        d="M12 35C12 24 21 16 35 16"
-        stroke="#475569"
-        strokeWidth="2"
+        d="M14 36V17C14 15 15.5 13.5 17.5 13.5H30.5C32.5 13.5 34 15 34 17V36"
+        stroke="#94A3B8"
+        strokeWidth="1.2"
+        strokeLinecap="round"
       />
-      {/* Pillbox Bunker Firing Slit */}
-      <rect x="20" y="19" width="16" height="14" rx="3" fill="#0F172A" stroke="#94A3B8" strokeWidth="1" />
-      <rect x="23" y="24" width="10" height="3" rx="1" fill="#F59E0B" fillOpacity="0.8" />
-      {/* Industrial Armor Rivets */}
-      <circle cx="11" cy="14" r="1.2" fill="#94A3B8" />
-      <circle cx="37" cy="14" r="1.2" fill="#94A3B8" />
-      <circle cx="11" cy="34" r="1.2" fill="#94A3B8" />
-      <circle cx="37" cy="34" r="1.2" fill="#94A3B8" />
+
+      {/* 战术射击孔/观瞄缝 (Gunports / Firing Slits) */}
+      <rect x="18" y="15" width="4" height="2" rx="0.5" fill="#F59E0B" />
+      <rect x="26" y="15" width="4" height="2" rx="0.5" fill="#F59E0B" />
+
+      {/* 掩体中央特工驻立钢板站位 */}
+      <rect x="18" y="24" width="12" height="12" rx="2" fill="#334155" fillOpacity="0.6" stroke="#64748B" strokeWidth="0.8" />
+      {/* 黄黑战术警戒斜纹标线 */}
+      <path d="M12 12L15 15M20 12L23 15M28 12L31 15M33 12L36 15" stroke="#F59E0B" strokeWidth="1" strokeLinecap="round" />
     </svg>
   );
 }
@@ -573,31 +607,150 @@ function TerrainTowerArt() {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      <rect x="8" y="8" width="32" height="32" rx="4" fill="#0C4A6E" fillOpacity="0.4" stroke="#0284C7" strokeWidth="1.2" strokeDasharray="3 2" />
-      <line x1="8" y1="8" x2="40" y2="40" stroke="#0284C7" strokeOpacity="0.3" strokeWidth="0.8" />
-      <line x1="40" y1="8" x2="8" y2="40" stroke="#0284C7" strokeOpacity="0.3" strokeWidth="0.8" />
-      <circle cx="24" cy="24" r="11" stroke="#38BDF8" strokeOpacity="0.35" strokeWidth="1" strokeDasharray="2 2" />
-      <circle cx="24" cy="24" r="6" fill="#0F172A" stroke="#38BDF8" strokeWidth="1.5" />
-      <line x1="24" y1="24" x2="31" y2="17" stroke="#7DD3FC" strokeWidth="1.8" strokeLinecap="round" />
-      <circle cx="24" cy="24" r="2" fill="#FDE047" />
+      {/* 满格科技高导地基与四角防爆基座 */}
+      <rect x="2" y="2" width="44" height="44" rx="4" fill="#082F49" fillOpacity="0.45" stroke="#0284C7" strokeWidth="0.8" strokeDasharray="3 2" />
+
+      {/* 四角桁架钢索地基向中心汇聚 */}
+      <line x1="4" y1="4" x2="16" y2="16" stroke="#0369A1" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="44" y1="4" x2="32" y2="16" stroke="#0369A1" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="4" y1="44" x2="16" y2="32" stroke="#0369A1" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="44" y1="44" x2="32" y2="32" stroke="#0369A1" strokeWidth="1.5" strokeLinecap="round" />
+
+      {/* 360度雷达刻度圆环 */}
+      <circle cx="24" cy="24" r="18" stroke="#0284C7" strokeWidth="1" strokeDasharray="2 3" strokeOpacity="0.6" />
+      <circle cx="24" cy="24" r="12" stroke="#38BDF8" strokeWidth="0.8" strokeOpacity="0.4" />
+
+      {/* 雷达动态扫描扇形光束 */}
+      <path
+        d="M24 24L36 12A18 18 0 0 0 24 6Z"
+        fill="#38BDF8"
+        fillOpacity="0.25"
+      />
+
+      {/* 雷达大型主天线锅体与相控阵馈源 (Radar Dish Emplacement) */}
+      <ellipse cx="24" cy="24" rx="9" ry="7" fill="#0F172A" stroke="#38BDF8" strokeWidth="1.4" />
+      <ellipse cx="24" cy="24" rx="6" ry="4.5" fill="#0369A1" fillOpacity="0.6" stroke="#7DD3FC" strokeWidth="0.8" />
+      {/* 馈源主桅杆与天线头 */}
+      <line x1="24" y1="24" x2="29" y2="17" stroke="#FDE047" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx="29" cy="17" r="1.5" fill="#EF4444" />
+      <circle cx="24" cy="24" r="2.5" fill="#38BDF8" />
     </svg>
   );
 }
 
-function TerrainBaseArt() {
+function TerrainBaseArt({
+  quadrant,
+}: {
+  quadrant?: "top-left" | "top-right" | "bottom-left" | "bottom-right";
+}) {
+  if (!quadrant) {
+    return (
+      <svg className="br-terrain-svg is-base" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="2" y="2" width="44" height="44" rx="4" fill="#78350F" fillOpacity="0.25" stroke="#F59E0B" strokeWidth="1" strokeDasharray="3 2" />
+        <circle cx="24" cy="24" r="15" stroke="#F59E0B" strokeWidth="1.2" strokeDasharray="4 2" />
+        <circle cx="24" cy="24" r="9" fill="#0F172A" stroke="#FDE047" strokeWidth="1.2" />
+        <path d="M20 20V28M28 20V28M20 24H28" stroke="#FDE047" strokeWidth="1.6" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  // 2x2 巨型联合军事停机坪基地一体化拼装
   return (
-    <svg
-      className="br-terrain-svg is-base"
-      viewBox="0 0 48 48"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <rect x="4" y="4" width="40" height="40" rx="4" fill="#78350F" fillOpacity="0.22" stroke="#F59E0B" strokeWidth="1" strokeDasharray="4 2" />
-      <circle cx="24" cy="24" r="14" stroke="#F59E0B" strokeWidth="1.3" strokeDasharray="5 3" />
-      <circle cx="24" cy="24" r="9" fill="#0F172A" stroke="#FDE047" strokeWidth="1.2" />
-      <path d="M20 19V29M28 19V29M20 24H28" stroke="#FDE047" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M4 11L11 4M37 4L44 11M4 37L11 44M37 44L44 37" stroke="#F59E0B" strokeWidth="1.2" strokeOpacity="0.6" />
+    <svg className="br-terrain-svg is-base" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="48" height="48" fill="#78350F" fillOpacity="0.2" />
+
+      {quadrant === "top-left" && (
+        <>
+          <path d="M12 48 A36 36 0 0 1 48 12" stroke="#B45309" strokeWidth="1.5" strokeDasharray="4 2" />
+          <path d="M22 48 A26 26 0 0 1 48 22" stroke="#F59E0B" strokeWidth="1.8" strokeDasharray="5 2.5" />
+          <path d="M33 48 A15 15 0 0 1 48 33" stroke="#FDE047" strokeWidth="1.2" />
+          <path d="M41 37V48M41 48H48" stroke="#FDE047" strokeWidth="2.2" strokeLinecap="round" />
+          <rect x="6" y="6" width="14" height="12" rx="2" fill="#1E293B" stroke="#B45309" strokeWidth="1" />
+          <path d="M6 10L20 10M10 6V18M16 6V18" stroke="#F59E0B" strokeWidth="0.8" strokeOpacity="0.5" />
+          <path d="M4 4L12 4M4 4V12" stroke="#F59E0B" strokeWidth="1.5" />
+        </>
+      )}
+
+      {quadrant === "top-right" && (
+        <>
+          <path d="M0 12 A36 36 0 0 1 36 48" stroke="#B45309" strokeWidth="1.5" strokeDasharray="4 2" />
+          <path d="M0 22 A26 26 0 0 1 26 48" stroke="#F59E0B" strokeWidth="1.8" strokeDasharray="5 2.5" />
+          <path d="M0 33 A15 15 0 0 1 15 48" stroke="#FDE047" strokeWidth="1.2" />
+          <path d="M7 37V48M0 48H7" stroke="#FDE047" strokeWidth="2.2" strokeLinecap="round" />
+          <rect x="28" y="6" width="14" height="12" rx="2" fill="#1E293B" stroke="#B45309" strokeWidth="1" />
+          <path d="M28 10L42 10M32 6V18M38 6V18" stroke="#F59E0B" strokeWidth="0.8" strokeOpacity="0.5" />
+          <path d="M44 4L36 4M44 4V12" stroke="#F59E0B" strokeWidth="1.5" />
+        </>
+      )}
+
+      {quadrant === "bottom-left" && (
+        <>
+          <path d="M48 36 A36 36 0 0 1 12 0" stroke="#B45309" strokeWidth="1.5" strokeDasharray="4 2" />
+          <path d="M48 26 A26 26 0 0 1 22 0" stroke="#F59E0B" strokeWidth="1.8" strokeDasharray="5 2.5" />
+          <path d="M48 15 A15 15 0 0 1 33 0" stroke="#FDE047" strokeWidth="1.2" />
+          <path d="M41 0V11M41 0H48" stroke="#FDE047" strokeWidth="2.2" strokeLinecap="round" />
+          <rect x="6" y="30" width="14" height="12" rx="2" fill="#1E293B" stroke="#B45309" strokeWidth="1" />
+          <path d="M6 34L20 34M10 30V42M16 30V42" stroke="#F59E0B" strokeWidth="0.8" strokeOpacity="0.5" />
+          <path d="M4 44L12 44M4 44V36" stroke="#F59E0B" strokeWidth="1.5" />
+        </>
+      )}
+
+      {quadrant === "bottom-right" && (
+        <>
+          <path d="M0 36 A36 36 0 0 1 36 0" stroke="#B45309" strokeWidth="1.5" strokeDasharray="4 2" />
+          <path d="M0 26 A26 26 0 0 1 26 0" stroke="#F59E0B" strokeWidth="1.8" strokeDasharray="5 2.5" />
+          <path d="M0 15 A15 15 0 0 1 15 0" stroke="#FDE047" strokeWidth="1.2" />
+          <path d="M7 0V11M0 0H7" stroke="#FDE047" strokeWidth="2.2" strokeLinecap="round" />
+          <rect x="28" y="30" width="14" height="12" rx="2" fill="#1E293B" stroke="#B45309" strokeWidth="1" />
+          <path d="M28 34L42 34M32 30V42M38 30V42" stroke="#F59E0B" strokeWidth="0.8" strokeOpacity="0.5" />
+          <path d="M44 44L36 44M44 44V36" stroke="#F59E0B" strokeWidth="1.5" />
+        </>
+      )}
+    </svg>
+  );
+}
+
+/* Micro-Landscape Tactical Crate Vector Arts (Zero emojis, Zero text clutter) */
+function AirdropCrateArt({ compact }: { compact?: boolean }) {
+  const s = compact ? 22 : 28;
+  return (
+    <svg width={s} height={s} viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="3" y="5" width="22" height="18" rx="3" fill="#DC2626" stroke="#FDE047" strokeWidth="1.2" />
+      <path d="M3 14H25V20C25 21.6569 23.6569 23 22 23H6C4.34315 23 3 21.6569 3 20V14Z" fill="#1E3A8A" />
+      <line x1="14" y1="5" x2="14" y2="23" stroke="#FDE047" strokeWidth="1.8" />
+      <line x1="3" y1="14" x2="25" y2="14" stroke="#FDE047" strokeWidth="1.2" />
+      <circle cx="14" cy="5" r="2" fill="#FEF08A" />
+      <circle cx="14" cy="5" r="3.5" stroke="#FEF08A" strokeWidth="0.8" strokeOpacity="0.7" className="br-airdrop-beacon" />
+      <rect x="2" y="4" width="3" height="3" fill="#FDE047" />
+      <rect x="23" y="4" width="3" height="3" fill="#FDE047" />
+      <rect x="2" y="21" width="3" height="3" fill="#FDE047" />
+      <rect x="23" y="21" width="3" height="3" fill="#FDE047" />
+    </svg>
+  );
+}
+
+function SupplyCrateArt({ compact }: { compact?: boolean }) {
+  const s = compact ? 20 : 26;
+  return (
+    <svg width={s} height={s} viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="3" y="4" width="20" height="18" rx="3" fill="#78350F" stroke="#F59E0B" strokeWidth="1.2" />
+      <rect x="5" y="6" width="16" height="14" rx="1.5" fill="#451A03" stroke="#D97706" strokeWidth="0.8" />
+      <rect x="7" y="11" width="3" height="4" rx="0.5" fill="#FDE047" />
+      <rect x="16" y="11" width="3" height="4" rx="0.5" fill="#FDE047" />
+      <path d="M13 8V18M9 13H17" stroke="#FBBF24" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function DeathboxCrateArt({ compact }: { compact?: boolean }) {
+  const s = compact ? 20 : 26;
+  return (
+    <svg width={s} height={s} viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="3" y="4" width="20" height="18" rx="3" fill="#0F172A" stroke="#64748B" strokeWidth="1.2" />
+      <rect x="6" y="8" width="14" height="2" rx="1" fill="#38BDF8" fillOpacity="0.85" />
+      <rect x="10" y="2" width="6" height="3" rx="1" stroke="#94A3B8" strokeWidth="1" fill="none" />
+      <rect x="11" y="14" width="4" height="4" rx="1" fill="#1E293B" stroke="#94A3B8" strokeWidth="0.8" />
+      <circle cx="13" cy="16" r="1" fill="#EF4444" />
     </svg>
   );
 }
@@ -1170,7 +1323,8 @@ export default function App() {
                   className="br-iq-badge"
                   title={t("iqBadge", { score: ag.tacticalScore || 0 })}
                 >
-                  ⚡{ag.tacticalScore || 0}
+                  <Zap size={10} className="br-iq-icon" />
+                  {ag.tacticalScore || 0}
                 </span>
                 <span className="br-kill-badge" title="Kills">
                   <Skull size={11} />
@@ -1201,7 +1355,8 @@ export default function App() {
 
               {ag.alive && ag.spawnProtected && l.phase === "combat" && (
                 <span className="br-spawn-pill" title={t("spawnShieldBadge")}>
-                  🛡️-40%
+                  <Shield size={10} className="br-shield-icon" />
+                  -40%
                 </span>
               )}
 
@@ -1247,10 +1402,11 @@ export default function App() {
           {latestWhisper && latestWhisper.fromSeat === seat ? (
             <p
               className="br-whisper-quote"
-              title={`[密电 ➔ ${seatShortLabel(latestWhisper.toSeat)}] ${latestWhisper.text}`}
+              title={`[密电 → ${seatShortLabel(latestWhisper.toSeat)}] ${latestWhisper.text}`}
             >
+              <Lock size={10} className="br-whisper-icon" />
               <span>
-                🔒➔{seatShortLabel(latestWhisper.toSeat)}: “{latestWhisper.text}”
+                →{seatShortLabel(latestWhisper.toSeat)}: “{latestWhisper.text}”
               </span>
             </p>
           ) : ag.lastRadio ? (
@@ -1340,11 +1496,13 @@ export default function App() {
               </span>
               {isFinished && p.winner ? (
                 <span className="br-winner-pill">
-                  🏆 胜者：{seatShortLabel(p.winner)} · {getPlayerInfo(p.winner).name}
+                  <Trophy size={13} className="br-trophy-icon" />
+                  胜者：{seatShortLabel(p.winner)} · {getPlayerInfo(p.winner).name}
                 </span>
               ) : p.turn && l.phase !== "lobby" ? (
                 <span className="br-turn-pill">
-                  🎯 {seatShortLabel(p.turn)} · {getPlayerInfo(p.turn).name}
+                  <Crosshair size={12} className="br-turn-icon" />
+                  {seatShortLabel(p.turn)} · {getPlayerInfo(p.turn).name}
                   {l.phase === "combat" ? ` (${p.turnAp} AP)` : ""}
                 </span>
               ) : null}
@@ -1482,32 +1640,43 @@ export default function App() {
 
                 {/* 8x8 Tactical Tiles Sandtable */}
                 <div className="br-tiles-grid">
-                {/* Animated Bullet / Laser Tracer SVG Overlay */}
-                {tracerPoints && (
+                  {/* Holographic Safe Zone Forcefield & Ballistics Overlay */}
                   <svg
-                    className="br-tracer-svg"
+                    className="br-board-fx-svg"
                     viewBox="0 0 100 100"
                     preserveAspectRatio="none"
                     aria-hidden="true"
                   >
-                    <line
-                      key={p.stepCount}
-                      x1={tracerPoints.x1}
-                      y1={tracerPoints.y1}
-                      x2={tracerPoints.x2}
-                      y2={tracerPoints.y2}
-                      className={`br-tracer-line ${
-                        ev?.kind === "grenade" ? "is-grenade" : "is-bullet"
-                      }`}
-                    />
+                    {/* Safe Zone Forcefield Ring */}
                     <circle
-                      cx={tracerPoints.x2}
-                      cy={tracerPoints.y2}
-                      r="4"
-                      className="br-impact-ring"
+                      cx={(p.stormCenter.x + 0.5) * 12.5}
+                      cy={(p.stormCenter.y + 0.5) * 12.5}
+                      r={(p.stormRadius + 0.5) * 12.5}
+                      className="br-storm-forcefield"
                     />
+
+                    {/* Animated Bullet / Laser Tracer Line */}
+                    {tracerPoints && (
+                      <>
+                        <line
+                          key={p.stepCount}
+                          x1={tracerPoints.x1}
+                          y1={tracerPoints.y1}
+                          x2={tracerPoints.x2}
+                          y2={tracerPoints.y2}
+                          className={`br-tracer-line ${
+                            ev?.kind === "grenade" ? "is-grenade" : "is-bullet"
+                          }`}
+                        />
+                        <circle
+                          cx={tracerPoints.x2}
+                          cy={tracerPoints.y2}
+                          r="3"
+                          className="br-impact-ring"
+                        />
+                      </>
+                    )}
                   </svg>
-                )}
 
                 {p.tiles.map((tile) => {
                   const inStorm = isInStorm(p, tile.x, tile.y);
@@ -1603,7 +1772,21 @@ export default function App() {
                         {tile.terrain === "bush" && <TerrainBushArt />}
                         {tile.terrain === "bunker" && <TerrainBunkerArt />}
                         {tile.terrain === "tower" && <TerrainTowerArt />}
-                        {tile.terrain === "base" && <TerrainBaseArt />}
+                        {tile.terrain === "base" && (
+                          <TerrainBaseArt
+                            quadrant={
+                              tile.x === 3 && tile.y === 3
+                                ? "top-left"
+                                : tile.x === 4 && tile.y === 3
+                                  ? "top-right"
+                                  : tile.x === 3 && tile.y === 4
+                                    ? "bottom-left"
+                                    : tile.x === 4 && tile.y === 4
+                                      ? "bottom-right"
+                                      : undefined
+                            }
+                          />
+                        )}
                       </div>
 
                       {/* Storm Center Beacon */}
@@ -1620,7 +1803,7 @@ export default function App() {
                         </div>
                       )}
 
-                      {/* Tactical Crates / Airdrops */}
+                      {/* Tactical Crates / Airdrops (Micro-models, Zero text noise) */}
                       {visibleInFog && tile.crate && (
                         <div
                           className={`br-loot-box is-${tile.crate} ${
@@ -1631,25 +1814,18 @@ export default function App() {
                               ? "黄金空投箱 (高阶武器与护甲)"
                               : tile.crate === "supply"
                                 ? "军备补给箱 (弹药与装备)"
-                                : "淘汰战利品盒"
+                                : "战术战利品密封箱"
                           }
                         >
                           <div className="br-loot-box-art">
                             {tile.crate === "airdrop" ? (
-                              <span className="br-airdrop-emoji">🪂</span>
+                              <AirdropCrateArt compact={agentsOnTile.length > 0} />
                             ) : tile.crate === "supply" ? (
-                              <Package size={agentsOnTile.length > 0 ? 12 : 18} />
+                              <SupplyCrateArt compact={agentsOnTile.length > 0} />
                             ) : (
-                              <span className="br-deathbox-emoji">💼</span>
+                              <DeathboxCrateArt compact={agentsOnTile.length > 0} />
                             )}
                           </div>
-                          <span className="br-loot-box-tag">
-                            {tile.crate === "airdrop"
-                              ? "空投"
-                              : tile.crate === "supply"
-                                ? "补给"
-                                : "战利品"}
-                          </span>
                         </div>
                       )}
 
@@ -1782,7 +1958,10 @@ export default function App() {
                 </div>
               ) : l.phase === "combat" ? (
                 <div className="br-hud-inner is-combat">
-                  <span className="br-ap-badge">⚡ {p.turnAp} AP</span>
+                  <span className="br-ap-badge">
+                    <Zap size={11} className="br-ap-icon" />
+                    {p.turnAp} AP
+                  </span>
 
                   <button
                     type="button"
@@ -1968,7 +2147,8 @@ export default function App() {
                 <>
                   {hasConflict && (
                     <div className="br-modal-warn-text">
-                      ⚠️ 同一会话或“我”不可重复分配给多个特工席位
+                      <AlertTriangle size={13} className="br-warn-icon" />
+                      <span>同一会话或“我”不可重复分配给多个特工席位</span>
                     </div>
                   )}
                   <div className="br-modal-footer">

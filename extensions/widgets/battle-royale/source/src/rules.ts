@@ -691,7 +691,7 @@ function executeSingleStep(
       y: dest.y,
       guarding: false,
       tacticalScore: ag.tacticalScore + moveTacticalBonus,
-      lastActionSummary: `移动 ${fromCoord} ➔ ${dest.coord}`,
+      lastActionSummary: `移动 ${fromCoord} → ${dest.coord}`,
     };
     lastEv = {
       step: nextStep,
@@ -1014,7 +1014,7 @@ function executeSingleStep(
         weapon: weaponUsed,
         damage: rawDmg,
         winner: nextAlive.length === 1 ? nextAlive[0] : null,
-        summary: `🔥 ${seat} 使用 [${weaponUsed.toUpperCase()}] 击杀淘汰了 ${
+        summary: `[击杀] ${seat} 使用 [${weaponUsed.toUpperCase()}] 淘汰了 ${
           targetAgent.seat
         }！`,
       };
@@ -1029,7 +1029,7 @@ function executeSingleStep(
         weapon: weaponUsed,
         damage: rawDmg,
         winner: null,
-        summary: `💥 ${seat} 攻击 ${targetAgent.seat} 造成 ${rawDmg} 点伤害${
+        summary: `[交火] ${seat} 攻击 ${targetAgent.seat} 造成 ${rawDmg} 点伤害${
           dmgCalc.cqbPenaltyApplied ? "（远距枪贴脸衰减）" : ""
         }`,
       };
@@ -1099,7 +1099,7 @@ function advanceTurnOrCycle(
           weapon: null,
           damage: null,
           winner: winSeat,
-          summary: `🏆 大吉大利，今晚吃鸡！${winSeat} 成为最终幸存冠军！`,
+          summary: `[胜出] 大吉大利，今晚吃鸡！${winSeat} 成为最终幸存冠军！`,
         },
       },
     };
@@ -1221,7 +1221,7 @@ function advanceTurnOrCycle(
           weapon: null,
           damage: null,
           winner: winSeat,
-          summary: `🏆 大吉大利，今晚吃鸡！${winSeat} 赢得最终胜利！`,
+          summary: `[胜出] 大吉大利，今晚吃鸡！${winSeat} 赢得最终胜利！`,
         },
       },
     };
