@@ -13,6 +13,15 @@ export function setSoundEnabled(val: boolean): void {
   soundEnabled = val;
 }
 
+export function isSoundMuted(): boolean {
+  return !soundEnabled;
+}
+
+export function toggleSoundMute(): boolean {
+  soundEnabled = !soundEnabled;
+  return !soundEnabled;
+}
+
 function getAudioGraph(): { ctx: AudioContext; out: AudioNode } | null {
   if (!soundEnabled || typeof window === "undefined") return null;
   try {
@@ -205,7 +214,7 @@ export function playAttackSound(
     return;
   }
 
-  if (weapon === "sniper" || weapon === "awm") {
+  if (weapon === "sniper") {
     // Piercing supersonic sniper crack + deep sub-bass punch + brass shell ping
     playNoiseBurst(0.05, "highpass", 2600, 6200, 1.5, 0.6, 0);
     playNoiseBurst(0.28, "bandpass", 1400, 240, 1.1, 0.52, 0.01);
@@ -217,20 +226,32 @@ export function playAttackSound(
     return;
   }
 
-  if (weapon === "shotgun") {
-    // Heavy close-quarters shotgun blast + pump rack
-    playNoiseBurst(0.18, "bandpass", 1800, 280, 1.0, 0.58, 0);
-    playTone(190, 38, 0.22, "sawtooth", 0.45, 0);
-    playNoiseBurst(0.04, "highpass", 3000, 4800, 2.0, 0.26, 0.22);
-    return;
-  }
-
   // Default: Assault Rifle / SMG 3-round burst
   for (let i = 0; i < 3; i++) {
     const d = i * 0.065;
     playNoiseBurst(0.055, "bandpass", 2400, 520, 1.3, 0.42, d);
     playTone(240, 52, 0.065, "sawtooth", 0.32, d);
   }
+}
+
+export function playSniperSound(): void {
+  playAttackSound("sniper");
+}
+
+export function playShotgunSound(): void {
+  playAttackSound("rifle");
+}
+
+export function playHitSound(): void {
+  playAttackSound("fists");
+}
+
+export function playExplosionSound(): void {
+  playAttackSound("grenade");
+}
+
+export function playStepSound(): void {
+  playMoveSound();
 }
 
 /**

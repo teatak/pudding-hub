@@ -30,7 +30,6 @@ body,
   user-select: none;
 }
 
-/* Full-Bleed Tactical Command Center Container (Zero Vertical Shift) */
 .br-app {
   position: relative;
   width: 100%;
@@ -47,13 +46,6 @@ body,
       rgba(17, 28, 45, 0.92) 0%,
       rgba(8, 13, 24, 0.98) 68%,
       #04070d 100%
-    ),
-    repeating-linear-gradient(
-      0deg,
-      rgba(56, 189, 248, 0.018) 0px,
-      rgba(56, 189, 248, 0.018) 1px,
-      transparent 1px,
-      transparent 24px
     );
   overflow-x: hidden;
 }
@@ -76,43 +68,45 @@ body,
   max-width: 1040px;
   width: 100%;
   margin: 0 auto;
-  box-sizing: border-box;
 }
 
 .br-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
 }
 
 .br-emblem {
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #fde047;
 }
 
 .br-brand h1 {
-  font-size: 16.5px;
+  font-size: 16px;
   font-weight: 800;
-  letter-spacing: 0.03em;
   background: linear-gradient(135deg, #fef08a 0%, #f59e0b 65%, #fbbf24 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  white-space: nowrap;
 }
 
 .br-status-pills {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-left: 2px;
+  margin-left: 4px;
   flex-wrap: wrap;
-  min-width: 0;
 }
 
 .br-phase-pill,
 .br-alive-pill,
-.br-storm-pill {
+.br-storm-pill,
+.br-turn-pill,
+.br-winner-pill {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -121,7 +115,6 @@ body,
   padding: 2.5px 8px;
   border-radius: 999px;
   white-space: nowrap;
-  line-height: 14px;
 }
 
 .br-phase-pill {
@@ -142,38 +135,42 @@ body,
   color: #7dd3fc;
 }
 
+.br-turn-pill {
+  background: rgba(168, 85, 247, 0.18);
+  border: 1px solid rgba(168, 85, 247, 0.45);
+  color: #d8b4fe;
+}
+
+.br-winner-pill {
+  background: rgba(245, 158, 11, 0.25);
+  border: 1px solid #fde047;
+  color: #fde047;
+}
+
 .br-toolbar {
   display: flex;
   align-items: center;
-  gap: 7px;
-  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .br-top-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  height: 31px;
-  padding: 0 11px;
-  border-radius: 8px;
+  gap: 5px;
+  height: 29px;
+  padding: 0 9px;
+  border-radius: 7px;
   border: 1px solid rgba(148, 163, 184, 0.22);
   background: rgba(30, 41, 59, 0.75);
   color: #e2e8f0;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.16s ease;
 }
 
 .br-top-btn.is-icon {
-  padding: 0 8px;
-}
-
-.br-top-btn:hover:not(:disabled) {
-  border-color: rgba(245, 158, 11, 0.55);
-  background: rgba(51, 65, 85, 0.88);
-  color: #ffffff;
+  padding: 0 7px;
 }
 
 .br-top-btn.is-active {
@@ -188,23 +185,21 @@ body,
   color: #fffbeb;
 }
 
-/* Error Toast */
 .br-error-toast {
   position: absolute;
-  top: 60px;
+  top: 55px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 60;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 7px 14px;
-  border-radius: 10px;
+  padding: 6px 12px;
+  border-radius: 8px;
   background: rgba(127, 29, 29, 0.95);
   border: 1px solid #f87171;
   color: #fef2f2;
-  font-size: 12.5px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+  font-size: 12px;
 }
 
 .br-error-toast button {
@@ -215,7 +210,7 @@ body,
   display: flex;
 }
 
-/* Main 3-Column Tactical Arena (Balanced Operative Wings & Controlled Proportions) */
+/* Main Arena */
 .br-arena {
   position: relative;
   z-index: 5;
@@ -228,7 +223,6 @@ body,
   max-width: 1040px;
   width: 100%;
   margin: 0 auto;
-  box-sizing: border-box;
 }
 
 .br-wing {
@@ -240,17 +234,15 @@ body,
   min-width: 0;
 }
 
-/* Operative Vitality Card (Slim, Fixed 104px Height, Zero Jump) */
+/* Operative Card */
 .br-agent-card {
   position: relative;
-  height: 104px;
-  min-height: 104px;
-  max-height: 104px;
+  height: 96px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 5px 7px;
+  padding: 6px 8px;
   border-radius: 10px;
   background: linear-gradient(
     165deg,
@@ -258,26 +250,23 @@ body,
     rgba(13, 20, 36, 0.97) 100%
   );
   border: 1px solid rgba(148, 163, 184, 0.18);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
   overflow: hidden;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .br-agent-card.is-turn {
   border-color: #fbbf24;
-  box-shadow:
-    0 0 0 1.5px rgba(251, 191, 36, 0.35),
-    0 6px 18px rgba(245, 158, 11, 0.2);
+  box-shadow: 0 0 0 1.5px rgba(251, 191, 36, 0.35);
 }
 
 .br-agent-card.is-winner {
   border-color: #fde047;
-  box-shadow: 0 0 20px rgba(250, 204, 21, 0.35);
+  box-shadow: 0 0 16px rgba(250, 204, 21, 0.35);
 }
 
 .br-agent-card.is-eliminated {
-  opacity: 0.52;
-  filter: saturate(0.35);
+  opacity: 0.45;
+  filter: saturate(0.3);
 }
 
 .br-agent-top {
@@ -286,7 +275,6 @@ body,
   gap: 6px;
 }
 
-/* Operative Avatar */
 .br-avatar-wrap {
   position: relative;
   width: 25px;
@@ -297,38 +285,14 @@ body,
   justify-content: center;
 }
 
-.br-avatar-wrap.is-token {
-  width: 24px;
-  height: 24px;
-}
-
-.br-winner-star-ring {
-  position: absolute;
-  inset: -3px;
-  width: calc(100% + 6px);
-  height: calc(100% + 6px);
-  animation: brSpin 12s linear infinite;
-}
-
-@keyframes brSpin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 .br-avatar-circle {
-  position: relative;
-  z-index: 2;
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: #1e293b;
-  border: 1.5px solid rgba(245, 158, 11, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  color: #fde047;
 }
 
 .br-avatar-img {
@@ -337,19 +301,11 @@ body,
   object-fit: cover;
 }
 
-.br-seat-num-badge {
+.br-avatar-crown {
   position: absolute;
-  bottom: -3px;
-  right: -3px;
-  z-index: 3;
-  padding: 0 3px;
-  border-radius: 4px;
-  background: #0f172a;
-  border: 1px solid rgba(251, 191, 36, 0.65);
+  top: -4px;
+  right: -4px;
   color: #fde047;
-  font-size: 8px;
-  font-weight: 800;
-  line-height: 10px;
 }
 
 .br-agent-meta {
@@ -365,122 +321,76 @@ body,
 }
 
 .br-agent-name {
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 700;
   color: #f8fafc;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-width: 0;
 }
 
-.br-kill-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 1.5px;
-  font-size: 8.5px;
-  font-weight: 700;
-  padding: 0 3px;
-  border-radius: 999px;
-  background: rgba(239, 68, 68, 0.18);
-  border: 1px solid rgba(248, 113, 113, 0.4);
-  color: #fca5a5;
-  flex-shrink: 0;
+.br-seat-pill {
+  font-size: 9px;
+  font-weight: 800;
 }
 
-.br-agent-sub-row {
+.br-agent-tags {
   display: flex;
   align-items: center;
-  gap: 3px;
-  margin-top: 2px;
-  flex-wrap: nowrap;
-  overflow: hidden;
-  min-width: 0;
+  gap: 4px;
+  margin-top: 1px;
 }
 
-.br-weapon-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  font-size: 9px;
+.br-wep-tag {
+  font-size: 9.5px;
   font-weight: 700;
-  padding: 0 4px;
-  border-radius: 3px;
-  background: rgba(245, 158, 11, 0.15);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  color: #fde047;
-  min-width: 0;
-  flex-shrink: 1;
-  white-space: nowrap;
-  overflow: hidden;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  color: #cbd5e1;
 }
 
-.br-wep-icon {
-  flex-shrink: 0;
-}
-
-.br-wep-name {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-}
-
-.br-coord-pill {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 9px;
-  font-weight: 700;
-  padding: 0 3px;
-  border-radius: 3px;
-  background: rgba(56, 189, 248, 0.16);
+.br-wep-tag.is-rifle {
   color: #7dd3fc;
-  flex-shrink: 0;
+  border-color: rgba(56, 189, 248, 0.4);
 }
 
-.br-coord-pill::before {
-  content: attr(data-coord);
+.br-wep-tag.is-sniper {
+  color: #fde047;
+  border-color: rgba(251, 191, 36, 0.4);
 }
 
-.br-out-pill {
+.br-kills-tag {
   font-size: 9px;
   color: #f87171;
   font-weight: 700;
-  flex-shrink: 0;
 }
 
-/* Vitality HP & Shield Bars (Ultra-Compact) */
-.br-vitality-bars {
+/* Bars */
+.br-agent-bars {
   display: flex;
   flex-direction: column;
-  gap: 2.5px;
+  gap: 2px;
 }
 
 .br-bar-track {
   position: relative;
-  height: 8px;
-  border-radius: 999px;
-  background: rgba(7, 11, 20, 0.78);
-  border: 1px solid rgba(148, 163, 184, 0.14);
+  height: 13px;
+  border-radius: 4px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.15);
   overflow: hidden;
 }
 
-.br-bar-fill {
-  height: 100%;
-  transition: width 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
 .br-bar-fill.is-hp {
-  background: linear-gradient(90deg, #16a34a, #22c55e);
-}
-.br-bar-fill.is-hp.is-warn {
-  background: linear-gradient(90deg, #d97706, #f59e0b);
-}
-.br-bar-fill.is-hp.is-critical {
-  background: linear-gradient(90deg, #dc2626, #ef4444);
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #22c55e 100%);
+  transition: width 0.3s ease;
 }
 
-.br-bar-fill.is-shield {
-  background: linear-gradient(90deg, #0284c7, #38bdf8);
+.br-bar-fill.is-hp.is-critical {
+  background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
 }
 
 .br-bar-label {
@@ -489,144 +399,52 @@ body,
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 7.5px;
+  font-size: 8.5px;
   font-weight: 800;
   color: #ffffff;
-  line-height: 1;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
-/* Radio & Action Log Slot */
 .br-agent-radio-slot {
-  height: 19px;
-  min-height: 19px;
-  max-height: 19px;
-  box-sizing: border-box;
+  height: 16px;
   display: flex;
   align-items: center;
-  padding: 1px 5px;
-  border-radius: 5px;
-  background: rgba(7, 11, 20, 0.6);
-  border: 1px solid rgba(148, 163, 184, 0.12);
   overflow: hidden;
 }
 
-.br-radio-quote {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  font-size: 9.5px;
-  color: #fde047;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-  line-height: 1;
-}
-
-.br-radio-icon {
-  flex-shrink: 0;
-}
-
-.br-action-note {
-  font-size: 9.5px;
-  color: #cbd5e1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-  line-height: 1;
-}
-
+.br-action-note,
 .br-action-placeholder {
-  font-size: 9px;
-  color: rgba(148, 163, 184, 0.45);
-  line-height: 1;
+  font-size: 9.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #94a3b8;
 }
+
+.br-kia-stamp {
+  position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 9.5px;
-  font-weight: 800;
-  color: #ffffff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
-}
-
-/* Radio & Action Log Slot */
-.br-agent-radio-slot {
-  height: 38px;
-  display: flex;
-  align-items: center;
-  padding: 4px 8px;
-  border-radius: 8px;
-  background: rgba(7, 11, 20, 0.6);
-  border: 1px solid rgba(148, 163, 184, 0.12);
-  overflow: hidden;
-}
-
-.br-radio-quote {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  color: #fde047;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.br-radio-icon {
-  flex-shrink: 0;
-}
-
-.br-action-note {
-  font-size: 11px;
-  color: #cbd5e1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.br-action-placeholder {
-  font-size: 11px;
-  color: rgba(148, 163, 184, 0.45);
-}
-
-/* K.I.A Eliminated Stamp */
-.br-kia-stamp {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 8;
-  padding: 2px 8px;
-  border: 2px solid #ef4444;
-  border-radius: 5px;
-  background: rgba(69, 10, 10, 0.92);
-  color: #fca5a5;
-  font-size: 10.5px;
-  font-weight: 900;
-  transform: rotate(-12deg);
-  animation: brStampSlam 0.34s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  pointer-events: none;
 }
 
 .br-kia-stamp span::before {
   content: attr(data-stamp);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: #ef4444;
+  border: 1.5px solid #ef4444;
+  padding: 1px 6px;
+  border-radius: 4px;
+  transform: rotate(-10deg);
+  display: inline-block;
+  opacity: 0.85;
 }
 
-@keyframes brStampSlam {
-  0% {
-    opacity: 0;
-    transform: rotate(-26deg) scale(2.2);
-  }
-  100% {
-    opacity: 1;
-    transform: rotate(-12deg) scale(1);
-  }
-}
-
-/* Center Stage: Ticker + 8x6 Tactical Grid + Control Dock */
-/* Center Stage: Direct Clean Stage for 8x8 Tactical Sandtable (No redundant nested boxes) */
+/* Center Stage */
 .br-center-stage {
   position: relative;
   flex: 1;
@@ -645,7 +463,7 @@ body,
   position: absolute;
   inset: 0;
   z-index: 25;
-  background: rgba(6, 10, 18, 0.86);
+  background: rgba(6, 10, 18, 0.88);
   backdrop-filter: blur(6px);
   display: flex;
   flex-direction: column;
@@ -663,31 +481,29 @@ body,
 }
 
 .br-welcome-overlay p {
-  max-width: 460px;
-  font-size: 13px;
-  line-height: 1.55;
+  max-width: 440px;
+  font-size: 12.5px;
+  line-height: 1.5;
   color: #cbd5e1;
 }
 
 .br-cta-btn {
-  margin-top: 6px;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 9px 22px;
+  gap: 7px;
+  padding: 8px 20px;
   border-radius: 999px;
   border: 1px solid #fde047;
   background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
   color: #fffbeb;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
 }
 
-/* 8x8 Tactical Sandtable (Gold Ratio Scaling: Max 58px per tile to ensure perfect spacing) */
+/* Board */
 .br-board-box {
-  --tile-size: clamp(34px, min(calc((100cqw - 32px) / 8), calc((100cqh - 36px) / 8)), 58px);
+  --tile-size: clamp(34px, min(calc((100cqw - 32px) / 8), calc((100cqh - 40px) / 8)), 58px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -696,39 +512,11 @@ body,
   min-width: 0;
 }
 
-.br-winner-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 9px;
-  border-radius: 999px;
-  background: rgba(245, 158, 11, 0.22);
-  border: 1px solid #fde047;
-  color: #fde047;
-  font-size: 11px;
-  font-weight: 800;
-  box-shadow: 0 0 10px rgba(250, 204, 21, 0.35);
-}
-
-.br-turn-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: rgba(56, 189, 248, 0.18);
-  border: 1px solid rgba(56, 189, 248, 0.5);
-  color: #7dd3fc;
-  font-size: 11px;
-  font-weight: 700;
-}
-
 .br-col-headers {
   display: grid;
   grid-template-columns: 20px repeat(8, var(--tile-size));
   gap: 2px;
-  margin-bottom: 3px;
-  flex-shrink: 0;
+  margin-bottom: 2px;
 }
 
 .br-corner-spacer {
@@ -738,11 +526,10 @@ body,
 .br-col-label {
   width: var(--tile-size);
   text-align: center;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: ui-monospace, monospace;
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
   color: #64748b;
-  line-height: 16px;
 }
 
 .br-grid-body {
@@ -756,7 +543,6 @@ body,
   display: grid;
   grid-template-rows: repeat(8, var(--tile-size));
   gap: 2px;
-  height: calc(8 * var(--tile-size) + 7 * 2px);
 }
 
 .br-row-label {
@@ -764,13 +550,12 @@ body,
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: ui-monospace, monospace;
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
   color: #64748b;
 }
 
-/* Seamless 8x8 Tactical Sandtable (Integrative Tabletop, Low Grid Clutter) */
 .br-tiles-grid {
   position: relative;
   display: grid;
@@ -782,116 +567,89 @@ body,
   background: #090e18;
   border-radius: 8px;
   border: 1px solid rgba(56, 189, 248, 0.22);
-  box-shadow:
-    inset 0 0 32px rgba(0, 0, 0, 0.8),
-    0 10px 28px rgba(0, 0, 0, 0.6);
 }
 
-/* SVG Bullet Tracer & Explosion Ring */
-.br-tracer-svg {
+/* Safe Zone Perimeter */
+.br-safe-perimeter-box {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 15;
+  z-index: 20;
   pointer-events: none;
+  box-sizing: border-box;
+  border: 2px solid #38bdf8;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.45);
+  animation: brSafePulse 3s ease-in-out infinite;
 }
 
-.br-tracer-line {
-  stroke-width: 0.9;
-  stroke-linecap: round;
-  animation: brTracerFade 0.95s ease-out forwards;
-}
-
-.br-tracer-line.is-bullet {
-  stroke: #fde047;
-  filter: drop-shadow(0 0 4px #f59e0b);
-}
-
-.br-tracer-line.is-grenade {
-  stroke: #ef4444;
-  stroke-dasharray: 2 1.5;
-  filter: drop-shadow(0 0 5px #ef4444);
-}
-
-.br-impact-ring {
-  fill: rgba(239, 68, 68, 0.35);
-  stroke: #fde047;
-  stroke-width: 0.6;
-  animation: brImpactPulse 0.85s ease-out forwards;
-}
-
-@keyframes brTracerFade {
-  0% {
-    opacity: 1;
+@keyframes brSafePulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
   }
-  100% {
-    opacity: 0;
+  50% {
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.7);
   }
 }
 
-@keyframes brImpactPulse {
-  0% {
-    transform: scale(0.5);
-    transform-origin: center;
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1.8);
-    transform-origin: center;
-    opacity: 0;
-  }
+.br-safe-corner {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-color: #fde047;
+  border-style: solid;
 }
 
-/* Individual Tile: Seamless Terrain Zone (No bulky cards, zero coordinate clutter) */
+.br-safe-corner.is-tl {
+  top: -2px;
+  left: -2px;
+  border-width: 2.5px 0 0 2.5px;
+}
+.br-safe-corner.is-tr {
+  top: -2px;
+  right: -2px;
+  border-width: 2.5px 2.5px 0 0;
+}
+.br-safe-corner.is-bl {
+  bottom: -2px;
+  left: -2px;
+  border-width: 0 0 2.5px 2.5px;
+}
+.br-safe-corner.is-br {
+  bottom: -2px;
+  right: -2px;
+  border-width: 0 2.5px 2.5px 0;
+}
+
+.br-safe-perimeter-tag {
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  font-size: 8.5px;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: rgba(14, 116, 144, 0.85);
+  color: #e0f2fe;
+}
+
+/* Tiles */
 .br-tile {
   width: var(--tile-size);
   height: var(--tile-size);
   box-sizing: border-box;
   position: relative;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 3px;
+  align-items: center;
+  justify-content: center;
   border-radius: 4px;
   border: 1px solid rgba(148, 163, 184, 0.05);
   background: rgba(18, 27, 43, 0.38);
-  color: #f8fafc;
   cursor: pointer;
   overflow: hidden;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
-.br-tile:hover {
-  background: rgba(56, 189, 248, 0.1);
-  border-color: rgba(56, 189, 248, 0.35);
-}
-
-/* Safe Zone */
 .br-tile.is-safe {
   background: rgba(22, 33, 51, 0.45);
-  border-color: rgba(148, 163, 184, 0.07);
 }
 
-/* Terrain Subtle Textures (Soft, muted tactical backdrop - not foreground) */
-.br-tile.is-ter-base {
-  background: rgba(120, 53, 15, 0.12);
-  border-color: rgba(245, 158, 11, 0.15);
-}
-.br-tile.is-ter-tower {
-  background: rgba(8, 51, 68, 0.14);
-  border-color: rgba(56, 189, 248, 0.16);
-}
-.br-tile.is-ter-bush {
-  background: rgba(20, 83, 45, 0.15);
-  border-color: rgba(34, 197, 94, 0.16);
-}
-.br-tile.is-ter-bunker {
-  background: rgba(30, 41, 59, 0.2);
-  border-color: rgba(148, 163, 184, 0.16);
-}
-
-/* Electromagnetic Storm (Continuous Deep Radiation Veil across battlefield) */
 .br-tile.is-storm {
   background: repeating-linear-gradient(
     -45deg,
@@ -901,429 +659,82 @@ body,
     rgba(38, 4, 60, 0.6) 12px
   );
   border-color: rgba(168, 85, 247, 0.22);
-  filter: saturate(0.6) brightness(0.7);
 }
 
-/* Storm Center Beacon */
-.br-tile.is-storm-center {
-  background: rgba(245, 158, 11, 0.16);
-  border-color: rgba(251, 191, 36, 0.55);
-  box-shadow: 0 0 14px rgba(245, 158, 11, 0.25);
-}
-
-/* Fog of War Shroud */
 .br-tile.is-fog {
-  opacity: 0.5;
-  filter: brightness(0.7);
+  opacity: 0.45;
+  filter: brightness(0.65);
 }
 
-/* Interactive Move & Attack Highlights */
 .br-tile.is-move-target {
   border: 1.5px dashed #38bdf8;
-  box-shadow:
-    inset 0 0 12px rgba(56, 189, 248, 0.25),
-    0 0 8px rgba(56, 189, 248, 0.2);
-  animation: brMovePulse 2.4s ease-in-out infinite alternate;
-}
-
-@keyframes brMovePulse {
-  from {
-    border-color: rgba(56, 189, 248, 0.55);
-    box-shadow: inset 0 0 8px rgba(56, 189, 248, 0.18);
-  }
-  to {
-    border-color: #38bdf8;
-    box-shadow: inset 0 0 14px rgba(56, 189, 248, 0.38), 0 0 10px rgba(56, 189, 248, 0.25);
-  }
-}
-
-.br-tile.is-move-target:hover {
-  transform: scale(1.02);
-  border-color: #7dd3fc;
-  background: rgba(56, 189, 248, 0.16);
+  box-shadow: inset 0 0 10px rgba(56, 189, 248, 0.3);
 }
 
 .br-tile.is-attack-target {
   border: 1.5px solid #ef4444;
-  box-shadow:
-    0 0 14px rgba(239, 68, 68, 0.6),
-    inset 0 0 14px rgba(220, 38, 38, 0.4);
-  animation: brAttackPulse 1.6s ease-in-out infinite alternate;
-}
-
-@keyframes brAttackPulse {
-  from {
-    border-color: rgba(239, 68, 68, 0.65);
-    box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
-  }
-  to {
-    border-color: #f87171;
-    box-shadow: 0 0 18px rgba(239, 68, 68, 0.8), inset 0 0 18px rgba(220, 38, 38, 0.55);
-  }
-}
-
-.br-tile.is-attack-target.is-cqb-penalized {
-  border: 1.5px dashed #f59e0b;
-  box-shadow:
-    0 0 12px rgba(245, 158, 11, 0.6),
-    inset 0 0 12px rgba(245, 158, 11, 0.3);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.65);
 }
 
 .br-tile.is-attack-target:hover {
   transform: scale(1.03);
 }
 
-.br-tile-head {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  width: 100%;
-  line-height: 1;
-}
-
-/* Interactive Sandtable Terrain Micro-Landscape (Layer 1 Background) */
 .br-tile-terrain-art {
   position: absolute;
   inset: 0;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   pointer-events: none;
-  overflow: hidden;
 }
 
 .br-terrain-svg {
   width: 100%;
   height: 100%;
-  opacity: 0.45;
-  transition: opacity 0.2s ease;
 }
 
-.br-terrain-svg.is-bush {
-  opacity: 0.42;
-}
-
-.br-terrain-svg.is-bunker {
-  opacity: 0.48;
-}
-
-.br-terrain-svg.is-tower {
-  opacity: 0.45;
-}
-
-.br-terrain-svg.is-base {
-  opacity: 0.42;
-}
-
-/* Storm Center Beacon */
-.br-storm-center-marker {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.br-beacon-art {
-  width: 16px;
-  height: 16px;
-  animation: brCenterBeaconPulse 1.4s ease-in-out infinite alternate;
-}
-
-/* Sonar Ping Radar Ring */
-.br-sonar-svg {
-  width: 26px;
-  height: 26px;
-}
-
-.br-sonar-ripple {
-  animation: brSonarWave 1.2s ease-out infinite;
-  transform-origin: center;
-}
-
-/* Combat Clash Badge */
-.br-cqb-clash-badge {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: brClashShake 0.6s ease-in-out infinite alternate;
-  pointer-events: none;
-}
-
-.br-clash-svg {
-  width: 22px;
-  height: 22px;
-  filter: drop-shadow(0 0 6px #ef4444);
-}
-
-/* Tactical Token States inside Terrain */
-.br-board-token.is-in-bush .br-token-disc {
-  box-shadow:
-    0 0 0 2px rgba(34, 197, 94, 0.45),
-    0 4px 10px rgba(5, 46, 22, 0.7);
-}
-
-.br-board-token.is-in-bunker .br-token-disc {
-  box-shadow:
-    0 0 0 2px rgba(148, 163, 184, 0.5),
-    0 4px 12px rgba(0, 0, 0, 0.8);
-}
-
-@keyframes brCenterBeaconPulse {
-  from {
-    transform: scale(0.95);
-    filter: drop-shadow(0 0 2px #f59e0b);
-  }
-  to {
-    transform: scale(1.2);
-    filter: drop-shadow(0 0 8px #fde047);
-  }
-}
-
-/* Strict Grid-Edge Safe Zone High-Contrast Perimeter Box */
-.br-safe-perimeter-box {
-  position: absolute;
-  z-index: 6;
-  pointer-events: none;
-  box-sizing: border-box;
-  border: 2.5px solid #38bdf8;
-  border-radius: 5px;
-  box-shadow:
-    0 0 16px rgba(56, 189, 248, 0.8),
-    inset 0 0 14px rgba(56, 189, 248, 0.2);
-  transition: all 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
-  animation: brPerimeterBreathe 3s ease-in-out infinite alternate;
-}
-
-@keyframes brPerimeterBreathe {
-  from {
-    border-color: #38bdf8;
-    box-shadow:
-      0 0 14px rgba(56, 189, 248, 0.7),
-      inset 0 0 12px rgba(56, 189, 248, 0.15);
-  }
-  to {
-    border-color: #7dd3fc;
-    box-shadow:
-      0 0 22px rgba(56, 189, 248, 0.95),
-      inset 0 0 20px rgba(56, 189, 248, 0.3);
-  }
-}
-
-/* Reinforced L-shaped brackets on 4 corners */
-.br-safe-corner {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border-color: #f0f9ff;
-  border-style: solid;
-  pointer-events: none;
-}
-.br-safe-corner.is-tl {
-  top: -3px;
-  left: -3px;
-  border-width: 3px 0 0 3px;
-}
-.br-safe-corner.is-tr {
-  top: -3px;
-  right: -3px;
-  border-width: 3px 3px 0 0;
-}
-.br-safe-corner.is-bl {
-  bottom: -3px;
-  left: -3px;
-  border-width: 0 0 3px 3px;
-}
-.br-safe-corner.is-br {
-  bottom: -3px;
-  right: -3px;
-  border-width: 0 3px 3px 0;
-}
-
-/* Tactical Safe Zone Pill Tag (Positioned inside perimeter top-left, avoids column letters) */
-.br-safe-perimeter-tag {
-  position: absolute;
-  top: 3px;
-  left: 6px;
-  padding: 1px 5px;
-  border-radius: 3px;
-  background: rgba(2, 132, 199, 0.92);
-  border: 1px solid #7dd3fc;
-  color: #f0f9ff;
-  font-size: 8.5px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  line-height: 1.1;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
-  pointer-events: none;
-}
-
-/* Ballistics FX Layer */
-.br-board-fx-svg {
+.br-loot-box {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   pointer-events: none;
-  z-index: 7;
-}
-
-/* Tactical Crates Presentation (Pure Micro-models, Zero text noise) */
-.br-loot-box {
-  position: relative;
   z-index: 3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.br-loot-box.is-prominent {
-  margin: auto;
+.br-crate-svg {
+  width: 22px;
+  height: 22px;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.6));
 }
 
-.br-loot-box.is-compact {
-  position: absolute;
-  top: 3px;
-  right: 3px;
-  transform-origin: top right;
-  transform: scale(0.85);
-}
-
-.br-loot-box:hover {
-  transform: translateY(-2px) scale(1.08);
-}
-
-.br-loot-box-art {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.6));
-}
-
-.br-loot-box.is-airdrop .br-loot-box-art {
-  animation: brAirdropHover 1.6s ease-in-out infinite alternate;
-}
-
-@keyframes brAirdropHover {
-  from {
-    transform: translateY(0);
-    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 6px rgba(250, 204, 21, 0.35));
-  }
-  to {
-    transform: translateY(-2px);
-    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 10px rgba(250, 204, 21, 0.65));
-  }
-}
-
-.br-airdrop-beacon {
-  animation: brAirdropBeaconPulse 1s ease-in-out infinite alternate;
-}
-
-@keyframes brAirdropBeaconPulse {
-  from {
-    opacity: 0.3;
-    r: 2.5;
-  }
-  to {
-    opacity: 1;
-    r: 4.5;
-  }
-}
-
-/* Sonar Ping Blip */
-.br-ping-sonar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: auto;
-}
-
-.br-sonar-ring {
-  position: absolute;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 1.5px solid #ef4444;
-  animation: brSonarWave 1.2s ease-out infinite;
-}
-
-@keyframes brSonarWave {
-  0% {
-    transform: scale(0.4);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1.6);
-    opacity: 0;
-  }
-}
-
-.br-sonar-core {
-  font-size: 13px;
-  position: relative;
-  z-index: 2;
-}
-
-/* Tactical Agent Piece on Board */
+/* Tokens */
 .br-tile-agents {
   position: relative;
   z-index: 4;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  width: 100%;
-  min-height: 0;
-}
-
-.br-tile-agents.count-2 {
   gap: 3px;
 }
 
 .br-board-token {
   position: relative;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  cursor: pointer;
-  transition: transform 0.15s ease;
+  justify-content: center;
 }
 
-.br-board-token:hover {
-  transform: translateY(-2px) scale(1.06);
-}
-
-.br-board-token.is-active-turn {
-  z-index: 6;
-}
-
-/* Turn Ping Radar Ring */
 .br-token-ping-ring {
   position: absolute;
-  inset: -5px;
-  width: calc(100% + 10px);
-  height: calc(100% + 10px);
+  inset: -4px;
   border-radius: 50%;
   border: 1.5px solid #fbbf24;
-  animation: brTokenRadarSpin 1.8s ease-out infinite;
-  pointer-events: none;
+  animation: brTokenRadarSpin 1.6s ease-out infinite;
 }
 
 @keyframes brTokenRadarSpin {
   0% {
-    transform: scale(0.75);
+    transform: scale(0.7);
     opacity: 1;
   }
   100% {
@@ -1332,341 +743,59 @@ body,
   }
 }
 
-/* Guarding Holo Shield & Forcefield Perimeter */
-.br-token-guard-aura {
-  position: absolute;
-  top: -7px;
-  right: -5px;
-  z-index: 7;
-  width: 17px;
-  height: 17px;
-  border-radius: 50%;
-  background: rgba(15, 23, 42, 0.95);
-  border: 1.2px solid #38bdf8;
-  box-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #38bdf8;
-  animation: brGuardPulse 1.8s ease-in-out infinite alternate;
-}
-
-@keyframes brGuardPulse {
-  from {
-    transform: scale(1);
-    box-shadow: 0 0 6px rgba(56, 189, 248, 0.6);
-  }
-  to {
-    transform: scale(1.15);
-    box-shadow: 0 0 12px rgba(56, 189, 248, 0.95);
-  }
-}
-
-.br-board-token.is-guarding .br-token-disc::before {
-  content: "";
-  position: absolute;
-  inset: -5px;
-  border-radius: 50%;
-  border: 1.5px dashed #38bdf8;
-  box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
-  animation: brForcefieldRotate 10s linear infinite;
-  pointer-events: none;
-}
-
-/* Token Avatar Disc */
 .br-token-disc {
   position: relative;
-  width: 34px;
-  height: 34px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   border: 2px solid #38bdf8;
   background: #0f172a;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.15s ease, border-color 0.15s ease;
-}
-
-.count-2 .br-token-disc {
-  width: 28px;
-  height: 28px;
 }
 
 .br-token-seat-badge {
   position: absolute;
   top: -3px;
-  left: -4px;
-  z-index: 5;
-  padding: 0 3.5px;
-  border-radius: 4px;
-  color: #0f172a;
-  font-size: 8.5px;
-  font-weight: 900;
-  line-height: 12px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
-}
-
-/* Weapon Stance Tag */
-.br-token-weapon-badge {
-  position: relative;
-  z-index: 5;
-  margin-top: -4px;
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 1px 4px;
-  border-radius: 4px;
-  background: rgba(15, 23, 42, 0.95);
-  border: 1px solid rgba(148, 163, 184, 0.4);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-  white-space: nowrap;
-}
-
-.br-token-weapon-badge.is-awm,
-.br-token-weapon-badge.is-sniper {
-  border-color: #f59e0b;
-  box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
-}
-
-.br-token-weapon-badge.is-rifle {
-  border-color: #38bdf8;
-}
-
-.br-token-weapon-badge.is-shotgun {
-  border-color: #ef4444;
-}
-
-.br-token-wep-code {
-  font-size: 8.5px;
+  right: -3px;
+  font-size: 7.5px;
   font-weight: 800;
-  color: #fde047;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: #ffffff;
+  padding: 0 2px;
+  border-radius: 3px;
+  line-height: 10px;
 }
 
-.br-token-ammo-text {
-  font-size: 8px;
-  font-weight: 800;
-  color: #94a3b8;
-}
-
-.br-token-ammo-text.is-empty {
-  color: #f87171;
-}
-
-.count-2 .br-token-weapon-badge {
-  transform: scale(0.9);
-  margin-top: -3px;
-}
-
-/* Direct HP Gauge on Token for Immediate Battlefield Readability */
-.br-token-hp-gauge {
-  position: relative;
-  z-index: 5;
-  width: 26px;
-  height: 3.5px;
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.88);
-  border: 0.5px solid rgba(255, 255, 255, 0.2);
-  margin-top: -2px;
-  overflow: hidden;
-}
-
-.br-token-hp-fill {
-  height: 100%;
-  background: #22c55e;
-  border-radius: 999px;
-  transition: width 0.2s ease;
-}
-
-.br-token-hp-fill.is-warn {
-  background: #f59e0b;
-}
-
-.br-token-hp-fill.is-critical {
-  background: #ef4444;
-}
-
-.count-2 .br-token-hp-gauge {
-  width: 20px;
-  height: 3px;
-}
-
-.br-floating-dmg {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  z-index: 20;
-  padding: 1px 5px;
-  border-radius: 5px;
-  background: #dc2626;
-  color: #fff;
-  font-size: 11px;
-  font-weight: 900;
-  animation: brFloatUp 0.95s ease-out forwards;
-}
-
-@keyframes brFloatUp {
-  0% {
-    opacity: 1;
-    transform: translateY(4px) scale(1.2);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-12px) scale(0.95);
-  }
-}
-
-/* Floating Action HUD (Non-intrusive floating pill, zero arena compression) */
-.br-floating-hud {
-  position: absolute;
-  bottom: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 35;
-  max-width: 95%;
-  padding: 6px 14px;
-  border-radius: 999px;
-  background: rgba(11, 17, 32, 0.94);
-  backdrop-filter: blur(14px);
-  border: 1.5px solid rgba(245, 158, 11, 0.55);
-  box-shadow:
-    0 8px 30px rgba(0, 0, 0, 0.8),
-    0 0 16px rgba(245, 158, 11, 0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: brHudPop 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-@keyframes brHudPop {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 8px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0) scale(1);
-  }
-}
-
-.br-hud-inner {
+/* Action Banner */
+.br-action-banner {
+  margin-top: 8px;
   display: flex;
   align-items: center;
   gap: 7px;
-  flex-wrap: nowrap;
-}
-
-.br-hud-prompt {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(245, 158, 11, 0.4);
   color: #fde047;
-  white-space: nowrap;
-}
-
-.br-beacon-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #fde047;
-  box-shadow: 0 0 8px #f59e0b;
-  flex-shrink: 0;
-}
-
-.br-combat-actions-row,
-.br-radio-row {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  flex-wrap: wrap;
-}
-
-.br-ap-badge {
-  font-size: 11.5px;
-  font-weight: 800;
-  padding: 4px 9px;
-  border-radius: 7px;
-  background: rgba(245, 158, 11, 0.2);
-  border: 1px solid #fbbf24;
-  color: #fde047;
-}
-
-.br-act-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  height: 32px;
-  padding: 0 11px;
-  border-radius: 7px;
   font-size: 11.5px;
   font-weight: 700;
-  cursor: pointer;
-  border: 1px solid rgba(148, 163, 184, 0.28);
-  background: rgba(30, 41, 59, 0.85);
-  color: #f8fafc;
 }
 
-.br-act-btn.is-loot {
-  border-color: rgba(245, 158, 11, 0.5);
-  color: #fde047;
+.br-action-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fde047;
+  box-shadow: 0 0 6px #fde047;
 }
 
-.br-act-btn.is-heal {
-  border-color: rgba(34, 197, 94, 0.5);
-  color: #86efac;
-}
-
-.br-act-btn.is-grenade {
-  border-color: rgba(239, 68, 68, 0.5);
-  color: #fca5a5;
-}
-
-.br-act-btn.is-grenade.is-selected {
-  background: #dc2626;
-  color: #ffffff;
-}
-
-.br-act-btn.is-guard {
-  border-color: rgba(56, 189, 248, 0.5);
-  color: #7dd3fc;
-}
-
-.br-act-btn.is-gold {
-  background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
-  border-color: #fde047;
-  color: #fffbeb;
-}
-
-.br-act-btn:disabled {
-  opacity: 0.42;
-  cursor: not-allowed;
-}
-
-.br-radio-input {
-  flex: 1;
-  min-width: 160px;
-  height: 32px;
-  padding: 0 11px;
-  border-radius: 7px;
-  border: 1px solid rgba(148, 163, 184, 0.28);
-  background: rgba(7, 11, 20, 0.85);
-  color: #f8fafc;
-  font-size: 12px;
-  outline: none;
-}
-
-.br-radio-input:focus {
-  border-color: #fbbf24;
-}
-
-/* Modal & Fixed-Position Custom Dropdowns */
+/* Modal */
 .br-modal-backdrop {
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: rgba(5, 8, 17, 0.8);
+  background: rgba(5, 8, 17, 0.82);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -1676,35 +805,33 @@ body,
 
 .br-modal-card {
   width: 100%;
-  max-width: 580px;
-  border-radius: 18px;
+  max-width: 520px;
+  border-radius: 16px;
   background: #0f172a;
   border: 1px solid rgba(245, 158, 11, 0.38);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
   display: flex;
   flex-direction: column;
-  max-height: 90vh;
-  box-sizing: border-box;
 }
 
 .br-modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 18px;
+  padding: 12px 16px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.16);
 }
 
 .br-modal-title-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  color: #fde047;
 }
 
 .br-modal-title-row h3 {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 800;
-  color: #fde047;
 }
 
 .br-modal-close {
@@ -1715,21 +842,20 @@ body,
 }
 
 .br-modal-body {
-  padding: 16px 18px;
-  overflow-y: auto;
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .br-config-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .br-config-label {
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
   color: #94a3b8;
 }
@@ -1741,8 +867,8 @@ body,
 }
 
 .br-mode-tab {
-  padding: 8px 10px;
-  border-radius: 10px;
+  padding: 7px 10px;
+  border-radius: 8px;
   border: 1px solid rgba(148, 163, 184, 0.22);
   background: rgba(30, 41, 59, 0.6);
   color: #cbd5e1;
@@ -1766,193 +892,33 @@ body,
 .br-seat-field {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  min-width: 0;
+  gap: 4px;
 }
 
 .br-seat-field-label {
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 700;
   color: #cbd5e1;
 }
 
-.br-select-wrap {
-  position: relative;
+.br-seat-select-native {
   width: 100%;
-  min-width: 0;
-}
-
-.br-select-trigger {
-  width: 100%;
-  min-width: 0;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 10px;
-  border-radius: 10px;
-  border: 1px solid rgba(148, 163, 184, 0.24);
-  background: rgba(30, 41, 59, 0.75);
-  color: #f8fafc;
-  cursor: pointer;
-  box-sizing: border-box;
-  gap: 6px;
-}
-
-.br-select-item-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-  flex: 1;
-  overflow: hidden;
-}
-
-.br-select-icon {
-  width: 26px;
-  height: 26px;
-  border-radius: 7px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.br-select-icon.is-human {
-  background: rgba(245, 158, 11, 0.2);
-  color: #fde047;
-}
-.br-select-icon.is-bot {
-  background: rgba(56, 189, 248, 0.2);
-  color: #7dd3fc;
-}
-.br-select-icon.is-ai {
-  background: rgba(168, 85, 247, 0.2);
-  color: #d8b4fe;
-}
-
-.br-select-model-img {
-  width: 26px;
-  height: 26px;
-  border-radius: 7px;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-
-.br-select-texts {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  min-width: 0;
-  flex: 1;
-  gap: 1px;
-  overflow: hidden;
-}
-
-.br-select-title {
-  width: 100%;
-  font-size: 12px;
-  line-height: 15px;
-  color: #f8fafc;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: left;
-}
-
-.br-select-sub {
-  width: 100%;
-  font-size: 10px;
-  line-height: 13px;
-  color: #94a3b8;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: left;
-}
-
-.br-select-chevron {
-  color: #94a3b8;
-  transition: transform 0.15s ease;
-  flex-shrink: 0;
-  margin-left: 2px;
-}
-
-.br-select-chevron.is-open {
-  transform: rotate(180deg);
-}
-
-.br-select-menu {
-  position: fixed;
-  z-index: 999;
-  max-height: 240px;
-  overflow-y: auto;
-  border-radius: 10px;
-  background: #0f172a;
-  border: 1px solid rgba(245, 158, 11, 0.55);
-  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.78);
-  padding: 5px;
-}
-
-.br-select-option {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  height: 38px;
   padding: 6px 8px;
-  border-radius: 7px;
-  border: none;
-  background: transparent;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: rgba(30, 41, 59, 0.85);
   color: #f8fafc;
-  cursor: pointer;
-}
-
-.br-select-option:hover,
-.br-select-option.is-selected {
-  background: rgba(245, 158, 11, 0.16);
-}
-
-.br-select-option.is-disabled {
-  opacity: 0.38;
-  cursor: not-allowed;
-  pointer-events: none;
-  filter: grayscale(0.7);
-}
-
-.br-select-option.is-disabled:hover {
-  background: transparent;
-}
-
-.br-select-option.is-disabled {
-  opacity: 0.42;
-  cursor: not-allowed;
-  filter: grayscale(0.65);
-}
-
-.br-select-option.is-disabled:hover {
-  background: transparent;
-}
-
-.br-modal-warn-text {
   font-size: 12px;
-  font-weight: 700;
-  color: #f87171;
-  text-align: center;
-  padding: 6px 16px;
-  background: rgba(239, 68, 68, 0.1);
-  border-top: 1px solid rgba(239, 68, 68, 0.25);
-}
-
-.br-select-check {
-  color: #fde047;
+  outline: none;
 }
 
 .br-modal-footer {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 10px;
-  padding: 12px 18px;
+  gap: 8px;
+  padding: 12px 16px;
   border-top: 1px solid rgba(148, 163, 184, 0.16);
 }
 
@@ -1960,103 +926,21 @@ body,
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  height: 36px;
-  padding: 0 16px;
-  border-radius: 9px;
-  font-size: 13px;
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
 }
 
 .br-modal-btn.is-ghost {
+  border: 1px solid rgba(148, 163, 184, 0.25);
   background: transparent;
-  border: 1px solid rgba(148, 163, 184, 0.3);
   color: #cbd5e1;
 }
 
 .br-modal-btn.is-confirm {
+  border: 1px solid #fde047;
   background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
-  border-color: #fde047;
   color: #fffbeb;
 }
-
-.br-agent-badges {
-  display: inline-flex;
-  align-items: center;
-  gap: 2.5px;
-  flex-shrink: 0;
-}
-
-.br-iq-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 1.5px;
-  padding: 0.5px 3.5px;
-  border-radius: 999px;
-  font-size: 9px;
-  font-weight: 800;
-  background: rgba(56, 189, 248, 0.16);
-  border: 1px solid rgba(56, 189, 248, 0.45);
-  color: #7dd3fc;
-}
-
-.br-spawn-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 1px 5px;
-  border-radius: 6px;
-  font-size: 9.5px;
-  font-weight: 700;
-  background: rgba(16, 185, 129, 0.16);
-  border: 1px solid rgba(16, 185, 129, 0.45);
-  color: #6ee7b7;
-}
-
-.br-whisper-quote {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 10.5px;
-  color: #c084fc;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.br-whisper-select {
-  height: 30px;
-  padding: 0 8px;
-  border-radius: 8px;
-  background: rgba(15, 23, 42, 0.9);
-  border: 1px solid rgba(192, 132, 252, 0.45);
-  color: #e9d5ff;
-  font-size: 11.5px;
-  font-weight: 600;
-  outline: none;
-  cursor: pointer;
-}
-
-/* Tactical Inline Icons */
-.br-iq-icon,
-.br-shield-icon,
-.br-turn-icon,
-.br-trophy-icon,
-.br-whisper-icon,
-.br-warn-icon,
-.br-ap-icon {
-  flex-shrink: 0;
-  display: inline-block;
-  vertical-align: middle;
-}
-
-.br-winner-pill,
-.br-turn-pill,
-.br-storm-pill,
-.br-alive-pill,
-.br-modal-warn-text {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-
