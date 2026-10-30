@@ -73,7 +73,7 @@ body,
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(14px);
   flex-shrink: 0;
-  max-width: 1160px;
+  max-width: 1060px;
   width: 100%;
   margin: 0 auto;
 }
@@ -247,11 +247,11 @@ body,
   z-index: 5;
   flex: 1;
   display: grid;
-  grid-template-columns: 162px minmax(0, 1fr) 162px;
+  grid-template-columns: 184px minmax(0, 1fr) 184px;
   gap: 14px;
   align-items: stretch;
   min-height: 0;
-  max-width: 1160px;
+  max-width: 1060px;
   width: 100%;
   margin: 0 auto;
 }
@@ -260,7 +260,7 @@ body,
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
   height: 100%;
   min-width: 0;
 }
@@ -268,22 +268,22 @@ body,
 /* Operative Card */
 .br-agent-card {
   position: relative;
-  height: 102px;
+  height: 104px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 7px 9px;
+  padding: 8px 10px;
   border-radius: 12px;
   background: linear-gradient(
     165deg,
     rgba(25, 36, 56, 0.94) 0%,
     rgba(12, 18, 33, 0.98) 100%
   );
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid rgba(148, 163, 184, 0.22);
   box-shadow:
-    0 6px 16px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    0 6px 16px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
   overflow: hidden;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
@@ -306,7 +306,7 @@ body,
 .br-agent-top {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
 }
 
 .br-avatar-wrap {
@@ -386,7 +386,7 @@ body,
 }
 
 .br-agent-name {
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 700;
   color: #f8fafc;
   white-space: nowrap;
@@ -404,9 +404,10 @@ body,
 .br-seat-pill {
   font-size: 9px;
   font-weight: 800;
-  padding: 0.5px 4.5px;
+  padding: 0.5px 5px;
   border-radius: 999px;
   border: 1px solid rgba(148, 163, 184, 0.3);
+  white-space: nowrap;
 }
 
 .br-kills-tag {
@@ -417,37 +418,42 @@ body,
   color: #fca5a5;
   background: rgba(127, 29, 29, 0.55);
   border: 1px solid rgba(248, 113, 113, 0.4);
-  padding: 0.5px 4px;
+  padding: 0.5px 4.5px;
   border-radius: 999px;
   font-weight: 800;
+  white-space: nowrap;
 }
 
 .br-agent-tags {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 4px;
+  gap: 5px;
   margin-top: 3px;
+  flex-wrap: nowrap;
 }
 
 .br-wep-tag {
   display: inline-flex;
   align-items: center;
-  gap: 3.5px;
+  gap: 4px;
+  height: 19px;
   font-size: 9.5px;
   font-weight: 700;
-  padding: 1px 5px;
+  padding: 0 6px;
   border-radius: 5px;
   background: rgba(30, 41, 59, 0.85);
   border: 1px solid rgba(148, 163, 184, 0.24);
   color: #cbd5e1;
-  min-width: 0;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .br-wep-tag small {
   font-size: 8.5px;
-  opacity: 0.78;
+  opacity: 0.82;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .br-wep-svg {
@@ -458,13 +464,13 @@ body,
 
 .br-wep-tag.is-rifle {
   color: #7dd3fc;
-  background: rgba(8, 47, 73, 0.65);
+  background: rgba(8, 47, 73, 0.68);
   border-color: rgba(56, 189, 248, 0.45);
 }
 
 .br-wep-tag.is-sniper {
   color: #fde047;
-  background: rgba(69, 26, 3, 0.65);
+  background: rgba(69, 26, 3, 0.68);
   border-color: rgba(251, 191, 36, 0.55);
 }
 
@@ -472,11 +478,15 @@ body,
   font-family: ui-monospace, monospace;
   font-size: 9px;
   font-weight: 800;
-  padding: 1px 4.5px;
+  height: 19px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 5px;
   border-radius: 4px;
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(15, 23, 42, 0.92);
   border: 1px solid rgba(56, 189, 248, 0.35);
   color: #7dd3fc;
+  white-space: nowrap;
   flex-shrink: 0;
 }
 
@@ -659,7 +669,7 @@ body,
   --tile-size: clamp(
     38px,
     min(calc((100cqw - 32px) / 8), calc((100cqh - 56px) / 8)),
-    78px
+    76px
   );
   display: flex;
   flex-direction: column;
@@ -673,7 +683,7 @@ body,
   display: grid;
   grid-template-columns: 20px repeat(8, var(--tile-size));
   gap: 2px;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .br-corner-spacer {
@@ -727,7 +737,7 @@ body,
   box-shadow: 0 12px 34px rgba(0, 0, 0, 0.55);
 }
 
-/* Ballistic Bullet / Sniper Laser Tracer SVG Overlay */
+/* Transient Ballistic Bullet / Sniper Laser Tracer SVG Overlay */
 .br-tracer-svg {
   position: absolute;
   inset: 0;
@@ -739,29 +749,29 @@ body,
 }
 
 .br-tracer-line {
-  stroke-width: 1.1;
+  stroke-width: 1.2;
   stroke-linecap: round;
   stroke-dasharray: 100;
   stroke-dashoffset: 100;
-  animation: brTracerShoot 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: brTracerShoot 0.62s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .br-tracer-line.is-sniper {
   stroke: #fde047;
-  stroke-width: 1.45;
-  filter: drop-shadow(0 0 5px #f59e0b);
+  stroke-width: 1.5;
+  filter: drop-shadow(0 0 6px #f59e0b);
 }
 
 .br-tracer-line.is-rifle {
   stroke: #38bdf8;
-  stroke-width: 1.25;
-  filter: drop-shadow(0 0 4px #38bdf8);
+  stroke-width: 1.3;
+  filter: drop-shadow(0 0 5px #38bdf8);
 }
 
 .br-tracer-line.is-fists {
   stroke: #f87171;
-  stroke-width: 1.3;
-  filter: drop-shadow(0 0 4px #ef4444);
+  stroke-width: 1.35;
+  filter: drop-shadow(0 0 5px #ef4444);
 }
 
 @keyframes brTracerShoot {
@@ -775,26 +785,6 @@ body,
   }
   100% {
     stroke-dashoffset: 0;
-    opacity: 0;
-  }
-}
-
-.br-impact-ring {
-  fill: none;
-  stroke: #ef4444;
-  stroke-width: 0.9;
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: brImpactBurst 0.65s ease-out forwards;
-}
-
-@keyframes brImpactBurst {
-  0% {
-    transform: scale(0.3);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1.9);
     opacity: 0;
   }
 }
@@ -856,15 +846,18 @@ body,
 
 .br-safe-perimeter-tag {
   position: absolute;
-  top: 2px;
-  right: 4px;
-  font-size: 8px;
+  top: -8px;
+  right: 10px;
+  font-size: 7.5px;
   font-weight: 800;
-  padding: 0.5px 4px;
-  border-radius: 3px;
-  background: rgba(14, 116, 144, 0.88);
+  line-height: 12px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #0c4a6e;
+  border: 1px solid #38bdf8;
   color: #e0f2fe;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.65);
 }
 
 /* Tiles */
@@ -898,7 +891,7 @@ body,
 }
 
 .br-tile.is-ter-bush.is-safe {
-  border-color: rgba(34, 197, 94, 0.22);
+  border-color: rgba(34, 197, 94, 0.24);
 }
 
 .br-tile.is-storm {
@@ -938,32 +931,53 @@ body,
   transform: scale(1.03);
 }
 
+.br-tile.is-hit-flash {
+  animation: brTileHitFlash 0.65s ease-out;
+}
+
+@keyframes brTileHitFlash {
+  0% {
+    box-shadow:
+      inset 0 0 22px rgba(239, 68, 68, 0.85),
+      0 0 16px rgba(239, 68, 68, 0.75);
+    border-color: #f87171;
+  }
+  100% {
+    box-shadow: none;
+  }
+}
+
 .br-tile-head {
   position: absolute;
-  top: 2px;
-  left: 3px;
-  right: 3px;
+  top: 3px;
+  left: 4px;
   z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   pointer-events: none;
 }
 
 .br-tile-coord {
   font-family: ui-monospace, monospace;
-  font-size: 8px;
+  font-size: 7.5px;
   font-weight: 700;
-  color: rgba(148, 163, 184, 0.42);
+  color: rgba(148, 163, 184, 0.35);
   line-height: 1;
 }
 
-.br-center-beacon {
-  width: 5px;
-  height: 5px;
+.br-center-reticle {
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  background: #fde047;
-  box-shadow: 0 0 6px #fde047;
+  border: 1px dashed rgba(56, 189, 248, 0.35);
+  position: relative;
+  pointer-events: none;
+}
+
+.br-center-reticle::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: rgba(56, 189, 248, 0.32);
 }
 
 .br-tile-terrain-art {
@@ -1102,6 +1116,7 @@ body,
   background: rgba(15, 23, 42, 0.92);
   color: #cbd5e1;
   border: 0.5px solid rgba(148, 163, 184, 0.35);
+  white-space: nowrap;
 }
 
 .br-token-wep-chip::before {
@@ -1143,16 +1158,17 @@ body,
   left: 50%;
   transform: translateX(-50%);
   z-index: 26;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 900;
   color: #fef08a;
-  background: rgba(185, 28, 28, 0.92);
+  background: rgba(185, 28, 28, 0.94);
   border: 1px solid #fca5a5;
-  padding: 0.5px 5px;
+  padding: 0.5px 5.5px;
   border-radius: 999px;
   pointer-events: none;
+  white-space: nowrap;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.75);
-  animation: brDamageFloat 0.95s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: brDamageFloat 0.68s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .br-floating-dmg.is-kill {
@@ -1166,16 +1182,16 @@ body,
     transform: translate(-50%, 6px) scale(0.75);
     opacity: 0;
   }
-  20% {
-    transform: translate(-50%, 0) scale(1.08);
+  22% {
+    transform: translate(-50%, 0) scale(1.06);
     opacity: 1;
   }
-  80% {
-    transform: translate(-50%, -6px) scale(1);
+  78% {
+    transform: translate(-50%, -5px) scale(1);
     opacity: 1;
   }
   100% {
-    transform: translate(-50%, -12px) scale(0.92);
+    transform: translate(-50%, -10px) scale(0.92);
     opacity: 0;
   }
 }

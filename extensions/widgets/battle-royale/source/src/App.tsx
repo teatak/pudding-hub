@@ -27,7 +27,7 @@ import {
   ShieldAlert,
   X,
 } from "lucide-react";
-import type { Seat, WeaponId } from "./types";
+import type { BattleEvent, Seat, WeaponId } from "./types";
 import {
   GRID_WIDTH,
   GRID_HEIGHT,
@@ -101,37 +101,37 @@ const SEAT_THEMES: Record<
   Seat1: {
     border: "#38bdf8",
     glow: "rgba(56, 189, 248, 0.5)",
-    bg: "rgba(8, 47, 73, 0.82)",
+    bg: "rgba(8, 47, 73, 0.85)",
     text: "#7dd3fc",
   },
   Seat2: {
     border: "#f59e0b",
     glow: "rgba(245, 158, 11, 0.5)",
-    bg: "rgba(69, 26, 3, 0.82)",
+    bg: "rgba(69, 26, 3, 0.85)",
     text: "#fde047",
   },
   Seat3: {
     border: "#10b981",
     glow: "rgba(16, 185, 129, 0.5)",
-    bg: "rgba(6, 78, 59, 0.82)",
+    bg: "rgba(6, 78, 59, 0.85)",
     text: "#6ee7b7",
   },
   Seat4: {
     border: "#a855f7",
     glow: "rgba(168, 85, 247, 0.5)",
-    bg: "rgba(59, 7, 100, 0.82)",
+    bg: "rgba(59, 7, 100, 0.85)",
     text: "#d8b4fe",
   },
   Seat5: {
     border: "#ec4899",
     glow: "rgba(236, 72, 153, 0.5)",
-    bg: "rgba(80, 7, 36, 0.82)",
+    bg: "rgba(80, 7, 36, 0.85)",
     text: "#f472b6",
   },
   Seat6: {
     border: "#06b6d4",
     glow: "rgba(6, 182, 212, 0.5)",
-    bg: "rgba(22, 78, 99, 0.82)",
+    bg: "rgba(22, 78, 99, 0.85)",
     text: "#67e8f9",
   },
 };
@@ -222,6 +222,9 @@ function BattleRoyaleEmblemIcon({ size = 28 }: { size?: number }) {
   );
 }
 
+/**
+ * Crisp layered tactical camouflage foliage SVG (replaces flat overlapping circles).
+ */
 function TerrainBushArt() {
   return (
     <svg
@@ -230,22 +233,47 @@ function TerrainBushArt() {
       aria-hidden="true"
     >
       <rect
-        x="0"
-        y="0"
-        width="48"
-        height="48"
+        x="2"
+        y="2"
+        width="44"
+        height="44"
+        rx="6"
         fill="#052e16"
-        fillOpacity="0.38"
+        fillOpacity="0.42"
       />
-      <circle cx="14" cy="18" r="10" fill="#14532d" fillOpacity="0.45" />
-      <circle cx="33" cy="16" r="10.5" fill="#166534" fillOpacity="0.42" />
-      <circle cx="22" cy="31" r="11.5" fill="#14532d" fillOpacity="0.5" />
-      <circle cx="34" cy="31" r="8.5" fill="#15803d" fillOpacity="0.38" />
+      {/* Back dark foliage blades */}
       <path
-        d="M11 25C13 20 17 17 20 15M28 33C31 28 34 25 38 23"
+        d="M10 36C8 27 13 18 22 14C19 22 19 29 22 36H10Z"
+        fill="#14532d"
+        fillOpacity="0.65"
+      />
+      <path
+        d="M38 36C40 27 35 18 26 14C29 22 29 29 26 36H38Z"
+        fill="#14532d"
+        fillOpacity="0.65"
+      />
+      {/* Mid emerald leaf cluster */}
+      <path
+        d="M15 37C14 26 20 16 24 11C28 16 34 26 33 37H15Z"
+        fill="#166534"
+        fillOpacity="0.72"
+      />
+      <path
+        d="M8 37C9 29 14 23 21 21C18 27 17 32 18 37H8Z"
+        fill="#15803d"
+        fillOpacity="0.6"
+      />
+      <path
+        d="M40 37C39 29 34 23 27 21C30 27 31 32 30 37H40Z"
+        fill="#15803d"
+        fillOpacity="0.6"
+      />
+      {/* Crisp leaf vein highlights */}
+      <path
+        d="M24 15V35M24 23L19 19M24 26L29 22M14 34L19 27M34 34L29 27"
         stroke="#4ade80"
-        strokeOpacity="0.28"
-        strokeWidth="1.4"
+        strokeOpacity="0.38"
+        strokeWidth="1.25"
         strokeLinecap="round"
       />
     </svg>
@@ -254,7 +282,11 @@ function TerrainBushArt() {
 
 function SupplyCrateArt() {
   return (
-    <svg viewBox="0 0 32 32" className="br-crate-svg is-supply" aria-hidden="true">
+    <svg
+      viewBox="0 0 32 32"
+      className="br-crate-svg is-supply"
+      aria-hidden="true"
+    >
       <rect
         x="4"
         y="7"
@@ -265,39 +297,29 @@ function SupplyCrateArt() {
         stroke="#fbbf24"
         strokeWidth="1.6"
       />
-      <rect
-        x="6"
-        y="9"
-        width="20"
-        height="5"
-        rx="1.5"
-        fill="#92400e"
-      />
+      <rect x="6" y="9" width="20" height="5" rx="1.5" fill="#92400e" />
       <path
         d="M4 15.5H28M11 7V25M21 7V25"
         stroke="#fde047"
         strokeOpacity="0.85"
         strokeWidth="1.4"
       />
-      <rect
-        x="13"
-        y="13"
-        width="6"
-        height="5"
-        rx="1"
-        fill="#fde047"
-      />
+      <rect x="13" y="13" width="6" height="5" rx="1" fill="#fde047" />
     </svg>
   );
 }
 
 function AirdropCrateArt() {
   return (
-    <svg viewBox="0 0 32 32" className="br-crate-svg is-airdrop" aria-hidden="true">
+    <svg
+      viewBox="0 0 32 32"
+      className="br-crate-svg is-airdrop"
+      aria-hidden="true"
+    >
       <path
         d="M7 9C7 4.8 11 2 16 2C21 2 25 4.8 25 9H7Z"
         fill="#ef4444"
-        fillOpacity="0.88"
+        fillOpacity="0.9"
         stroke="#fde047"
         strokeWidth="1.2"
       />
@@ -362,8 +384,7 @@ function weaponBadgeCode(w: WeaponId): string {
 }
 
 function weaponStatsShort(w: WeaponId): string {
-  const spec = WEAPONS[w];
-  return `${spec.range}格/${spec.damage}伤`;
+  return t(`weapon_${w}_stat`);
 }
 
 function OperativeAvatar({
@@ -699,6 +720,7 @@ export default function App() {
   const [muted, setMuted] = useState(isSoundMuted());
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [activeFxStep, setActiveFxStep] = useState<number | null>(null);
 
   async function loadCandidates(): Promise<Candidates | null> {
     try {
@@ -752,7 +774,7 @@ export default function App() {
     };
   }, [l.phase, p.turn, p.winner, p.stepCount, l.seats, run?.status]);
 
-  // Rich Multi-Layered Audio Effects on Battle Event
+  // Rich Multi-Layered Audio Effects & Transient Visual FX Timer on Battle Event
   const lastStepRef = useRef(p.stepCount);
   const lastRoundRef = useRef(l.round);
   useEffect(() => {
@@ -766,6 +788,11 @@ export default function App() {
     lastStepRef.current = p.stepCount;
     const ev = p.lastEvent;
     if (!ev) return;
+
+    setActiveFxStep(p.stepCount);
+    const fxTimer = setTimeout(() => {
+      setActiveFxStep((curr) => (curr === p.stepCount ? null : curr));
+    }, 680);
 
     if (ev.kind === "victory") {
       playVictorySound();
@@ -791,6 +818,8 @@ export default function App() {
     } else if (ev.kind === "storm") {
       playExplosionSound();
     }
+
+    return () => clearTimeout(fxTimer);
   }, [l.round, p.stepCount, p.lastEvent, p.tiles]);
 
   const activeSeats = seatsForCount(l.playerCount);
@@ -848,6 +877,130 @@ export default function App() {
     };
   }
 
+  function formatSeatTag(seat: Seat | null | undefined): string {
+    if (!seat) return "";
+    return `${seatShortLabel(seat)} ${getPlayerInfo(seat).name}`;
+  }
+
+  /**
+   * Formats an operative's latest action in the active locale without leaking raw `Seat2` IDs
+   * or hardcoded Chinese strings from `rules.ts`.
+   */
+  function formatAgentActionText(seat: Seat): string | null {
+    const ag = p.agents[seat];
+    const latestEv = [...(p.history || [])]
+      .reverse()
+      .find((item) => item.actor === seat);
+
+    if (latestEv) {
+      if (latestEv.kind === "drop" && latestEv.toCoord) {
+        const lootedSniper = latestEv.summary?.includes("狙") || latestEv.weapon === "sniper";
+        const lootedRifle = latestEv.summary?.includes("步枪") || latestEv.weapon === "rifle";
+        if (lootedSniper) return t("actDropSniper", { coord: latestEv.toCoord });
+        if (lootedRifle) return t("actDropRifle", { coord: latestEv.toCoord });
+        return t("actDropPlain", { coord: latestEv.toCoord });
+      }
+      if (latestEv.kind === "move" && latestEv.fromCoord && latestEv.toCoord) {
+        const lootedSniper = latestEv.summary?.includes("狙");
+        const lootedRifle = latestEv.summary?.includes("步枪");
+        if (lootedSniper) {
+          return t("actMoveSniper", {
+            from: latestEv.fromCoord,
+            to: latestEv.toCoord,
+          });
+        }
+        if (lootedRifle) {
+          return t("actMoveRifle", {
+            from: latestEv.fromCoord,
+            to: latestEv.toCoord,
+          });
+        }
+        return t("actMovePlain", {
+          from: latestEv.fromCoord,
+          to: latestEv.toCoord,
+        });
+      }
+      if (
+        (latestEv.kind === "attack" || latestEv.kind === "kill") &&
+        latestEv.targetSeat
+      ) {
+        const targetLabel = `${seatShortLabel(latestEv.targetSeat)} ${
+          getPlayerInfo(latestEv.targetSeat).name
+        }`;
+        return t(
+          latestEv.kind === "kill" ? "actAttackKill" : "actAttackHit",
+          {
+            target: targetLabel,
+            dmg: latestEv.damage ?? WEAPONS[ag.weapon].damage,
+          },
+        );
+      }
+    }
+
+    return ag.lastActionSummary || null;
+  }
+
+  /**
+   * Formats the bottom HUD event ticker in the active locale with friendly operative names.
+   */
+  function formatTickerEventText(event: BattleEvent | null): string {
+    if (!event) return t("welcomeSub");
+    if (event.kind === "start") return t("tickerStart");
+    if (event.kind === "drop" && event.actor && event.toCoord) {
+      const lootedSniper =
+        event.summary?.includes("狙") || event.weapon === "sniper";
+      const lootedRifle =
+        event.summary?.includes("步枪") || event.weapon === "rifle";
+      const loot = lootedSniper
+        ? t("tickerLootSniper")
+        : lootedRifle
+          ? t("tickerLootRifle")
+          : "";
+      return t("tickerDrop", {
+        actor: formatSeatTag(event.actor),
+        coord: event.toCoord,
+        loot,
+      });
+    }
+    if (event.kind === "move" && event.actor && event.toCoord) {
+      const lootedSniper = event.summary?.includes("狙");
+      const lootedRifle = event.summary?.includes("步枪");
+      const loot = lootedSniper
+        ? t("tickerLootSniper")
+        : lootedRifle
+          ? t("tickerLootRifle")
+          : "";
+      return t("tickerMove", {
+        actor: formatSeatTag(event.actor),
+        to: event.toCoord,
+        loot,
+      });
+    }
+    if (
+      (event.kind === "attack" || event.kind === "kill") &&
+      event.actor &&
+      event.targetSeat
+    ) {
+      const wepCode =
+        event.weapon && event.weapon !== "storm"
+          ? weaponBadgeCode(event.weapon)
+          : weaponBadgeCode("fists");
+      return t(event.kind === "kill" ? "tickerKill" : "tickerAttack", {
+        actor: formatSeatTag(event.actor),
+        target: formatSeatTag(event.targetSeat),
+        weapon: wepCode,
+        dmg: event.damage ?? 25,
+      });
+    }
+    if (event.kind === "victory" && event.winner) {
+      return t("winnerBanner", {
+        name: formatSeatTag(event.winner),
+        kills: p.agents[event.winner]?.kills || 0,
+      });
+    }
+    return event.summary;
+  }
+
   function resolveSeatChoice(pid: string | null | undefined): string {
     if (!pid || isBotParticipant(pid)) return "@bot";
     if (currentPartID && pid === currentPartID) return "@me";
@@ -890,7 +1043,6 @@ export default function App() {
       const dist = chebyshevDist(meAg.x, meAg.y, x, y);
       const wep = WEAPONS[meAg.weapon];
 
-      // Check if there is an attackable visible enemy on this tile
       const enemiesOnTile = p.aliveSeats
         .filter((s) => s !== humanSeat)
         .map((s) => p.agents[s])
@@ -915,10 +1067,11 @@ export default function App() {
   const leftWingSeats = activeSeats.slice(0, Math.ceil(activeSeats.length / 2));
   const rightWingSeats = activeSeats.slice(Math.ceil(activeSeats.length / 2));
 
-  // Compute ballistic tracer line coordinates when lastEvent was an attack or kill
+  // Transient ballistic tracer line (auto-clears after 680ms so nothing ever sticks on the board)
   const ev = p.lastEvent;
   const showTracer = Boolean(
-    ev &&
+    activeFxStep === p.stepCount &&
+      ev &&
       (ev.kind === "attack" || ev.kind === "kill") &&
       ev.fromCoord &&
       ev.toCoord,
@@ -960,6 +1113,7 @@ export default function App() {
       (l.phase === "combat" && canAgentSeeAgent(p, observerSeat, seat));
 
     const hpPct = Math.max(0, Math.min(100, ag.hp));
+    const actionText = formatAgentActionText(seat);
 
     return (
       <article
@@ -1041,11 +1195,11 @@ export default function App() {
           </div>
         </div>
 
-        {/* Action Note */}
+        {/* Localized Action Note */}
         <div className="br-agent-radio-slot">
-          {ag.lastActionSummary ? (
-            <p className="br-action-note" title={ag.lastActionSummary}>
-              {ag.lastActionSummary}
+          {actionText ? (
+            <p className="br-action-note" title={actionText}>
+              {actionText}
             </p>
           ) : (
             <p className="br-action-placeholder">{t("statusWaitingDrop")}</p>
@@ -1159,7 +1313,6 @@ export default function App() {
             {muted ? <VolumeX size={13} /> : <Volume2 size={13} />}
           </button>
 
-          {/* Pause / Resume: visible during active game */}
           {l.phase !== "lobby" && !isFinished && (
             <button
               type="button"
@@ -1246,7 +1399,7 @@ export default function App() {
 
               {/* 8x8 Grid Tiles */}
               <div className="br-tiles-grid">
-                {/* Ballistic Bullet / Sniper Laser Tracer SVG Overlay */}
+                {/* Transient Ballistic Bullet / Sniper Laser Tracer SVG Overlay */}
                 {tracerPoints && (
                   <svg
                     className="br-tracer-svg"
@@ -1261,13 +1414,6 @@ export default function App() {
                       x2={tracerPoints.x2}
                       y2={tracerPoints.y2}
                       className={`br-tracer-line is-${ev?.weapon || "fists"}`}
-                    />
-                    <circle
-                      key={`impact-${p.stepCount}`}
-                      cx={tracerPoints.x2}
-                      cy={tracerPoints.y2}
-                      r="4.2"
-                      className="br-impact-ring"
                     />
                   </svg>
                 )}
@@ -1326,7 +1472,6 @@ export default function App() {
                     l.phase !== "combat" ||
                     canAgentSeeTile(p, observerSeat, tile.x, tile.y);
 
-                  // Operatives standing on this tile visible to observer (honoring Blind Drop & Bush Stealth)
                   const agentsOnTile = p.activeSeats
                     .map((s) => p.agents[s])
                     .filter(
@@ -1372,7 +1517,11 @@ export default function App() {
                   }
 
                   const isDamagedTile = Boolean(
-                    tracerPoints && ev?.toCoord === tile.coord && ev.damage,
+                    activeFxStep === p.stepCount &&
+                      ev &&
+                      (ev.kind === "attack" || ev.kind === "kill") &&
+                      ev.toCoord === tile.coord &&
+                      ev.damage,
                   );
 
                   return (
@@ -1383,7 +1532,9 @@ export default function App() {
                         inStorm ? "is-storm" : "is-safe"
                       } ${!visibleInFog ? "is-fog" : ""} ${
                         isMoveTarget ? "is-move-target" : ""
-                      } ${isAttackTarget ? "is-attack-target" : ""}`}
+                      } ${isAttackTarget ? "is-attack-target" : ""} ${
+                        isDamagedTile ? "is-hit-flash" : ""
+                      }`}
                       title={`${tile.coord} · ${terrainLabel(tile.terrain)}${
                         isStormCenter ? ` · ${t("tipSafeCenter")}` : ""
                       }${isAttackTarget ? ` · ${t("tipTargetLocked")}` : ""}`}
@@ -1396,16 +1547,20 @@ export default function App() {
                         {tile.terrain === "bush" && <TerrainBushArt />}
                       </div>
 
-                      {/* Subtle Coordinate & Safe Center Beacon */}
+                      {/* Subtle Coordinate Watermark */}
                       <div className="br-tile-head" aria-hidden="true">
                         <span className="br-tile-coord">{tile.coord}</span>
-                        {isStormCenter && (
+                      </div>
+
+                      {/* Subtle Safe Zone Center Reticle Watermark */}
+                      {isStormCenter &&
+                        tile.crate === "none" &&
+                        agentsOnTile.length === 0 && (
                           <span
-                            className="br-center-beacon"
-                            title={t("tipSafeCenter")}
+                            className="br-center-reticle"
+                            aria-hidden="true"
                           />
                         )}
-                      </div>
 
                       {/* Crates */}
                       {visibleInFog && tile.crate !== "none" && (
@@ -1506,7 +1661,7 @@ export default function App() {
                         })}
                       </div>
 
-                      {/* Floating Damage Popup */}
+                      {/* Transient Floating Damage Popup */}
                       {isDamagedTile && ev?.damage && (
                         <div
                           key={`dmg-${p.stepCount}`}
@@ -1525,7 +1680,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* Unified Tactical Event Ticker & Human Turn Banner */}
+          {/* Unified Localized Tactical Event Ticker & Human Turn Banner */}
           <div
             className={`br-hud-footer ${isMyTurn ? "is-my-turn" : ""} ${
               isFinished ? "is-victory" : ""
@@ -1553,9 +1708,7 @@ export default function App() {
             ) : (
               <div className="br-hud-row">
                 <Flame size={14} className="br-hud-icon" />
-                <span>
-                  {p.lastEvent ? p.lastEvent.summary : t("welcomeSub")}
-                </span>
+                <span>{formatTickerEventText(p.lastEvent)}</span>
               </div>
             )}
           </div>
