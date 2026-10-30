@@ -503,12 +503,157 @@ const SEAT_THEMES: Record<
   Seat6: { color: "#ec4899", bg: "rgba(236, 72, 153, 0.18)", border: "#ec4899", glow: "rgba(236, 72, 153, 0.55)" },
 };
 
-function terrainShortIcon(ter: TerrainType): string {
-  if (ter === "base") return "🏰";
-  if (ter === "tower") return "📡";
-  if (ter === "bush") return "🌿";
-  if (ter === "bunker") return "🛡️";
-  return "";
+/* Tactical SVG Terrain Micro-Landscapes (Replacing emojis with physical sandtable terrain) */
+function TerrainBushArt() {
+  return (
+    <svg
+      className="br-terrain-svg is-bush"
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <ellipse cx="24" cy="27" rx="19" ry="14" fill="#052E16" fillOpacity="0.75" />
+      <circle cx="16" cy="24" r="10" fill="#14532D" />
+      <circle cx="15" cy="22" r="7" fill="#166534" />
+      <circle cx="32" cy="25" r="9.5" fill="#14532D" />
+      <circle cx="33" cy="23" r="7" fill="#166534" />
+      <circle cx="24" cy="18" r="9" fill="#15803D" />
+      <circle cx="23" cy="16" r="6.5" fill="#22C55E" fillOpacity="0.85" />
+      <circle cx="21" cy="15" r="1.5" fill="#86EFAC" fillOpacity="0.75" />
+      <circle cx="14" cy="21" r="1.5" fill="#86EFAC" fillOpacity="0.6" />
+      <circle cx="34" cy="22" r="1.5" fill="#86EFAC" fillOpacity="0.6" />
+      <circle cx="26" cy="26" r="1.5" fill="#86EFAC" fillOpacity="0.5" />
+    </svg>
+  );
+}
+
+function TerrainBunkerArt() {
+  return (
+    <svg
+      className="br-terrain-svg is-bunker"
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <rect x="7" y="10" width="34" height="28" rx="6" fill="#1E293B" stroke="#64748B" strokeWidth="1.2" />
+      {/* Fortified Sandbags Outer Line */}
+      <path
+        d="M9 33C9 21 19 13 33 13"
+        stroke="#B45309"
+        strokeWidth="3.4"
+        strokeDasharray="4 1.5"
+        strokeLinecap="round"
+      />
+      {/* Heavy Armor Parapet */}
+      <path
+        d="M12 35C12 24 21 16 35 16"
+        stroke="#475569"
+        strokeWidth="2"
+      />
+      {/* Pillbox Bunker Firing Slit */}
+      <rect x="20" y="19" width="16" height="14" rx="3" fill="#0F172A" stroke="#94A3B8" strokeWidth="1" />
+      <rect x="23" y="24" width="10" height="3" rx="1" fill="#F59E0B" fillOpacity="0.8" />
+      {/* Industrial Armor Rivets */}
+      <circle cx="11" cy="14" r="1.2" fill="#94A3B8" />
+      <circle cx="37" cy="14" r="1.2" fill="#94A3B8" />
+      <circle cx="11" cy="34" r="1.2" fill="#94A3B8" />
+      <circle cx="37" cy="34" r="1.2" fill="#94A3B8" />
+    </svg>
+  );
+}
+
+function TerrainTowerArt() {
+  return (
+    <svg
+      className="br-terrain-svg is-tower"
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <rect x="8" y="8" width="32" height="32" rx="4" fill="#0C4A6E" fillOpacity="0.4" stroke="#0284C7" strokeWidth="1.2" strokeDasharray="3 2" />
+      <line x1="8" y1="8" x2="40" y2="40" stroke="#0284C7" strokeOpacity="0.3" strokeWidth="0.8" />
+      <line x1="40" y1="8" x2="8" y2="40" stroke="#0284C7" strokeOpacity="0.3" strokeWidth="0.8" />
+      <circle cx="24" cy="24" r="11" stroke="#38BDF8" strokeOpacity="0.35" strokeWidth="1" strokeDasharray="2 2" />
+      <circle cx="24" cy="24" r="6" fill="#0F172A" stroke="#38BDF8" strokeWidth="1.5" />
+      <line x1="24" y1="24" x2="31" y2="17" stroke="#7DD3FC" strokeWidth="1.8" strokeLinecap="round" />
+      <circle cx="24" cy="24" r="2" fill="#FDE047" />
+    </svg>
+  );
+}
+
+function TerrainBaseArt() {
+  return (
+    <svg
+      className="br-terrain-svg is-base"
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <rect x="4" y="4" width="40" height="40" rx="4" fill="#78350F" fillOpacity="0.22" stroke="#F59E0B" strokeWidth="1" strokeDasharray="4 2" />
+      <circle cx="24" cy="24" r="14" stroke="#F59E0B" strokeWidth="1.3" strokeDasharray="5 3" />
+      <circle cx="24" cy="24" r="9" fill="#0F172A" stroke="#FDE047" strokeWidth="1.2" />
+      <path d="M20 19V29M28 19V29M20 24H28" stroke="#FDE047" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M4 11L11 4M37 4L44 11M4 37L11 44M37 44L44 37" stroke="#F59E0B" strokeWidth="1.2" strokeOpacity="0.6" />
+    </svg>
+  );
+}
+
+function StormCenterBeaconArt() {
+  return (
+    <svg
+      className="br-beacon-art"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="9" stroke="#F59E0B" strokeWidth="1.2" strokeDasharray="3 2" />
+      <circle cx="12" cy="12" r="5" stroke="#FDE047" strokeWidth="1.4" />
+      <line x1="12" y1="1" x2="12" y2="7" stroke="#FDE047" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="12" y1="17" x2="12" y2="23" stroke="#FDE047" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="1" y1="12" x2="7" y2="12" stroke="#FDE047" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="17" y1="12" x2="23" y2="12" stroke="#FDE047" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="12" cy="12" r="2" fill="#FDE047" />
+    </svg>
+  );
+}
+
+function SonarPingArt() {
+  return (
+    <svg
+      className="br-sonar-svg"
+      viewBox="0 0 28 28"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <circle cx="14" cy="14" r="11" stroke="#EF4444" strokeWidth="1.2" strokeDasharray="3 2" className="br-sonar-ripple" />
+      <circle cx="14" cy="14" r="6" stroke="#F87171" strokeWidth="1.5" />
+      <circle cx="14" cy="14" r="2.5" fill="#EF4444" />
+    </svg>
+  );
+}
+
+function ClashBadgeArt() {
+  return (
+    <svg
+      className="br-clash-svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path d="M14.5 17.5L3 6V3H6L17.5 14.5" stroke="#EF4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M13 19L19 13M16 16L20 20M19 21L21 19" stroke="#EF4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M14.5 6.5L18 3H21V6L17.5 9.5" stroke="#FDE047" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9.5 14.5L6 18L3 21" stroke="#FDE047" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="12" cy="12" r="2" fill="#FEF08A" />
+    </svg>
+  );
 }
 
 function weaponBadgeCode(w: WeaponId): string {
@@ -1193,6 +1338,16 @@ export default function App() {
                   center: p.stormCenter.coord,
                 })}
               </span>
+              {isFinished && p.winner ? (
+                <span className="br-winner-pill">
+                  🏆 胜者：{seatShortLabel(p.winner)} · {getPlayerInfo(p.winner).name}
+                </span>
+              ) : p.turn && l.phase !== "lobby" ? (
+                <span className="br-turn-pill">
+                  🎯 {seatShortLabel(p.turn)} · {getPlayerInfo(p.turn).name}
+                  {l.phase === "combat" ? ` (${p.turnAp} AP)` : ""}
+                </span>
+              ) : null}
             </div>
           )}
         </div>
@@ -1284,66 +1439,36 @@ export default function App() {
           {leftWingSeats.map((s) => renderOperativeCard(s))}
         </aside>
 
-        {/* Center Stage: Kill-Feed Ticker + 8x6 Tactical Battlefield Grid + Bottom Command Dock */}
+        {/* Center Stage: Pure Tactical Sandtable (No redundant headers/docks, max space) */}
         <section className="br-center-stage">
-          {/* Live Kill-Feed & Event Ticker */}
-          <div className="br-ticker-bar">
-            <div className="br-ticker-left">
-              <Flame size={15} className="br-ticker-icon" />
-              <span>
-                {isFinished && p.winner
-                  ? t("winnerBanner", {
-                      name: `${seatShortLabel(p.winner)} · ${
-                        getPlayerInfo(p.winner).name
-                      }`,
-                      kills: p.agents[p.winner]?.kills || 0,
-                      score: p.agents[p.winner]?.tacticalScore || 0,
-                    })
-                  : p.lastEvent
-                    ? p.lastEvent.summary
-                    : t("welcomeSub")}
-              </span>
+          {l.round === 0 || l.phase === "lobby" ? (
+            <div className="br-welcome-overlay">
+              <div className="br-welcome-emblem">
+                <BattleRoyaleEmblemIcon size={54} />
+              </div>
+              <h2>{t("welcomeTitle")}</h2>
+              <p>{t("welcomeSub")}</p>
+              <button
+                type="button"
+                className="br-cta-btn"
+                onClick={openPickerModal}
+              >
+                <Sparkles size={16} />
+                <span>{t("startDropBtn")}</span>
+              </button>
             </div>
+          ) : null}
 
-            {p.turn && !p.winner && l.phase !== "lobby" && (
-              <span className="br-turn-tag">
-                🎯 当前行动：{seatShortLabel(p.turn)} ·{" "}
-                {getPlayerInfo(p.turn).name}
-                {l.phase === "combat" ? ` (${p.turnAp} AP)` : ""}
-              </span>
-            )}
-          </div>
-
-          {/* 8x6 Tactical Island Map Grid */}
-          <div className="br-map-container">
-            {l.round === 0 || l.phase === "lobby" ? (
-              <div className="br-welcome-overlay">
-                <div className="br-welcome-emblem">
-                  <BattleRoyaleEmblemIcon size={54} />
-                </div>
-                <h2>{t("welcomeTitle")}</h2>
-                <p>{t("welcomeSub")}</p>
-                <button
-                  type="button"
-                  className="br-cta-btn"
-                  onClick={openPickerModal}
-                >
-                  <Sparkles size={16} />
-                  <span>{t("startDropBtn")}</span>
-                </button>
-              </div>
-            ) : null}
-
-            {/* Column Letters Header (A..H) */}
-            <div className="br-board-box">
-              <div className="br-col-headers" aria-hidden="true">
-                <span className="br-corner-spacer" />
-                {COL_LETTERS.map((col) => (
-                  <span key={col} className="br-col-label">
-                    {col}
-                  </span>
-                ))}
-              </div>
+          {/* 8x8 Tactical Sandtable */}
+          <div className="br-board-box">
+            <div className="br-col-headers" aria-hidden="true">
+              <span className="br-corner-spacer" />
+              {COL_LETTERS.map((col) => (
+                <span key={col} className="br-col-label">
+                  {col}
+                </span>
+              ))}
+            </div>
 
               <div className="br-grid-body">
                 {/* Row Numbers (1..8) */}
@@ -1473,29 +1598,25 @@ export default function App() {
                         handleTileClick(tile.coord, tile.x, tile.y)
                       }
                     >
-                      {/* Top row inside tile: storm center marker & terrain only (No tile coordinates clutter) */}
-                      <div className="br-tile-head">
-                        {isStormCenter ? (
-                          <span title="安全区中心" className="br-storm-center-marker">
-                            🎯
-                          </span>
-                        ) : (
-                          <span className="br-tile-head-blank" />
-                        )}
-                        {terrainShortIcon(tile.terrain) && (
-                          <span
-                            className="br-ter-icon"
-                            title={terrainLabel(tile.terrain)}
-                          >
-                            {terrainShortIcon(tile.terrain)}
-                          </span>
-                        )}
+                      {/* Integrated Tactical Micro-Landscape Art */}
+                      <div className="br-tile-terrain-art" aria-hidden="true">
+                        {tile.terrain === "bush" && <TerrainBushArt />}
+                        {tile.terrain === "bunker" && <TerrainBunkerArt />}
+                        {tile.terrain === "tower" && <TerrainTowerArt />}
+                        {tile.terrain === "base" && <TerrainBaseArt />}
                       </div>
+
+                      {/* Storm Center Beacon */}
+                      {isStormCenter && (
+                        <div className="br-storm-center-marker" title="安全区中心">
+                          <StormCenterBeaconArt />
+                        </div>
+                      )}
 
                       {/* Close Quarters Combat Clash Indicator when 2+ operatives share tile */}
                       {visibleInFog && agentsOnTile.length >= 2 && (
                         <div className="br-cqb-clash-badge" title="近身拼枪交火对峙！">
-                          ⚔️
+                          <ClashBadgeArt />
                         </div>
                       )}
 
@@ -1534,8 +1655,7 @@ export default function App() {
 
                       {!visibleInFog && recentPing && (
                         <div className="br-ping-sonar" title="探测到战场声纹">
-                          <span className="br-sonar-ring" />
-                          <span className="br-sonar-core">🔊</span>
+                          <SonarPingArt />
                         </div>
                       )}
 
@@ -1552,7 +1672,9 @@ export default function App() {
                                 isMe ? "is-self" : "is-enemy"
                               } ${p.turn === ag.seat ? "is-active-turn" : ""} ${
                                 ag.guarding ? "is-guarding" : ""
-                              } ${ag.spawnProtected ? "is-protected" : ""}`}
+                              } ${ag.spawnProtected ? "is-protected" : ""} ${
+                                tile.terrain === "bush" ? "is-in-bush" : ""
+                              } ${tile.terrain === "bunker" ? "is-in-bunker" : ""}`}
                               title={`${seatLabel(ag.seat)} · ${pInfo.name} (${ag.hp}HP, ${weaponLabel(ag.weapon)})`}
                             >
                               {/* Active Turn Radar Ring */}
@@ -1639,17 +1761,16 @@ export default function App() {
               </div>
             </div>
           </div>
-        </div>
 
-          {/* Bottom Tactical Control Dock */}
-          <div className="br-control-dock">
-            {myTurn && humanSeat && l.phase === "dropping" ? (
-              <div className="br-dock-inner">
-                <div className="br-dock-prompt">
-                  <span className="br-beacon-dot" />
-                  <strong>{t("dropPrompt")}</strong>
-                </div>
-                <div className="br-radio-row">
+          {/* Floating Action HUD (Only when human commander needs to act, non-intrusive) */}
+          {myTurn && humanSeat && (
+            <div className="br-floating-hud">
+              {l.phase === "dropping" ? (
+                <div className="br-hud-inner is-drop">
+                  <div className="br-hud-prompt">
+                    <span className="br-beacon-dot" />
+                    <strong>{t("dropPrompt")}</strong>
+                  </div>
                   <input
                     type="text"
                     className="br-radio-input"
@@ -1659,10 +1780,8 @@ export default function App() {
                     onChange={(e) => setDraftRadio(e.target.value)}
                   />
                 </div>
-              </div>
-            ) : myTurn && humanSeat && l.phase === "combat" ? (
-              <div className="br-dock-inner">
-                <div className="br-combat-actions-row">
+              ) : l.phase === "combat" ? (
+                <div className="br-hud-inner is-combat">
                   <span className="br-ap-badge">⚡ {p.turnAp} AP</span>
 
                   <button
@@ -1748,45 +1867,9 @@ export default function App() {
                     onChange={(e) => setDraftRadio(e.target.value)}
                   />
                 </div>
-              </div>
-            ) : (
-              <div className="br-dock-inner is-standby">
-                {isFinished && p.winner ? (
-                  <div className="br-standby-bar">
-                    <Trophy size={16} className="br-gold-icon" />
-                    <strong>
-                      {t("winnerBanner", {
-                        name: `${seatShortLabel(p.winner)} · ${
-                          getPlayerInfo(p.winner).name
-                        }`,
-                        kills: p.agents[p.winner]?.kills || 0,
-                        score: p.agents[p.winner]?.tacticalScore || 0,
-                      })}
-                    </strong>
-                    <button
-                      type="button"
-                      className="br-act-btn is-gold"
-                      onClick={handleQuickStart}
-                    >
-                      <RotateCcw size={14} />
-                      <span>{t("newRound")}</span>
-                    </button>
-                  </div>
-                ) : (
-                  <div className="br-standby-bar">
-                    <span className="br-beacon-dot" />
-                    <span>
-                      {p.turn
-                        ? `正在等待 ${seatLabel(p.turn)}（${
-                            getPlayerInfo(p.turn).name
-                          }）执行战术行动...`
-                        : t("welcomeSub")}
-                    </span>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+              ) : null}
+            </div>
+          )}
         </section>
 
         {/* Right Wing Operative Vitality Cards */}

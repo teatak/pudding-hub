@@ -612,75 +612,15 @@ body,
 }
 
 /* Center Stage: Ticker + 8x6 Tactical Grid + Control Dock */
+/* Center Stage: Direct Clean Stage for 8x8 Tactical Sandtable (No redundant nested boxes) */
 .br-center-stage {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 8px;
-  min-width: 0;
-  min-height: 0;
-}
-
-.br-ticker-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 7px 14px;
-  border-radius: 10px;
-  background: rgba(15, 23, 42, 0.88);
-  border: 1px solid rgba(245, 158, 11, 0.28);
-  font-size: 12px;
-  flex-shrink: 0;
-}
-
-.br-ticker-left {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  color: #f8fafc;
-  font-weight: 600;
-  min-width: 0;
-}
-
-.br-ticker-left span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.br-ticker-icon {
-  color: #f59e0b;
-  flex-shrink: 0;
-}
-
-.br-turn-tag {
-  font-size: 11.5px;
-  font-weight: 700;
-  color: #fde047;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-/* 8x6 Tactical Island Sandtable Board (Seamless Command Sandtable) */
-.br-map-container {
   position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 8px;
-  border-radius: 14px;
-  background: radial-gradient(
-    circle at center,
-    rgba(15, 23, 42, 0.94) 0%,
-    rgba(8, 12, 22, 0.98) 100%
-  );
-  border: 1px solid rgba(56, 189, 248, 0.2);
-  box-shadow:
-    inset 0 0 36px rgba(0, 0, 0, 0.75),
-    0 10px 30px rgba(0, 0, 0, 0.5);
+  min-width: 0;
   min-height: 0;
   overflow: hidden;
   container-type: size;
@@ -730,13 +670,41 @@ body,
   box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
 }
 
+/* 8x8 Tactical Sandtable (Directly occupies entire central arena, fully maximized) */
 .br-board-box {
-  --tile-size: clamp(30px, min(calc((100cqw - 36px) / 8), calc((100cqh - 36px) / 8)), 96px);
+  --tile-size: clamp(34px, min(calc((100cqw - 24px) / 8), calc((100cqh - 24px) / 8)), 110px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   margin: auto;
+}
+
+.br-winner-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgba(245, 158, 11, 0.22);
+  border: 1px solid #fde047;
+  color: #fde047;
+  font-size: 11px;
+  font-weight: 800;
+  box-shadow: 0 0 10px rgba(250, 204, 21, 0.35);
+}
+
+.br-turn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(56, 189, 248, 0.18);
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  color: #7dd3fc;
+  font-size: 11px;
+  font-weight: 700;
 }
 
 .br-col-headers {
@@ -956,25 +924,106 @@ body,
   z-index: 2;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   width: 100%;
   line-height: 1;
 }
 
-.br-tile-head-blank {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
+/* Interactive Sandtable Terrain Micro-Landscape (Layer 1 Background) */
+.br-tile-terrain-art {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  overflow: hidden;
 }
 
+.br-terrain-svg {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.br-terrain-svg.is-bush {
+  opacity: 0.9;
+  filter: drop-shadow(0 2px 5px rgba(5, 46, 22, 0.6));
+}
+
+.br-terrain-svg.is-bunker {
+  opacity: 0.88;
+  filter: drop-shadow(0 2px 6px rgba(15, 23, 42, 0.7));
+}
+
+.br-terrain-svg.is-tower {
+  opacity: 0.85;
+}
+
+.br-terrain-svg.is-base {
+  opacity: 0.85;
+}
+
+/* Storm Center Beacon */
 .br-storm-center-marker {
-  font-size: 12px;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.br-beacon-art {
+  width: 16px;
+  height: 16px;
   animation: brCenterBeaconPulse 1.4s ease-in-out infinite alternate;
 }
 
-.br-ter-icon {
-  font-size: 10px;
-  opacity: 0.75;
+/* Sonar Ping Radar Ring */
+.br-sonar-svg {
+  width: 26px;
+  height: 26px;
+}
+
+.br-sonar-ripple {
+  animation: brSonarWave 1.2s ease-out infinite;
+  transform-origin: center;
+}
+
+/* Combat Clash Badge */
+.br-cqb-clash-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: brClashShake 0.6s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.br-clash-svg {
+  width: 22px;
+  height: 22px;
+  filter: drop-shadow(0 0 6px #ef4444);
+}
+
+/* Tactical Token States inside Terrain */
+.br-board-token.is-in-bush .br-token-disc {
+  box-shadow:
+    0 0 0 2px rgba(34, 197, 94, 0.45),
+    0 4px 10px rgba(5, 46, 22, 0.7);
+}
+
+.br-board-token.is-in-bunker .br-token-disc {
+  box-shadow:
+    0 0 0 2px rgba(148, 163, 184, 0.5),
+    0 4px 12px rgba(0, 0, 0, 0.8);
 }
 
 @keyframes brCenterBeaconPulse {
@@ -1302,28 +1351,6 @@ body,
   margin-top: -3px;
 }
 
-/* Close Quarters Combat Clash Indicator (When 2+ operatives share cell) */
-.br-cqb-clash-badge {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 8;
-  font-size: 16px;
-  animation: brClashShake 0.6s ease-in-out infinite alternate;
-  pointer-events: none;
-  filter: drop-shadow(0 0 6px #ef4444);
-}
-
-@keyframes brClashShake {
-  0% {
-    transform: translate(-50%, -50%) rotate(-10deg) scale(0.9);
-  }
-  100% {
-    transform: translate(-50%, -50%) rotate(10deg) scale(1.15);
-  }
-}
-
 /* Direct HP Gauge on Token for Immediate Battlefield Readability */
 .br-token-hp-gauge {
   position: relative;
@@ -1382,31 +1409,53 @@ body,
   }
 }
 
-/* Bottom Tactical Control Dock */
-.br-control-dock {
-  flex-shrink: 0;
-  min-height: 58px;
-  padding: 8px 14px;
-  border-radius: 12px;
-  background: rgba(11, 17, 32, 0.92);
-  border: 1px solid rgba(245, 158, 11, 0.28);
+/* Floating Action HUD (Non-intrusive floating pill, zero arena compression) */
+.br-floating-hud {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 35;
+  max-width: 95%;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(11, 17, 32, 0.94);
+  backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(245, 158, 11, 0.55);
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.8),
+    0 0 16px rgba(245, 158, 11, 0.25);
   display: flex;
   align-items: center;
+  justify-content: center;
+  animation: brHudPop 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.br-dock-inner {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+@keyframes brHudPop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
 }
 
-.br-dock-prompt {
+.br-hud-inner {
   display: flex;
   align-items: center;
   gap: 7px;
+  flex-wrap: nowrap;
+}
+
+.br-hud-prompt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 12px;
   color: #fde047;
+  white-space: nowrap;
 }
 
 .br-beacon-dot {
@@ -1502,20 +1551,6 @@ body,
 
 .br-radio-input:focus {
   border-color: #fbbf24;
-}
-
-.br-standby-bar {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  font-size: 12.5px;
-  color: #cbd5e1;
-}
-
-.br-gold-icon {
-  color: #fde047;
 }
 
 /* Modal & Fixed-Position Custom Dropdowns */
