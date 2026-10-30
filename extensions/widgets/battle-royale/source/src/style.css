@@ -213,7 +213,7 @@ body,
   z-index: 5;
   flex: 1;
   display: grid;
-  grid-template-columns: 138px minmax(0, 1fr) 138px;
+  grid-template-columns: 156px minmax(0, 1fr) 156px;
   gap: 8px;
   align-items: stretch;
   min-height: 0;
@@ -363,10 +363,10 @@ body,
 .br-kill-badge {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
-  font-size: 9px;
+  gap: 1.5px;
+  font-size: 8.5px;
   font-weight: 700;
-  padding: 0 4px;
+  padding: 0 3px;
   border-radius: 999px;
   background: rgba(239, 68, 68, 0.18);
   border: 1px solid rgba(248, 113, 113, 0.4);
@@ -857,22 +857,22 @@ body,
   border-color: rgba(148, 163, 184, 0.07);
 }
 
-/* Terrain Subtle Textures */
+/* Terrain Subtle Textures (Soft, muted tactical backdrop - not foreground) */
 .br-tile.is-ter-base {
-  background: radial-gradient(circle, rgba(180, 83, 9, 0.35) 0%, rgba(120, 53, 15, 0.22) 100%);
-  border-color: rgba(245, 158, 11, 0.28);
+  background: rgba(120, 53, 15, 0.12);
+  border-color: rgba(245, 158, 11, 0.15);
 }
 .br-tile.is-ter-tower {
-  background: radial-gradient(circle, rgba(14, 116, 144, 0.35) 0%, rgba(8, 51, 68, 0.25) 100%);
-  border-color: rgba(56, 189, 248, 0.28);
+  background: rgba(8, 51, 68, 0.14);
+  border-color: rgba(56, 189, 248, 0.16);
 }
 .br-tile.is-ter-bush {
-  background: #064e3b;
-  border-color: rgba(34, 197, 94, 0.3);
+  background: rgba(20, 83, 45, 0.15);
+  border-color: rgba(34, 197, 94, 0.16);
 }
 .br-tile.is-ter-bunker {
-  background: rgba(30, 41, 59, 0.65);
-  border-color: rgba(148, 163, 184, 0.3);
+  background: rgba(30, 41, 59, 0.2);
+  border-color: rgba(148, 163, 184, 0.16);
 }
 
 /* Electromagnetic Storm (Continuous Deep Radiation Veil across battlefield) */
@@ -950,25 +950,24 @@ body,
 .br-terrain-svg {
   width: 100%;
   height: 100%;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  opacity: 0.45;
+  transition: opacity 0.2s ease;
 }
 
 .br-terrain-svg.is-bush {
-  opacity: 0.9;
-  filter: drop-shadow(0 2px 5px rgba(5, 46, 22, 0.6));
+  opacity: 0.42;
 }
 
 .br-terrain-svg.is-bunker {
-  opacity: 0.88;
-  filter: drop-shadow(0 2px 6px rgba(15, 23, 42, 0.7));
+  opacity: 0.48;
 }
 
 .br-terrain-svg.is-tower {
-  opacity: 0.85;
+  opacity: 0.45;
 }
 
 .br-terrain-svg.is-base {
-  opacity: 0.85;
+  opacity: 0.42;
 }
 
 /* Storm Center Beacon */
@@ -1103,20 +1102,20 @@ body,
   border-width: 0 3px 3px 0;
 }
 
-/* Tactical Safe Zone Pill Tag */
+/* Tactical Safe Zone Pill Tag (Positioned inside perimeter top-left, avoids column letters) */
 .br-safe-perimeter-tag {
   position: absolute;
-  top: -10px;
-  left: 10px;
-  padding: 1px 6px;
-  border-radius: 4px;
-  background: #0284c7;
+  top: 3px;
+  left: 6px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(2, 132, 199, 0.92);
   border: 1px solid #7dd3fc;
   color: #f0f9ff;
-  font-size: 9px;
+  font-size: 8.5px;
   font-weight: 800;
   letter-spacing: 0.5px;
-  line-height: 1.2;
+  line-height: 1.1;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
   pointer-events: none;
 }
@@ -1926,16 +1925,17 @@ body,
 .br-agent-badges {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 2.5px;
   flex-shrink: 0;
 }
 
 .br-iq-badge {
   display: inline-flex;
   align-items: center;
-  padding: 1px 5px;
+  gap: 1.5px;
+  padding: 0.5px 3.5px;
   border-radius: 999px;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 800;
   background: rgba(56, 189, 248, 0.16);
   border: 1px solid rgba(56, 189, 248, 0.45);

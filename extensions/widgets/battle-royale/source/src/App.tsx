@@ -508,7 +508,7 @@ const SEAT_THEMES: Record<
   Seat6: { color: "#ec4899", bg: "rgba(236, 72, 153, 0.18)", border: "#ec4899", glow: "rgba(236, 72, 153, 0.55)" },
 };
 
-/* Tactical SVG Terrain Micro-Landscapes (Seamless physical sandtable terrain) */
+/* Tactical SVG Terrain Micro-Landscapes (Soft, low-contrast tactical backdrop) */
 function TerrainBushArt() {
   return (
     <svg
@@ -518,33 +518,28 @@ function TerrainBushArt() {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      {/* 铺满全格的茂盛草甸底色 */}
-      <rect width="48" height="48" rx="4" fill="#064E3B" fillOpacity="0.65" />
-      {/* 深层丛林阴影层，覆盖四角与边缘 */}
-      <circle cx="10" cy="10" r="12" fill="#022c22" fillOpacity="0.6" />
-      <circle cx="38" cy="10" r="12" fill="#022c22" fillOpacity="0.6" />
-      <circle cx="10" cy="38" r="12" fill="#022c22" fillOpacity="0.6" />
-      <circle cx="38" cy="38" r="12" fill="#022c22" fillOpacity="0.6" />
-      <ellipse cx="24" cy="24" rx="20" ry="18" fill="#064E3B" fillOpacity="0.8" />
+      {/* 柔和半透明草甸底色 */}
+      <rect width="48" height="48" fill="#14532D" fillOpacity="0.35" />
+      <rect x="1" y="1" width="46" height="46" fill="#166534" fillOpacity="0.45" />
 
-      {/* 密集的高草与灌木群落 (填满 48x48 整个方格) */}
-      <circle cx="8" cy="20" r="9" fill="#047857" />
-      <circle cx="20" cy="12" r="10" fill="#065F46" />
-      <circle cx="36" cy="16" r="9.5" fill="#047857" />
-      <circle cx="40" cy="32" r="9" fill="#065F46" />
-      <circle cx="26" cy="38" r="10.5" fill="#047857" />
-      <circle cx="12" cy="36" r="8.5" fill="#065F46" />
-      <circle cx="24" cy="24" r="11" fill="#059669" />
+      {/* 浅淡低对比度灌木地表起伏 */}
+      <ellipse cx="12" cy="12" rx="11" ry="9" fill="#15803D" fillOpacity="0.4" />
+      <ellipse cx="36" cy="12" rx="11" ry="9" fill="#15803D" fillOpacity="0.4" />
+      <ellipse cx="12" cy="36" rx="11" ry="9" fill="#15803D" fillOpacity="0.4" />
+      <ellipse cx="36" cy="36" rx="11" ry="9" fill="#15803D" fillOpacity="0.4" />
 
-      {/* 草丛前沿灌木层次与高光 */}
-      <circle cx="18" cy="20" r="7" fill="#10B981" fillOpacity="0.75" />
-      <circle cx="30" cy="22" r="6.5" fill="#10B981" fillOpacity="0.75" />
-      <circle cx="24" cy="30" r="6" fill="#34D399" fillOpacity="0.6" />
+      <ellipse cx="24" cy="10" rx="9" ry="7" fill="#166534" fillOpacity="0.45" />
+      <ellipse cx="24" cy="38" rx="9" ry="7" fill="#166534" fillOpacity="0.45" />
+      <ellipse cx="10" cy="24" rx="7" ry="9" fill="#166534" fillOpacity="0.45" />
+      <ellipse cx="38" cy="24" rx="7" ry="9" fill="#166534" fillOpacity="0.45" />
 
-      {/* 茂密草叶尖刺细节 (遍布整个方格各角) */}
-      <path d="M4 12L7 6L9 13M15 6L17 2L20 7M28 6L31 1L33 6M40 7L43 3L44 9" stroke="#6EE7B7" strokeWidth="1" strokeLinecap="round" />
-      <path d="M5 40L8 45L10 39M21 41L24 47L26 40M34 40L37 46L39 39" stroke="#6EE7B7" strokeWidth="1" strokeLinecap="round" />
-      <path d="M2 24L7 22M46 22L41 24M22 22L24 17L26 22" stroke="#A7F3D0" strokeWidth="1.2" strokeLinecap="round" />
+      <circle cx="24" cy="24" r="10" fill="#15803D" fillOpacity="0.4" />
+      <circle cx="16" cy="20" r="7" fill="#22C55E" fillOpacity="0.35" />
+      <circle cx="32" cy="28" r="7" fill="#22C55E" fillOpacity="0.35" />
+
+      {/* 极轻微草芒点缀 */}
+      <path d="M8 8L10 5M12 9L15 6M34 8L36 5M38 9L41 6" stroke="#86EFAC" strokeWidth="0.8" strokeLinecap="round" strokeOpacity="0.4" />
+      <path d="M8 40L10 43M12 39L15 42M34 40L36 43M38 39L41 42" stroke="#86EFAC" strokeWidth="0.8" strokeLinecap="round" strokeOpacity="0.4" />
     </svg>
   );
 }
@@ -558,44 +553,43 @@ function TerrainBunkerArt() {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      {/* 阵地地基钢网与夯土地坪 */}
-      <rect x="2" y="2" width="44" height="44" rx="4" fill="#0F172A" fillOpacity="0.7" stroke="#475569" strokeWidth="1" strokeDasharray="3 2" />
+      {/* 阵地地基淡暗地坪 */}
+      <rect x="2" y="2" width="44" height="44" rx="4" fill="#0F172A" fillOpacity="0.35" stroke="#475569" strokeWidth="0.8" strokeDasharray="3 2" />
 
-      {/* 外圈层叠双层加固沙袋堑壕 (Sandbag Emplacement) */}
-      <rect x="7" y="6" width="9" height="5" rx="1.5" fill="#92400E" stroke="#D97706" strokeWidth="0.8" />
-      <rect x="17" y="6" width="9" height="5" rx="1.5" fill="#78350F" stroke="#B45309" strokeWidth="0.8" />
-      <rect x="27" y="6" width="9" height="5" rx="1.5" fill="#92400E" stroke="#D97706" strokeWidth="0.8" />
-      <rect x="5" y="12" width="6" height="8" rx="1.5" fill="#78350F" stroke="#B45309" strokeWidth="0.8" />
-      <rect x="5" y="21" width="6" height="8" rx="1.5" fill="#92400E" stroke="#D97706" strokeWidth="0.8" />
-      <rect x="5" y="30" width="6" height="8" rx="1.5" fill="#78350F" stroke="#B45309" strokeWidth="0.8" />
-      <rect x="37" y="12" width="6" height="8" rx="1.5" fill="#78350F" stroke="#B45309" strokeWidth="0.8" />
-      <rect x="37" y="21" width="6" height="8" rx="1.5" fill="#92400E" stroke="#D97706" strokeWidth="0.8" />
-      <rect x="37" y="30" width="6" height="8" rx="1.5" fill="#78350F" stroke="#B45309" strokeWidth="0.8" />
+      {/* 外圈灰砂战术沙袋 (低饱和度、浅淡沉稳沙灰) */}
+      <rect x="7" y="6" width="9" height="5" rx="1.5" fill="#44403C" stroke="#78716C" strokeWidth="0.6" />
+      <rect x="17" y="6" width="9" height="5" rx="1.5" fill="#292524" stroke="#57534E" strokeWidth="0.6" />
+      <rect x="27" y="6" width="9" height="5" rx="1.5" fill="#44403C" stroke="#78716C" strokeWidth="0.6" />
+      <rect x="5" y="12" width="6" height="8" rx="1.5" fill="#292524" stroke="#57534E" strokeWidth="0.6" />
+      <rect x="5" y="21" width="6" height="8" rx="1.5" fill="#44403C" stroke="#78716C" strokeWidth="0.6" />
+      <rect x="5" y="30" width="6" height="8" rx="1.5" fill="#292524" stroke="#57534E" strokeWidth="0.6" />
+      <rect x="37" y="12" width="6" height="8" rx="1.5" fill="#292524" stroke="#57534E" strokeWidth="0.6" />
+      <rect x="37" y="21" width="6" height="8" rx="1.5" fill="#44403C" stroke="#78716C" strokeWidth="0.6" />
+      <rect x="37" y="30" width="6" height="8" rx="1.5" fill="#292524" stroke="#57534E" strokeWidth="0.6" />
 
-      {/* 倒U型厚重防爆混凝土掩体墙 (Blast Concrete Bunker Wall) */}
+      {/* 倒U型装甲混凝土掩体墙 */}
       <path
         d="M12 36V16C12 13.5 13.5 12 16 12H32C34.5 12 36 13.5 36 16V36"
         fill="#1E293B"
+        fillOpacity="0.6"
         stroke="#64748B"
-        strokeWidth="3.5"
+        strokeWidth="2.5"
         strokeLinecap="round"
       />
-      {/* 掩体防弹装甲胸墙内衬 */}
       <path
         d="M14 36V17C14 15 15.5 13.5 17.5 13.5H30.5C32.5 13.5 34 15 34 17V36"
         stroke="#94A3B8"
-        strokeWidth="1.2"
+        strokeWidth="0.8"
         strokeLinecap="round"
+        strokeOpacity="0.6"
       />
 
-      {/* 战术射击孔/观瞄缝 (Gunports / Firing Slits) */}
-      <rect x="18" y="15" width="4" height="2" rx="0.5" fill="#F59E0B" />
-      <rect x="26" y="15" width="4" height="2" rx="0.5" fill="#F59E0B" />
+      {/* 战术射击孔微光 */}
+      <rect x="18" y="15" width="4" height="2" rx="0.5" fill="#D97706" fillOpacity="0.75" />
+      <rect x="26" y="15" width="4" height="2" rx="0.5" fill="#D97706" fillOpacity="0.75" />
 
       {/* 掩体中央特工驻立钢板站位 */}
-      <rect x="18" y="24" width="12" height="12" rx="2" fill="#334155" fillOpacity="0.6" stroke="#64748B" strokeWidth="0.8" />
-      {/* 黄黑战术警戒斜纹标线 */}
-      <path d="M12 12L15 15M20 12L23 15M28 12L31 15M33 12L36 15" stroke="#F59E0B" strokeWidth="1" strokeLinecap="round" />
+      <rect x="18" y="24" width="12" height="12" rx="2" fill="#334155" fillOpacity="0.4" stroke="#64748B" strokeWidth="0.6" />
     </svg>
   );
 }
@@ -609,33 +603,30 @@ function TerrainTowerArt() {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      {/* 满格科技高导地基与四角防爆基座 */}
-      <rect x="2" y="2" width="44" height="44" rx="4" fill="#082F49" fillOpacity="0.45" stroke="#0284C7" strokeWidth="0.8" strokeDasharray="3 2" />
+      {/* 满格科技淡暗地基 */}
+      <rect x="2" y="2" width="44" height="44" rx="4" fill="#082F49" fillOpacity="0.22" stroke="#0284C7" strokeWidth="0.6" strokeDasharray="3 2" />
 
-      {/* 四角桁架钢索地基向中心汇聚 */}
-      <line x1="4" y1="4" x2="16" y2="16" stroke="#0369A1" strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="44" y1="4" x2="32" y2="16" stroke="#0369A1" strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="4" y1="44" x2="16" y2="32" stroke="#0369A1" strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="44" y1="44" x2="32" y2="32" stroke="#0369A1" strokeWidth="1.5" strokeLinecap="round" />
+      {/* 四角桁架拉索 (浅色微弱) */}
+      <line x1="4" y1="4" x2="16" y2="16" stroke="#0284C7" strokeWidth="1" strokeLinecap="round" strokeOpacity="0.35" />
+      <line x1="44" y1="4" x2="32" y2="16" stroke="#0284C7" strokeWidth="1" strokeLinecap="round" strokeOpacity="0.35" />
+      <line x1="4" y1="44" x2="16" y2="32" stroke="#0284C7" strokeWidth="1" strokeLinecap="round" strokeOpacity="0.35" />
+      <line x1="44" y1="44" x2="32" y2="32" stroke="#0284C7" strokeWidth="1" strokeLinecap="round" strokeOpacity="0.35" />
 
       {/* 360度雷达刻度圆环 */}
-      <circle cx="24" cy="24" r="18" stroke="#0284C7" strokeWidth="1" strokeDasharray="2 3" strokeOpacity="0.6" />
-      <circle cx="24" cy="24" r="12" stroke="#38BDF8" strokeWidth="0.8" strokeOpacity="0.4" />
+      <circle cx="24" cy="24" r="18" stroke="#0284C7" strokeWidth="0.8" strokeDasharray="2 3" strokeOpacity="0.35" />
+      <circle cx="24" cy="24" r="12" stroke="#38BDF8" strokeWidth="0.6" strokeOpacity="0.25" />
 
-      {/* 雷达动态扫描扇形光束 */}
+      {/* 极淡雷达扫描波束 */}
       <path
         d="M24 24L36 12A18 18 0 0 0 24 6Z"
         fill="#38BDF8"
-        fillOpacity="0.25"
+        fillOpacity="0.08"
       />
 
-      {/* 雷达大型主天线锅体与相控阵馈源 (Radar Dish Emplacement) */}
-      <ellipse cx="24" cy="24" rx="9" ry="7" fill="#0F172A" stroke="#38BDF8" strokeWidth="1.4" />
-      <ellipse cx="24" cy="24" rx="6" ry="4.5" fill="#0369A1" fillOpacity="0.6" stroke="#7DD3FC" strokeWidth="0.8" />
-      {/* 馈源主桅杆与天线头 */}
-      <line x1="24" y1="24" x2="29" y2="17" stroke="#FDE047" strokeWidth="1.6" strokeLinecap="round" />
-      <circle cx="29" cy="17" r="1.5" fill="#EF4444" />
-      <circle cx="24" cy="24" r="2.5" fill="#38BDF8" />
+      {/* 雷达主天线大锅与馈源 */}
+      <ellipse cx="24" cy="24" rx="8" ry="6" fill="#0F172A" stroke="#0284C7" strokeWidth="1" strokeOpacity="0.6" />
+      <line x1="24" y1="24" x2="28" y2="18" stroke="#FDE047" strokeWidth="1.2" strokeLinecap="round" strokeOpacity="0.6" />
+      <circle cx="28" cy="18" r="1.2" fill="#EF4444" fillOpacity="0.75" />
     </svg>
   );
 }
@@ -648,111 +639,255 @@ function TerrainBaseArt({
   if (!quadrant) {
     return (
       <svg className="br-terrain-svg is-base" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect x="2" y="2" width="44" height="44" rx="4" fill="#78350F" fillOpacity="0.25" stroke="#F59E0B" strokeWidth="1" strokeDasharray="3 2" />
-        <circle cx="24" cy="24" r="15" stroke="#F59E0B" strokeWidth="1.2" strokeDasharray="4 2" />
-        <circle cx="24" cy="24" r="9" fill="#0F172A" stroke="#FDE047" strokeWidth="1.2" />
-        <path d="M20 20V28M28 20V28M20 24H28" stroke="#FDE047" strokeWidth="1.6" strokeLinecap="round" />
+        <rect x="2" y="2" width="44" height="44" rx="4" fill="#78350F" fillOpacity="0.15" stroke="#F59E0B" strokeWidth="0.8" strokeDasharray="3 2" />
+        <circle cx="24" cy="24" r="15" stroke="#F59E0B" strokeWidth="0.9" strokeDasharray="4 2" strokeOpacity="0.4" />
+        <circle cx="24" cy="24" r="9" fill="#0F172A" stroke="#FDE047" strokeWidth="0.9" strokeOpacity="0.4" />
+        <path d="M20 20V28M28 20V28M20 24H28" stroke="#FDE047" strokeWidth="1.2" strokeLinecap="round" strokeOpacity="0.5" />
       </svg>
     );
   }
 
-  // 2x2 巨型联合军事停机坪基地一体化拼装
+  // 2x2 巨型联合军事停机坪基地一体化拼装 (浅淡低对比度背景)
   return (
     <svg className="br-terrain-svg is-base" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <rect width="48" height="48" fill="#78350F" fillOpacity="0.2" />
+      <rect width="48" height="48" fill="#78350F" fillOpacity="0.1" />
 
       {quadrant === "top-left" && (
         <>
-          <path d="M12 48 A36 36 0 0 1 48 12" stroke="#B45309" strokeWidth="1.5" strokeDasharray="4 2" />
-          <path d="M22 48 A26 26 0 0 1 48 22" stroke="#F59E0B" strokeWidth="1.8" strokeDasharray="5 2.5" />
-          <path d="M33 48 A15 15 0 0 1 48 33" stroke="#FDE047" strokeWidth="1.2" />
-          <path d="M41 37V48M41 48H48" stroke="#FDE047" strokeWidth="2.2" strokeLinecap="round" />
-          <rect x="6" y="6" width="14" height="12" rx="2" fill="#1E293B" stroke="#B45309" strokeWidth="1" />
-          <path d="M6 10L20 10M10 6V18M16 6V18" stroke="#F59E0B" strokeWidth="0.8" strokeOpacity="0.5" />
-          <path d="M4 4L12 4M4 4V12" stroke="#F59E0B" strokeWidth="1.5" />
+          <path d="M12 48 A36 36 0 0 1 48 12" stroke="#B45309" strokeWidth="1.2" strokeDasharray="4 2" strokeOpacity="0.4" />
+          <path d="M22 48 A26 26 0 0 1 48 22" stroke="#F59E0B" strokeWidth="1.4" strokeDasharray="5 2.5" strokeOpacity="0.45" />
+          <path d="M33 48 A15 15 0 0 1 48 33" stroke="#FDE047" strokeWidth="1" strokeOpacity="0.4" />
+          <path d="M41 37V48M41 48H48" stroke="#FDE047" strokeWidth="1.8" strokeLinecap="round" strokeOpacity="0.5" />
+          <rect x="6" y="6" width="14" height="12" rx="2" fill="#1E293B" stroke="#B45309" strokeWidth="0.8" strokeOpacity="0.35" />
+          <path d="M4 4L10 4M4 4V10" stroke="#F59E0B" strokeWidth="1.2" strokeOpacity="0.4" />
         </>
       )}
 
       {quadrant === "top-right" && (
         <>
-          <path d="M0 12 A36 36 0 0 1 36 48" stroke="#B45309" strokeWidth="1.5" strokeDasharray="4 2" />
-          <path d="M0 22 A26 26 0 0 1 26 48" stroke="#F59E0B" strokeWidth="1.8" strokeDasharray="5 2.5" />
-          <path d="M0 33 A15 15 0 0 1 15 48" stroke="#FDE047" strokeWidth="1.2" />
-          <path d="M7 37V48M0 48H7" stroke="#FDE047" strokeWidth="2.2" strokeLinecap="round" />
-          <rect x="28" y="6" width="14" height="12" rx="2" fill="#1E293B" stroke="#B45309" strokeWidth="1" />
-          <path d="M28 10L42 10M32 6V18M38 6V18" stroke="#F59E0B" strokeWidth="0.8" strokeOpacity="0.5" />
-          <path d="M44 4L36 4M44 4V12" stroke="#F59E0B" strokeWidth="1.5" />
+          <path d="M0 12 A36 36 0 0 1 36 48" stroke="#B45309" strokeWidth="1.2" strokeDasharray="4 2" strokeOpacity="0.4" />
+          <path d="M0 22 A26 26 0 0 1 26 48" stroke="#F59E0B" strokeWidth="1.4" strokeDasharray="5 2.5" strokeOpacity="0.45" />
+          <path d="M0 33 A15 15 0 0 1 15 48" stroke="#FDE047" strokeWidth="1" strokeOpacity="0.4" />
+          <path d="M7 37V48M0 48H7" stroke="#FDE047" strokeWidth="1.8" strokeLinecap="round" strokeOpacity="0.5" />
+          <rect x="28" y="6" width="14" height="12" rx="2" fill="#1E293B" stroke="#B45309" strokeWidth="0.8" strokeOpacity="0.35" />
+          <path d="M44 4L38 4M44 4V10" stroke="#F59E0B" strokeWidth="1.2" strokeOpacity="0.4" />
         </>
       )}
 
       {quadrant === "bottom-left" && (
         <>
-          <path d="M48 36 A36 36 0 0 1 12 0" stroke="#B45309" strokeWidth="1.5" strokeDasharray="4 2" />
-          <path d="M48 26 A26 26 0 0 1 22 0" stroke="#F59E0B" strokeWidth="1.8" strokeDasharray="5 2.5" />
-          <path d="M48 15 A15 15 0 0 1 33 0" stroke="#FDE047" strokeWidth="1.2" />
-          <path d="M41 0V11M41 0H48" stroke="#FDE047" strokeWidth="2.2" strokeLinecap="round" />
-          <rect x="6" y="30" width="14" height="12" rx="2" fill="#1E293B" stroke="#B45309" strokeWidth="1" />
-          <path d="M6 34L20 34M10 30V42M16 30V42" stroke="#F59E0B" strokeWidth="0.8" strokeOpacity="0.5" />
-          <path d="M4 44L12 44M4 44V36" stroke="#F59E0B" strokeWidth="1.5" />
+          <path d="M48 36 A36 36 0 0 1 12 0" stroke="#B45309" strokeWidth="1.2" strokeDasharray="4 2" strokeOpacity="0.4" />
+          <path d="M48 26 A26 26 0 0 1 22 0" stroke="#F59E0B" strokeWidth="1.4" strokeDasharray="5 2.5" strokeOpacity="0.45" />
+          <path d="M48 15 A15 15 0 0 1 33 0" stroke="#FDE047" strokeWidth="1" strokeOpacity="0.4" />
+          <path d="M41 0V11M41 0H48" stroke="#FDE047" strokeWidth="1.8" strokeLinecap="round" strokeOpacity="0.5" />
+          <rect x="6" y="30" width="14" height="12" rx="2" fill="#1E293B" stroke="#B45309" strokeWidth="0.8" strokeOpacity="0.35" />
+          <path d="M4 44L10 44M4 44V38" stroke="#F59E0B" strokeWidth="1.2" strokeOpacity="0.4" />
         </>
       )}
 
       {quadrant === "bottom-right" && (
         <>
-          <path d="M0 36 A36 36 0 0 1 36 0" stroke="#B45309" strokeWidth="1.5" strokeDasharray="4 2" />
-          <path d="M0 26 A26 26 0 0 1 26 0" stroke="#F59E0B" strokeWidth="1.8" strokeDasharray="5 2.5" />
-          <path d="M0 15 A15 15 0 0 1 15 0" stroke="#FDE047" strokeWidth="1.2" />
-          <path d="M7 0V11M0 0H7" stroke="#FDE047" strokeWidth="2.2" strokeLinecap="round" />
-          <rect x="28" y="30" width="14" height="12" rx="2" fill="#1E293B" stroke="#B45309" strokeWidth="1" />
-          <path d="M28 34L42 34M32 30V42M38 30V42" stroke="#F59E0B" strokeWidth="0.8" strokeOpacity="0.5" />
-          <path d="M44 44L36 44M44 44V36" stroke="#F59E0B" strokeWidth="1.5" />
+          <path d="M36 0 A36 36 0 0 1 0 36" stroke="#B45309" strokeWidth="1.2" strokeDasharray="4 2" strokeOpacity="0.4" />
+          <path d="M26 0 A26 26 0 0 1 0 26" stroke="#F59E0B" strokeWidth="1.4" strokeDasharray="5 2.5" strokeOpacity="0.45" />
+          <path d="M15 0 A15 15 0 0 1 0 15" stroke="#FDE047" strokeWidth="1" strokeOpacity="0.4" />
+          <path d="M7 0V11M0 0H7" stroke="#FDE047" strokeWidth="1.8" strokeLinecap="round" strokeOpacity="0.5" />
+          <rect x="28" y="30" width="14" height="12" rx="2" fill="#1E293B" stroke="#B45309" strokeWidth="0.8" strokeOpacity="0.35" />
+          <path d="M44 44L38 44M44 44V38" stroke="#F59E0B" strokeWidth="1.2" strokeOpacity="0.4" />
         </>
       )}
     </svg>
   );
 }
 
-/* Micro-Landscape Tactical Crate Vector Arts (Zero emojis, Zero text clutter) */
+/* Authentic Tactical Items & Equipment Icons (True-to-life military silhouettes) */
+function TacticalRifleIcon({ size = 12, className }: { size?: number; className?: string }) {
+  return (
+    <svg
+      width={Math.round(size * 1.55)}
+      height={size}
+      viewBox="0 0 24 14"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      {/* 战术步枪/长枪剪影: 枪口消焰器、长枪管、护木导轨、机匣、弧形弹匣、握把与伸缩托 */}
+      <path d="M0 4H3V6H0V4ZM3 5H13V6H14.5V5H19C20.1 5 21 5.9 21 7V9C21 9.6 20.6 10 20 10H18L17 12.5H15L15.5 10H12.2L10.8 13.5H8.2L9.6 10H5V8H3V5Z" />
+      <rect x="7" y="3.2" width="2.5" height="1.4" rx="0.4" />
+      <rect x="13.5" y="2.8" width="4.5" height="1.6" rx="0.5" />
+    </svg>
+  );
+}
+
+function TacticalGrenadeIcon({ size = 14, className }: { size?: number; className?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect x="6.5" y="2.5" width="3" height="2" rx="0.5" fill="#94A3B8" />
+      <path d="M9.5 3C11 3 12 4 12 5.5V11" stroke="#94A3B8" strokeWidth="1.2" strokeLinecap="round" />
+      <ellipse cx="8" cy="9.5" rx="4.5" ry="5.5" fill="#15803D" stroke="#052E16" strokeWidth="0.8" />
+      <line x1="5.5" y1="9.5" x2="10.5" y2="9.5" stroke="#86EFAC" strokeWidth="0.8" strokeOpacity="0.7" />
+      <line x1="8" y1="5.5" x2="8" y2="14" stroke="#86EFAC" strokeWidth="0.8" strokeOpacity="0.7" />
+      <circle cx="5" cy="3.5" r="1.5" stroke="#FDE047" strokeWidth="1" fill="none" />
+    </svg>
+  );
+}
+
+function TacticalMedkitIcon({ size = 14, className }: { size?: number; className?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect x="2" y="4" width="12" height="10" rx="2" fill="#047857" stroke="#10B981" strokeWidth="1" />
+      <path d="M6 4V2.5C6 2.2 6.2 2 6.5 2H9.5C9.8 2 10 2.2 10 2.5V4" stroke="#A7F3D0" strokeWidth="1.2" />
+      <rect x="7" y="6" width="2" height="6" rx="0.5" fill="#FFFFFF" />
+      <rect x="5" y="8" width="6" height="2" rx="0.5" fill="#FFFFFF" />
+    </svg>
+  );
+}
+
+function TacticalLootIcon({ size = 14, className }: { size?: number; className?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect x="2" y="6" width="12" height="8" rx="1.5" fill="#78350F" stroke="#F59E0B" strokeWidth="1" />
+      <path d="M1.5 5.5L8 2L14.5 5.5" stroke="#FDE047" strokeWidth="1.2" strokeLinecap="round" />
+      <rect x="7" y="8" width="2" height="3" rx="0.5" fill="#FDE047" />
+    </svg>
+  );
+}
+
+/* Micro-Landscape 3D Isometric Tactical Crates (High-fidelity, authentic battle royale supply models) */
 function AirdropCrateArt({ compact }: { compact?: boolean }) {
   const s = compact ? 22 : 28;
   return (
-    <svg width={s} height={s} viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <rect x="3" y="5" width="22" height="18" rx="3" fill="#DC2626" stroke="#FDE047" strokeWidth="1.2" />
-      <path d="M3 14H25V20C25 21.6569 23.6569 23 22 23H6C4.34315 23 3 21.6569 3 20V14Z" fill="#1E3A8A" />
-      <line x1="14" y1="5" x2="14" y2="23" stroke="#FDE047" strokeWidth="1.8" />
-      <line x1="3" y1="14" x2="25" y2="14" stroke="#FDE047" strokeWidth="1.2" />
-      <circle cx="14" cy="5" r="2" fill="#FEF08A" />
-      <circle cx="14" cy="5" r="3.5" stroke="#FEF08A" strokeWidth="0.8" strokeOpacity="0.7" className="br-airdrop-beacon" />
-      <rect x="2" y="4" width="3" height="3" fill="#FDE047" />
-      <rect x="23" y="4" width="3" height="3" fill="#FDE047" />
-      <rect x="2" y="21" width="3" height="3" fill="#FDE047" />
-      <rect x="23" y="21" width="3" height="3" fill="#FDE047" />
+    <svg
+      width={s}
+      height={s}
+      viewBox="0 0 32 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      {/* 接触软阴影 */}
+      <ellipse cx="16" cy="27" rx="12" ry="4" fill="#000000" fillOpacity="0.55" />
+
+      {/* 3D等轴测空投箱体 */}
+      {/* 顶面 (红色帆布顶盖，带黄色十字绑带与金属吊环) */}
+      <polygon points="16,5 28,11 16,17 4,11" fill="#DC2626" stroke="#991B1B" strokeWidth="0.8" />
+      <line x1="10" y1="8" x2="22" y2="14" stroke="#FDE047" strokeWidth="1.8" />
+      <line x1="22" y1="8" x2="10" y2="14" stroke="#FDE047" strokeWidth="1.8" />
+      <circle cx="16" cy="11" r="1.8" fill="#F59E0B" stroke="#FEF08A" strokeWidth="0.6" />
+
+      {/* 正面左侧壁 (深蓝重型装甲，带黄色加固带) */}
+      <polygon points="4,11 16,17 16,26 4,20" fill="#1D4ED8" stroke="#1E3A8A" strokeWidth="0.8" />
+      <line x1="10" y1="14" x2="10" y2="23" stroke="#FDE047" strokeWidth="1.8" />
+      <line x1="4" y1="19" x2="16" y2="25" stroke="#1E3A8A" strokeWidth="1.5" />
+
+      {/* 正面右侧壁 (暗蓝背光侧壁，带黄色加固带) */}
+      <polygon points="16,17 28,11 28,20 16,26" fill="#1E3A8A" stroke="#0F172A" strokeWidth="0.8" />
+      <line x1="22" y1="14" x2="22" y2="23" stroke="#EAB308" strokeWidth="1.8" />
+      <line x1="16" y1="25" x2="28" y2="19" stroke="#0F172A" strokeWidth="1.5" />
+
+      {/* 顶部天线与红色频闪信号信标 */}
+      <line x1="16" y1="11" x2="16" y2="3" stroke="#CBD5E1" strokeWidth="1.2" strokeLinecap="round" />
+      <circle cx="16" cy="3" r="2" fill="#EF4444" />
+      <circle cx="16" cy="3" r="3.8" stroke="#FCA5A5" strokeWidth="0.8" className="br-airdrop-beacon" />
     </svg>
   );
 }
 
 function SupplyCrateArt({ compact }: { compact?: boolean }) {
-  const s = compact ? 20 : 26;
+  const s = compact ? 22 : 28;
   return (
-    <svg width={s} height={s} viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <rect x="3" y="4" width="20" height="18" rx="3" fill="#78350F" stroke="#F59E0B" strokeWidth="1.2" />
-      <rect x="5" y="6" width="16" height="14" rx="1.5" fill="#451A03" stroke="#D97706" strokeWidth="0.8" />
-      <rect x="7" y="11" width="3" height="4" rx="0.5" fill="#FDE047" />
-      <rect x="16" y="11" width="3" height="4" rx="0.5" fill="#FDE047" />
-      <path d="M13 8V18M9 13H17" stroke="#FBBF24" strokeWidth="1.2" strokeLinecap="round" />
+    <svg
+      width={s}
+      height={s}
+      viewBox="0 0 30 30"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      {/* 接触软阴影 */}
+      <ellipse cx="15" cy="25" rx="11" ry="3.5" fill="#000000" fillOpacity="0.5" />
+
+      {/* 3D等轴测军火弹药箱 */}
+      {/* 顶面 (亮黄铜金属面，冲压防撞条) */}
+      <polygon points="15,4 26,9.5 15,15 4,9.5" fill="#D97706" stroke="#92400E" strokeWidth="0.8" />
+      <line x1="9" y1="7" x2="20" y2="12.5" stroke="#FDE047" strokeWidth="1.2" strokeOpacity="0.8" />
+      <line x1="11" y1="6" x2="22" y2="11.5" stroke="#FDE047" strokeWidth="1.2" strokeOpacity="0.8" />
+
+      {/* 正面左侧壁 (主立面，印有 3 发金色子弹弹药标志) */}
+      <polygon points="4,9.5 15,15 15,24 4,18.5" fill="#B45309" stroke="#78350F" strokeWidth="0.8" />
+      <line x1="7.5" y1="12" x2="7.5" y2="16.5" stroke="#FEF08A" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="10" y1="13.2" x2="10" y2="17.7" stroke="#FEF08A" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="12.5" y1="14.5" x2="12.5" y2="19" stroke="#FEF08A" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="7.5" cy="12" r="0.75" fill="#FDE047" />
+      <circle cx="10" cy="13.2" r="0.75" fill="#FDE047" />
+      <circle cx="12.5" cy="14.5" r="0.75" fill="#FDE047" />
+
+      {/* 正面右侧壁 (背光暗铜色，带工业合页锁扣) */}
+      <polygon points="15,15 26,9.5 26,18.5 15,24" fill="#78350F" stroke="#451A03" strokeWidth="0.8" />
+      <line x1="18.5" y1="13.5" x2="18.5" y2="17.5" stroke="#F59E0B" strokeWidth="1.2" strokeLinecap="round" />
+      <line x1="22.5" y1="11.5" x2="22.5" y2="15.5" stroke="#F59E0B" strokeWidth="1.2" strokeLinecap="round" />
     </svg>
   );
 }
 
 function DeathboxCrateArt({ compact }: { compact?: boolean }) {
-  const s = compact ? 20 : 26;
+  const s = compact ? 22 : 28;
   return (
-    <svg width={s} height={s} viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <rect x="3" y="4" width="20" height="18" rx="3" fill="#0F172A" stroke="#64748B" strokeWidth="1.2" />
-      <rect x="6" y="8" width="14" height="2" rx="1" fill="#38BDF8" fillOpacity="0.85" />
-      <rect x="10" y="2" width="6" height="3" rx="1" stroke="#94A3B8" strokeWidth="1" fill="none" />
-      <rect x="11" y="14" width="4" height="4" rx="1" fill="#1E293B" stroke="#94A3B8" strokeWidth="0.8" />
-      <circle cx="13" cy="16" r="1" fill="#EF4444" />
+    <svg
+      width={s}
+      height={s}
+      viewBox="0 0 30 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      {/* 接触软阴影 */}
+      <ellipse cx="15" cy="27" rx="11" ry="3.5" fill="#000000" fillOpacity="0.6" />
+
+      {/* 垂直全息战利品光柱 (冲天光束与星标) */}
+      <polygon points="13,15 17,15 16,3 14,3" fill="#38BDF8" fillOpacity="0.45" />
+      <line x1="15" y1="15" x2="15" y2="2" stroke="#E0F2FE" strokeWidth="1.2" strokeLinecap="round" />
+      <polygon points="15,0 16,2 15,4 14,2" fill="#67E8F9" />
+
+      {/* 3D等轴测暗钛合金箱体 */}
+      {/* 顶面 (钛合金受光面，带天青色能量边缘与电子铭牌) */}
+      <polygon points="15,5 26,10.5 15,16 4,10.5" fill="#334155" stroke="#38BDF8" strokeWidth="0.9" />
+      <polygon points="15,9 19,11.2 15,13.5 11,11.2" fill="#1E293B" stroke="#0284C7" strokeWidth="0.6" />
+      <circle cx="15" cy="11.2" r="1.2" fill="#38BDF8" />
+
+      {/* 正面左侧壁 (黑曜石装甲，带战术荧光脉冲能量条) */}
+      <polygon points="4,10.5 15,16 15,25 4,19.5" fill="#1E293B" stroke="#0F172A" strokeWidth="0.8" />
+      <line x1="6.5" y1="13" x2="12.5" y2="16" stroke="#10B981" strokeWidth="1.6" strokeLinecap="round" />
+      <line x1="6.5" y1="16" x2="12.5" y2="19" stroke="#38BDF8" strokeWidth="1.2" strokeLinecap="round" />
+
+      {/* 正面右侧壁 (极暗背光侧壁，带战术散热槽) */}
+      <polygon points="15,16 26,10.5 26,19.5 15,25" fill="#0F172A" stroke="#020617" strokeWidth="0.8" />
+      <line x1="18" y1="16" x2="23" y2="13.5" stroke="#475569" strokeWidth="1" strokeLinecap="round" />
+      <line x1="18" y1="19" x2="23" y2="16.5" stroke="#475569" strokeWidth="1" strokeLinecap="round" />
     </svg>
   );
 }
@@ -1343,7 +1478,7 @@ export default function App() {
                     ag.weapon !== "fists" ? ` · ${ag.ammo}/${ag.maxAmmo}` : ""
                   }`}
                 >
-                  <Swords size={10} className="br-wep-icon" />
+                  <TacticalRifleIcon size={10} className="br-wep-icon" />
                   <span className="br-wep-name">
                     {weaponLabel(ag.weapon)}
                     {ag.weapon !== "fists" ? ` · ${ag.ammo}/${ag.maxAmmo}` : ""}
@@ -1822,11 +1957,13 @@ export default function App() {
                         </div>
                       )}
 
-                      {/* Tactical Crates / Airdrops (Micro-models, Zero text noise) */}
+                      {/* Tactical Crates / Airdrops (Docked in corner on terrain/agents, centered on empty plains) */}
                       {visibleInFog && tile.crate && (
                         <div
                           className={`br-loot-box is-${tile.crate} ${
-                            agentsOnTile.length > 0 ? "is-compact" : "is-prominent"
+                            agentsOnTile.length > 0 || tile.terrain !== "plain"
+                              ? "is-compact"
+                              : "is-prominent"
                           }`}
                           title={
                             tile.crate === "airdrop"
@@ -1838,11 +1975,26 @@ export default function App() {
                         >
                           <div className="br-loot-box-art">
                             {tile.crate === "airdrop" ? (
-                              <AirdropCrateArt compact={agentsOnTile.length > 0} />
+                              <AirdropCrateArt
+                                compact={
+                                  agentsOnTile.length > 0 ||
+                                  tile.terrain !== "plain"
+                                }
+                              />
                             ) : tile.crate === "supply" ? (
-                              <SupplyCrateArt compact={agentsOnTile.length > 0} />
+                              <SupplyCrateArt
+                                compact={
+                                  agentsOnTile.length > 0 ||
+                                  tile.terrain !== "plain"
+                                }
+                              />
                             ) : (
-                              <DeathboxCrateArt compact={agentsOnTile.length > 0} />
+                              <DeathboxCrateArt
+                                compact={
+                                  agentsOnTile.length > 0 ||
+                                  tile.terrain !== "plain"
+                                }
+                              />
                             )}
                           </div>
                         </div>
@@ -1988,7 +2140,7 @@ export default function App() {
                     disabled={busy}
                     onClick={() => triggerHumanSingleStep({ kind: "loot" })}
                   >
-                    <Package size={14} />
+                    <TacticalLootIcon size={14} />
                     <span>{t("actLoot")}</span>
                   </button>
 
@@ -2002,7 +2154,7 @@ export default function App() {
                     }
                     onClick={() => triggerHumanSingleStep({ kind: "heal" })}
                   >
-                    <HeartPulse size={14} />
+                    <TacticalMedkitIcon size={14} />
                     <span>
                       {t("actHeal", { count: p.agents[humanSeat].medkits })}
                     </span>
@@ -2019,7 +2171,7 @@ export default function App() {
                         setUseGrenadeMode(!useGrenadeMode);
                       }}
                     >
-                      <Crosshair size={14} />
+                      <TacticalGrenadeIcon size={14} />
                       <span>
                         {t("actGrenade", {
                           count: p.agents[humanSeat].grenades,
