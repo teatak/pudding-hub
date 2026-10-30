@@ -367,7 +367,7 @@ export async function publish(retry = false) {
         audience: isFinished
           ? { kind: "all" }
           : { kind: "selected", participantIDs },
-        delivery: "request-action",
+        delivery: isFinished ? "inform" : "request-action",
         topic,
         summary,
         message,
@@ -552,16 +552,24 @@ export const stepBotTurn = () =>
     }
 
     await save(res.lobby, res.position);
-    await publish();
+    try {
+      await publish();
+    } catch {
+      /* ignore notification delivery error during bot turn */
+    }
     return true;
   });
 
 export const pause = async () => {
   const l = lobby();
   const p = position();
-  if (l.phase === "lobby" || p.winner) throw new Error("No ongoing game");
-  await pudding.interaction.pause();
-  await mutation?.catch(() => {});
+  if (l.phase === "lobby" || p.winner) return;
+  try {
+    await pudding.interaction.pause();
+    await mutation?.catch(() => {});
+  } catch {
+    /* ignore if run expired or already inactive */
+  }
 };
 
 export const resume = async () => {
