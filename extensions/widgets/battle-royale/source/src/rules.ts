@@ -145,25 +145,57 @@ export function initialLobby(): BattleRoyaleLobby {
   };
 }
 
+function createPrng(seed: number) {
+  let s = Math.abs(Math.floor(seed)) || 1;
+  return () => {
+    s = (s * 1664525 + 1013904223) % 4294967296;
+    return s / 4294967296;
+  };
+}
+
 export function createInitialPosition(
   round: number,
   playerCount: 4 | 6,
-  seed = 42,
+  seed?: number,
 ): BattleRoyalePosition {
   const activeSeats = seatsForCount(playerCount);
 
-  // Symmetric Bush tiles
-  const bushCoords = new Set([
-    "C3", "D3", "E3", "F3",
-    "C6", "D6", "E6", "F6",
-    "C4", "C5", "F4", "F5",
-  ]);
+  let bushCoords: Set<string>;
+  let crateCoords: Set<string>;
 
-  // Symmetric Supply Crate locations
-  const crateCoords = new Set([
-    "B2", "G2", "B7", "G7",
-    "D4", "E4", "D5", "E5",
-  ]);
+  if (seed === 42) {
+    // Deterministic layout for verification tests
+    bushCoords = new Set([
+      "C3", "D3", "E3", "F3",
+      "C6", "D6", "E6", "F6",
+      "C4", "C5", "F4", "F5",
+    ]);
+    crateCoords = new Set([
+      "B2", "G2", "B7", "G7",
+      "D4", "E4", "D5", "E5",
+    ]);
+  } else {
+    // Procedural dynamic randomization for real battles!
+    const effectiveSeed = seed ?? (Date.now() + round * 10007);
+    const rand = createPrng(effectiveSeed);
+
+    const allCoords: string[] = [];
+    for (let y = 0; y < GRID_HEIGHT; y++) {
+      for (let x = 0; x < GRID_WIDTH; x++) {
+        allCoords.push(toCoord(x, y));
+      }
+    }
+    for (let i = allCoords.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      const temp = allCoords[i];
+      allCoords[i] = allCoords[j];
+      allCoords[j] = temp;
+    }
+
+    const bushCount = 12 + Math.floor(rand() * 3);
+    bushCoords = new Set(allCoords.slice(0, bushCount));
+    crateCoords = new Set(allCoords.slice(bushCount, bushCount + 8));
+  }
 
   const tiles: TileState[] = [];
   for (let y = 0; y < GRID_HEIGHT; y++) {

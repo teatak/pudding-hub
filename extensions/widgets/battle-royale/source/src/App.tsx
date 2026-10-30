@@ -207,6 +207,241 @@ function OperativeAvatar({
   );
 }
 
+function SeatSelectorDropdown({
+  seat,
+  value,
+  onChange,
+  sessions,
+  activeSeats,
+  allSlots,
+}: {
+  seat: Seat;
+  value: string;
+  onChange: (val: string) => void;
+  sessions: SessionCandidate[];
+  activeSeats: Seat[];
+  allSlots: Record<Seat, string>;
+}) {
+  const [open, setOpen] = useState(false);
+  const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const updatePosition = () => {
+      if (!triggerRef.current) return;
+      const rect = triggerRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const openUpward = spaceBelow < 230 && rect.top > spaceBelow;
+      if (openUpward) {
+        setMenuStyle({
+          position: "fixed",
+          left: `${rect.left}px`,
+          width: `${rect.width}px`,
+          bottom: `${window.innerHeight - rect.top + 5}px`,
+          top: "auto",
+          maxHeight: `${Math.min(240, rect.top - 16)}px`,
+          zIndex: 999,
+        });
+      } else {
+        setMenuStyle({
+          position: "fixed",
+          left: `${rect.left}px`,
+          width: `${rect.width}px`,
+          top: `${rect.bottom + 5}px`,
+          bottom: "auto",
+          maxHeight: `${Math.min(240, spaceBelow - 16)}px`,
+          zIndex: 999,
+        });
+      }
+    };
+    updatePosition();
+    const onDocDown = (e: MouseEvent) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+    document.addEventListener("mousedown", onDocDown);
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+      document.removeEventListener("mousedown", onDocDown);
+    };
+  }, [open]);
+
+  function getOccupiedSeat(id: string): Seat | null {
+    if (!id || id.startsWith("@bot")) return null;
+    const found = activeSeats.find((s) => s !== seat && allSlots[s] === id);
+    return found || null;
+  }
+
+  const isMe = value === "@me";
+  const isBot = value === "@bot" || value.startsWith("@bot");
+  const currentSession = sessions.find(
+    (s) => s.id === value || s.participantID === value,
+  );
+
+  const meOccupiedBy = getOccupiedSeat("@me");
+
+  return (
+    <div className="br-select-wrap" ref={wrapRef}>
+      <button
+        ref={triggerRef}
+        type="button"
+        className="br-select-trigger"
+        onClick={() => setOpen(!open)}
+      >
+        <div className="br-select-item-left">
+          {isMe ? (
+            <span className="br-select-icon is-human">
+              <UserRound size={15} />
+            </span>
+          ) : isBot ? (
+            <span className="br-select-icon is-bot">
+              <Bot size={15} />
+            </span>
+          ) : currentSession?.model?.icon ? (
+            <img
+              src={currentSession.model.icon}
+              alt=""
+              className="br-select-model-img"
+            />
+          ) : (
+            <span className="br-select-icon is-ai">
+              <Sparkles size={15} />
+            </span>
+          )}
+          <div className="br-select-texts">
+            <strong className="br-select-title">
+              {isMe
+                ? t("playerYou")
+                : isBot
+                  ? `${t("playerBot")} · ${botNameForSeat(seat)}`
+                  : currentSession?.name || value}
+            </strong>
+            <small className="br-select-sub">
+              {isMe
+                ? t("humanSubTag")
+                : isBot
+                  ? t("botTag")
+                  : currentSession?.model?.name || "AI Session"}
+            </small>
+          </div>
+        </div>
+        <ChevronDown
+          size={15}
+          className={`br-select-chevron ${open ? "is-open" : ""}`}
+        />
+      </button>
+
+      {open && (
+        <div className="br-select-menu" style={menuStyle}>
+          {/* Option: @me (You) */}
+          <button
+            type="button"
+            disabled={Boolean(meOccupiedBy)}
+            className={`br-select-option ${isMe ? "is-selected" : ""} ${
+              meOccupiedBy ? "is-disabled" : ""
+            }`}
+            onClick={() => {
+              if (meOccupiedBy) return;
+              onChange("@me");
+              setOpen(false);
+            }}
+          >
+            <div className="br-select-item-left">
+              <span className="br-select-icon is-human">
+                <UserRound size={15} />
+              </span>
+              <div className="br-select-texts">
+                <strong className="br-select-title">{t("playerYou")}</strong>
+                <small className="br-select-sub">
+                  {meOccupiedBy
+                    ? t("alreadyAssignedTo", { seat: seatLabel(meOccupiedBy) })
+                    : t("humanSubTag")}
+                </small>
+              </div>
+            </div>
+            {isMe && <Check size={14} className="br-select-check" />}
+          </button>
+
+          {/* Option: @bot (Built-in Bot) */}
+          <button
+            type="button"
+            className={`br-select-option ${isBot ? "is-selected" : ""}`}
+            onClick={() => {
+              onChange("@bot");
+              setOpen(false);
+            }}
+          >
+            <div className="br-select-item-left">
+              <span className="br-select-icon is-bot">
+                <Bot size={15} />
+              </span>
+              <div className="br-select-texts">
+                <strong className="br-select-title">
+                  {t("playerBot")} · {botNameForSeat(seat)}
+                </strong>
+                <small className="br-select-sub">{t("botTag")}</small>
+              </div>
+            </div>
+            {isBot && <Check size={14} className="br-select-check" />}
+          </button>
+
+          {/* Sessions Options */}
+          {sessions.map((sess) => {
+            const selected = value === sess.id || value === sess.participantID;
+            const occ =
+              getOccupiedSeat(sess.id) ||
+              (sess.participantID ? getOccupiedSeat(sess.participantID) : null);
+            return (
+              <button
+                key={sess.id}
+                type="button"
+                disabled={Boolean(occ)}
+                className={`br-select-option ${selected ? "is-selected" : ""} ${
+                  occ ? "is-disabled" : ""
+                }`}
+                onClick={() => {
+                  if (occ) return;
+                  onChange(sess.id);
+                  setOpen(false);
+                }}
+              >
+                <div className="br-select-item-left">
+                  {sess.model?.icon ? (
+                    <img
+                      src={sess.model.icon}
+                      alt=""
+                      className="br-select-model-img"
+                    />
+                  ) : (
+                    <span className="br-select-icon is-ai">
+                      <Sparkles size={15} />
+                    </span>
+                  )}
+                  <div className="br-select-texts">
+                    <strong className="br-select-title">{sess.name}</strong>
+                    <small className="br-select-sub">
+                      {occ
+                        ? t("alreadyAssignedTo", { seat: seatLabel(occ) })
+                        : sess.model?.name || "AI Session"}
+                    </small>
+                  </div>
+                </div>
+                {selected && <Check size={14} className="br-select-check" />}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function App() {
   useWidgetState();
   const locale = useWidgetLocale();
@@ -462,36 +697,38 @@ export default function App() {
           </div>
           <h1>{t("appTitle")}</h1>
           <div className="br-status-pills">
-            <span className="br-phase-pill">
-              {l.phase === "lobby"
-                ? t("phaseLobby")
-                : l.phase === "dropping"
-                  ? t("phaseDropping")
-                  : l.phase === "finished"
-                    ? t("phaseFinished")
-                    : t("phaseCombat", { cycle: p.cycle, radius: p.stormRadius })}
-            </span>
-            <span className="br-alive-pill">
-              {t("aliveCount", { alive: p.aliveSeats.length, total: activeSeats.length })}
-            </span>
-            <span className="br-storm-pill">
-              <Zap size={11} />
-              {t("stormStatus", { radius: p.stormRadius, center: p.stormCenter.coord })}
-            </span>
             {isFinished && p.winner ? (
               <span className="br-winner-pill">
-                <Trophy size={12} />
+                <Trophy size={13} />
                 {t("winnerHeader", {
                   seat: seatShortLabel(p.winner),
                   name: getPlayerInfo(p.winner).name,
                 })}
               </span>
-            ) : p.turn && l.phase !== "lobby" ? (
-              <span className="br-turn-pill">
-                <Crosshair size={11} />
-                {seatShortLabel(p.turn)} · {getPlayerInfo(p.turn).name}
-              </span>
-            ) : null}
+            ) : (
+              <>
+                <span className="br-phase-pill">
+                  {l.phase === "lobby"
+                    ? t("phaseLobby")
+                    : l.phase === "dropping"
+                      ? t("phaseDropping")
+                      : t("phaseCombat", { cycle: p.cycle, radius: p.stormRadius })}
+                </span>
+                <span className="br-alive-pill">
+                  {t("aliveCount", { alive: p.aliveSeats.length, total: activeSeats.length })}
+                </span>
+                <span className="br-storm-pill">
+                  <Zap size={11} />
+                  {t("stormStatus", { radius: p.stormRadius, center: p.stormCenter.coord })}
+                </span>
+                {p.turn && l.phase !== "lobby" && (
+                  <span className="br-turn-pill">
+                    <Crosshair size={11} />
+                    {seatShortLabel(p.turn)} · {getPlayerInfo(p.turn).name}
+                  </span>
+                )}
+              </>
+            )}
           </div>
         </div>
 
@@ -515,24 +752,27 @@ export default function App() {
             {muted ? <VolumeX size={13} /> : <Volume2 size={13} />}
           </button>
 
-          {run?.status === "paused" ? (
-            <button
-              type="button"
-              className="br-top-btn"
-              onClick={() => void resumeGame()}
-            >
-              <Play size={13} />
-              <span>{t("resume")}</span>
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="br-top-btn"
-              onClick={() => void pauseGame()}
-            >
-              <Pause size={13} />
-              <span>{t("pause")}</span>
-            </button>
+          {/* Pause / Resume: only visible during active combat */}
+          {l.phase === "combat" && !isFinished && (
+            run?.status === "paused" ? (
+              <button
+                type="button"
+                className="br-top-btn"
+                onClick={() => void resumeGame()}
+              >
+                <Play size={13} />
+                <span>{t("resume")}</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="br-top-btn"
+                onClick={() => void pauseGame()}
+              >
+                <Pause size={13} />
+                <span>{t("pause")}</span>
+              </button>
+            )
           )}
 
           <button
@@ -617,7 +857,7 @@ export default function App() {
                     <div
                       className="br-safe-perimeter-box"
                       style={{
-                        left: `calc(20px + ${safeMinX} * (var(--tile-size) + 2px))`,
+                        left: `calc(${safeMinX} * (var(--tile-size) + 2px))`,
                         top: `calc(${safeMinY} * (var(--tile-size) + 2px))`,
                         width: `calc(${safeColSpan} * var(--tile-size) + ${safeColSpan - 1} * 2px)`,
                         height: `calc(${safeRowSpan} * var(--tile-size) + ${safeRowSpan - 1} * 2px)`,
@@ -804,21 +1044,16 @@ export default function App() {
                 {seatsForCount(pickerPlayerCount).map((seat) => (
                   <div key={seat} className="br-seat-field">
                     <span className="br-seat-field-label">{seatLabel(seat)}</span>
-                    <select
-                      className="br-seat-select-native"
+                    <SeatSelectorDropdown
+                      seat={seat}
                       value={pickerSlots[seat]}
-                      onChange={(e) =>
-                        setPickerSlots((prev) => ({ ...prev, [seat]: e.target.value }))
+                      onChange={(val) =>
+                        setPickerSlots((prev) => ({ ...prev, [seat]: val }))
                       }
-                    >
-                      <option value="@me">{t("playerYou")}</option>
-                      <option value="@bot">{t("playerBot")} · {botNameForSeat(seat)}</option>
-                      {(candidates?.sessions || []).map((sess) => (
-                        <option key={sess.id} value={sess.id}>
-                          {sess.name}
-                        </option>
-                      ))}
-                    </select>
+                      sessions={candidates?.sessions || []}
+                      activeSeats={seatsForCount(pickerPlayerCount)}
+                      allSlots={pickerSlots}
+                    />
                   </div>
                 ))}
               </div>
