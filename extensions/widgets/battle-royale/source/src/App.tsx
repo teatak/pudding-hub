@@ -39,6 +39,8 @@ import {
 import type { Seat, TerrainType, WeaponId } from "./types";
 import {
   COL_LETTERS,
+  GRID_WIDTH,
+  GRID_HEIGHT,
   seatsForCount,
   isBotParticipant,
   WEAPONS,
@@ -1640,43 +1642,60 @@ export default function App() {
 
                 {/* 8x8 Tactical Tiles Sandtable */}
                 <div className="br-tiles-grid">
-                  {/* Holographic Safe Zone Forcefield & Ballistics Overlay */}
-                  <svg
-                    className="br-board-fx-svg"
-                    viewBox="0 0 100 100"
-                    preserveAspectRatio="none"
-                    aria-hidden="true"
-                  >
-                    {/* Safe Zone Forcefield Ring */}
-                    <circle
-                      cx={(p.stormCenter.x + 0.5) * 12.5}
-                      cy={(p.stormCenter.y + 0.5) * 12.5}
-                      r={(p.stormRadius + 0.5) * 12.5}
-                      className="br-storm-forcefield"
-                    />
+                  {/* Strict Grid-Edge Safe Zone High-Contrast Perimeter Box */}
+                  {(() => {
+                    const safeMinX = Math.max(0, p.stormCenter.x - p.stormRadius);
+                    const safeMaxX = Math.min(GRID_WIDTH - 1, p.stormCenter.x + p.stormRadius);
+                    const safeMinY = Math.max(0, p.stormCenter.y - p.stormRadius);
+                    const safeMaxY = Math.min(GRID_HEIGHT - 1, p.stormCenter.y + p.stormRadius);
+                    const safeColSpan = safeMaxX - safeMinX + 1;
+                    const safeRowSpan = safeMaxY - safeMinY + 1;
+                    return (
+                      <div
+                        className="br-safe-perimeter-box"
+                        style={{
+                          left: `calc(${safeMinX} * (var(--tile-size) + 2px))`,
+                          top: `calc(${safeMinY} * (var(--tile-size) + 2px))`,
+                          width: `calc(${safeColSpan} * var(--tile-size) + ${safeColSpan - 1} * 2px)`,
+                          height: `calc(${safeRowSpan} * var(--tile-size) + ${safeRowSpan - 1} * 2px)`,
+                        }}
+                        aria-hidden="true"
+                      >
+                        <span className="br-safe-corner is-tl" />
+                        <span className="br-safe-corner is-tr" />
+                        <span className="br-safe-corner is-bl" />
+                        <span className="br-safe-corner is-br" />
+                        <span className="br-safe-perimeter-tag">安全区</span>
+                      </div>
+                    );
+                  })()}
 
-                    {/* Animated Bullet / Laser Tracer Line */}
-                    {tracerPoints && (
-                      <>
-                        <line
-                          key={p.stepCount}
-                          x1={tracerPoints.x1}
-                          y1={tracerPoints.y1}
-                          x2={tracerPoints.x2}
-                          y2={tracerPoints.y2}
-                          className={`br-tracer-line ${
-                            ev?.kind === "grenade" ? "is-grenade" : "is-bullet"
-                          }`}
-                        />
-                        <circle
-                          cx={tracerPoints.x2}
-                          cy={tracerPoints.y2}
-                          r="3"
-                          className="br-impact-ring"
-                        />
-                      </>
-                    )}
-                  </svg>
+                  {/* Ballistics Tracer Overlay */}
+                  {tracerPoints && (
+                    <svg
+                      className="br-board-fx-svg"
+                      viewBox="0 0 100 100"
+                      preserveAspectRatio="none"
+                      aria-hidden="true"
+                    >
+                      <line
+                        key={p.stepCount}
+                        x1={tracerPoints.x1}
+                        y1={tracerPoints.y1}
+                        x2={tracerPoints.x2}
+                        y2={tracerPoints.y2}
+                        className={`br-tracer-line ${
+                          ev?.kind === "grenade" ? "is-grenade" : "is-bullet"
+                        }`}
+                      />
+                      <circle
+                        cx={tracerPoints.x2}
+                        cy={tracerPoints.y2}
+                        r="3"
+                        className="br-impact-ring"
+                      />
+                    </svg>
+                  )}
 
                 {p.tiles.map((tile) => {
                   const inStorm = isInStorm(p, tile.x, tile.y);
