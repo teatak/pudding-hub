@@ -1,0 +1,800 @@
+/* 决策罗盘 (Decision Matrix) 专属样式 */
+
+:root {
+  --dm-bg: #0b0f17;
+  --dm-surface: #131b2a;
+  --dm-surface-elevated: #1a2438;
+  --dm-border: rgba(255, 255, 255, 0.08);
+  --dm-border-hover: rgba(255, 255, 255, 0.16);
+  --dm-text-main: #f8fafc;
+  --dm-text-muted: #94a3b8;
+  --dm-text-sub: #64748b;
+
+  --dm-white: #f1f5f9;
+  --dm-yellow: #fbbf24;
+  --dm-black: #94a3b8;
+  --dm-red: #fb7185;
+  --dm-green: #34d399;
+  --dm-blue: #60a5fa;
+}
+
+.dm-container {
+  width: 100%;
+  height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--dm-bg);
+  color: var(--dm-text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ================= 顶栏 ================= */
+.dm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background-color: rgba(19, 27, 42, 0.95);
+  border-bottom: 1px solid var(--dm-border);
+  backdrop-filter: blur(12px);
+  z-index: 20;
+  gap: 12px;
+}
+
+.dm-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.dm-logo-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.dm-brand-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.dm-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.dm-app-title {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.dm-phase-pill {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+.dm-phase-setup {
+  background: rgba(148, 163, 184, 0.15);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.dm-phase-deliberating {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  animation: dm-pulse 2s infinite ease-in-out;
+}
+
+.dm-phase-completed {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.35);
+}
+
+@keyframes dm-pulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.5)); }
+}
+
+.dm-topic-badge {
+  font-size: 12px;
+  color: var(--dm-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 320px;
+}
+
+.dm-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.dm-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+  outline: none;
+  white-space: nowrap;
+}
+
+.dm-btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--dm-border);
+  color: #e2e8f0;
+}
+
+.dm-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--dm-border-hover);
+}
+
+.dm-btn-primary {
+  background: #2563eb;
+  color: #fff;
+}
+
+.dm-btn-primary:hover {
+  background: #1d4ed8;
+  box-shadow: 0 0 12px rgba(37, 99, 235, 0.4);
+}
+
+.dm-btn-gold {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+}
+
+.dm-btn-gold:hover {
+  background: rgba(245, 158, 11, 0.25);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+}
+
+/* ================= 阶段一：议题立项 (Setup) ================= */
+.dm-setup-wrap {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px 24px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.dm-setup-card {
+  width: 100%;
+  max-width: 680px;
+  background: var(--dm-surface);
+  border: 1px solid var(--dm-border);
+  border-radius: 12px;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.dm-setup-header h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+  color: #fff;
+}
+
+.dm-setup-header p {
+  font-size: 13px;
+  color: var(--dm-text-muted);
+  margin: 0;
+}
+
+.dm-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dm-form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.dm-input,
+.dm-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--dm-border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.dm-input:focus,
+.dm-textarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+}
+
+.dm-textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+
+.dm-presets-label {
+  font-size: 12px;
+  color: var(--dm-text-sub);
+  margin-top: 4px;
+}
+
+.dm-presets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.dm-preset-item {
+  font-size: 12px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--dm-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.dm-preset-item:hover {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #93c5fd;
+}
+
+.dm-hats-roster {
+  margin-top: 8px;
+  border-top: 1px solid var(--dm-border);
+  padding-top: 16px;
+}
+
+.dm-roster-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #cbd5e1;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dm-hats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.dm-hat-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--dm-border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dm-hat-card-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.dm-hat-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dm-hat-desc {
+  font-size: 11px;
+  color: var(--dm-text-muted);
+  line-height: 1.4;
+}
+
+.dm-setup-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* ================= 阶段二与三：推演与矩阵展示 ================= */
+.dm-main-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 顶部综述 / 活跃指示条 */
+.dm-verdict-banner {
+  background: linear-gradient(135deg, rgba(30, 58, 138, 0.3) 0%, rgba(15, 23, 42, 0.8) 100%);
+  border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.dm-verdict-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.dm-score-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid #3b82f6;
+  flex-shrink: 0;
+}
+
+.dm-score-num {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+  color: #fff;
+}
+
+.dm-score-label {
+  font-size: 10px;
+  color: var(--dm-text-sub);
+  margin-top: 2px;
+}
+
+.dm-verdict-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.dm-verdict-rec {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dm-rec-tag {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 4px;
+}
+
+.dm-rec-strongly_recommend {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.dm-rec-recommend_with_caution {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.dm-rec-neutral {
+  background: rgba(148, 163, 184, 0.2);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+.dm-rec-not_recommended {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.dm-verdict-summary {
+  font-size: 13px;
+  color: #e2e8f0;
+  line-height: 1.5;
+}
+
+/* 研判中提示条 */
+.dm-deliberating-banner {
+  background: rgba(15, 23, 42, 0.8);
+  border-bottom: 1px solid var(--dm-border);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dm-active-hat-hint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+/* 标签切换栏 */
+.dm-tab-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  background: var(--dm-surface);
+  border-bottom: 1px solid var(--dm-border);
+}
+
+.dm-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.dm-tab {
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dm-text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+
+.dm-tab:hover {
+  color: #fff;
+}
+
+.dm-tab.active {
+  color: #38bdf8;
+  border-bottom-color: #38bdf8;
+}
+
+.dm-view-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ================= 视图 A：四象限决策矩阵 ================= */
+.dm-matrix-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.dm-quadrant {
+  background: var(--dm-surface);
+  border: 1px solid var(--dm-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 160px;
+}
+
+.dm-quadrant-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dm-quadrant-points {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.dm-quadrant-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dm-q-headline {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.4;
+}
+
+.dm-q-content {
+  font-size: 12px;
+  color: var(--dm-text-muted);
+  line-height: 1.45;
+}
+
+.dm-q-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.dm-q-tag {
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #cbd5e1;
+}
+
+.dm-empty-hint {
+  font-size: 12px;
+  color: var(--dm-text-sub);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+  font-style: italic;
+}
+
+/* 行动清单模块 */
+.dm-checklist-card {
+  background: var(--dm-surface);
+  border: 1px solid var(--dm-border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dm-checklist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dm-checklist-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dm-checklist-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dm-check-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--dm-border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.dm-check-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dm-checkbox {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 2px solid #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.dm-checkbox.checked {
+  background: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.dm-check-text {
+  font-size: 13px;
+  color: #e2e8f0;
+  flex: 1;
+}
+
+.dm-check-text.done {
+  text-decoration: line-through;
+  color: var(--dm-text-sub);
+}
+
+/* ================= 视图 B：思考帽研判流 ================= */
+.dm-stream-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dm-hat-filter-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.dm-filter-chip {
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--dm-border);
+  color: var(--dm-text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.dm-filter-chip:hover {
+  color: #fff;
+  border-color: var(--dm-border-hover);
+}
+
+.dm-filter-chip.active {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.5);
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.dm-perspectives-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dm-perspective-card {
+  background: var(--dm-surface);
+  border: 1px solid var(--dm-border);
+  border-left-width: 4px;
+  border-radius: 8px;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.dm-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dm-hat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.dm-speaker-label {
+  font-size: 11px;
+  color: var(--dm-text-sub);
+}
+
+.dm-card-headline {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.4;
+}
+
+.dm-card-body {
+  font-size: 13px;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+/* 人工补充录入抽屉 */
+.dm-manual-box {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed var(--dm-border);
+  border-radius: 8px;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dm-manual-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dm-manual-hat-select {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.dm-radio-hat {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid var(--dm-border);
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--dm-text-muted);
+}
+
+.dm-radio-hat.active {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.15);
+  color: #fff;
+  font-weight: 600;
+}

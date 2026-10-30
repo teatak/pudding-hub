@@ -1,0 +1,19 @@
+{
+  "id": "teatak/pudding-hub/widgets/decision-matrix",
+  "version": "1.0.0",
+  "title": {
+    "zh-CN": "决策罗盘",
+    "zh-TW": "決策羅盤",
+    "en": "Decision Matrix"
+  },
+  "description": {
+    "zh-CN": "六顶思考帽多视角决策罗盘，汇聚事实、收益、风险与直觉，自动收敛行动矩阵与建议清单。",
+    "zh-TW": "六頂思考帽多視角決策羅盤，匯聚事實、收益、風險與直覺，自動收斂行動矩陣與建議清單。",
+    "en": "Multi-perspective decision matrix based on Six Thinking Hats, distilling facts, gains, risks, and gut feelings into clear action plans."
+  },
+  "requires": {
+    "protocolVersion": 24,
+    "sdkVersion": "1"
+  },
+  "icon": "./assets/icon.svg"
+}
