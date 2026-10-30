@@ -518,6 +518,12 @@ export const takeAction = (
     const p = position();
     const mySeat = seatForParticipant(l, who.id);
     if (!mySeat) throw new Error("You do not occupy an active seat in this round");
+    if (input.kind === "move" && !input.to) {
+      throw new Error("Missing move destination 'to'");
+    }
+    if (input.kind === "attack" && !input.target) {
+      throw new Error("Missing attack target 'target'");
+    }
     const res = applyCombatAction(l, p, mySeat, input);
     await save(res.lobby, res.position);
     await publish();
@@ -562,20 +568,13 @@ export const resume = async () => {
   await pudding.interaction.resume();
 };
 
-const actionSchema = z.discriminatedUnion("kind", [
-  z
-    .object({
-      kind: z.literal("move"),
-      to: z.string().trim().min(2).max(4),
-    })
-    .strict(),
-  z
-    .object({
-      kind: z.literal("attack"),
-      target: z.string().trim().min(2).max(10),
-    })
-    .strict(),
-]);
+const actionSchema = z
+  .object({
+    kind: z.enum(["move", "attack"]),
+    to: z.string().trim().min(2).max(4).optional(),
+    target: z.string().trim().min(2).max(10).optional(),
+  })
+  .strict();
 
 function registerInterfaces() {
   (
@@ -609,7 +608,17 @@ function registerInterfaces() {
       name: "takeAction",
       description: t("descTakeAction"),
       input: actionSchema,
-      run: (i, c) => takeAction(i, c),
+      run: (i, c) => {
+        if (i.kind === "move") {
+          if (!i.to) throw new Error("Missing move destination 'to'");
+          return takeAction({ kind: "move", to: i.to }, c);
+        }
+        if (i.kind === "attack") {
+          if (!i.target) throw new Error("Missing attack target 'target'");
+          return takeAction({ kind: "attack", target: i.target }, c);
+        }
+        throw new Error("Invalid action kind");
+      },
     }),
   ];
 }
