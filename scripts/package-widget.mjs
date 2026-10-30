@@ -152,11 +152,6 @@ export async function packageWidget(
   }
   await fs.mkdir(releaseDir, { recursive: true });
   await fs.writeFile(path.join(releaseDir, packageName), text);
-  if (!dev) {
-    const legacyReleaseDir = path.join(root, "widgets", name, `releases/${manifest.version}`);
-    await fs.mkdir(legacyReleaseDir, { recursive: true });
-    await fs.writeFile(path.join(legacyReleaseDir, packageName), text);
-  }
   if (dev) return { packageHash, pkg };
   const release = {
     version: manifest.version,

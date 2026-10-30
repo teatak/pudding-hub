@@ -6,9 +6,9 @@
   --gd-muted: light-dark(#737373, oklch(0.69 0 0));
   --gd-edge: light-dark(#dddddd, #ffffff1a);
   --gd-accent: light-dark(#333333, #e5e5e5);
-  --gd-win: light-dark(#237a4c, #86d4aa);
-  --gd-win-bg: light-dark(#237a4c0d, #86d4aa0d);
-  --gd-win-text: light-dark(#ffffff, #0d331e);
+  --gd-win: light-dark(#885d16, #f0d48e);
+  --gd-win-bg: light-dark(#fff7e1, #3b3220);
+  --gd-win-edge: light-dark(#ead6a6, #786137);
   --gd-on-accent: light-dark(#ffffff, #262626);
   --gd-soft: light-dark(#e8e8e8, #363636);
   --gd-wood: light-dark(#e9c98e, #d9b67c);
@@ -139,25 +139,29 @@
 .gd-player.is-turn {
   border-color: var(--gd-accent);
 }
-.gd-win-stamp {
+.gd-win-badge {
   position: absolute;
-  top: -8px;
-  right: -8px;
+  top: -10px;
+  right: -7px;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 4px 14px;
-  border-radius: 6px;
-  color: var(--gd-win-text);
-  background: var(--gd-win);
-  font-size: 28px;
-  font-weight: 900;
+  flex-shrink: 0;
+  gap: 8px;
+  height: 44px;
+  padding: 0 13px;
+  border: 2px solid var(--gd-win-edge);
+  border-radius: 8px;
+  color: var(--gd-win);
+  background: var(--gd-win-bg);
+  font-size: 26px;
+  font-weight: 800;
   line-height: 1;
-  letter-spacing: 0.08em;
-  transform: rotate(-12deg);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+  letter-spacing: 0.06em;
+  transform: rotate(-11deg);
+  box-shadow: 0 3px 9px #00000012;
   pointer-events: none;
-  z-index: 2;
 }
 .gd-player-top {
   grid-row: 1;
@@ -628,6 +632,21 @@
   font-size: 11px;
   color: var(--gd-muted);
 }
+.gd-picker-row .gd-candidate-status {
+  color: var(--gd-text);
+  margin-top: 3px;
+}
+.gd-candidate-status::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 5px;
+  border-radius: 50%;
+  background: light-dark(#4a8a69, #89bea2);
+}
+.gd-picker-row .gd-candidate-status.is-offline { color: var(--gd-muted); }
+.gd-candidate-status.is-offline::before { background: var(--gd-muted); }
 .gd-picker-row label > span:last-child {
   min-width: 0;
   overflow-wrap: anywhere;
@@ -680,17 +699,17 @@
   }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .gd-win-stamp {
-    animation: gd-stamp-arrive 0.32s ease-out both;
+  .gd-win-badge {
+    animation: gd-badge-arrive 0.28s ease-out both;
   }
-  @keyframes gd-stamp-arrive {
+  @keyframes gd-badge-arrive {
     from {
       opacity: 0;
-      transform: rotate(-12deg) scale(1.4);
+      transform: rotate(-11deg) scale(1.2);
     }
     to {
       opacity: 1;
-      transform: rotate(-12deg) scale(1);
+      transform: rotate(-11deg) scale(1);
     }
   }
   .gd-board-comment {

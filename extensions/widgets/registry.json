@@ -8,6 +8,33 @@
   },
   "items": [
     {
+      "id": "teatak/pudding-hub/widgets/battle-royale",
+      "title": {
+        "zh-CN": "绝地吃鸡",
+        "zh-TW": "絕地吃雞",
+        "en": "Battle Royale"
+      },
+      "description": {
+        "zh-CN": "六边形战术网格与战争迷雾大逃杀，支持跳伞选点、毒圈缩圈、空投抢夺与多模型电台博弈。",
+        "zh-TW": "六邊形戰術網格與戰爭迷霧大逃殺，支援跳傘選點、毒圈縮圈、空投搶奪與多模型電台博弈。",
+        "en": "Tactical grid battle royale with fog of war, parachute drop, shrinking storm zone, airdrops, and multi-model radio diplomacy."
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIyNiIgZmlsbD0iIzBCMTExRSIvPgogIDxyZWN0IHg9IjYiIHk9IjYiIHdpZHRoPSIxMTYiIGhlaWdodD0iMTE2IiByeD0iMjIiIHN0cm9rZT0iI0Y1OUUwQiIgc3Ryb2tlLW9wYWNpdHk9IjAuNCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPCEtLSBHbG93aW5nIFN0b3JtIFJpbmcgLS0+CiAgPGNpcmNsZSBjeD0iNjQiIGN5PSI2NCIgcj0iNDYiIGZpbGw9IiMxMTFDMkQiIHN0cm9rZT0iIzM4QkRGOCIgc3Ryb2tlLW9wYWNpdHk9IjAuNTUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWRhc2hhcnJheT0iNiA0Ii8+CiAgPCEtLSBUYWN0aWNhbCBDcm9zc2hhaXIgdGlja3MgLS0+CiAgPHBhdGggZD0iTTY0IDEyVjI0TTY0IDEwNFYxMTZNMTIgNjRIMjRNMTA0IDY0SDExNiIgc3Ryb2tlPSIjRjU5RTBCIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDwhLS0gU3BldHNuYXogTGV2ZWwtMyBUYWN0aWNhbCBIZWxtZXQgLS0+CiAgPHBhdGggZD0iTTM0IDYyQzM0IDQzIDQ2IDMxIDY0IDMxQzgyIDMxIDk0IDQzIDk0IDYyVjgyQzk0IDg4IDg5IDkzIDgzIDkzSDQ1QzM5IDkzIDM0IDg4IDM0IDgyVjYyWiIgZmlsbD0iIzMzNDE1NSIgc3Ryb2tlPSIjRkJCRjI0IiBzdHJva2Utd2lkdGg9IjIuNSIvPgogIDxwYXRoIGQ9Ik00MCA1Mkg4OEM5MCA1MiA5MiA1NCA5MiA1NlY3MUM5MiA3MyA5MCA3NSA4OCA3NUg0MEMzOCA3NSAzNiA3MyAzNiA3MVY1NkMzNiA1NCAzOCA1MiA0MCA1MloiIGZpbGw9IiMxRTI5M0IiIHN0cm9rZT0iIzk0QTNCOCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPCEtLSBHbG93aW5nIEN5YmVyIFZpc29yIFNsaXQgLS0+CiAgPHJlY3QgeD0iNDMiIHk9IjU5IiB3aWR0aD0iNDIiIGhlaWdodD0iOSIgcng9IjMiIGZpbGw9IiNGNTlFMEIiLz4KICA8cGF0aCBkPSJNNDYgNjFINjIiIHN0cm9rZT0iI0ZFRjA4QSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8IS0tIENoaW4gZ3VhcmQgcml2ZXRzIC0tPgogIDxjaXJjbGUgY3g9IjQ1IiBjeT0iODQiIHI9IjIuNSIgZmlsbD0iI0ZCQkYyNCIvPgogIDxjaXJjbGUgY3g9IjgzIiBjeT0iODQiIHI9IjIuNSIgZmlsbD0iI0ZCQkYyNCIvPgogIDxwYXRoIGQ9Ik01MyA4NEg3NSIgc3Ryb2tlPSIjNjQ3NDhCIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDwhLS0gR29sZGVuIEFpcmRyb3AgLyBXaW5uZXIgQmFkZ2UgLS0+CiAgPGNpcmNsZSBjeD0iOTYiIGN5PSI5NCIgcj0iMTQiIGZpbGw9IiNEQzI2MjYiIHN0cm9rZT0iI0ZFRjA4QSIgc3Ryb2tlLXdpZHRoPSIyLjUiLz4KICA8cGF0aCBkPSJNOTAgOTVMOTQgOTlMMTAzIDkwIiBzdHJva2U9IiNGRUYwOEEiIHN0cm9rZS13aWR0aD0iMi44IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==",
+      "releases": [
+        {
+          "version": "1.0.0-preview.1",
+          "package": "./battle-royale/releases/1.0.0-preview.1/battle-royale.pudding-widget.json",
+          "packageHash": "6a8c512a40c6f04425c619edb9d684c611e820ec73c91f89cd8630fc5bbd2827",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        }
+      ]
+    },
+    {
       "id": "teatak/pudding-hub/widgets/debate",
       "title": {
         "zh-CN": "辩论",
@@ -71,6 +98,17 @@
       },
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiBmaWxsPSJub25lIj4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI4IiBmaWxsPSIjMTgxODFCIi8+CiAgPHJlY3QgeD0iNiIgeT0iNiIgd2lkdGg9IjExNiIgaGVpZ2h0PSIxMTYiIHJ4PSIyMyIgc3Ryb2tlPSIjM0YzRjQ2IiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cGF0aCBmaWxsPSIjRkFGQUZBIiBkPSJNNjQgMjJjLTIzLjIgMC00MiAxOC44LTQyIDQyIDAgMTguNTYgMTIuMDMgMzQuMyAyOC43MiAzOS44NSAyLjEuMzggMi44Ni0uOTIgMi44Ni0yLjAzIDAtMS0uMDQtNC4zLS4wNi03Ljc5LTExLjY4IDIuNTQtMTQuMTUtNC45Ni0xNC4xNS00Ljk2LTEuOS00Ljg1LTQuNjctNi4xNS00LjY3LTYuMTUtMy44Mi0uMTkuMjktMy43NC4yOS0zLjc0IDQuMjIuMyA2LjQ1IDQuMzMgNi40NSA0LjMzIDMuNzYgNi40NCA5Ljg1IDQuNTggMTIuMjYgMy41LjM4LTIuNzMgMS40Ny00LjU4IDIuNjctNS42My05LjMyLTEuMDctMTkuMTMtNC42Ni0xOS4xMy0yMC43MyAwLTQuNTggMS42NC04LjM1IDQuMzMtMTEuMjctLjQ0LTEuMDctMS44Ny01LjM1LjQyLTExLjEzIDAgMCAzLjUzLS4xMyAxMS41NSA0LjNhNDAuMyA0MC4zIDAgMCAxIDIxLjA0IDBjOC4wMi00LjQzIDExLjUzLTQuMyAxMS41My00LjMgMi4yOSA1Ljc4Ljg2IDEwLjA2LjQyIDExLjEzIDIuNjkgMi45MiA0LjMzIDYuNjkgNC4zMyAxMS4yNyAwIDE2LjExLTkuODMgMTkuNjUtMTkuMTkgMjAuNjggMS41MSAxLjMgMi44NiAzLjg2IDIuODYgNy43NyAwIDUuNjEtLjA2IDEwLjE0LS4wNiAxMS41MSAwIDEuMTMuNzYgMi40MyAyLjg4IDIuMDNBNDIuMDIgNDIuMDIgMCAwIDAgMTA2IDY0YzAtMjMuMi0xOC44LTQyLTQyLTQyWiIvPgogIDxjaXJjbGUgY3g9Ijk2IiBjeT0iOTYiIHI9IjE2IiBmaWxsPSIjMjU2M0VCIiBzdHJva2U9IiMxODE4MUIiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxwYXRoIGQ9Ik05MCA5Nmw0IDQgOC04IiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=",
       "releases": [
+        {
+          "version": "1.0.0-preview.3",
+          "package": "./github-board/releases/1.0.0-preview.3/github-board.pudding-widget.json",
+          "packageHash": "7817ca4d28dcf6aa4b1def0e2f8b643f020c4129b56d94687c6f01c3677afab1",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          },
+          "channel": "preview",
+          "preview": true
+        },
         {
           "version": "1.0.0-preview.2",
           "package": "./github-board/releases/1.0.0-preview.2/github-board.pudding-widget.json",
@@ -235,6 +273,17 @@
       },
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjIwIiBmaWxsPSIjMTZBMzRBIi8+CiAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CiAgICA8cmVjdCB4PSIyOCIgeT0iMjgiIHdpZHRoPSI3MiIgaGVpZ2h0PSI3MiIgcng9IjgiLz4KICAgIDxwYXRoIGQ9Ik00NiAyOHY3Mk02NCAyOHY3Mk04MiAyOHY3Mk0yOCA0Nmg3Mk0yOCA2NGg3Mk0yOCA4Mmg3MiIvPgogIDwvZz4KICA8Y2lyY2xlIGN4PSI0NiIgY3k9IjQ2IiByPSI4IiBmaWxsPSIjZmZmZmZmIi8+CiAgPGNpcmNsZSBjeD0iODIiIGN5PSI2NCIgcj0iOCIgZmlsbD0iI2ZmZmZmZiIvPgogIDxjaXJjbGUgY3g9IjY0IiBjeT0iODIiIHI9IjgiIGZpbGw9IiMxMTE4MjciLz4KICA8Y2lyY2xlIGN4PSI2NCIgY3k9IjgyIiByPSI2IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIvPgo8L3N2Zz4K",
       "releases": [
+        {
+          "version": "1.0.4-preview.7",
+          "package": "./gomoku/releases/1.0.4-preview.7/gomoku.pudding-widget.json",
+          "packageHash": "46f08cdd94039476862812e0bf93fa8b6bcb6881f91790b8ae527a4b707b6701",
+          "requires": {
+            "protocolVersion": 55,
+            "sdkVersion": "1.2.0"
+          },
+          "channel": "preview",
+          "preview": true
+        },
         {
           "version": "1.0.4-preview.6",
           "package": "./gomoku/releases/1.0.4-preview.6/gomoku.pudding-widget.json",
@@ -462,6 +511,15 @@
       },
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjIwIiBmaWxsPSIjMjU2M0VCIi8+CiAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CiAgICA8cGF0aCBkPSJtMjggMzcgNyA3IDEyLTE0bS0xOSAzNiA3IDcgMTItMTRNNjIgMzdoMzZNNjIgNjZoMzZNNjIgOTVoMzYiLz4KICAgIDxjaXJjbGUgY3g9IjM2IiBjeT0iOTUiIHI9IjMiLz4KICA8L2c+Cjwvc3ZnPgo=",
       "releases": [
+        {
+          "version": "1.0.1",
+          "package": "./shared-todo/releases/1.0.1/shared-todo.pudding-widget.json",
+          "packageHash": "c739cd640d8032ddbdc09d9a8bf1ec96c007bc5ca170356d29790e04c1b6eef6",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1"
+          }
+        },
         {
           "version": "1.0.0",
           "package": "./shared-todo/releases/1.0.0/shared-todo.pudding-widget.json",

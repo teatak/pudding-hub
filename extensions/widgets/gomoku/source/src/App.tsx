@@ -17,6 +17,7 @@ import {
   Play,
   Pause,
   Swords,
+  Trophy,
   UserRound,
   UsersRound,
 } from "lucide-react";
@@ -63,6 +64,7 @@ type Player = {
   connected?: boolean;
 };
 const me = "@me";
+type PlayerQuote = { text: string; moveNumber: number; kind?: "resign" };
 const sideName = (role: Color) =>
   role === "Black" ? t("sideBlackFirst") : t("sideWhiteSecond");
 const elapsedTime = (ms: number) => {
@@ -76,14 +78,12 @@ const elapsedTime = (ms: number) => {
 function Comment({
   text: comment,
   moveNumber,
-}: {
-  text: string;
-  moveNumber: number;
-}) {
+  kind,
+}: PlayerQuote) {
   return (
     <>
       <span className="gd-speech-prefix">
-        {t("commentPrefix", { number: moveNumber })}
+        {kind === "resign" ? t("resignCommentPrefix") : t("commentPrefix", { number: moveNumber })}
       </span>
       {comment}
     </>
@@ -105,7 +105,7 @@ function Avatar({ player }: { player?: Player }) {
 function BoardComment({ player, role, quote }: {
   player: Player;
   role: Color;
-  quote: { text: string; moveNumber: number };
+  quote: PlayerQuote;
 }) {
   const track = useRef<HTMLSpanElement>(null);
   const text = useRef<HTMLSpanElement>(null);
@@ -121,7 +121,7 @@ function BoardComment({ player, role, quote }: {
   const identity = `${player.human ? t("you") : player.model?.name || player.name} · ${sideName(role)}`;
   return (
     <div className="gd-board-comment" data-speech-move={quote.moveNumber} data-color={role}
-      title={`${identity} · ${t("commentPrefix", { number: quote.moveNumber })}${quote.text}`}>
+      title={`${identity} · ${quote.kind === "resign" ? t("resignCommentPrefix") : t("commentPrefix", { number: quote.moveNumber })}${quote.text}`}>
       <span className="gd-comment-author" role="img" aria-label={identity}>
         <Avatar player={player} />
         <span className={`gd-color-dot gd-${role.toLowerCase()}`} />
@@ -275,7 +275,10 @@ export default function App() {
     : selected.map(chosenPlayer);
   const commentIndex = view.history.map(move => !!move.comment).lastIndexOf(true);
   const commentMove = view.history[commentIndex];
-  const latestComment = commentMove?.comment ? {
+  const latestComment: { role: Color; quote: PlayerQuote } | undefined = view.resigned ? {
+    role: view.resigned,
+    quote: { text: view.resignationComment || t("resignCommentDefault"), moveNumber: view.moveCount, kind: "resign" as const },
+  } : commentMove?.comment ? {
     role: (commentMove.stone === "B" ? "Black" : "White") as Color,
     quote: { text: commentMove.comment, moveNumber: commentIndex + 1 },
   } : undefined;
@@ -534,8 +537,9 @@ export default function App() {
                       }
                     >
                       {won ? (
-                        <span className="gd-win-stamp" aria-label={t("statusWinner")}>
-                          {t("winStamp")}
+                        <span className="gd-win-badge" aria-label={t("statusWinner")}>
+                          <Trophy size={21} strokeWidth={1.9} aria-hidden="true" />
+                          <span aria-hidden="true">{t("winStamp")}</span>
                         </span>
                       ) : player ? status : t("statusOpen")}
                       {turn &&
@@ -575,7 +579,7 @@ export default function App() {
                             aria-label={t("commentAria")}
                             maxLength={40}
                             value={draft}
-                            disabled={busy || !myTurn}
+                            disabled={busy || run?.status !== "running"}
                             onChange={(e) => setDraft(e.target.value)}
                             placeholder={t("commentPlaceholder")}
                           />
@@ -628,7 +632,7 @@ export default function App() {
               <div className="gd-board-comments" role="region" aria-label={t("playerComments")} aria-live="polite">
                 {danmaku && latestComment?.quote?.text && commenter && (
                   <BoardComment
-                    key={`${l.round}-${latestComment.role}-${latestComment.quote.moveNumber}`}
+                    key={`${l.round}-${latestComment.role}-${latestComment.quote.moveNumber}-${latestComment.quote.kind || "move"}`}
                     player={commenter}
                     role={latestComment.role}
                     quote={latestComment.quote}
@@ -890,7 +894,10 @@ export default function App() {
                       className="gd-button is-text"
                       disabled={busy || run?.status !== "running"}
                       onClick={() =>
-                        void perform(() => pudding.interaction.handle(resign))
+                        void perform(async () => {
+                          await pudding.interaction.handle((context) => resign(context, draft));
+                          setDraft("");
+                        })
                       }
                     >
                       {t("actionResign")}
@@ -986,7 +993,10 @@ function CandidatePicker({
               <Avatar player={player} />
               <span>
                 {player.human ? t("you") : player.model?.name}
-                <small>{player.name}{player.connected === false && ` · ${t("connectionOffline")}`}</small>
+                <small>{player.name}</small>
+                {player.external && <small className={"gd-candidate-status" + (player.connected === false ? " is-offline" : "")}>
+                  {player.connected === false ? t("connectionOffline") : selected.includes(id) ? t("candidateSelected") : t("candidateConnected")}
+                </small>}
               </span>
               </label>
               {player.external && remove && <button className="gd-button" disabled={busy}

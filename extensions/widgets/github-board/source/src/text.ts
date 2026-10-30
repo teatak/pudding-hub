@@ -280,7 +280,8 @@ export type MessageKey = Key;
 
 export function t(key: Key): string {
   const loc = pudding.locale.read();
-  const table = messages[loc] || messages.en;
+  const table =
+    loc === "zh-CN" || loc === "zh-TW" ? messages[loc] : messages.en;
   return table[key] ?? en[key];
 }
 

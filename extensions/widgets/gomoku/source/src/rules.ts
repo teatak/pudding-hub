@@ -7,10 +7,11 @@ export type Move = {
   stone: "B" | "W";
   comment?: string;
 };
-// The ordered score is the only source of board, turn, count and comments.
+// The ordered score determines the board; resignation is a separate event.
 export type PositionState = {
   history: Move[];
   resigned: Color | null;
+  resignationComment?: string;
   turnStartedAt: number | null;
   turnElapsedMS: number;
   totalElapsedMS?: Record<Color, number>;
@@ -27,6 +28,7 @@ export function record(p: PositionState): PositionState {
   return {
     history: p.history,
     resigned: p.resigned,
+    ...(p.resignationComment ? { resignationComment: p.resignationComment } : {}),
     turnStartedAt: p.turnStartedAt,
     turnElapsedMS: p.turnElapsedMS,
     ...(p.totalElapsedMS ? { totalElapsedMS: { ...p.totalElapsedMS } } : {}),
@@ -110,6 +112,7 @@ export function summarizePosition(p: Position) {
     turn: p.winner ? null : p.turn,
     winner: p.winner,
     lastMove: p.history.at(-1) || null,
+    resignation: p.resigned ? { color: p.resigned, comment: p.resignationComment || null } : null,
   };
 }
 // A local replay view never changes the saved score or runs a game action.
@@ -117,6 +120,7 @@ export function replayPosition(p: Position, moveCount: number): Position {
   return derive({
     history: p.history.slice(0, moveCount),
     resigned: moveCount === p.moveCount ? p.resigned : null,
+    ...(moveCount === p.moveCount && p.resignationComment ? { resignationComment: p.resignationComment } : {}),
     turnStartedAt: null,
     turnElapsedMS: 0,
   });
@@ -145,6 +149,16 @@ export function describePosition(p: Position) {
     },
     ...summarizePosition(p),
   };
+}
+export function concede(old: Position, color: Color, comment = "", now = Date.now()): Position {
+  if (old.winner) throw new Error("Match is finished");
+  const text = comment.trim();
+  if (text.length > 40) throw new Error("Keep your comment within 40 characters");
+  return derive({
+    ...record(pauseClock(old, now)),
+    resigned: color,
+    ...(text ? { resignationComment: text } : {}),
+  });
 }
 export function place(
   old: Position,

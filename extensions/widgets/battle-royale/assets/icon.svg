@@ -1,0 +1,21 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="128" height="128" rx="26" fill="#0B111E"/>
+  <rect x="6" y="6" width="116" height="116" rx="22" stroke="#F59E0B" stroke-opacity="0.4" stroke-width="2"/>
+  <!-- Glowing Storm Ring -->
+  <circle cx="64" cy="64" r="46" fill="#111C2D" stroke="#38BDF8" stroke-opacity="0.55" stroke-width="2" stroke-dasharray="6 4"/>
+  <!-- Tactical Crosshair ticks -->
+  <path d="M64 12V24M64 104V116M12 64H24M104 64H116" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/>
+  <!-- Spetsnaz Level-3 Tactical Helmet -->
+  <path d="M34 62C34 43 46 31 64 31C82 31 94 43 94 62V82C94 88 89 93 83 93H45C39 93 34 88 34 82V62Z" fill="#334155" stroke="#FBBF24" stroke-width="2.5"/>
+  <path d="M40 52H88C90 52 92 54 92 56V71C92 73 90 75 88 75H40C38 75 36 73 36 71V56C36 54 38 52 40 52Z" fill="#1E293B" stroke="#94A3B8" stroke-width="2"/>
+  <!-- Glowing Cyber Visor Slit -->
+  <rect x="43" y="59" width="42" height="9" rx="3" fill="#F59E0B"/>
+  <path d="M46 61H62" stroke="#FEF08A" stroke-width="2" stroke-linecap="round"/>
+  <!-- Chin guard rivets -->
+  <circle cx="45" cy="84" r="2.5" fill="#FBBF24"/>
+  <circle cx="83" cy="84" r="2.5" fill="#FBBF24"/>
+  <path d="M53 84H75" stroke="#64748B" stroke-width="3" stroke-linecap="round"/>
+  <!-- Golden Airdrop / Winner Badge -->
+  <circle cx="96" cy="94" r="14" fill="#DC2626" stroke="#FEF08A" stroke-width="2.5"/>
+  <path d="M90 95L94 99L103 90" stroke="#FEF08A" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

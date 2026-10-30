@@ -184,4 +184,4 @@ Repeated installation opens the original item. A model's first edit of a downloa
 
 Updates do not overwrite locally edited source. A validated, activated version becomes the default, while existing pages continue their original revision until reloaded. Storage persists; state is scoped to its page and source revision. The package supplies installed icons, and the host manages localized item names.
 
-Formal packages and catalogs are written to `extensions/widgets/`; legacy paths remain available. Follow the [SDK version rules](widget-sdk.md#sdk-version-compatibility), without a minimum Pudding version.
+Formal, preview and development packages and catalogs are written only to `extensions/widgets/`. The root `widgets/` directory is retired and retains frozen historical files only; never generate new packages there or copy release mirrors into it. Follow the [SDK version rules](widget-sdk.md#sdk-version-compatibility), without a minimum Pudding version.

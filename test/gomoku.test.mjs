@@ -9,6 +9,7 @@ import {
 import {
   initial,
   place,
+  concede,
   describePosition,
   summarizePosition,
   winningLine,
@@ -21,6 +22,26 @@ import {
   thinkingMS,
   totalThinkingMS,
 } from "../extensions/widgets/gomoku/source/src/rules.ts";
+test("resignation stores its own comment without adding a move; replay and reload preserve the event", () => {
+  const active = place(initial(), 8, "H", "Black", "Opening", 1000);
+  const original = JSON.stringify(active);
+  const finished = concede(active, "Black", "  Well played!  ", 2000);
+  assert.equal(finished.winner, "White");
+  assert.equal(finished.moveCount, 1);
+  assert.deepEqual(finished.history, active.history);
+  assert.deepEqual(finished.board, active.board);
+  assert.equal(finished.last, active.last);
+  assert.equal(finished.turnStartedAt, null);
+  assert.equal(JSON.stringify(active), original);
+  const restored = derive(JSON.parse(JSON.stringify(record(finished))));
+  assert.deepEqual(describePosition(restored).resignation, {color: "Black", comment: "Well played!"});
+  assert.equal(replayPosition(restored, 0).resignationComment, undefined);
+  assert.equal(replayPosition(restored, 0).resigned, null);
+  assert.equal(replayPosition(restored, 1).resignationComment, "Well played!");
+  assert.deepEqual(summarizePosition(concede(initial(), "White")).resignation, {color: "White", comment: null});
+  assert.throws(() => concede(finished, "White"), /finished/);
+  assert.throws(() => concede(active, "White", "x".repeat(41)), /40/);
+});
 test("replay seeks derive only visible stones, comments and winning lines without changing the game", () => {
   let p = initial();
   for (let c = 0; c < 5; c++) {

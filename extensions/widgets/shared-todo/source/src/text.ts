@@ -143,9 +143,12 @@ export const messages = {
 } as const;
 export type TextKey = keyof typeof messages.en;
 export function t(key: TextKey, params: Record<string, string | number> = {}) {
-  return messages[pudding.locale.read()][key].replace(
+  const locale = pudding.locale.read();
+  const table =
+    locale === "zh-CN" || locale === "zh-TW" ? messages[locale] : messages.en;
+  return table[key].replace(
     /\{(\w+)\}/g,
-    (match, name) => String(params[name] ?? match),
+    (match: string, name: string) => String(params[name] ?? match),
   );
 }
 const errors: Record<string, TextKey> = {

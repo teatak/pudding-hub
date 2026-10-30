@@ -52,6 +52,8 @@ export const messages = {
     you: "You",
     loadingModel: "Loading model",
     connectionOffline: "Offline",
+    candidateConnected: "Connected · waiting for selection",
+    candidateSelected: "Selected · click Invite and play to start",
     removeConnection: "Remove",
     removeConnectionNamed: "Remove connection {name}",
     choosePlayer: "Choose a player",
@@ -66,8 +68,10 @@ export const messages = {
     // 弹幕与评论
     playerComments: "Player comments",
     commentPrefix: "Move {number} · ",
+    resignCommentPrefix: "Resigned · ",
+    resignCommentDefault: "I concede. Well played!",
     commentPlaceholder: "Say something…",
-    commentAria: "Comment on your next move",
+    commentAria: "Comment on your next move or resignation",
     commentHint: "Add an optional comment",
 
     // 卡片提示语
@@ -105,13 +109,13 @@ export const messages = {
 
     // 接口描述
     descReady:
-      "Confirm readiness for your assigned color; ready:false cancels readiness before play without changing colors. Both ready starts a 3-second countdown.",
+      "Confirm readiness for your assigned color; ready:false cancels readiness before play without changing colors. Both ready starts a 3-second countdown. Returns status only; the board arrives with your move notification.",
     descPlaceStone:
       "Place your stone at a real board coordinate: column A–O (letter), row 1–15 (number, bottom to top), e.g. {column:'H',row:8}. Optional comment (max 40 characters) is sharp taunts and psychological pressure only (e.g. 'Is that all you got?', 'Careless move'); no casual chit-chat, and never reveal tactics, intent, or game-deciding moves (no 'blocking your four', 'double open three', 'game over', etc.). Returns a compact receipt without board or history; wait for your next move notification.",
     descReadBoard:
       "Read board.text, moveCount, turn, seats, readiness, countdown and your identity. History is omitted by default; includeHistory:true returns the complete ordered history with comments. Columns A–O; rows 1–15 bottom to top.",
     descResign:
-      'Concede your own side during play, even on the opponent\'s turn. Call widget_invoke with name:"resign", input:{}. Ends the game and notifies both players.',
+      'Concede your own side during play, even on the opponent\'s turn. Call widget_invoke with name:"resign", input:{comment:"Well played!"}; comment is optional (max 40 characters). Ends the game and notifies both players, including the resignation comment.',
 
     // 模型通知
     notifyInviteSummary: "Game invitation: you are {color}; get ready",
@@ -123,7 +127,7 @@ export const messages = {
       "{result}. Briefly acknowledge the result. Do not place more stones.",
     notifyWaitingMoveSummary: "{color} to move",
     notifyMoveMessage:
-      '{color} to move. The current board and stateVersion are attached. Call widget_invoke with this targetID, expectedStateVersion, name:"placeStone", input:{column:"H",row:8,comment:"Is that all you got?"} (example). Columns A–O, rows 1–15 bottom to top; comment is optional (max 40 chars) for sharp taunts and psychological pressure only—no casual small talk, and never reveal your strategy, planned attacks, or critical board states (no open four, double three, etc.). Play only your side, then wait for the next notification. To concede, use name:"resign", input:{}; read history only when needed via name:"readBoard", input:{includeHistory:true}.',
+      '{color} to move. The current board and stateVersion are attached. Call widget_invoke with this targetID, expectedStateVersion, name:"placeStone", input:{column:"H",row:8,comment:"Is that all you got?"} (example). Columns A–O, rows 1–15 bottom to top; comment is optional (max 40 chars) for sharp taunts and psychological pressure only—no casual small talk, and never reveal your strategy, planned attacks, or critical board states (no open four, double three, etc.). Play only your side, then wait for the next notification. To concede, use name:"resign", input:{comment:"Well played!"} (comment optional); read history only when needed via name:"readBoard", input:{includeHistory:true}.',
   },
   "zh-CN": {
     // 页面与游戏控制
@@ -176,6 +180,8 @@ export const messages = {
     you: "我",
     loadingModel: "读取模型信息",
     connectionOffline: "离线",
+    candidateConnected: "已连接 · 等待选择",
+    candidateSelected: "已选中 · 点击邀请并开局",
     removeConnection: "移除",
     removeConnectionNamed: "移除连接 {name}",
     choosePlayer: "等待棋手",
@@ -190,9 +196,11 @@ export const messages = {
     // 弹幕与评论
     playerComments: "棋手弹幕",
     commentPrefix: "第 {number} 手 · ",
+    resignCommentPrefix: "认输 · ",
+    resignCommentDefault: "这局我认输，你赢了。",
     commentPlaceholder: "这手想说什么？",
-    commentAria: "随下一手发言",
-    commentHint: "落子时可以说一句",
+    commentAria: "落子或认输时的发言",
+    commentHint: "落子或认输时可以说一句",
 
     // 卡片提示语
     hintPaused: "对局暂停 · 继续后可落子",
@@ -229,13 +237,13 @@ export const messages = {
 
     // 接口描述
     descReady:
-      "确认已分配颜色的准备状态；开局前 ready:false 取消准备，黑白保持不变。双方准备后倒计时 3 秒。",
+      "确认已分配颜色的准备状态；开局前 ready:false 取消准备，黑白保持不变。双方准备后倒计时 3 秒。仅返回状态，棋盘随落子通知提供。",
     descPlaceStone:
       '按棋盘真实坐标落子：column 为 A–O 字母列，row 为 1–15 数字行（由下向上），例如 {column:"H",row:8}。弹幕可选（最多 40 字），仅限凌厉嘲讽与心理施压（如“你就这点水平？”、“大意了吧”、“这就招架不住了？”）；严禁闲聊废话，严禁透露算路意图（不要出现“准备冲四”、“防你连三”等）或点破关键胜负点（不要出现“已有活四”、“双活机会”、“胜负已分”等剧透内容）。返回简短结果，无棋盘及历史；等待下次落子通知。',
     descReadBoard:
       "读取棋盘多行文本、moveCount 手数、回合、席位、准备状态、倒计时和你的身份。默认无历史；includeHistory:true 返回完整 history 棋谱及弹幕。字母列 A–O，数字行 1–15 由下向上。",
     descResign:
-      '对局中为自己认输，对手回合也可调用。通过 widget_invoke 传 name:"resign"、input:{}，结束本局并通知双方。',
+      '对局中为自己认输，对手回合也可调用。通过 widget_invoke 传 name:"resign"、input:{comment:"这局你赢了"}；comment 可选，最多 40 字。结束本局，展示认输弹幕并通知双方。',
 
     // 模型通知
     notifyInviteSummary: "棋局邀请：你执{color}，请准备",
@@ -246,7 +254,7 @@ export const messages = {
     notifyResultSummary: "{result}。简短回应结果，不要再落子。",
     notifyWaitingMoveSummary: "等待{color}落子",
     notifyMoveMessage:
-      '轮到{color}。通知已附当前棋盘和 stateVersion。调用 widget_invoke，传本局 targetID、expectedStateVersion、name:"placeStone"、input:{column:"H",row:8,comment:"你就这点水平？"}（示例）。字母列 A–O，数字行 1–15 由下向上；弹幕可选（最多 40 字），仅用于凌厉嘲讽与心理压迫，严禁生活化闲聊废话，严禁透露算路意图（如冲四、防守）或剧透胜负关键点（如活四、双活）。只替自己落子，然后等待下次通知。认输用 name:"resign"、input:{}；需要历史时用 name:"readBoard"、input:{includeHistory:true}。',
+      '轮到{color}。通知已附当前棋盘和 stateVersion。调用 widget_invoke，传本局 targetID、expectedStateVersion、name:"placeStone"、input:{column:"H",row:8,comment:"你就这点水平？"}（示例）。字母列 A–O，数字行 1–15 由下向上；弹幕可选（最多 40 字），仅用于凌厉嘲讽与心理压迫，严禁生活化闲聊废话，严禁透露算路意图（如冲四、防守）或剧透胜负关键点（如活四、双活）。只替自己落子，然后等待下次通知。认输用 name:"resign"、input:{comment:"这局你赢了"}（弹幕可选）；需要历史时用 name:"readBoard"、input:{includeHistory:true}。',
   },
   "zh-TW": {
     // 页面与游戏控制
@@ -299,6 +307,8 @@ export const messages = {
     you: "我",
     loadingModel: "讀取模型資訊",
     connectionOffline: "離線",
+    candidateConnected: "已連線 · 等待選擇",
+    candidateSelected: "已選取 · 點擊邀請並開局",
     removeConnection: "移除",
     removeConnectionNamed: "移除連線 {name}",
     choosePlayer: "等待棋手",
@@ -313,9 +323,11 @@ export const messages = {
     // 弹幕与评论
     playerComments: "棋手彈幕",
     commentPrefix: "第 {number} 手 · ",
+    resignCommentPrefix: "認輸 · ",
+    resignCommentDefault: "這局我認輸，你贏了。",
     commentPlaceholder: "這手想說什麼？",
-    commentAria: "隨下一手發言",
-    commentHint: "落子時可以說一句",
+    commentAria: "落子或認輸時的發言",
+    commentHint: "落子或認輸時可以說一句",
 
     // 卡片提示语
     hintPaused: "對局暫停 · 繼續後可落子",
@@ -352,13 +364,13 @@ export const messages = {
 
     // 接口描述
     descReady:
-      "確認已分配顏色的準備狀態；開局前 ready:false 取消準備，黑白保持不變。雙方準備後倒數 3 秒。",
+      "確認已分配顏色的準備狀態；開局前 ready:false 取消準備，黑白保持不變。雙方準備後倒數 3 秒。僅回傳狀態，棋盤隨落子通知提供。",
     descPlaceStone:
       '按棋盤實際座標落子：column 為 A–O 字母欄，row 為 1–15 數字列（由下向上），例如 {column:"H",row:8}。彈幕可選（最多 40 字），僅限凌厲嘲諷與心理施壓（如「你就這點水準？」、「大意了吧」、「這就招架不住了？」）；嚴禁閒聊廢話，嚴禁透露算路意圖（不要出現「準備沖四」、「防你連三」等）或點破關鍵勝負點（不要出現「已有活四」、「雙活機會」、「勝負已分」等劇透內容）。回傳簡短結果，無棋盤及歷史；等待下次落子通知。',
     descReadBoard:
       "讀取棋盤多行文字、moveCount 手數、回合、席位、準備狀態、倒數和你的身分。預設無歷史；includeHistory:true 回傳完整 history 棋譜及彈幕。字母欄 A–O，數字列 1–15 由下向上。",
     descResign:
-      '對局中為自己認輸，對手回合也可呼叫。透過 widget_invoke 傳 name:"resign"、input:{}，結束本局並通知雙方。',
+      '對局中為自己認輸，對手回合也可呼叫。透過 widget_invoke 傳 name:"resign"、input:{comment:"這局你贏了"}；comment 可選，最多 40 字。結束本局，展示認輸彈幕並通知雙方。',
 
     // 模型通知
     notifyInviteSummary: "棋局邀請：你執{color}，請準備",
@@ -369,7 +381,7 @@ export const messages = {
     notifyResultSummary: "{result}。簡短回應結果，不要再落子。",
     notifyWaitingMoveSummary: "等待{color}落子",
     notifyMoveMessage:
-      '輪到{color}。通知已附目前棋盤和 stateVersion。呼叫 widget_invoke，傳本局 targetID、expectedStateVersion、name:"placeStone"、input:{column:"H",row:8,comment:"你就這點水準？"}（範例）。字母欄 A–O，數字列 1–15 由下向上；彈幕可選（最多 40 字），僅用於凌厲嘲諷與心理壓迫，嚴禁生活化閒聊廢話，嚴禁透露算路意圖（如沖四、防守）或劇透勝負關鍵點（如活四、雙活）。只替自己落子，然後等待下次通知。認輸用 name:"resign"、input:{}；需要歷史時用 name:"readBoard"、input:{includeHistory:true}。',
+      '輪到{color}。通知已附目前棋盤和 stateVersion。呼叫 widget_invoke，傳本局 targetID、expectedStateVersion、name:"placeStone"、input:{column:"H",row:8,comment:"你就這點水準？"}（範例）。字母欄 A–O，數字列 1–15 由下向上；彈幕可選（最多 40 字），僅用於凌厲嘲諷與心理壓迫，嚴禁生活化閒聊廢話，嚴禁透露算路意圖（如沖四、防守）或劇透勝負關鍵點（如活四、雙活）。只替自己落子，然後等待下次通知。認輸用 name:"resign"、input:{comment:"這局你贏了"}（彈幕可選）；需要歷史時用 name:"readBoard"、input:{includeHistory:true}。',
   },
 } as const;
 

@@ -184,4 +184,4 @@ Desktop 的 widget-hub smoke 可通过 PUDDING_HUB_DIR 读取本地源码。运�
 
 更新不会覆盖本地修改过的源码。通过校验并启用的新版本成为默认版本，已经打开的页面仍运行原版本，重载后才切换。storage 保留，state 按页面和源码版本区分。安装条目的图标由包提供，名称的语言切换由宿主管理。
 
-正式包与目录写入 `extensions/widgets/`；历史路径保留。兼容声明遵循 [SDK 版本规则](widget-sdk.zh-CN.md#sdk-版本兼容)，不声明最低 Pudding 版本。
+正式包、预览包、开发包与目录清单只写入 `extensions/widgets/`。根目录 `widgets/` 已停止维护，只保留冻结的历史文件；禁止向旧目录生成新包或复制镜像。兼容声明遵循 [SDK 版本规则](widget-sdk.zh-CN.md#sdk-版本兼容)，不声明最低 Pudding 版本。

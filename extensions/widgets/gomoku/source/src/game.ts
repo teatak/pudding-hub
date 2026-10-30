@@ -11,6 +11,7 @@ import {
   pauseClock,
   resumeClock,
   place,
+  concede,
   describePosition,
   summarizePosition,
   type Position,
@@ -273,7 +274,8 @@ export const changeReadiness = (ready: boolean, context: InteractionContext) =>
       old = lobby();
     const next = setReady(old, who.id, ready);
     if (next !== old) await save(next, position());
-    return readBoard(context);
+    const { board: _board, ...status } = readBoard(context);
+    return status;
   });
 export const finishCountdown = () =>
   change(async () => {
@@ -299,7 +301,7 @@ export const move = (
     await publish();
     return actionResult();
   });
-export const resign = (context: InteractionContext) =>
+export const resign = (context: InteractionContext, comment?: string) =>
   change(async () => {
     const who = actor(context),
       l = lobby(),
@@ -307,10 +309,7 @@ export const resign = (context: InteractionContext) =>
     if (l.phase !== "playing" || p.winner) throw new Error("No ongoing match");
     const role = roles.find((r) => l.seats[r] === who.id);
     if (!role) throw new Error("You have no seat");
-    await save(l, {
-      ...pauseClock(p),
-      resigned: role,
-    });
+    await save(l, concede(p, role, comment));
     await publish();
     return actionResult();
   });
@@ -370,8 +369,8 @@ function registerInterfaces() {
     defineGameInterface({
       name: "resign",
       description: t("descResign"),
-      input: z.object({}).strict(),
-      run: (_, c) => resign(c),
+      input: z.object({ comment: z.string().trim().max(40, errorText("Keep your comment within 40 characters")).optional() }).strict(),
+      run: (i, c) => resign(c, i.comment),
     }),
   ];
 }
