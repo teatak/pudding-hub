@@ -1,0 +1,21 @@
+{
+  "id": "teatak/pudding-hub/widgets/blackjack",
+  "version": "1.0.0-preview.1",
+  "preview": true,
+  "channel": "preview",
+  "title": {
+    "zh-CN": "21点",
+    "zh-TW": "21點",
+    "en": "Blackjack"
+  },
+  "description": {
+    "zh-CN": "经典绿绒布21点牌桌，支持要牌、停牌、加倍、软17庄家规则与筹码博弈。",
+    "zh-TW": "經典綠絨布21點牌桌，支援要牌、停牌、加倍、軟17莊家規則與籌碼博弈。",
+    "en": "Classic casino Blackjack table with Hit, Stand, Double Down, dealer soft 17 rules, and chip wagering."
+  },
+  "requires": {
+    "protocolVersion": 24,
+    "sdkVersion": "1"
+  },
+  "icon": "./assets/icon.svg"
+}
