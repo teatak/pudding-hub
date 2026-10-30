@@ -207,14 +207,14 @@ body,
   display: flex;
 }
 
-/* Main 3-Column Tactical Arena */
+/* Main 3-Column Tactical Arena (Narrower Operative Wings for Maximized Map) */
 .br-arena {
   position: relative;
   z-index: 5;
   flex: 1;
   display: grid;
-  grid-template-columns: minmax(195px, 232px) minmax(0, 1fr) minmax(195px, 232px);
-  gap: 12px;
+  grid-template-columns: 138px minmax(0, 1fr) 138px;
+  gap: 8px;
   align-items: stretch;
   min-height: 0;
 }
@@ -222,28 +222,29 @@ body,
 .br-wing {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 10px;
+  justify-content: center;
+  gap: 6px;
 }
 
-/* Operative Vitality Card (Fixed Height = Zero Vertical Jump) */
+/* Operative Vitality Card (Slim, Fixed 104px Height, Zero Jump) */
 .br-agent-card {
   position: relative;
-  flex: 1;
-  min-height: 146px;
-  max-height: 176px;
+  height: 104px;
+  min-height: 104px;
+  max-height: 104px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 10px 12px;
-  border-radius: 13px;
+  padding: 5px 7px;
+  border-radius: 10px;
   background: linear-gradient(
     165deg,
-    rgba(30, 41, 59, 0.88) 0%,
-    rgba(15, 23, 42, 0.95) 100%
+    rgba(24, 34, 52, 0.92) 0%,
+    rgba(13, 20, 36, 0.97) 100%
   );
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.36);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
   overflow: hidden;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -251,31 +252,31 @@ body,
 .br-agent-card.is-turn {
   border-color: #fbbf24;
   box-shadow:
-    0 0 0 2px rgba(251, 191, 36, 0.28),
-    0 10px 26px rgba(245, 158, 11, 0.22);
+    0 0 0 1.5px rgba(251, 191, 36, 0.35),
+    0 6px 18px rgba(245, 158, 11, 0.2);
 }
 
 .br-agent-card.is-winner {
   border-color: #fde047;
-  box-shadow: 0 0 24px rgba(250, 204, 21, 0.35);
+  box-shadow: 0 0 20px rgba(250, 204, 21, 0.35);
 }
 
 .br-agent-card.is-eliminated {
-  opacity: 0.58;
-  filter: saturate(0.4);
+  opacity: 0.52;
+  filter: saturate(0.35);
 }
 
 .br-agent-top {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 6px;
 }
 
 /* Operative Avatar */
 .br-avatar-wrap {
   position: relative;
-  width: 38px;
-  height: 38px;
+  width: 25px;
+  height: 25px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -283,15 +284,15 @@ body,
 }
 
 .br-avatar-wrap.is-token {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
 }
 
 .br-winner-star-ring {
   position: absolute;
-  inset: -4px;
-  width: calc(100% + 8px);
-  height: calc(100% + 8px);
+  inset: -3px;
+  width: calc(100% + 6px);
+  height: calc(100% + 6px);
   animation: brSpin 12s linear infinite;
 }
 
@@ -325,15 +326,16 @@ body,
 .br-seat-num-badge {
   position: absolute;
   bottom: -3px;
-  right: -4px;
+  right: -3px;
   z-index: 3;
-  padding: 0 4px;
-  border-radius: 5px;
+  padding: 0 3px;
+  border-radius: 4px;
   background: #0f172a;
   border: 1px solid rgba(251, 191, 36, 0.65);
   color: #fde047;
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 800;
+  line-height: 10px;
 }
 
 .br-agent-meta {
@@ -345,25 +347,26 @@ body,
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 5px;
+  gap: 3px;
 }
 
 .br-agent-name {
-  font-size: 12.5px;
+  font-size: 11px;
   font-weight: 700;
   color: #f8fafc;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .br-kill-badge {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  font-size: 10.5px;
+  gap: 2px;
+  font-size: 9px;
   font-weight: 700;
-  padding: 1px 6px;
+  padding: 0 4px;
   border-radius: 999px;
   background: rgba(239, 68, 68, 0.18);
   border: 1px solid rgba(248, 113, 113, 0.4);
@@ -374,31 +377,50 @@ body,
 .br-agent-sub-row {
   display: flex;
   align-items: center;
-  gap: 5px;
-  margin-top: 3px;
+  gap: 3px;
+  margin-top: 2px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  min-width: 0;
 }
 
 .br-weapon-pill {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  font-size: 10px;
+  gap: 2px;
+  font-size: 9px;
   font-weight: 700;
-  padding: 1px 6px;
-  border-radius: 4px;
+  padding: 0 4px;
+  border-radius: 3px;
   background: rgba(245, 158, 11, 0.15);
   border: 1px solid rgba(245, 158, 11, 0.35);
   color: #fde047;
+  min-width: 0;
+  flex-shrink: 1;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.br-wep-icon {
+  flex-shrink: 0;
+}
+
+.br-wep-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .br-coord-pill {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
-  padding: 1px 5px;
-  border-radius: 4px;
+  padding: 0 3px;
+  border-radius: 3px;
   background: rgba(56, 189, 248, 0.16);
   color: #7dd3fc;
+  flex-shrink: 0;
 }
 
 .br-coord-pill::before {
@@ -406,24 +428,25 @@ body,
 }
 
 .br-out-pill {
-  font-size: 10px;
+  font-size: 9px;
   color: #f87171;
   font-weight: 700;
+  flex-shrink: 0;
 }
 
-/* Vitality HP & Shield Bars */
+/* Vitality HP & Shield Bars (Ultra-Compact) */
 .br-vitality-bars {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2.5px;
 }
 
 .br-bar-track {
   position: relative;
-  height: 13px;
+  height: 8px;
   border-radius: 999px;
   background: rgba(7, 11, 20, 0.78);
-  border: 1px solid rgba(148, 163, 184, 0.16);
+  border: 1px solid rgba(148, 163, 184, 0.14);
   overflow: hidden;
 }
 
@@ -448,6 +471,64 @@ body,
 
 .br-bar-label {
   position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7.5px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+}
+
+/* Radio & Action Log Slot */
+.br-agent-radio-slot {
+  height: 19px;
+  min-height: 19px;
+  max-height: 19px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  padding: 1px 5px;
+  border-radius: 5px;
+  background: rgba(7, 11, 20, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  overflow: hidden;
+}
+
+.br-radio-quote {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9.5px;
+  color: #fde047;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  line-height: 1;
+}
+
+.br-radio-icon {
+  flex-shrink: 0;
+}
+
+.br-action-note {
+  font-size: 9.5px;
+  color: #cbd5e1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  line-height: 1;
+}
+
+.br-action-placeholder {
+  font-size: 9px;
+  color: rgba(148, 163, 184, 0.45);
+  line-height: 1;
+}
   inset: 0;
   display: flex;
   align-items: center;
@@ -581,21 +662,28 @@ body,
   flex-shrink: 0;
 }
 
-/* 8x6 Tactical Map Board */
+/* 8x6 Tactical Island Sandtable Board (Seamless Command Sandtable) */
 .br-map-container {
   position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 8px 10px 10px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
   border-radius: 14px;
-  background: rgba(8, 14, 26, 0.92);
-  border: 1px solid rgba(56, 189, 248, 0.25);
+  background: radial-gradient(
+    circle at center,
+    rgba(15, 23, 42, 0.94) 0%,
+    rgba(8, 12, 22, 0.98) 100%
+  );
+  border: 1px solid rgba(56, 189, 248, 0.2);
   box-shadow:
-    inset 0 0 30px rgba(0, 0, 0, 0.65),
-    0 10px 30px rgba(0, 0, 0, 0.45);
-  min-height: 360px;
+    inset 0 0 36px rgba(0, 0, 0, 0.75),
+    0 10px 30px rgba(0, 0, 0, 0.5);
+  min-height: 0;
   overflow: hidden;
+  container-type: size;
 }
 
 .br-welcome-overlay {
@@ -642,37 +730,53 @@ body,
   box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
 }
 
+.br-board-box {
+  --tile-size: clamp(30px, min(calc((100cqw - 36px) / 8), calc((100cqh - 36px) / 8)), 96px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+}
+
 .br-col-headers {
   display: grid;
-  grid-template-columns: 22px repeat(8, 1fr);
-  gap: 5px;
-  margin-bottom: 4px;
+  grid-template-columns: 20px repeat(8, var(--tile-size));
+  gap: 2px;
+  margin-bottom: 3px;
   flex-shrink: 0;
 }
 
+.br-corner-spacer {
+  width: 20px;
+}
+
 .br-col-label {
+  width: var(--tile-size);
   text-align: center;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 11px;
   font-weight: 800;
   color: #64748b;
+  line-height: 16px;
 }
 
 .br-grid-body {
-  flex: 1;
   display: grid;
-  grid-template-columns: 22px 1fr;
-  gap: 5px;
-  min-height: 0;
+  grid-template-columns: 20px calc(8 * var(--tile-size) + 7 * 2px);
+  gap: 2px;
+  align-items: center;
 }
 
 .br-row-headers {
   display: grid;
-  grid-template-rows: repeat(6, 1fr);
-  gap: 5px;
+  grid-template-rows: repeat(8, var(--tile-size));
+  gap: 2px;
+  height: calc(8 * var(--tile-size) + 7 * 2px);
 }
 
 .br-row-label {
+  height: var(--tile-size);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -682,13 +786,21 @@ body,
   color: #64748b;
 }
 
+/* Seamless 8x8 Tactical Sandtable (Integrative Tabletop, Low Grid Clutter) */
 .br-tiles-grid {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  grid-template-rows: repeat(6, 1fr);
-  gap: 5px;
-  min-height: 0;
+  grid-template-columns: repeat(8, var(--tile-size));
+  grid-template-rows: repeat(8, var(--tile-size));
+  gap: 2px;
+  width: calc(8 * var(--tile-size) + 7 * 2px);
+  height: calc(8 * var(--tile-size) + 7 * 2px);
+  background: #090e18;
+  border-radius: 8px;
+  border: 1px solid rgba(56, 189, 248, 0.22);
+  box-shadow:
+    inset 0 0 32px rgba(0, 0, 0, 0.8),
+    0 10px 28px rgba(0, 0, 0, 0.6);
 }
 
 /* SVG Bullet Tracer & Explosion Ring */
@@ -747,7 +859,7 @@ body,
   }
 }
 
-/* Individual Tactical Tile (Strict 1:1 Square & Command Grid) */
+/* Individual Tile: Seamless Terrain Zone (No bulky cards, zero coordinate clutter) */
 .br-tile {
   width: var(--tile-size);
   height: var(--tile-size);
@@ -756,121 +868,63 @@ body,
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 4px 5px;
-  border-radius: 9px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  background: linear-gradient(
-    145deg,
-    rgba(22, 33, 53, 0.78) 0%,
-    rgba(12, 19, 34, 0.9) 100%
-  );
+  padding: 3px;
+  border-radius: 4px;
+  border: 1px solid rgba(148, 163, 184, 0.05);
+  background: rgba(18, 27, 43, 0.38);
   color: #f8fafc;
   cursor: pointer;
   overflow: hidden;
-  transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease, box-shadow 0.14s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
-/* Subtle Tactical Reticle Markers in Corners */
-.br-tile::before,
-.br-tile::after {
-  content: "";
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  pointer-events: none;
-  border-color: rgba(148, 163, 184, 0.25);
-  opacity: 0.6;
-  transition: border-color 0.15s ease, opacity 0.15s ease;
-}
-.br-tile::before {
-  top: 2px;
-  left: 2px;
-  border-top: 1px solid currentColor;
-  border-left: 1px solid currentColor;
-}
-.br-tile::after {
-  bottom: 2px;
-  right: 2px;
-  border-bottom: 1px solid currentColor;
-  border-right: 1px solid currentColor;
-}
-.br-tile:hover::before,
-.br-tile:hover::after {
-  opacity: 1;
-  border-color: #38bdf8;
+.br-tile:hover {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: rgba(56, 189, 248, 0.35);
 }
 
-/* Safe Zone Clean Command Backdrop */
+/* Safe Zone */
 .br-tile.is-safe {
-  background: linear-gradient(
-    145deg,
-    rgba(26, 38, 62, 0.75) 0%,
-    rgba(13, 21, 38, 0.88) 100%
-  );
-  border-color: rgba(56, 189, 248, 0.26);
-  box-shadow: inset 0 0 10px rgba(56, 189, 248, 0.06);
+  background: rgba(22, 33, 51, 0.45);
+  border-color: rgba(148, 163, 184, 0.07);
 }
 
-/* Terrain Theming */
+/* Terrain Subtle Textures */
 .br-tile.is-ter-base {
-  background: linear-gradient(
-    145deg,
-    rgba(120, 53, 15, 0.42),
-    rgba(20, 27, 43, 0.88)
-  );
-  border-color: rgba(245, 158, 11, 0.35);
+  background: radial-gradient(circle, rgba(180, 83, 9, 0.32) 0%, rgba(120, 53, 15, 0.2) 100%);
+  border-color: rgba(245, 158, 11, 0.25);
 }
-
 .br-tile.is-ter-tower {
-  background: linear-gradient(
-    145deg,
-    rgba(14, 116, 144, 0.42),
-    rgba(16, 26, 44, 0.88)
-  );
-  border-color: rgba(56, 189, 248, 0.38);
+  background: radial-gradient(circle, rgba(14, 116, 144, 0.32) 0%, rgba(8, 51, 68, 0.2) 100%);
+  border-color: rgba(56, 189, 248, 0.22);
 }
-
 .br-tile.is-ter-bush {
-  background: linear-gradient(
-    145deg,
-    rgba(20, 83, 45, 0.45),
-    rgba(15, 26, 38, 0.88)
-  );
-  border-color: rgba(34, 197, 94, 0.35);
+  background: rgba(20, 83, 45, 0.32);
+  border-color: rgba(34, 197, 94, 0.18);
 }
-
 .br-tile.is-ter-bunker {
-  background: linear-gradient(
-    145deg,
-    rgba(51, 65, 85, 0.72),
-    rgba(15, 23, 42, 0.9)
-  );
-  border-color: rgba(148, 163, 184, 0.42);
+  background: rgba(51, 65, 85, 0.45);
+  border-color: rgba(148, 163, 184, 0.2);
 }
 
-/* Electromagnetic Storm (Clean, Deep Ionizing Radiation - No Harsh Zebra Stripes!) */
+/* Electromagnetic Storm (Continuous Deep Radiation Veil across battlefield) */
 .br-tile.is-storm {
-  background: radial-gradient(
-    circle at center,
-    rgba(76, 29, 149, 0.42) 0%,
-    rgba(15, 19, 36, 0.94) 100%
-  );
-  border-color: rgba(168, 85, 247, 0.35);
-  box-shadow: inset 0 0 16px rgba(126, 34, 206, 0.22);
+  background: rgba(59, 7, 100, 0.38);
+  border-color: rgba(147, 51, 234, 0.14);
+  filter: saturate(0.55) brightness(0.68);
 }
 
-/* Storm Center Spotlight */
+/* Storm Center Beacon */
 .br-tile.is-storm-center {
-  border-color: rgba(251, 191, 36, 0.75);
-  box-shadow:
-    0 0 16px rgba(245, 158, 11, 0.3),
-    inset 0 0 12px rgba(245, 158, 11, 0.25);
+  background: rgba(245, 158, 11, 0.16);
+  border-color: rgba(251, 191, 36, 0.55);
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.25);
 }
 
 /* Fog of War Shroud */
 .br-tile.is-fog {
-  opacity: 0.52;
-  filter: brightness(0.72);
+  opacity: 0.5;
+  filter: brightness(0.7);
 }
 
 /* Interactive Move & Attack Highlights */
@@ -882,7 +936,7 @@ body,
 }
 
 .br-tile.is-move-target:hover {
-  transform: scale(1.03);
+  transform: scale(1.02);
   border-color: #7dd3fc;
 }
 
@@ -894,7 +948,7 @@ body,
 }
 
 .br-tile.is-attack-target:hover {
-  transform: scale(1.04);
+  transform: scale(1.03);
 }
 
 .br-tile-head {
@@ -907,24 +961,20 @@ body,
   line-height: 1;
 }
 
-.br-tile-coord {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10px;
-  font-weight: 800;
-  color: #94a3b8;
-  letter-spacing: -0.2px;
-}
-
-.br-tile-icons {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  font-size: 11px;
+.br-tile-head-blank {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
 }
 
 .br-storm-center-marker {
   font-size: 12px;
   animation: brCenterBeaconPulse 1.4s ease-in-out infinite alternate;
+}
+
+.br-ter-icon {
+  font-size: 10px;
+  opacity: 0.75;
 }
 
 @keyframes brCenterBeaconPulse {
@@ -1250,6 +1300,61 @@ body,
 .count-2 .br-token-weapon-badge {
   transform: scale(0.9);
   margin-top: -3px;
+}
+
+/* Close Quarters Combat Clash Indicator (When 2+ operatives share cell) */
+.br-cqb-clash-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 8;
+  font-size: 16px;
+  animation: brClashShake 0.6s ease-in-out infinite alternate;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px #ef4444);
+}
+
+@keyframes brClashShake {
+  0% {
+    transform: translate(-50%, -50%) rotate(-10deg) scale(0.9);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(10deg) scale(1.15);
+  }
+}
+
+/* Direct HP Gauge on Token for Immediate Battlefield Readability */
+.br-token-hp-gauge {
+  position: relative;
+  z-index: 5;
+  width: 26px;
+  height: 3.5px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.88);
+  border: 0.5px solid rgba(255, 255, 255, 0.2);
+  margin-top: -2px;
+  overflow: hidden;
+}
+
+.br-token-hp-fill {
+  height: 100%;
+  background: #22c55e;
+  border-radius: 999px;
+  transition: width 0.2s ease;
+}
+
+.br-token-hp-fill.is-warn {
+  background: #f59e0b;
+}
+
+.br-token-hp-fill.is-critical {
+  background: #ef4444;
+}
+
+.count-2 .br-token-hp-gauge {
+  width: 20px;
+  height: 3px;
 }
 
 .br-floating-dmg {
@@ -1652,6 +1757,17 @@ body,
 .br-select-option:hover,
 .br-select-option.is-selected {
   background: rgba(245, 158, 11, 0.16);
+}
+
+.br-select-option.is-disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  pointer-events: none;
+  filter: grayscale(0.7);
+}
+
+.br-select-option.is-disabled:hover {
+  background: transparent;
 }
 
 .br-select-option.is-disabled {

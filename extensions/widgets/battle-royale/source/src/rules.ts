@@ -12,7 +12,7 @@ import type {
 } from "./types";
 
 export const GRID_WIDTH = 8; // Columns A..H (0..7)
-export const GRID_HEIGHT = 6; // Rows 1..6 (0..5)
+export const GRID_HEIGHT = 8; // Rows 1..8 (0..7)
 export const COL_LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H"] as const;
 
 export const allSeats: Seat[] = [
@@ -156,9 +156,9 @@ export function toCoord(x: number, y: number): string {
 
 export function parseCoord(raw: string): { x: number; y: number; coord: string } {
   const clean = raw.trim().toUpperCase();
-  const match = clean.match(/^([A-H])([1-6])$/);
+  const match = clean.match(/^([A-H])([1-8])$/);
   if (!match) {
-    throw new Error(`Invalid coordinate "${raw}" (use A1–H6, e.g. D3)`);
+    throw new Error(`Invalid coordinate "${raw}" (use A1–H8, e.g. D4)`);
   }
   const x = COL_LETTERS.indexOf(match[1] as (typeof COL_LETTERS)[number]);
   const y = Number(match[2]) - 1;
@@ -229,34 +229,42 @@ export function createInitialPosition(
       let crate: TileState["crate"] = "none";
 
       // Symmetrical canon coordinates for 180-degree rotational fairness
-      const canonX = y < 3 ? x : GRID_WIDTH - 1 - x;
-      const canonY = y < 3 ? y : GRID_HEIGHT - 1 - y;
+      const canonX = y < 4 ? x : GRID_WIDTH - 1 - x;
+      const canonY = y < 4 ? y : GRID_HEIGHT - 1 - y;
 
-      // Central military base cluster
-      if ((x === 3 || x === 4) && (y === 2 || y === 3)) {
+      // Central military base cluster (4x central tiles D4, E4, D5, E5)
+      if ((x === 3 || x === 4) && (y === 3 || y === 4)) {
         terrain = "base";
         crate = "supply";
       } else if (
         (x === 1 && y === 1) ||
         (x === 6 && y === 1) ||
-        (x === 1 && y === 4) ||
-        (x === 6 && y === 4)
+        (x === 1 && y === 6) ||
+        (x === 6 && y === 6)
       ) {
         terrain = "tower";
         crate = "supply";
       } else if (
         (x === 2 && y === 2) ||
-        (x === 5 && y === 3) ||
-        (x === 2 && y === 4) ||
-        (x === 5 && y === 1) ||
+        (x === 5 && y === 5) ||
+        (x === 5 && y === 2) ||
+        (x === 2 && y === 5) ||
         (x === 0 && y === 3) ||
-        (x === 7 && y === 2)
+        (x === 7 && y === 4) ||
+        (x === 0 && y === 4) ||
+        (x === 7 && y === 3) ||
+        (x === 3 && y === 2) ||
+        (x === 4 && y === 5)
       ) {
         terrain = "bush";
       } else if (
         (x === 3 && y === 1) ||
-        (x === 4 && y === 4) ||
-        (x === 1 && y === 2) ||
+        (x === 4 && y === 6) ||
+        (x === 4 && y === 1) ||
+        (x === 3 && y === 6) ||
+        (x === 1 && y === 3) ||
+        (x === 6 && y === 4) ||
+        (x === 1 && y === 4) ||
         (x === 6 && y === 3)
       ) {
         terrain = "bunker";
@@ -308,9 +316,9 @@ export function createInitialPosition(
     Seat6: makeAgent("Seat6"),
   };
 
-  // Safe zone center slightly randomized near center (D3, E3, D4, E4)
+  // Safe zone center slightly randomized near center (D4, E4, D5, E5)
   const centerX = 3 + (seed % 2);
-  const centerY = 2 + (Math.floor(seed / 2) % 2);
+  const centerY = 3 + (Math.floor(seed / 2) % 2);
   const stormCenter = {
     x: centerX,
     y: centerY,

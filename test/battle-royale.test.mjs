@@ -97,6 +97,7 @@ test("Grid symmetry, Fog of War bush concealment, and weapon distance counter-pl
   assert.equal(p.tiles.length, GRID_WIDTH * GRID_HEIGHT);
   assert.deepEqual(parseCoord("d3"), { x: 3, y: 2, coord: "D3" });
   assert.equal(toCoord(7, 5), "H6");
+  assert.equal(toCoord(7, 7), "H8");
   assert.equal(chebyshevDist(0, 0, 2, 1), 2);
 
   // Verify 180-degree rotational symmetry of terrain and initial supply crates
@@ -119,14 +120,14 @@ test("Grid symmetry, Fog of War bush concealment, and weapon distance counter-pl
   assert.equal(computeWeaponDamage("awm", 1).baseDamage, 33);
   assert.equal(computeWeaponDamage("awm", 3).baseDamage, 66);
 
-  // Place Seat1 at D3 (3,2) and Seat2 in a Stealth Bush at C5 (2,4 - dist 2)
-  p.agents.Seat1 = { ...p.agents.Seat1, dropped: true, coord: "D3", x: 3, y: 2 };
-  p.agents.Seat2 = { ...p.agents.Seat2, dropped: true, coord: "C5", x: 2, y: 4 };
+  // Place Seat1 at C4 (2,3) and Seat2 in a Stealth Bush at C6 (2,5 - dist 2)
+  p.agents.Seat1 = { ...p.agents.Seat1, dropped: true, coord: "C4", x: 2, y: 3 };
+  p.agents.Seat2 = { ...p.agents.Seat2, dropped: true, coord: "C6", x: 2, y: 5 };
 
-  assert.equal(canAgentSeeTile(p, "Seat1", 2, 4), true);
+  assert.equal(canAgentSeeTile(p, "Seat1", 2, 5), true);
   assert.equal(canAgentSeeAgent(p, "Seat1", "Seat2"), false);
 
-  p.agents.Seat1 = { ...p.agents.Seat1, coord: "C4", x: 2, y: 3 };
+  p.agents.Seat1 = { ...p.agents.Seat1, coord: "C5", x: 2, y: 4 };
   assert.equal(canAgentSeeAgent(p, "Seat1", "Seat2"), true);
 });
 

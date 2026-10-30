@@ -70,7 +70,7 @@ export const messages: Record<LocaleKey, Record<string, string>> = {
     crate_deathbox: "淘汰战利品盒",
     welcomeTitle: "绝地孤岛 · 大模型高阶智力吃鸡",
     welcomeSub:
-      "6 名特工盲降 8×6 对称迷雾孤岛。蛇形先后手轮转 + 空降防秒杀护盾规避先手优势；远近枪械距离克制、弹药限制、声纹听声辨位、定向加密私聊（Whisper）合纵连横，全面检验大模型空间推理与心机博弈！",
+      "6 名特工盲降 8×8 对称迷雾孤岛。蛇形先后手轮转 + 空降防秒杀护盾规避先手优势；远近枪械距离克制、弹药限制、声纹听声辨位、定向加密私聊（Whisper）合纵连横，全面检验大模型空间推理与心机博弈！",
     startDropBtn: "登上运输机 · 开始盲降",
     dropPrompt: "点击任意网格盲降（全员落地前坐标保密；先跳者优占资源点，后跳者第1轮优先行动）：",
     combatPrompt: "当前剩余：{ap} AP（点击相邻格移动，点击敌人开火；注意狙击/步枪贴脸1格伤害衰减）",
@@ -92,12 +92,12 @@ export const messages: Record<LocaleKey, Record<string, string>> = {
     cancel: "取消",
     seatConflictError: "同一个 AI 会话不能同时操控两名干员",
     instructions:
-      "绝地吃鸡（Battle Royale）：8×6 对称战争迷雾网格（列 A–H，行 1–6）高阶智力博弈。首先调用 readRadar 获取你的视野雷达、弹药、安全区、轮转顺序（turnOrder）、定向私聊（privateWhispers）与个人战术备忘（tacticalNote）。【公平与反先手优势机制】：1) 跳伞阶段（dropping）为盲降，全员落地前互不可见落点；2) 第 1 轮交火顺序为跳伞顺序的完全逆序（后跳者先动），且每轮按蛇形轮转（Snake Turn Order）；3) 每名干员在第 1 轮完成自身首次行动前享有「空降护盾」（spawnProtected:true，受到攻击减伤 40% 且免疫单次秒杀）。【距离克制与弹药机制】：霰弹枪贴脸（dist=1）爆发最高（45伤）；步枪（M416）最佳射程 dist>=2（贴脸 0.75 倍衰减）；狙击枪（98K/AWM）最佳射程 dist>=2（贴脸 1 格开镜受限仅 0.5 倍伤害！拿狙被贴脸请先 move 拉开再 attack）。枪械开火消耗 1 发弹药（ammo），耗尽需 loot 补充。每回合 2 AP，调用 takeAction 提交 1～2 步动作，并可通过 radio 公开喊话、whisper 向特定席位发送加密私聊结盟/挑拨、note 记录仅自己可见的跨回合推理笔记。",
+      "绝地吃鸡（Battle Royale）：8×8 对称战争迷雾网格（列 A–H，行 1–8）高阶智力博弈。首先调用 readRadar 获取你的视野雷达、弹药、安全区、轮转顺序（turnOrder）、定向私聊（privateWhispers）与个人战术备忘（tacticalNote）。【公平与反先手优势机制】：1) 跳伞阶段（dropping）为盲降，全员落地前互不可见落点；2) 第 1 轮交火顺序为跳伞顺序的完全逆序（后跳者先动），且每轮按蛇形轮转（Snake Turn Order）；3) 每名干员在第 1 轮完成自身首次行动前享有「空降护盾」（spawnProtected:true，受到攻击减伤 40% 且免疫单次秒杀）。【距离克制与弹药机制】：霰弹枪贴脸（dist=1）爆发最高（45伤）；步枪（M416）最佳射程 dist>=2（贴脸 0.75 倍衰减）；狙击枪（98K/AWM）最佳射程 dist>=2（贴脸 1 格开镜受限仅 0.5 倍伤害！拿狙被贴脸请先 move 拉开再 attack）。枪械开火消耗 1 发弹药（ammo），耗尽需 loot 补充。每回合 2 AP，调用 takeAction 提交 1～2 步动作，并可通过 radio 公开喊话、whisper 向特定席位发送加密私聊结盟/挑拨、note 记录仅自己可见的跨回合推理笔记。",
     descReady: "确认准备就绪",
     descReadRadar:
       "读取你的专属战术雷达：包含自身坐标、HP、护甲、武器、剩余弹药（ammo）、空降护盾状态、智商分（tacticalScore）、视野内可见地形/物资箱/敌人、视野外声纹方向提示、本轮与下轮行动顺序（turnOrder）、仅你可见的加密私聊（privateWhispers）及个人战术笔记（tacticalNote）。",
     descDropIn:
-      "在盲降跳伞阶段（dropping）选择空降坐标（A1–H6，如 'D3'），可选附带公开电台广播 radio 与仅自己可见的战术笔记 note。",
+      "在盲降跳伞阶段（dropping）选择空降坐标（A1–H8，如 'D4'），可选附带公开电台广播 radio 与仅自己可见的战术笔记 note。",
     descTakeAction:
       "在你的战斗回合提交 1～2 步战术动作（每回合 2 AP）：move（移动到相邻格 to）、loot（搜刮当前格物资并补充弹药）、attack（攻击射程内目标 target，注意远距枪贴脸 1 格伤害减半）、heal（使用急救包）、guard（架枪减伤并结束回合）。可选附带公开广播 radio、定向加密私聊 whisper({to,message}) 与私人战术推理笔记 note。",
     notifyInviteSummary: "请你作为 {seat} 空降《绝地吃鸡》战场",
@@ -154,7 +154,7 @@ export const messages: Record<LocaleKey, Record<string, string>> = {
     crate_deathbox: "淘汰戰利品盒",
     welcomeTitle: "絕地孤島 · 大模型高階智力吃雞",
     welcomeSub:
-      "6 名特工盲降 8×6 對稱迷霧孤島。蛇形先後手輪轉 + 空降防秒殺護盾規避先手優勢；遠近槍械距離克制、彈藥限制、聲紋聽聲辨位、定向加密私聊（Whisper）合縱連橫，全面檢驗大模型空間推理與心機博弈！",
+      "6 名特工盲降 8×8 對稱迷霧孤島。蛇形先後手輪轉 + 空降防秒殺護盾規避先手優勢；遠近槍械距離克制、彈藥限制、聲紋聽聲辨位、定向加密私聊（Whisper）合縱連橫，全面檢驗大模型空間推理與心機博弈！",
     startDropBtn: "登上運輸機 · 開始盲降",
     dropPrompt: "點擊任意網格盲降（全員落地前座標保密；先跳者優佔資源點，後跳者第1輪優先行動）：",
     combatPrompt: "當前剩餘：{ap} AP（點擊相鄰格移動，點擊敵人開火；注意狙擊/步槍貼臉1格傷害衰減）",
@@ -176,12 +176,12 @@ export const messages: Record<LocaleKey, Record<string, string>> = {
     cancel: "取消",
     seatConflictError: "同一個 AI 會話不能同時操控兩名幹員",
     instructions:
-      "絕地吃雞（Battle Royale）：8×6 對稱戰爭迷霧網格（欄 A–H，列 1–6）高階智力博弈。首先呼叫 readRadar 取得你的視野雷達、彈藥、安全區、輪轉順序（turnOrder）、定向私聊（privateWhispers）與個人戰術備忘（tacticalNote）。【公平與反先手優勢機制】：1) 跳傘階段為盲降，全員落地前互不可見落點；2) 第 1 輪交火順序為跳傘順序的完全逆序（後跳者先動），且每輪按蛇形輪轉；3) 每名幹員在第 1 輪完成自身首次行動前享有「空降護盾」（受到攻擊減傷 40% 且免疫單次秒殺）。【距離克制與彈藥機制】：霰彈槍貼臉（dist=1）爆發最高；狙擊槍（98K/AWM）最佳射程 dist>=2（貼臉 1 格僅 0.5 倍傷害！）。每回合 2 AP，呼叫 takeAction 提交 1～2 步動作，並可透過 radio 公開喊話、whisper 發送加密私聊、note 記錄個人跨回合推理筆記。",
+      "絕地吃雞（Battle Royale）：8×8 對稱戰爭迷霧網格（欄 A–H，列 1–8）高階智力博弈。首先呼叫 readRadar 取得你的視野雷達、彈藥、安全區、輪轉順序（turnOrder）、定向私聊（privateWhispers）與個人戰術備忘（tacticalNote）。【公平與反先手優勢機制】：1) 跳傘階段為盲降，全員落地前互不可見落點；2) 第 1 輪交火順序為跳傘順序的完全逆序（後跳者先動），且每輪按蛇形輪轉；3) 每名幹員在第 1 輪完成自身首次行動前享有「空降護盾」（受到攻擊減傷 40% 且免疫單次秒殺）。【距離克制與彈藥機制】：霰彈槍貼臉（dist=1）爆發最高；狙擊槍（98K/AWM）最佳射程 dist>=2（貼臉 1 格僅 0.5 倍傷害！）。每回合 2 AP，呼叫 takeAction 提交 1～2 步動作，並可透過 radio 公開喊話、whisper 發送加密私聊、note 記錄個人跨回合推理筆記。",
     descReady: "確認準備就緒",
     descReadRadar:
       "讀取你的專屬戰術雷達：包含自身座標、HP、護甲、武器、剩餘彈藥、空降護盾狀態、智商分、視野內地形/物資箱/敵人、聲紋方向提示、行動順序、加密私聊（privateWhispers）及個人戰術筆記（tacticalNote）。",
     descDropIn:
-      "在盲降跳傘階段（dropping）選擇空降座標（A1–H6，如 'D3'），可選附帶公開廣播 radio 與個人戰術筆記 note。",
+      "在盲降跳傘階段（dropping）選擇空降座標（A1–H8，如 'D4'），可選附帶公開廣播 radio 與個人戰術筆記 note。",
     descTakeAction:
       "在你的戰鬥回合提交 1～2 步戰術動作（每回合 2 AP）：move、loot、attack、heal、guard，可選附帶公開廣播 radio、定向加密私聊 whisper({to,message}) 與私人戰術推理筆記 note。",
     notifyInviteSummary: "請你作為 {seat} 空降《絕地吃雞》戰場",
@@ -236,7 +236,7 @@ export const messages: Record<LocaleKey, Record<string, string>> = {
     crate_deathbox: "Loot Box",
     welcomeTitle: "Cyber Island · High-IQ LLM Battle Royale",
     welcomeSub:
-      "6 operatives blind-drop onto a symmetric 8×6 Fog-of-War island. Snake turn order & Spawn Shields eliminate first-mover advantage; weapon range brackets, ammo limits, acoustic pings, encrypted Whispers, and private Tactical Notes test deep LLM reasoning!",
+      "6 operatives blind-drop onto a symmetric 8×8 Fog-of-War island. Snake turn order & Spawn Shields eliminate first-mover advantage; weapon range brackets, ammo limits, acoustic pings, encrypted Whispers, and private Tactical Notes test deep LLM reasoning!",
     startDropBtn: "Board Transport · Launch Blind Drop",
     dropPrompt: "Click any grid coordinate to blind-drop (coords stay hidden until all land; last dropper acts first in Round 1):",
     combatPrompt: "Remaining: {ap} AP (Click adjacent tile to move, click enemy to fire; Snipers/Rifles suffer CQB penalty at dist=1)",
@@ -258,12 +258,12 @@ export const messages: Record<LocaleKey, Record<string, string>> = {
     cancel: "Cancel",
     seatConflictError: "The same AI session cannot control multiple operatives",
     instructions:
-      "Battle Royale: Symmetric 8×6 Fog-of-War grid (Columns A–H, Rows 1–6). First call readRadar to inspect your vision, ammo, safe zone, snake turnOrder, privateWhispers, and personal tacticalNote. [Anti-First-Mover Balance]: 1) Parachute phase (dropping) is blind—landing coords are hidden until everyone lands; 2) Round 1 combat order is the exact reverse of dropOrder (last dropper moves first), and subsequent cycles use rotating Snake Turn Order; 3) Every operative starts with a Spawn Shield (spawnProtected:true, -40% incoming damage & anti-one-shot) until completing their first combat turn. [Weapon Range Brackets & Ammo]: Shotguns dominate at dist=1 (45 dmg); Snipers (98K/AWM) deal full damage at dist>=2 (50/66 dmg) but suffer a 50% CQB penalty at dist=1! Firearms consume 1 ammo per shot (refill via loot). Submit 1–2 steps via takeAction, plus optional public radio, encrypted 1-on-1 whisper({to,message}), and private tacticalNote.",
+      "Battle Royale: Symmetric 8×8 Fog-of-War grid (Columns A–H, Rows 1–8). First call readRadar to inspect your vision, ammo, safe zone, snake turnOrder, privateWhispers, and personal tacticalNote. [Anti-First-Mover Balance]: 1) Parachute phase (dropping) is blind—landing coords are hidden until everyone lands; 2) Round 1 combat order is the exact reverse of dropOrder (last dropper moves first), and subsequent cycles use rotating Snake Turn Order; 3) Every operative starts with a Spawn Shield (spawnProtected:true, -40% incoming damage & anti-one-shot) until completing their first combat turn. [Weapon Range Brackets & Ammo]: Shotguns dominate at dist=1 (45 dmg); Snipers (98K/AWM) deal full damage at dist>=2 (50/66 dmg) but suffer a 50% CQB penalty at dist=1! Firearms consume 1 ammo per shot (refill via loot). Submit 1–2 steps via takeAction, plus optional public radio, encrypted 1-on-1 whisper({to,message}), and private tacticalNote.",
     descReady: "Confirm readiness",
     descReadRadar:
       "Read your private tactical radar: position, HP, shield, weapon, ammo, spawnProtected, tacticalScore, visible tiles/crates/enemies, acoustic pings, current & next cycle snake turnOrder, privateWhispers, and your personal tacticalNote.",
     descDropIn:
-      "Blind-drop into a grid coordinate (A1–H6, e.g. 'D3') during the dropping phase, with optional public radio and private tactical note.",
+      "Blind-drop into a grid coordinate (A1–H8, e.g. 'D4') during the dropping phase, with optional public radio and private tactical note.",
     descTakeAction:
       "Submit 1–2 tactical steps on your combat turn (2 AP total): move, loot, attack, heal, or guard, plus optional public radio, encrypted whisper({to,message}), and private tacticalNote.",
     notifyInviteSummary: "Deploy as {seat} in Battle Royale",

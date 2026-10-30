@@ -619,6 +619,44 @@ export default function App() {
     }
   }
 
+  function sanitizeSlots(
+    slots: Record<Seat, string>,
+    count: 4 | 6,
+    c?: Candidates | null,
+  ): Record<Seat, string> {
+    const active = seatsForCount(count);
+    const seen = new Set<string>();
+    const res: Record<Seat, string> = { ...slots };
+
+    const availablePool: string[] = [];
+    if (c?.sessions) {
+      for (const s of c.sessions) {
+        if (s.connected !== false && s.id && !availablePool.includes(s.id)) {
+          availablePool.push(s.id);
+        }
+      }
+    }
+
+    for (const s of active) {
+      const val = res[s];
+      if (!val || val === "@bot" || val.startsWith("@bot")) {
+        res[s] = "@bot";
+      } else if (seen.has(val)) {
+        // 重复的会话自动寻找尚未被分配的真实会话，否则降级为 @bot
+        const spare = availablePool.find((id) => !seen.has(id));
+        if (spare) {
+          res[s] = spare;
+          seen.add(spare);
+        } else {
+          res[s] = "@bot";
+        }
+      } else {
+        seen.add(val);
+      }
+    }
+    return res;
+  }
+
   function initDefaultSeats(c: Candidates) {
     const sessions = (c.sessions || []).filter((s) => s.connected !== false);
     const externals = sessions
@@ -670,16 +708,18 @@ export default function App() {
   }
 
   function openPickerModal() {
-    setPickerPlayerCount(l.playerCount || 6);
+    const count = (l.playerCount || 6) as 4 | 6;
+    setPickerPlayerCount(count);
     if (l.round > 0) {
-      setPickerSlots({
+      const raw = {
         Seat1: resolveSeatChoice(l.seats.Seat1),
         Seat2: resolveSeatChoice(l.seats.Seat2),
         Seat3: resolveSeatChoice(l.seats.Seat3),
         Seat4: resolveSeatChoice(l.seats.Seat4),
         Seat5: resolveSeatChoice(l.seats.Seat5),
         Seat6: resolveSeatChoice(l.seats.Seat6),
-      });
+      };
+      setPickerSlots(sanitizeSlots(raw, count, candidates));
     } else if (candidates) {
       initDefaultSeats(candidates);
     }
@@ -1110,9 +1150,9 @@ export default function App() {
       const tCoord = parseCoord(ev.toCoord);
       tracerPoints = {
         x1: (f.x + 0.5) * (100 / 8),
-        y1: (f.y + 0.5) * (100 / 6),
+        y1: (f.y + 0.5) * (100 / 8),
         x2: (tCoord.x + 0.5) * (100 / 8),
-        y2: (tCoord.y + 0.5) * (100 / 6),
+        y2: (tCoord.y + 0.5) * (100 / 8),
       };
     } catch {
       tracerPoints = null;
@@ -1306,16 +1346,16 @@ export default function App() {
               </div>
 
               <div className="br-grid-body">
-                {/* Row Numbers (1..6) */}
+                {/* Row Numbers (1..8) */}
                 <div className="br-row-headers" aria-hidden="true">
-                  {[1, 2, 3, 4, 5, 6].map((rNum) => (
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((rNum) => (
                     <span key={rNum} className="br-row-label">
                       {rNum}
                     </span>
                   ))}
                 </div>
 
-                {/* 8x6 Tactical Tiles */}
+                {/* 8x8 Tactical Tiles Sandtable */}
                 <div className="br-tiles-grid">
                 {/* Animated Bullet / Laser Tracer SVG Overlay */}
                 {tracerPoints && (
@@ -1433,25 +1473,31 @@ export default function App() {
                         handleTileClick(tile.coord, tile.x, tile.y)
                       }
                     >
-                      {/* Top row inside tile: coord + terrain / storm center marker */}
+                      {/* Top row inside tile: storm center marker & terrain only (No tile coordinates clutter) */}
                       <div className="br-tile-head">
-                        <span className="br-tile-coord">{tile.coord}</span>
-                        <span className="br-tile-icons">
-                          {isStormCenter && (
-                            <span title="安全区中心" className="br-storm-center-marker">
-                              🎯
-                            </span>
-                          )}
-                          {terrainShortIcon(tile.terrain) && (
-                            <span
-                              className="br-ter-icon"
-                              title={terrainLabel(tile.terrain)}
-                            >
-                              {terrainShortIcon(tile.terrain)}
-                            </span>
-                          )}
-                        </span>
+                        {isStormCenter ? (
+                          <span title="安全区中心" className="br-storm-center-marker">
+                            🎯
+                          </span>
+                        ) : (
+                          <span className="br-tile-head-blank" />
+                        )}
+                        {terrainShortIcon(tile.terrain) && (
+                          <span
+                            className="br-ter-icon"
+                            title={terrainLabel(tile.terrain)}
+                          >
+                            {terrainShortIcon(tile.terrain)}
+                          </span>
+                        )}
                       </div>
+
+                      {/* Close Quarters Combat Clash Indicator when 2+ operatives share tile */}
+                      {visibleInFog && agentsOnTile.length >= 2 && (
+                        <div className="br-cqb-clash-badge" title="近身拼枪交火对峙！">
+                          ⚔️
+                        </div>
+                      )}
 
                       {/* Tactical Crates / Airdrops */}
                       {visibleInFog && tile.crate && (
@@ -1545,6 +1591,16 @@ export default function App() {
                                 >
                                   {seatShortLabel(ag.seat)}
                                 </span>
+                              </div>
+
+                              {/* Direct HP Gauge on Token for Immediate Combat Readability */}
+                              <div className="br-token-hp-gauge" title={`HP: ${ag.hp}/100`}>
+                                <div
+                                  className={`br-token-hp-fill ${
+                                    ag.hp <= 30 ? "is-critical" : ag.hp <= 60 ? "is-warn" : ""
+                                  }`}
+                                  style={{ width: `${Math.max(0, Math.min(100, ag.hp))}%` }}
+                                />
                               </div>
 
                               {/* Weapon Tag */}
@@ -1777,6 +1833,7 @@ export default function App() {
                     onClick={() => {
                       playSelectSound();
                       setPickerPlayerCount(4);
+                      setPickerSlots((prev) => sanitizeSlots(prev, 4, candidates));
                     }}
                   >
                     {t("mode4Players")}
@@ -1789,6 +1846,7 @@ export default function App() {
                     onClick={() => {
                       playSelectSound();
                       setPickerPlayerCount(6);
+                      setPickerSlots((prev) => sanitizeSlots(prev, 6, candidates));
                     }}
                   >
                     {t("mode6Players")}

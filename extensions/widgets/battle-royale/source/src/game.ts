@@ -288,7 +288,7 @@ export function describeRadarFor(
     },
     grid: {
       columns: "A–H (8 columns)",
-      rows: "1–6 (6 rows)",
+      rows: "1–8 (8 rows)",
     },
     storm: {
       centerCoord: p.stormCenter.coord,

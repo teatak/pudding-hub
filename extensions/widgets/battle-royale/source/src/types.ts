@@ -155,7 +155,7 @@ export interface BattleRoyalePosition {
   turnOrder: Seat[]; // Current cycle's snake/rotated combat turn order
   completedTurnSeats: Seat[];
   gridWidth: number; // 8 (A..H)
-  gridHeight: number; // 6 (1..6)
+  gridHeight: number; // 8 (1..8)
   tiles: TileState[];
   agents: Record<Seat, AgentState>;
   stormCenter: { x: number; y: number; coord: string };
