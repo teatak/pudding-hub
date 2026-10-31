@@ -117,7 +117,7 @@ function playNoise(
 
   const gain = ctx.createGain();
   gain.gain.setValueAtTime(0.001, startTime);
-  gain.gain.linearRampToValueAtTime(peakGain, startTime + 0.002);
+  gain.gain.linearRampToValueAtTime(peakGain, startTime + 0.0015);
   gain.gain.exponentialRampToValueAtTime(0.0008, startTime + duration);
 
   src.connect(filter);
@@ -128,7 +128,7 @@ function playNoise(
 }
 
 /**
- * Authentic Kaya wood board + Slate/Clamshell stone placement sound (榧木棋盘落子声).
+ * Crisp, tight porcelain/agate stone click on the board (清脆利落的云子落盘声，无拖沓滑音).
  */
 export function playStoneSound(color: "Black" | "White"): void {
   const audio = getAudio();
@@ -137,37 +137,69 @@ export function playStoneSound(color: "Black" | "White"): void {
   const now = ctx.currentTime;
 
   const isBlack = color === "Black";
-  const bodyFreq = isBlack ? 415 : 455;
-  const bodyEnd = isBlack ? 168 : 188;
-  const woodHarmonic = isBlack ? 890 : 960;
 
-  // 1. Crisp slate/shell strike transient against lacquered wood
-  playNoise(ctx, out, 0.018, now, 3600, 1750, 0.28, "bandpass", 1.5);
-  playTone(ctx, out, 1850, 720, 0.022, now, 0.14, "sine");
+  // 1. Ultra-tight porcelain/slate contact click (8ms high-Q resonant impulse)
+  playNoise(
+    ctx,
+    out,
+    0.009,
+    now,
+    isBlack ? 2450 : 2750,
+    isBlack ? 1950 : 2200,
+    0.34,
+    "bandpass",
+    3.2,
+  );
+  playNoise(
+    ctx,
+    out,
+    0.006,
+    now,
+    4600,
+    3200,
+    0.18,
+    "highpass",
+    1.4,
+  );
 
-  // 2. Warm Kaya wooden board hollow cavity resonance
-  playTone(ctx, out, bodyFreq, bodyEnd, 0.085, now, 0.26, "triangle");
-  playTone(ctx, out, woodHarmonic, bodyFreq, 0.048, now, 0.11, "sine");
+  // 2. Short, solid board thud (22ms fast decay, gives weight without any synth "boing")
+  playTone(
+    ctx,
+    out,
+    isBlack ? 250 : 275,
+    isBlack ? 95 : 108,
+    0.024,
+    now,
+    0.28,
+    "sine",
+  );
 
-  // 3. Subtle secondary micro-rebound as the convex stone settles
-  playNoise(ctx, out, 0.012, now + 0.025, 2400, 1200, 0.09, "bandpass", 1.8);
-  playTone(ctx, out, bodyFreq * 1.35, bodyFreq * 0.85, 0.032, now + 0.025, 0.06, "sine");
+  // 3. Crisp agate/shell ring transient (14ms fixed harmonic)
+  playTone(
+    ctx,
+    out,
+    isBlack ? 1180 : 1320,
+    isBlack ? 1180 : 1320,
+    0.015,
+    now,
+    0.11,
+    "triangle",
+  );
 }
 
 /**
- * Lighter wooden tap for replay step navigation or UI toggles.
+ * Subtle, clean micro-tick for UI button toggles.
  */
 export function playTapSound(): void {
   const audio = getAudio();
   if (!audio) return;
   const { ctx, out } = audio;
   const now = ctx.currentTime;
-  playNoise(ctx, out, 0.014, now, 3200, 1800, 0.15, "bandpass", 1.6);
-  playTone(ctx, out, 680, 340, 0.038, now, 0.12, "triangle");
+  playTone(ctx, out, 1046.5, 1046.5, 0.018, now, 0.07, "sine");
 }
 
 /**
- * Crisp two-note wooden chime when a player confirms readiness.
+ * Crisp two-note chime when a player confirms readiness (kept as approved).
  */
 export function playReadySound(): void {
   const audio = getAudio();
@@ -180,19 +212,20 @@ export function playReadySound(): void {
 }
 
 /**
- * Subtle woodblock tick for each countdown second (3, 2, 1).
+ * Clean, pure crystal chime beep for countdown (3, 2, 1) — no woodblock/wooden-fish knock!
  */
-export function playCountdownTickSound(): void {
+export function playCountdownTickSound(secondsLeft = 3): void {
   const audio = getAudio();
   if (!audio) return;
   const { ctx, out } = audio;
   const now = ctx.currentTime;
-  playNoise(ctx, out, 0.014, now, 2400, 1400, 0.12, "bandpass", 2.0);
-  playTone(ctx, out, 784, 520, 0.055, now, 0.13, "sine");
+  const freq = secondsLeft === 1 ? 987.77 : 783.99; // B5 on final second, G5 on 3 & 2
+  playTone(ctx, out, freq, freq, 0.095, now, 0.13, "sine");
+  playTone(ctx, out, freq * 2, freq * 2, 0.06, now, 0.035, "triangle");
 }
 
 /**
- * Resonant wooden clapper + pentatonic cadence when the match begins.
+ * Resonant pentatonic cadence when the match begins (kept as approved).
  */
 export function playGameStartSound(): void {
   const audio = getAudio();
@@ -209,7 +242,7 @@ export function playGameStartSound(): void {
 }
 
 /**
- * Celebratory Oriental pentatonic fanfare when Five-in-a-Row is achieved.
+ * Celebratory Oriental pentatonic fanfare when Five-in-a-Row is achieved (kept as approved).
  */
 export function playWinSound(): void {
   const audio = getAudio();
@@ -225,16 +258,20 @@ export function playWinSound(): void {
 }
 
 /**
- * Descending wooden cadence when a player resigns or the board draws.
+ * Pure, in-tune pentatonic resolution when a player resigns or the match draws.
  */
 export function playEndSound(kind: "resign" | "draw"): void {
   const audio = getAudio();
   if (!audio) return;
   const { ctx, out } = audio;
   const now = ctx.currentTime;
-  const notes = kind === "resign" ? [659.25, 440] : [523.25, 659.25];
+  const notes =
+    kind === "resign"
+      ? [880, 659.25, 587.33] // A5 -> E5 -> D5 clean descending triad
+      : [523.25, 587.33, 783.99]; // C5 -> D5 -> G5 calm neutral resolution
   notes.forEach((f, i) => {
-    const t = now + i * 0.085;
-    playTone(ctx, out, f, f * 0.96, 0.16, t, 0.15, "triangle");
+    const t = now + i * 0.075;
+    playTone(ctx, out, f, f, 0.2, t, 0.14, "triangle");
+    playTone(ctx, out, f * 2, f * 2, 0.12, t, 0.04, "sine");
   });
 }

@@ -318,7 +318,7 @@ export default function App() {
     const sec = Math.max(1, Math.ceil((l.startsAt - now) / 1000));
     if (sec !== prevCountdownSecRef.current) {
       prevCountdownSecRef.current = sec;
-      playCountdownTickSound();
+      playCountdownTickSound(sec);
     }
   }, [l.phase, l.startsAt, run?.status, now]);
   const chosenPlayer = (id: string): Player | undefined => {
