@@ -1,21 +1,29 @@
 {
   "id": "teatak/pudding-hub/widgets/mechanics-lab",
-  "version": "1.0.0-preview.1",
-  "preview": true,
-  "channel": "preview",
+  "version": "1.0.0",
   "title": {
+    "en": "Mechanics Physics Lab",
     "zh-CN": "经典力学实验室",
     "zh-TW": "經典力學實驗室",
-    "en": "Mechanics Physics Lab"
+    "ja": "古典力学ラボ",
+    "ko": "고전 역학 실험실",
+    "es": "Laboratorio de mecánica clásica",
+    "de": "Klassisches Mechanik-Labor",
+    "fr": "Laboratoire de mécanique classique"
   },
   "description": {
+    "en": "Modular interactive classical mechanics lab with inclined-plane force decomposition, projectile vs. free-fall strobe comparison, momentum collisions, and harmonic oscillators, with live force vectors, energy bars, and AI Tutor controls.",
     "zh-CN": "面向青少年物理启蒙的模块化互动力学实验台，内置斜面受力正交分解、平抛自由落体对比、动量碰撞与简谐振动，支持受力矢量图、能量守恒监控与 AI 实验导师联调。",
     "zh-TW": "面向青少年物理啟蒙的模組化互動力學實驗台，內建斜面受力正交分解、平拋自由落體對比、動量碰撞與簡諧振動，支援受力向量圖、能量守恆監控與 AI 實驗導師聯調。",
-    "en": "Modular interactive classical mechanics lab with inclined-plane force decomposition, projectile vs. free-fall strobe comparison, momentum collisions, and harmonic oscillators, with live force vectors, energy bars, and AI Tutor controls."
+    "ja": "斜面の力の分解、水平投射と自由落下の比較、運動量衝突、単振動を備えた青少年向けインタラクティブ物理実験台。力のベクトル、エネルギー保存、AI実験指導に対応。",
+    "ko": "경사면 힘 분해, 수평 투사와 자유 낙하 비교, 운동량 충돌, 단진동을 갖춘 청소년용 인터랙티브 물리 실험대. 힘 벡터, 에너지 보존, AI 튜터 지원.",
+    "es": "Laboratorio interactivo de mecánica con descomposición de fuerzas en planos inclinados, tiro parabólico y caída libre, colisiones y osciladores armónicos, con vectores y tutor IA.",
+    "de": "Interaktives Mechanik-Labor mit Kräftezerlegung auf schiefer Ebene, Wurf und freiem Fall, Stoßprozessen und harmonischer Schwingung mit Vektoren und KI-Tutor.",
+    "fr": "Laboratoire interactif de mécanique avec décomposition des forces sur plan incliné, tir et chute libre, collisions et oscillateur harmonique avec vecteurs et tuteur IA."
   },
   "requires": {
     "protocolVersion": 24,
-    "sdkVersion": "1"
+    "sdkVersion": "1.0.0"
   },
   "icon": "./assets/icon.svg"
 }

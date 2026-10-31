@@ -11,7 +11,7 @@
 import { pudding, type JSONValue } from "@pudding/widget";
 import { z } from "zod";
 import { BENCH_REGISTRY, getBenchById } from "./benches";
-import { getLocale, t } from "./text";
+import { getLocale, t, loc } from "./text";
 import type { WaveformSample } from "./types";
 
 export interface LabPersistedState {
@@ -110,11 +110,11 @@ export function describeLabSnapshot(lab = readLabPersistedState()): JSONValue {
     activeBenchId: bench.id,
     availableBenches: BENCH_REGISTRY.map((b) => ({
       id: b.id,
-      title: b.title[locale],
+      title: loc(b.title, locale),
       formula: b.formulaBadge,
       presets: b.presets.map((p) => ({
         id: p.id,
-        title: p.title[locale],
+        title: loc(p.title, locale),
         params: p.params,
       })),
     })),
@@ -130,7 +130,7 @@ export function describeLabSnapshot(lab = readLabPersistedState()): JSONValue {
     },
     telemetry: telemetry.map((item) => ({
       id: item.id,
-      label: item.label[locale],
+      label: loc(item.label, locale),
       symbol: item.symbol,
       value: `${item.value}${item.unit ? " " + item.unit : ""}`,
     })),

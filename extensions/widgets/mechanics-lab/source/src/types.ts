@@ -17,6 +17,12 @@
 import type React from "react";
 import type { LocaleKey } from "./text";
 
+export type LocalizedText = Partial<Record<LocaleKey, string>> & {
+  en?: string;
+  "zh-CN"?: string;
+  [k: string]: string | undefined;
+};
+
 /**
  * 单个可调物理参数的声明式元数据。
  * 宿主外壳根据此数组自动渲染右侧滑块控制面板，并在大模型调用 `configureExperiment` 时自动校验范围。
@@ -25,7 +31,7 @@ export interface BenchParamSpec {
   /** 参数唯一键名（如 "angleDeg", "mu", "mass1"） */
   key: string;
   /** 多语言名称 */
-  label: Record<LocaleKey, string>;
+  label: LocalizedText;
   /** 物理符号（如 "θ", "μ", "m₁"），用于在滑块旁展示标准物理记号 */
   symbol: string;
   /** 单位字符串（如 "°", "kg", "m/s", "N/m"） */
@@ -45,8 +51,8 @@ export interface BenchParamSpec {
  */
 export interface BenchPresetSpec<TParams extends Record<string, number> = Record<string, number>> {
   id: string;
-  title: Record<LocaleKey, string>;
-  description: Record<LocaleKey, string>;
+  title: LocalizedText;
+  description: LocalizedText;
   /** 预设对应的参数键值对 */
   params: TParams;
 }
@@ -71,7 +77,7 @@ export interface EnergyBreakdown {
  */
 export interface TelemetryItem {
   id: string;
-  label: Record<LocaleKey, string>;
+  label: LocalizedText;
   symbol: string;
   value: string;
   unit: string;
@@ -137,17 +143,17 @@ export interface ExperimentBench<
   /** 实验台唯一 ID（如 "ramp" | "projectile" | "collision" | "harmonic"） */
   id: string;
   /** 实验台简短名称（用于顶部 Tab 切换栏） */
-  title: Record<LocaleKey, string>;
+  title: LocalizedText;
   /** 实验台一句话教学副标题 */
-  subtitle: Record<LocaleKey, string>;
+  subtitle: LocalizedText;
   /** 核心物理公式说明（展示在实验台公式铭牌上） */
   formulaBadge: string;
   /** 面向孩子的通俗原理解析卡片文案 */
-  principleNote: Record<LocaleKey, string>;
+  principleNote: LocalizedText;
   /** 示波器曲线标签 */
   waveformLabels: {
-    primary: Record<LocaleKey, string>;
-    secondary?: Record<LocaleKey, string>;
+    primary: LocalizedText;
+    secondary?: LocalizedText;
     unit: string;
   };
   /** 声明式参数滑块列表 */

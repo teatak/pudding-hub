@@ -33,7 +33,7 @@ import {
   writeLabPersistedState,
   type LabPersistedState,
 } from "./game";
-import { getLocale, setLocale, t } from "./text";
+import { getLocale, setLocale, t, loc } from "./text";
 import {
   isSoundMuted,
   toggleSoundMute,
@@ -279,7 +279,7 @@ export default function App() {
           <span className="ml-logo-dot" />
           <div>
             <h1>{t("appTitle")}</h1>
-            <small>{activeBench.subtitle[locale]}</small>
+            <small>{loc(activeBench.subtitle, locale)}</small>
           </div>
         </div>
 
@@ -294,7 +294,7 @@ export default function App() {
               }`}
               onClick={() => handleSelectBench(bench.id)}
             >
-              {bench.title[locale]}
+              {loc(bench.title, locale)}
             </button>
           ))}
         </nav>
@@ -462,7 +462,7 @@ export default function App() {
                     key={item.id}
                     className={`ml-stat-box is-${item.highlight || "default"}`}
                   >
-                    <small>{item.label[locale]}</small>
+                    <small>{loc(item.label, locale)}</small>
                     <strong>
                       <em>{item.symbol} = </em>
                       {item.value}
@@ -479,7 +479,7 @@ export default function App() {
                 <span>{t("panelPrinciple")}</span>
               </div>
               <p className="ml-principle-text">
-                {activeBench.principleNote[locale]}
+                {loc(activeBench.principleNote, locale)}
               </p>
             </div>
           </div>
@@ -499,7 +499,7 @@ export default function App() {
                   <label key={spec.key} className="ml-slider-row">
                     <div className="ml-slider-top">
                       <span>
-                        {spec.label[locale]} (<code>{spec.symbol}</code>)
+                        {loc(spec.label, locale)} (<code>{spec.symbol}</code>)
                       </span>
                       <strong>
                         {val} {spec.unit}
@@ -534,8 +534,8 @@ export default function App() {
                   className="ml-preset-btn"
                   onClick={() => handleLoadPreset(preset.params)}
                 >
-                  <strong>{preset.title[locale]}</strong>
-                  <small>{preset.description[locale]}</small>
+                  <strong>{loc(preset.title, locale)}</strong>
+                  <small>{loc(preset.description, locale)}</small>
                 </button>
               ))}
             </div>
