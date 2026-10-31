@@ -487,13 +487,13 @@ export const projectileBench: ExperimentBench<
                     y1={20}
                     x2={px}
                     y2={groundY}
-                    stroke="rgba(148, 163, 184, 0.1)"
+                    stroke="var(--ml-canvas-grid)"
                   />
                   <text
                     x={px}
                     y={groundY + 18}
                     textAnchor="middle"
-                    fill="#64748b"
+                    fill="var(--ml-text-dim)"
                     fontSize="10"
                   >
                     {m}m
@@ -511,13 +511,13 @@ export const projectileBench: ExperimentBench<
                     y1={py}
                     x2={730}
                     y2={py}
-                    stroke="rgba(148, 163, 184, 0.1)"
+                    stroke="var(--ml-canvas-grid)"
                   />
                   <text
                     x={32}
                     y={py + 4}
                     textAnchor="end"
-                    fill="#64748b"
+                    fill="var(--ml-text-dim)"
                     fontSize="10"
                   >
                     {m}m
@@ -534,8 +534,9 @@ export const projectileBench: ExperimentBench<
           y1={groundY}
           x2={735}
           y2={groundY}
-          stroke="#475569"
-          strokeWidth="3"
+          stroke="var(--ml-canvas-ground)"
+          strokeWidth="2.5"
+          strokeLinecap="round"
         />
 
         {/* 发射高台 */}
@@ -546,8 +547,8 @@ export const projectileBench: ExperimentBench<
             width={36}
             height={groundY - towerTopY}
             rx={3}
-            fill="rgba(30, 41, 59, 0.9)"
-            stroke="#38bdf8"
+            fill="var(--ml-ramp-surface)"
+            stroke="var(--ml-ramp-edge)"
             strokeWidth="2"
           />
         )}

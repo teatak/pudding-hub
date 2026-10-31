@@ -377,8 +377,8 @@ export const harmonicBench: ExperimentBench<HarmonicParams, HarmonicState> = {
     return (
       <g>
         {/* 左侧固定墙面与光滑导轨 */}
-        <rect x={wallX - 10} y={105} width={10} height={115} rx={2} fill="#475569" />
-        <line x1={wallX} y1={220} x2={710} y2={220} stroke="#475569" strokeWidth="3" />
+        <rect x={wallX - 10} y={105} width={10} height={115} rx={2} fill="var(--ml-canvas-ground)" />
+        <line x1={wallX} y1={220} x2={710} y2={220} stroke="var(--ml-canvas-ground)" strokeWidth="2.5" />
 
         {/* 平衡位置 O (x = 0) 基准虚线 */}
         <line

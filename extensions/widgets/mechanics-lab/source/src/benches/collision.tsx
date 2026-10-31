@@ -411,7 +411,7 @@ export const collisionBench: ExperimentBench<CollisionParams, CollisionState> =
       return (
         <g>
           {showGrid && (
-            <g stroke="rgba(148, 163, 184, 0.1)" strokeWidth="1">
+            <g stroke="var(--ml-canvas-grid)" strokeWidth="1">
               {Array.from({ length: 13 }, (_, i) => {
                 const m = i - 6;
                 const px = centerX + m * pxPerMeter;
@@ -422,7 +422,7 @@ export const collisionBench: ExperimentBench<CollisionParams, CollisionState> =
                       x={px}
                       y={trackY + 62}
                       textAnchor="middle"
-                      fill="#64748b"
+                      fill="var(--ml-text-dim)"
                       fontSize="10"
                     >
                       {m}m
@@ -440,9 +440,9 @@ export const collisionBench: ExperimentBench<CollisionParams, CollisionState> =
             width={650}
             height={14}
             rx={4}
-            fill="#1e293b"
-            stroke="#475569"
-            strokeWidth="2"
+            fill="var(--ml-ramp-surface)"
+            stroke="var(--ml-canvas-ground)"
+            strokeWidth="1.8"
           />
 
           {/* 左球 A */}

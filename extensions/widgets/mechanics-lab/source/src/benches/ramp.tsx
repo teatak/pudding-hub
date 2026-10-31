@@ -56,6 +56,8 @@ export interface RampState {
   strobePositions: number[];
   lastStrobeAt: number;
   completed: boolean;
+  /** 到达底端瞬间的末速度 (m/s) */
+  finalVelocity?: number;
 }
 
 export const RAMP_LENGTH = 8.0; // 斜面总长度 8.0 m
@@ -160,7 +162,7 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
       label: { "zh-CN": "斜面倾角", "zh-TW": "斜面傾角", en: "Ramp Angle" },
       symbol: "θ",
       unit: "°",
-      min: 5,
+      min: 0,
       max: 55,
       step: 1,
       defaultValue: 30,
@@ -236,6 +238,20 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
       params: { angleDeg: 20, mass: 3, mu: 0.5, pushForce: 0, gravity: 9.8 },
     },
     {
+      id: "horizontal_pull",
+      title: {
+        "zh-CN": "水平地面匀加速 (θ = 0°)",
+        "zh-TW": "水平地面勻加速 (θ = 0°)",
+        en: "Horizontal Floor Pull (θ = 0°)",
+      },
+      description: {
+        "zh-CN": "倾角 0°，施加 12N 外力拉动滑块克服水平滑动摩擦力向前加速",
+        "zh-TW": "傾角 0°，施加 12N 外力拉動滑塊克服水平滑動摩擦力向前加速",
+        en: "0° flat surface; 12N applied force overcomes friction to accelerate",
+      },
+      params: { angleDeg: 0, mass: 2, mu: 0.2, pushForce: 12, gravity: 9.8 },
+    },
+    {
       id: "uphill_pull",
       title: {
         "zh-CN": "外力拉动上坡 (F = -22N)",
@@ -300,6 +316,9 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
     let completed = false;
     const soundEvents: BenchStepResult<RampState>["soundEvents"] = [];
 
+    let impactEk = 0;
+    let finalVelocity = state.finalVelocity;
+
     if (nextS >= RAMP_LENGTH - 0.35) {
       nextS = RAMP_LENGTH - 0.35;
       if (Math.abs(nextV) > 0.2) {
@@ -308,10 +327,14 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
           intensity: Math.min(1.5, Math.abs(nextV) / 4),
         });
       }
+      finalVelocity = Math.abs(nextV);
+      impactEk = 0.5 * params.mass * nextV * nextV;
       nextV = 0;
       completed = true;
     } else if (nextS <= 0.35) {
       nextS = 0.35;
+      finalVelocity = Math.abs(nextV);
+      impactEk = 0.5 * params.mass * nextV * nextV;
       nextV = 0;
       completed = true;
     }
@@ -331,10 +354,11 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
         s: nextS,
         v: nextV,
         a: completed ? 0 : f.accel,
-        thermalEnergy: state.thermalEnergy + dThermal,
+        thermalEnergy: state.thermalEnergy + dThermal + impactEk,
         strobePositions: nextStrobes.slice(-16),
         lastStrobeAt,
         completed,
+        finalVelocity,
       },
       soundEvents,
     };
@@ -432,276 +456,408 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
     state,
     showVectors,
     showGrid,
+    locale,
   }: BenchStageProps<RampParams, RampState>) {
     const f = computeRampForces(params, state.v);
-    const baseLeftX = 110;
+    const rad = f.rad;
+    const sinA = Math.sin(rad);
+    const cosA = Math.cos(rad);
+
+    // 画布标准视口 760 x 400
     const baseBottomY = 345;
-    const pxPerMeter = 62; // 8m = 496px
+    const maxUsableHeight = 265; // y 保持在 80 ~ 345 之间，杜绝大角度冲顶！
+    const maxUsableWidth = 610; // x 保持在 65 ~ 675 之间
+
+    // 动态像素缩放：无论倾角多大或多小，斜面都自适应展开且安全留在屏幕内
+    const naturalHeight = RAMP_LENGTH * sinA;
+    const naturalWidth = RAMP_LENGTH * cosA;
+    const scaleY = naturalHeight > 0.08 ? maxUsableHeight / naturalHeight : 74;
+    const scaleX = naturalWidth > 0.08 ? maxUsableWidth / naturalWidth : 74;
+    const pxPerMeter = Math.max(38, Math.min(74, Math.min(scaleX, scaleY)));
+
     const rampPxLen = RAMP_LENGTH * pxPerMeter;
-    const topX = baseLeftX;
-    const topY = baseBottomY - rampPxLen * Math.sin(f.rad);
-    const bottomX = baseLeftX + rampPxLen * Math.cos(f.rad);
+    const rampPxH = rampPxLen * sinA;
+    const rampPxW = rampPxLen * cosA;
+
+    // 斜面主体居中偏左分布
+    const topX = 65 + Math.max(0, (maxUsableWidth - rampPxW) * 0.2);
+    const topY = baseBottomY - rampPxH;
+    const bottomX = topX + rampPxW;
     const bottomY = baseBottomY;
 
     // 滑块在斜面上的像素坐标
     const blockCenterS = state.s * pxPerMeter;
-    const blockSurfaceX = topX + blockCenterS * Math.cos(f.rad);
-    const blockSurfaceY = topY + blockCenterS * Math.sin(f.rad);
+    const blockSurfaceX = topX + blockCenterS * cosA;
+    const blockSurfaceY = topY + blockCenterS * sinA;
 
-    // 矢量缩放因子 (1 N = 2.2 px)
-    const vScale = 2.2;
-    const weightPx = Math.min(115, f.weight * vScale);
-    const gxPx = Math.min(100, f.gx * vScale);
-    const gyPx = Math.min(100, f.gy * vScale);
+    // 滑块尺寸随质量自适应 (46 ~ 56px)
+    const blockW = Math.round(44 + Math.min(12, params.mass * 1.2));
+    const blockH = Math.round(28 + Math.min(8, params.mass * 0.8));
+
+    // 矢量长度缩放与地面防穿透限制
+    const vScale = 1.9;
+    const gxPx = Math.min(85, f.gx * vScale);
+    const gyPx = Math.min(85, f.gy * vScale);
     const normalPx = gyPx;
-    const frictionPx = Math.max(-100, Math.min(100, f.friction * vScale));
+    const frictionPx = Math.max(-85, Math.min(85, f.friction * vScale));
+    const maxWeightDist = Math.max(20, 395 - blockSurfaceY);
+    const weightPx = Math.min(f.weight * vScale, maxWeightDist);
+
+    // 精细状态流转判断
+    let statusText = "";
+    let statusBorder = "var(--ml-border)";
+    let statusBg = "light-dark(rgba(255,255,255,0.92), rgba(15,23,42,0.92))";
+
+    if (state.completed) {
+      statusBorder = "var(--ml-ek)";
+      if (state.s >= RAMP_LENGTH - 0.4) {
+        statusText =
+          locale === "zh-TW"
+            ? `🏁 已到達底端擋板 (末速 v = ${(state.finalVelocity ?? 0).toFixed(2)} m/s)`
+            : locale === "en"
+            ? `🏁 Reached bottom buffer (v_end = ${(state.finalVelocity ?? 0).toFixed(2)} m/s)`
+            : `🏁 已到达底端挡板 (末速 v = ${(state.finalVelocity ?? 0).toFixed(2)} m/s)`;
+      } else if (state.s <= 0.4) {
+        statusText =
+          locale === "zh-TW"
+            ? "🏁 已到達頂端"
+            : locale === "en"
+            ? "🏁 Reached ramp top"
+            : "🏁 已到达斜面顶端";
+      } else {
+        statusText =
+          locale === "zh-TW"
+            ? "⏸ 滑塊已靜止"
+            : locale === "en"
+            ? "⏸ Block stopped"
+            : "⏸ 滑块已静止";
+      }
+    } else if (f.isStatic && Math.abs(state.v) < 1e-4) {
+      statusBorder = "var(--ml-etotal)";
+      statusText =
+        locale === "zh-TW"
+          ? `🔒 靜摩擦自鎖平衡 (θ=${params.angleDeg}° ≤ θc=${f.criticalAngleDeg.toFixed(1)}°)`
+          : locale === "en"
+          ? `🔒 Static friction locked (θ=${params.angleDeg}° ≤ θc=${f.criticalAngleDeg.toFixed(1)}°)`
+          : `🔒 静摩擦自锁平衡 (θ=${params.angleDeg}° ≤ θc=${f.criticalAngleDeg.toFixed(1)}°)`;
+    } else if (Math.abs(state.v) > 0.02) {
+      statusBorder = "var(--ml-primary)";
+      const isDown = state.v > 0;
+      statusText = isDown
+        ? locale === "zh-TW"
+          ? `⚡ 加速下滑中 (a = ${state.a.toFixed(2)} m/s²)`
+          : locale === "en"
+          ? `⚡ Accelerating down (a = ${state.a.toFixed(2)} m/s²)`
+          : `⚡ 加速下滑中 (a = ${state.a.toFixed(2)} m/s²)`
+        : locale === "zh-TW"
+        ? `⚡ 逆坡滑行中 (a = ${state.a.toFixed(2)} m/s²)`
+        : locale === "en"
+        ? `⚡ Sliding uphill (a = ${state.a.toFixed(2)} m/s²)`
+        : `⚡ 逆坡滑行中 (a = ${state.a.toFixed(2)} m/s²)`;
+    } else {
+      statusText =
+        locale === "zh-TW"
+          ? "⏸ 準備就緒，點擊開始實驗"
+          : locale === "en"
+          ? "⏸ Ready, click Play to run"
+          : "⏸ 准备就绪，点击开始实验";
+    }
 
     return (
       <g>
-        {/* 背景标尺网格 */}
+        {/* 背景标尺工程网格 */}
         {showGrid && (
-          <g stroke="rgba(148, 163, 184, 0.1)" strokeWidth="1">
-            {Array.from({ length: 14 }, (_, i) => (
-              <line key={`vx-${i}`} x1={i * 60} y1={0} x2={i * 60} y2={400} />
+          <g stroke="var(--ml-canvas-grid)" strokeWidth="1">
+            {Array.from({ length: 15 }, (_, i) => (
+              <line key={`vx-${i}`} x1={i * 54} y1={0} x2={i * 54} y2={400} />
             ))}
-            {Array.from({ length: 8 }, (_, i) => (
-              <line key={`hy-${i}`} x1={0} y1={i * 55} x2={760} y2={i * 55} />
+            {Array.from({ length: 9 }, (_, i) => (
+              <line key={`hy-${i}`} x1={0} y1={i * 50} x2={760} y2={i * 50} />
             ))}
           </g>
         )}
 
         {/* 地面基准线 */}
         <line
-          x1={50}
+          x1={30}
           y1={baseBottomY}
-          x2={710}
+          x2={730}
           y2={baseBottomY}
-          stroke="#475569"
-          strokeWidth="3"
-        />
-
-        {/* 斜面三角形主体 */}
-        <polygon
-          points={`${topX},${topY} ${bottomX},${bottomY} ${topX},${bottomY}`}
-          fill="rgba(30, 41, 59, 0.82)"
-          stroke="#38bdf8"
+          stroke="var(--ml-canvas-ground)"
           strokeWidth="2.5"
-          strokeLinejoin="round"
+          strokeLinecap="round"
         />
 
-        {/* 斜面倾角 θ 圆弧标注 */}
-        <path
-          d={`M ${bottomX - 52} ${bottomY} A 52 52 0 0 1 ${
-            bottomX - 52 * Math.cos(f.rad)
-          } ${bottomY - 52 * Math.sin(f.rad)}`}
-          fill="none"
-          stroke="#fbbf24"
-          strokeWidth="2"
-        />
-        <text
-          x={bottomX - 82}
-          y={bottomY - 12}
-          fill="#fde047"
-          fontSize="12"
-          fontWeight="700"
-        >
-          θ = {params.angleDeg}°
-        </text>
+        {/* 斜面主体：当 θ = 0° 时自动渲染为水平实验台导轨；θ > 0° 时渲染直角三角形 */}
+        {params.angleDeg === 0 ? (
+          <g>
+            <rect
+              x={topX}
+              y={baseBottomY - 14}
+              width={rampPxLen}
+              height={14}
+              rx={3}
+              fill="var(--ml-ramp-surface)"
+              stroke="var(--ml-ramp-edge)"
+              strokeWidth="2"
+            />
+            {/* 导轨精密标尺刻度 */}
+            {Array.from({ length: Math.floor(RAMP_LENGTH) + 1 }, (_, m) => (
+              <line
+                key={`m-${m}`}
+                x1={topX + m * pxPerMeter}
+                y1={baseBottomY - 14}
+                x2={topX + m * pxPerMeter}
+                y2={baseBottomY - 8}
+                stroke="var(--ml-ramp-edge)"
+                strokeWidth="1.5"
+              />
+            ))}
+          </g>
+        ) : (
+          <polygon
+            points={`${topX},${topY} ${bottomX},${bottomY} ${topX},${bottomY}`}
+            fill="var(--ml-ramp-surface)"
+            stroke="var(--ml-ramp-edge)"
+            strokeWidth="2.2"
+            strokeLinejoin="round"
+          />
+        )}
 
-        {/* 斜面刻度与频闪残影点 */}
+        {/* 倾角 θ 标注：彻底移到底角右下地面安全区，滑块绝不覆盖！ */}
+        {params.angleDeg > 0 ? (
+          <g>
+            <path
+              d={`M ${bottomX - 44 * cosA} ${bottomY - 44 * sinA} A 44 44 0 0 1 ${
+                bottomX - 44
+              } ${bottomY}`}
+              fill="none"
+              stroke="var(--ml-etotal)"
+              strokeWidth="1.8"
+            />
+            <g transform={`translate(${bottomX + 12}, ${bottomY + 18})`}>
+              <rect
+                x={-4}
+                y={-14}
+                width={56}
+                height={18}
+                rx={4}
+                fill="var(--ml-panel)"
+                stroke="var(--ml-border)"
+                strokeWidth="1"
+              />
+              <text
+                x={24}
+                y={-1}
+                textAnchor="middle"
+                fill="var(--ml-text)"
+                fontSize="11"
+                fontWeight="700"
+              >
+                θ = {params.angleDeg}°
+              </text>
+            </g>
+          </g>
+        ) : (
+          <g transform={`translate(${bottomX + 12}, ${bottomY + 18})`}>
+            <rect
+              x={-4}
+              y={-14}
+              width={64}
+              height={18}
+              rx={4}
+              fill="var(--ml-panel)"
+              stroke="var(--ml-border)"
+              strokeWidth="1"
+            />
+            <text
+              x={28}
+              y={-1}
+              textAnchor="middle"
+              fill="var(--ml-primary)"
+              fontSize="10.5"
+              fontWeight="650"
+            >
+              θ = 0° 水平
+            </text>
+          </g>
+        )}
+
+        {/* 斜面频闪残影点 */}
         {state.strobePositions.map((pos, idx) => {
-          const sx = topX + pos * pxPerMeter * Math.cos(f.rad);
-          const sy = topY + pos * pxPerMeter * Math.sin(f.rad);
+          const sx = topX + pos * pxPerMeter * cosA;
+          const sy = topY + pos * pxPerMeter * sinA;
           return (
             <circle
               key={`st-${idx}`}
               cx={sx}
               cy={sy}
-              r={3.5}
-              fill="rgba(56, 189, 248, 0.55)"
+              r={3}
+              fill="var(--ml-primary)"
+              opacity="0.45"
             />
           );
         })}
 
         {/* 底端缓冲挡板 */}
-        <g
-          transform={`translate(${bottomX}, ${bottomY}) rotate(${params.angleDeg})`}
-        >
+        <g transform={`translate(${bottomX}, ${bottomY}) rotate(${params.angleDeg})`}>
           <rect
-            x={-22}
-            y={-26}
-            width={8}
-            height={26}
+            x={-18}
+            y={-28}
+            width={6}
+            height={28}
             rx={2}
-            fill="#ef4444"
+            fill="var(--ml-q)"
           />
         </g>
 
-        {/* 滑块与旋转局部坐标系（原点在滑块底面中心，X轴沿斜面向下，Y轴垂直斜面向下） */}
-        <g
-          transform={`translate(${blockSurfaceX}, ${blockSurfaceY}) rotate(${params.angleDeg})`}
-        >
-          {/* 滑块本体 */}
+        {/* 滑块与旋转坐标系 */}
+        <g transform={`translate(${blockSurfaceX}, ${blockSurfaceY}) rotate(${params.angleDeg})`}>
+          {/* 滑块主体 */}
           <rect
-            x={-26}
-            y={-36}
-            width={52}
-            height={36}
-            rx={6}
-            fill="rgba(245, 158, 11, 0.92)"
-            stroke="#fef08a"
-            strokeWidth="2"
+            x={-blockW / 2}
+            y={-blockH}
+            width={blockW}
+            height={blockH}
+            rx={5}
+            fill="var(--ml-block-fill)"
+            stroke="var(--ml-block-stroke)"
+            strokeWidth="1.8"
           />
-          <text
-            x={0}
-            y={-14}
-            textAnchor="middle"
-            fill="#0f172a"
-            fontSize="11.5"
-            fontWeight="800"
-          >
-            {params.mass}kg
-          </text>
+          {/* 滑块质量文字标签，自带微底衬防遮挡 */}
+          <g transform={`translate(0, ${-blockH / 2})`}>
+            <rect
+              x={-18}
+              y={-9}
+              width={36}
+              height={17}
+              rx={3}
+              fill="var(--ml-panel)"
+              opacity="0.9"
+            />
+            <text
+              x={0}
+              y={4}
+              textAnchor="middle"
+              fill="var(--ml-text)"
+              fontSize="11"
+              fontWeight="800"
+            >
+              {params.mass}kg
+            </text>
+          </g>
 
-          {/* 受力分析正交分解矢量图（以滑块质心 (0, -18) 为起点） */}
+          {/* 受力分析正交分解矢量图 */}
           {showVectors && (
-            <g transform="translate(0, -18)">
+            <g transform={`translate(0, ${-blockH / 2})`}>
               {/* 正交分解平行四边形虚线 */}
               <line
                 x1={gxPx}
                 y1={0}
                 x2={gxPx}
                 y2={gyPx}
-                stroke="rgba(251, 191, 36, 0.55)"
-                strokeWidth="1.4"
-                strokeDasharray="4 3"
+                stroke="var(--ml-text-dim)"
+                strokeWidth="1.2"
+                strokeDasharray="3 3"
               />
               <line
                 x1={0}
                 y1={gyPx}
                 x2={gxPx}
                 y2={gyPx}
-                stroke="rgba(251, 191, 36, 0.55)"
-                strokeWidth="1.4"
-                strokeDasharray="4 3"
+                stroke="var(--ml-text-dim)"
+                strokeWidth="1.2"
+                strokeDasharray="3 3"
               />
 
               {/* Gx = mg sinθ (沿斜面向下分力) */}
-              <line
-                x1={0}
-                y1={0}
-                x2={gxPx}
-                y2={0}
-                stroke="#fbbf24"
-                strokeWidth="2.5"
-              />
-              <polygon
-                points={`${gxPx},0 ${gxPx - 7},-4 ${gxPx - 7},4`}
-                fill="#fbbf24"
-              />
-              <text
-                x={gxPx + 6}
-                y={4}
-                fill="#fde047"
-                fontSize="10.5"
-                fontWeight="700"
-              >
-                Gx={f.gx.toFixed(1)}N
-              </text>
+              {Math.abs(gxPx) > 1.5 && (
+                <g>
+                  <line x1={0} y1={0} x2={gxPx} y2={0} stroke="var(--ml-force-drive)" strokeWidth="2.2" />
+                  <polygon
+                    points={`${gxPx},0 ${gxPx - 6},-3.5 ${gxPx - 6},3.5`}
+                    fill="var(--ml-force-drive)"
+                  />
+                  <text
+                    x={gxPx * 0.5}
+                    y={-7}
+                    textAnchor="middle"
+                    fill="var(--ml-force-drive)"
+                    fontSize="9.5"
+                    fontWeight="750"
+                  >
+                    Gx={f.gx.toFixed(1)}N
+                  </text>
+                </g>
+              )}
 
               {/* Gy = mg cosθ (垂直斜面分力) */}
-              <line
-                x1={0}
-                y1={0}
-                x2={0}
-                y2={gyPx}
-                stroke="#94a3b8"
-                strokeWidth="2"
-                strokeDasharray="3 2"
-              />
-              <text
-                x={8}
-                y={gyPx + 10}
-                fill="#cbd5e1"
-                fontSize="10"
-                fontWeight="600"
-              >
-                Gy={f.gy.toFixed(1)}N
-              </text>
+              <g>
+                <line x1={0} y1={0} x2={0} y2={gyPx} stroke="var(--ml-text-muted)" strokeWidth="1.6" strokeDasharray="3 2" />
+                <text
+                  x={7}
+                  y={gyPx * 0.6}
+                  fill="var(--ml-text-muted)"
+                  fontSize="9.5"
+                  fontWeight="600"
+                >
+                  Gy={f.gy.toFixed(1)}N
+                </text>
+              </g>
 
               {/* 支持力 N (垂直斜面向上) */}
-              <line
-                x1={0}
-                y1={0}
-                x2={0}
-                y2={-normalPx}
-                stroke="#22c55e"
-                strokeWidth="2.8"
-              />
-              <polygon
-                points={`0,${-normalPx} -4.5,${-normalPx + 8} 4.5,${
-                  -normalPx + 8
-                }`}
-                fill="#22c55e"
-              />
-              <text
-                x={8}
-                y={-normalPx + 4}
-                fill="#86efac"
-                fontSize="10.5"
-                fontWeight="700"
-              >
-                N={f.normal.toFixed(1)}N
-              </text>
+              <g>
+                <line x1={0} y1={0} x2={0} y2={-normalPx} stroke="var(--ml-force-n)" strokeWidth="2.4" />
+                <polygon
+                  points={`0,${-normalPx} -3.5,${-normalPx + 6} 3.5,${-normalPx + 6}`}
+                  fill="var(--ml-force-n)"
+                />
+                <text
+                  x={7}
+                  y={-normalPx * 0.6}
+                  fill="var(--ml-force-n)"
+                  fontSize="9.5"
+                  fontWeight="750"
+                >
+                  N={f.normal.toFixed(1)}N
+                </text>
+              </g>
 
               {/* 摩擦力 f */}
               {Math.abs(frictionPx) > 2 && (
-                <>
-                  <line
-                    x1={0}
-                    y1={0}
-                    x2={frictionPx}
-                    y2={0}
-                    stroke="#f43f5e"
-                    strokeWidth="2.8"
-                  />
+                <g>
+                  <line x1={0} y1={0} x2={frictionPx} y2={0} stroke="var(--ml-force-f)" strokeWidth="2.4" />
                   <polygon
-                    points={`${frictionPx},0 ${
-                      frictionPx - Math.sign(frictionPx) * 7
-                    },-4 ${frictionPx - Math.sign(frictionPx) * 7},4`}
-                    fill="#f43f5e"
+                    points={`${frictionPx},0 ${frictionPx - Math.sign(frictionPx) * 6},-3.5 ${
+                      frictionPx - Math.sign(frictionPx) * 6
+                    },3.5`}
+                    fill="var(--ml-force-f)"
                   />
                   <text
-                    x={frictionPx - (frictionPx < 0 ? 48 : -6)}
+                    x={frictionPx * 0.5}
                     y={-7}
-                    fill="#fda4af"
-                    fontSize="10.5"
-                    fontWeight="700"
+                    textAnchor="middle"
+                    fill="var(--ml-force-f)"
+                    fontSize="9.5"
+                    fontWeight="750"
                   >
                     f={Math.abs(f.friction).toFixed(1)}N
                   </text>
-                </>
+                </g>
               )}
 
-              {/* 竖直向下的总重力 G = mg (逆向旋转 -angleDeg 保持竖直向下) */}
+              {/* 竖直向下的重力 G = mg (地面防穿透) */}
               <g transform={`rotate(${-params.angleDeg})`}>
-                <line
-                  x1={0}
-                  y1={0}
-                  x2={0}
-                  y2={weightPx}
-                  stroke="#38bdf8"
-                  strokeWidth="3"
-                />
+                <line x1={0} y1={0} x2={0} y2={weightPx} stroke="var(--ml-force-g)" strokeWidth="2.6" />
                 <polygon
-                  points={`0,${weightPx} -5,${weightPx - 8} 5,${weightPx - 8}`}
-                  fill="#38bdf8"
+                  points={`0,${weightPx} -4,${weightPx - 6} 4,${weightPx - 6}`}
+                  fill="var(--ml-force-g)"
                 />
                 <text
-                  x={-52}
-                  y={weightPx + 4}
-                  fill="#7dd3fc"
-                  fontSize="11"
+                  x={-42}
+                  y={weightPx * 0.6}
+                  fill="var(--ml-force-g)"
+                  fontSize="10"
                   fontWeight="800"
                 >
                   G={f.weight.toFixed(1)}N
@@ -711,21 +867,20 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
           )}
         </g>
 
-        {/* 左上角状态提示 */}
-        <g transform="translate(20, 26)">
+        {/* 左上角精细状态铭牌 */}
+        <g transform="translate(18, 20)">
           <rect
             x={0}
             y={0}
-            width={255}
-            height={30}
+            width={statusText.length * 11 + 32}
+            height={26}
             rx={6}
-            fill="rgba(15, 23, 42, 0.85)"
-            stroke="rgba(56, 189, 248, 0.35)"
+            fill={statusBg}
+            stroke={statusBorder}
+            strokeWidth="1.2"
           />
-          <text x={12} y={19} fill="#e2e8f0" fontSize="11.5" fontWeight="700">
-            {f.isStatic
-              ? `🔒 静摩擦自锁静止 (θ=${params.angleDeg}° ≤ θc=${f.criticalAngleDeg.toFixed(1)}°)`
-              : `⚡ 匀变速滑动中 (a = ${state.a.toFixed(2)} m/s²)`}
+          <text x={10} y={17} fill="var(--ml-text)" fontSize="11" fontWeight="650">
+            {statusText}
           </text>
         </g>
       </g>

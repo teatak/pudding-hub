@@ -51,6 +51,7 @@ export default function App() {
   const persisted = readLabPersistedState();
   const [lab, setLab] = useState<LabPersistedState>(persisted);
   const [muted, setMuted] = useState(isSoundMuted());
+  const [activePresetId, setActivePresetId] = useState<string | null>(null);
 
   // 同步外部 MCP 接口（如 AI 导师调用 configureExperiment / loadPreset）引起的状态变更
   useEffect(() => {
@@ -134,6 +135,7 @@ export default function App() {
 
   function handleSelectBench(benchId: string) {
     playUiClick();
+    setActivePresetId(null);
     const target = getBenchById(benchId);
     const params =
       lab.paramsByBench[target.id] ?? target.getDefaultParams();
@@ -149,6 +151,7 @@ export default function App() {
   }
 
   function handleChangeParam(key: string, value: number) {
+    setActivePresetId(null);
     const nextParams = { ...activeParams, [key]: value };
     const freshState = activeBench.createInitialState(nextParams);
     commitLab({
@@ -171,8 +174,9 @@ export default function App() {
     });
   }
 
-  function handleLoadPreset(presetParams: Record<string, number>) {
+  function handleLoadPreset(presetId: string, presetParams: Record<string, number>) {
     playUiClick();
+    setActivePresetId(presetId);
     const nextParams = { ...presetParams };
     const freshState = activeBench.createInitialState(nextParams);
     commitLab({
@@ -531,8 +535,10 @@ export default function App() {
                 <button
                   key={preset.id}
                   type="button"
-                  className="ml-preset-btn"
-                  onClick={() => handleLoadPreset(preset.params)}
+                  className={`ml-preset-btn ${
+                    preset.id === activePresetId ? "is-active" : ""
+                  }`}
+                  onClick={() => handleLoadPreset(preset.id, preset.params)}
                 >
                   <strong>{loc(preset.title, locale)}</strong>
                   <small>{loc(preset.description, locale)}</small>
