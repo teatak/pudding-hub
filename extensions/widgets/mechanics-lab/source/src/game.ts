@@ -86,15 +86,47 @@ export function readLabPersistedState(): LabPersistedState {
   };
 }
 
+let pendingWrite: LabPersistedState | null = null;
+let isWriting = false;
+
 export async function writeLabPersistedState(
   next: LabPersistedState,
 ): Promise<void> {
-  await pudding.state.write({
-    expectedVersion: pudding.state.read().version,
-    data: {
-      lab: sanitizeJson(next),
-    },
-  });
+  pendingWrite = next;
+  if (isWriting) {
+    return;
+  }
+  isWriting = true;
+  try {
+    while (pendingWrite) {
+      const targetState = pendingWrite;
+      pendingWrite = null;
+      let attempt = 0;
+      while (attempt < 3) {
+        try {
+          const currentVersion = pudding.state.read().version;
+          await pudding.state.write({
+            expectedVersion: currentVersion,
+            data: {
+              lab: sanitizeJson(targetState),
+            },
+          });
+          break;
+        } catch (err: unknown) {
+          const msg = String((err as Error)?.message || err);
+          if (msg.includes("widget_data_conflict") && attempt < 2) {
+            attempt++;
+            await new Promise((r) => setTimeout(r, 60));
+            continue;
+          }
+          console.warn("[MechanicsLab] state write suppressed:", err);
+          break;
+        }
+      }
+    }
+  } finally {
+    isWriting = false;
+  }
 }
 
 export function describeLabSnapshot(lab = readLabPersistedState()): JSONValue {

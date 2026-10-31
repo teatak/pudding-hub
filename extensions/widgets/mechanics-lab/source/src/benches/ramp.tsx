@@ -505,8 +505,7 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
 
     // 精细状态流转判断
     let statusText = "";
-    let statusBorder = "var(--ml-border)";
-    let statusBg = "light-dark(rgba(255,255,255,0.92), rgba(15,23,42,0.92))";
+    let statusBorder = "rgba(56, 189, 248, 0.4)";
 
     if (state.completed) {
       statusBorder = "var(--ml-ek)";
@@ -583,12 +582,12 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
           y1={baseBottomY}
           x2={730}
           y2={baseBottomY}
-          stroke="var(--ml-canvas-ground)"
+          stroke="#475569"
           strokeWidth="2.5"
           strokeLinecap="round"
         />
 
-        {/* 斜面主体：当 θ = 0° 时自动渲染为水平实验台导轨；θ > 0° 时渲染直角三角形 */}
+        {/* 斜面主体：当 θ = 0° 时渲染为水平精密导轨；θ > 0° 时渲染实心科技斜面 */}
         {params.angleDeg === 0 ? (
           <g>
             <rect
@@ -597,8 +596,8 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
               width={rampPxLen}
               height={14}
               rx={3}
-              fill="var(--ml-ramp-surface)"
-              stroke="var(--ml-ramp-edge)"
+              fill="rgba(30, 41, 59, 0.85)"
+              stroke="#38bdf8"
               strokeWidth="2"
             />
             {/* 导轨精密标尺刻度 */}
@@ -609,7 +608,7 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
                 y1={baseBottomY - 14}
                 x2={topX + m * pxPerMeter}
                 y2={baseBottomY - 8}
-                stroke="var(--ml-ramp-edge)"
+                stroke="#38bdf8"
                 strokeWidth="1.5"
               />
             ))}
@@ -617,14 +616,14 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
         ) : (
           <polygon
             points={`${topX},${topY} ${bottomX},${bottomY} ${topX},${bottomY}`}
-            fill="var(--ml-ramp-surface)"
-            stroke="var(--ml-ramp-edge)"
+            fill="rgba(30, 41, 59, 0.78)"
+            stroke="#38bdf8"
             strokeWidth="2.2"
             strokeLinejoin="round"
           />
         )}
 
-        {/* 倾角 θ 标注：彻底移到底角右下地面安全区，滑块绝不覆盖！ */}
+        {/* 倾角 θ 标注：置于底角右下安全区 */}
         {params.angleDeg > 0 ? (
           <g>
             <path
@@ -632,8 +631,8 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
                 bottomX - 44
               } ${bottomY}`}
               fill="none"
-              stroke="var(--ml-etotal)"
-              strokeWidth="1.8"
+              stroke="#fbbf24"
+              strokeWidth="2"
             />
             <g transform={`translate(${bottomX + 12}, ${bottomY + 18})`}>
               <rect
@@ -642,15 +641,15 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
                 width={56}
                 height={18}
                 rx={4}
-                fill="var(--ml-panel)"
-                stroke="var(--ml-border)"
+                fill="rgba(15, 23, 42, 0.9)"
+                stroke="#fbbf24"
                 strokeWidth="1"
               />
               <text
                 x={24}
                 y={-1}
                 textAnchor="middle"
-                fill="var(--ml-text)"
+                fill="#fde047"
                 fontSize="11"
                 fontWeight="700"
               >
@@ -666,15 +665,15 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
               width={64}
               height={18}
               rx={4}
-              fill="var(--ml-panel)"
-              stroke="var(--ml-border)"
+              fill="rgba(15, 23, 42, 0.9)"
+              stroke="#38bdf8"
               strokeWidth="1"
             />
             <text
               x={28}
               y={-1}
               textAnchor="middle"
-              fill="var(--ml-primary)"
+              fill="#38bdf8"
               fontSize="10.5"
               fontWeight="650"
             >
@@ -693,61 +692,52 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
               cx={sx}
               cy={sy}
               r={3}
-              fill="var(--ml-primary)"
-              opacity="0.45"
+              fill="#38bdf8"
+              opacity="0.5"
             />
           );
         })}
 
-        {/* 底端缓冲挡板 */}
+        {/* 底端缓冲挡板（工业缓冲胶垫，杜绝突兀色彩） */}
         <g transform={`translate(${bottomX}, ${bottomY}) rotate(${params.angleDeg})`}>
           <rect
-            x={-18}
-            y={-28}
-            width={6}
-            height={28}
+            x={-12}
+            y={-24}
+            width={8}
+            height={24}
             rx={2}
-            fill="var(--ml-q)"
+            fill="#334155"
+            stroke="#64748b"
+            strokeWidth="1.5"
           />
         </g>
 
         {/* 滑块与旋转坐标系 */}
         <g transform={`translate(${blockSurfaceX}, ${blockSurfaceY}) rotate(${params.angleDeg})`}>
-          {/* 滑块主体 */}
+          {/* 滑块主体：高饱和金属琥珀色，质感厚实醒目 */}
           <rect
             x={-blockW / 2}
             y={-blockH}
             width={blockW}
             height={blockH}
             rx={5}
-            fill="var(--ml-block-fill)"
-            stroke="var(--ml-block-stroke)"
+            fill="rgba(245, 158, 11, 0.92)"
+            stroke="#fef08a"
             strokeWidth="1.8"
           />
-          {/* 滑块质量文字标签，自带微底衬防遮挡 */}
-          <g transform={`translate(0, ${-blockH / 2})`}>
-            <rect
-              x={-18}
-              y={-9}
-              width={36}
-              height={17}
-              rx={3}
-              fill="var(--ml-panel)"
-              opacity="0.9"
-            />
-            <text
-              x={0}
-              y={4}
-              textAnchor="middle"
-              fill="var(--ml-text)"
-              fontSize="11"
-              fontWeight="800"
-            >
-              {params.mass}kg
-            </text>
-          </g>
+          {/* 滑块质量文字标签 */}
+          <text
+            x={0}
+            y={-blockH / 2 + 4}
+            textAnchor="middle"
+            fill="#0f172a"
+            fontSize="11.5"
+            fontWeight="800"
+          >
+            {params.mass}kg
+          </text>
 
-          {/* 受力分析正交分解矢量图 */}
+          {/* 受力分析正交分解矢量图：全高对比鲜艳矢量配色 + 暗色描边保护，彻底杜绝黑模糊 */}
           {showVectors && (
             <g transform={`translate(0, ${-blockH / 2})`}>
               {/* 正交分解平行四边形虚线 */}
@@ -756,8 +746,8 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
                 y1={0}
                 x2={gxPx}
                 y2={gyPx}
-                stroke="var(--ml-text-dim)"
-                strokeWidth="1.2"
+                stroke="rgba(251, 191, 36, 0.6)"
+                strokeWidth="1.4"
                 strokeDasharray="3 3"
               />
               <line
@@ -765,25 +755,28 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
                 y1={gyPx}
                 x2={gxPx}
                 y2={gyPx}
-                stroke="var(--ml-text-dim)"
-                strokeWidth="1.2"
+                stroke="rgba(251, 191, 36, 0.6)"
+                strokeWidth="1.4"
                 strokeDasharray="3 3"
               />
 
               {/* Gx = mg sinθ (沿斜面向下分力) */}
               {Math.abs(gxPx) > 1.5 && (
                 <g>
-                  <line x1={0} y1={0} x2={gxPx} y2={0} stroke="var(--ml-force-drive)" strokeWidth="2.2" />
+                  <line x1={0} y1={0} x2={gxPx} y2={0} stroke="#fbbf24" strokeWidth="2.4" />
                   <polygon
                     points={`${gxPx},0 ${gxPx - 6},-3.5 ${gxPx - 6},3.5`}
-                    fill="var(--ml-force-drive)"
+                    fill="#fbbf24"
                   />
                   <text
                     x={gxPx * 0.5}
                     y={-7}
                     textAnchor="middle"
-                    fill="var(--ml-force-drive)"
-                    fontSize="9.5"
+                    fill="#fef08a"
+                    stroke="rgba(10, 15, 29, 0.9)"
+                    strokeWidth="2.5"
+                    paintOrder="stroke fill"
+                    fontSize="10"
                     fontWeight="750"
                   >
                     Gx={f.gx.toFixed(1)}N
@@ -793,11 +786,14 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
 
               {/* Gy = mg cosθ (垂直斜面分力) */}
               <g>
-                <line x1={0} y1={0} x2={0} y2={gyPx} stroke="var(--ml-text-muted)" strokeWidth="1.6" strokeDasharray="3 2" />
+                <line x1={0} y1={0} x2={0} y2={gyPx} stroke="#94a3b8" strokeWidth="1.8" strokeDasharray="3 2" />
                 <text
                   x={7}
                   y={gyPx * 0.6}
-                  fill="var(--ml-text-muted)"
+                  fill="#cbd5e1"
+                  stroke="rgba(10, 15, 29, 0.9)"
+                  strokeWidth="2.5"
+                  paintOrder="stroke fill"
                   fontSize="9.5"
                   fontWeight="600"
                 >
@@ -807,16 +803,19 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
 
               {/* 支持力 N (垂直斜面向上) */}
               <g>
-                <line x1={0} y1={0} x2={0} y2={-normalPx} stroke="var(--ml-force-n)" strokeWidth="2.4" />
+                <line x1={0} y1={0} x2={0} y2={-normalPx} stroke="#22c55e" strokeWidth="2.6" />
                 <polygon
                   points={`0,${-normalPx} -3.5,${-normalPx + 6} 3.5,${-normalPx + 6}`}
-                  fill="var(--ml-force-n)"
+                  fill="#22c55e"
                 />
                 <text
                   x={7}
                   y={-normalPx * 0.6}
-                  fill="var(--ml-force-n)"
-                  fontSize="9.5"
+                  fill="#86efac"
+                  stroke="rgba(10, 15, 29, 0.9)"
+                  strokeWidth="2.5"
+                  paintOrder="stroke fill"
+                  fontSize="10"
                   fontWeight="750"
                 >
                   N={f.normal.toFixed(1)}N
@@ -826,19 +825,22 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
               {/* 摩擦力 f */}
               {Math.abs(frictionPx) > 2 && (
                 <g>
-                  <line x1={0} y1={0} x2={frictionPx} y2={0} stroke="var(--ml-force-f)" strokeWidth="2.4" />
+                  <line x1={0} y1={0} x2={frictionPx} y2={0} stroke="#f97316" strokeWidth="2.4" />
                   <polygon
                     points={`${frictionPx},0 ${frictionPx - Math.sign(frictionPx) * 6},-3.5 ${
                       frictionPx - Math.sign(frictionPx) * 6
                     },3.5`}
-                    fill="var(--ml-force-f)"
+                    fill="#f97316"
                   />
                   <text
                     x={frictionPx * 0.5}
                     y={-7}
                     textAnchor="middle"
-                    fill="var(--ml-force-f)"
-                    fontSize="9.5"
+                    fill="#fdba74"
+                    stroke="rgba(10, 15, 29, 0.9)"
+                    strokeWidth="2.5"
+                    paintOrder="stroke fill"
+                    fontSize="10"
                     fontWeight="750"
                   >
                     f={Math.abs(f.friction).toFixed(1)}N
@@ -848,15 +850,18 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
 
               {/* 竖直向下的重力 G = mg (地面防穿透) */}
               <g transform={`rotate(${-params.angleDeg})`}>
-                <line x1={0} y1={0} x2={0} y2={weightPx} stroke="var(--ml-force-g)" strokeWidth="2.6" />
+                <line x1={0} y1={0} x2={0} y2={weightPx} stroke="#eab308" strokeWidth="2.6" />
                 <polygon
                   points={`0,${weightPx} -4,${weightPx - 6} 4,${weightPx - 6}`}
-                  fill="var(--ml-force-g)"
+                  fill="#eab308"
                 />
                 <text
                   x={-42}
                   y={weightPx * 0.6}
-                  fill="var(--ml-force-g)"
+                  fill="#fde047"
+                  stroke="rgba(10, 15, 29, 0.9)"
+                  strokeWidth="2.5"
+                  paintOrder="stroke fill"
                   fontSize="10"
                   fontWeight="800"
                 >
@@ -875,11 +880,11 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
             width={statusText.length * 11 + 32}
             height={26}
             rx={6}
-            fill={statusBg}
+            fill="rgba(15, 23, 42, 0.88)"
             stroke={statusBorder}
             strokeWidth="1.2"
           />
-          <text x={10} y={17} fill="var(--ml-text)" fontSize="11" fontWeight="650">
+          <text x={10} y={17} fill="#e2e8f0" fontSize="11" fontWeight="650">
             {statusText}
           </text>
         </g>

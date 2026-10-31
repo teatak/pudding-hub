@@ -277,7 +277,7 @@ export default function App() {
 
   return (
     <div className="ml-app">
-      {/* 顶部导航栏：标题 + 动态实验台切换 Tab + 全局视图开关 */}
+      {/* 顶部导航栏：标题 + 动态实验台切换 Tab */}
       <header className="ml-topbar">
         <div className="ml-brand">
           <span className="ml-logo-dot" />
@@ -302,53 +302,54 @@ export default function App() {
             </button>
           ))}
         </nav>
-
-        <div className="ml-view-toggles">
-          <button
-            type="button"
-            className={`ml-chip-btn ${lab.showVectors ? "is-on" : ""}`}
-            onClick={() => {
-              playUiClick();
-              commitLab({ ...lab, showVectors: !lab.showVectors });
-            }}
-            title={t("toggleVectors")}
-          >
-            <Compass size={14} />
-            <span>{t("toggleVectors")}</span>
-          </button>
-
-          <button
-            type="button"
-            className={`ml-chip-btn ${lab.showGrid ? "is-on" : ""}`}
-            onClick={() => {
-              playUiClick();
-              commitLab({ ...lab, showGrid: !lab.showGrid });
-            }}
-            title={t("toggleGrid")}
-          >
-            <Grid size={14} />
-            <span>{t("toggleGrid")}</span>
-          </button>
-
-          <button
-            type="button"
-            className={`ml-chip-btn is-icon ${!muted ? "is-on" : ""}`}
-            onClick={() => {
-              const nextMuted = toggleSoundMute();
-              setMuted(nextMuted);
-              if (!nextMuted) playUiClick();
-            }}
-            title={t("toggleSound")}
-            aria-label={t("toggleSound")}
-          >
-            {muted ? <VolumeX size={14} /> : <Volume2 size={14} />}
-          </button>
-        </div>
       </header>
 
       {/* 主工作区：左侧物理实验舞台与仪表，右侧参数滑块与经典预设 */}
       <main className="ml-workspace">
         <section className="ml-stage-column">
+          {/* 辅助工具栏：受力矢量图 + 坐标标尺 + 音效开关（空间独立，绝不折行） */}
+          <div className="ml-stage-tools">
+            <button
+              type="button"
+              className={`ml-chip-btn ${lab.showVectors ? "is-on" : ""}`}
+              onClick={() => {
+                playUiClick();
+                commitLab({ ...lab, showVectors: !lab.showVectors });
+              }}
+              title={t("toggleVectors")}
+            >
+              <Compass size={14} />
+              <span>{t("toggleVectors")}</span>
+            </button>
+
+            <button
+              type="button"
+              className={`ml-chip-btn ${lab.showGrid ? "is-on" : ""}`}
+              onClick={() => {
+                playUiClick();
+                commitLab({ ...lab, showGrid: !lab.showGrid });
+              }}
+              title={t("toggleGrid")}
+            >
+              <Grid size={14} />
+              <span>{t("toggleGrid")}</span>
+            </button>
+
+            <button
+              type="button"
+              className={`ml-chip-btn is-icon ${!muted ? "is-on" : ""}`}
+              onClick={() => {
+                const nextMuted = toggleSoundMute();
+                setMuted(nextMuted);
+                if (!nextMuted) playUiClick();
+              }}
+              title={t("toggleSound")}
+              aria-label={t("toggleSound")}
+            >
+              {muted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+            </button>
+          </div>
+
           {/* 实验台顶部公式铭牌 + 机械能守恒实时进度条 */}
           <div className="ml-stage-hud">
             <div className="ml-formula-pill">

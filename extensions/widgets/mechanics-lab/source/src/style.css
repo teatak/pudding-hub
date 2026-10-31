@@ -20,21 +20,29 @@
   --ml-primary-border: light-dark(#bae6fd, rgba(56, 189, 248, 0.3));
 
   /* 物理能量守恒监测条配色 */
-  --ml-ek: light-dark(#16a34a, #22c55e);
-  --ml-ep: light-dark(#0284c7, #38bdf8);
-  --ml-q: light-dark(#e11d48, #fb7185);
-  --ml-etotal: light-dark(#b45309, #fde047);
+  --ml-ek: #22c55e;
+  --ml-ep: #38bdf8;
+  --ml-q: #fb7185;
+  --ml-etotal: #fde047;
+
+  /* 受力矢量标准鲜明配色（绝不发黑，高对比度物理可视化） */
+  --ml-force-drive: #fbbf24;
+  --ml-force-n: #22c55e;
+  --ml-force-f: #f97316;
+  --ml-force-g: #eab308;
+  --ml-force-gy: #94a3b8;
+  --ml-force-ext: #38bdf8;
 
   /* 画布工程图风格变量 */
   --ml-canvas-bg: light-dark(#ffffff, #070c14);
   --ml-canvas-border: light-dark(#e2e8f0, #1e293b);
-  --ml-canvas-grid: light-dark(#f1f5f9, rgba(148, 163, 184, 0.06));
-  --ml-canvas-ground: light-dark(#64748b, #475569);
-  --ml-ramp-surface: light-dark(#f8fafc, #131d2e);
-  --ml-ramp-edge: light-dark(#3b82f6, #38bdf8);
-  --ml-block-fill: light-dark(#fef3c7, rgba(245, 158, 11, 0.22));
-  --ml-block-stroke: light-dark(#d97706, #fde047);
-  --ml-block-text: light-dark(#92400e, #fef08a);
+  --ml-canvas-grid: light-dark(rgba(148, 163, 184, 0.25), rgba(148, 163, 184, 0.08));
+  --ml-canvas-ground: #475569;
+  --ml-ramp-surface: light-dark(rgba(226, 232, 240, 0.8), rgba(30, 41, 59, 0.8));
+  --ml-ramp-edge: #38bdf8;
+  --ml-block-fill: rgba(245, 158, 11, 0.92);
+  --ml-block-stroke: #fef08a;
+  --ml-block-text: #0f172a;
 }
 
 * {
@@ -78,7 +86,11 @@ button:disabled {
   flex-direction: column;
   padding: 10px 14px 14px;
   gap: 10px;
-  background: var(--ml-bg);
+  background: radial-gradient(
+    circle at 50% 25%,
+    light-dark(#f8fafc, #0e172a) 0%,
+    light-dark(#f1f5f9, #060b14) 100%
+  );
 }
 
 /* 顶部现代导航栏 */
@@ -160,25 +172,27 @@ button:disabled {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
-/* 顶部辅助开关组 */
-.ml-view-toggles {
+/* 主舞台上方独立辅助工具栏（杜绝在顶栏挤压折行） */
+.ml-stage-tools {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
 }
 
 .ml-chip-btn {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   height: 28px;
-  padding: 0 9px;
+  padding: 0 11px;
   border-radius: 7px;
   border: 1px solid var(--ml-border);
   background: var(--ml-panel);
   color: var(--ml-text-muted);
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 550;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .ml-chip-btn:hover {
@@ -193,7 +207,7 @@ button:disabled {
 }
 
 .ml-chip-btn.is-icon {
-  padding: 0 8px;
+  padding: 0 9px;
 }
 
 /* 主工作区栅格：尽量扩大实验主舞台 */
