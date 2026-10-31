@@ -1,0 +1,29 @@
+{
+  "id": "teatak/pudding-hub/widgets/light-workshop",
+  "version": "1.0.1",
+  "title": {
+    "en": "Light Workshop",
+    "zh-CN": "光线机关工坊",
+    "zh-TW": "光線機關工坊",
+    "ja": "光の工房",
+    "ko": "빛 공방",
+    "es": "Taller de luz",
+    "de": "Lichtwerkstatt",
+    "fr": "Atelier de lumière"
+  },
+  "description": {
+    "en": "Reflect light through handmade puzzles, create your own, and play alongside AI. No asset downloads.",
+    "zh-CN": "转动镜子点亮目标，自由出题，与 AI 一起解谜。无需下载素材。",
+    "zh-TW": "轉動鏡子點亮目標，自由出題，與 AI 一起解謎。無需下載素材。",
+    "ja": "鏡を回して光を届け、自分で作り、AIと一緒に解くパズル。",
+    "ko": "거울로 빛을 보내고 직접 출제하며 AI와 함께 푸는 퍼즐.",
+    "es": "Guía la luz, crea tus puzles y juega con la IA. Sin descargar recursos.",
+    "de": "Lenke Licht, erstelle Rätsel und spiele mit der KI. Ohne zusätzliche Downloads.",
+    "fr": "Guidez la lumière, créez des énigmes et jouez avec l’IA. Sans ressources à télécharger."
+  },
+  "requires": {
+    "protocolVersion": 55,
+    "sdkVersion": "1.2.0"
+  },
+  "icon": "./assets/icon.svg"
+}

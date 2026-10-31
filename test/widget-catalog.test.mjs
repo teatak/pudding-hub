@@ -21,6 +21,7 @@ test("widget catalog contains all registered widgets with complete, verifiable r
     "github-board",
     "gomoku",
     "kanban",
+    "light-workshop",
     "notes",
     "pocket-studio",
     "reversi",
