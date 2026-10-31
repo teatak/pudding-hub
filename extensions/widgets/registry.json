@@ -415,6 +415,15 @@
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiBmaWxsPSJub25lIj48cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjI4IiBmaWxsPSIjMzQzYjMwIi8+PHBhdGggZD0iTTIwIDk0aDQ2VjM2aDM4IiBzdHJva2U9IiNmMmM1NjUiIHN0cm9rZS13aWR0aD0iNyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0ibTUwIDExMCAzMi0zMk01MCA1MmwzMi0zMiIgc3Ryb2tlPSIjZDZlZGYwIiBzdHJva2Utd2lkdGg9IjEwIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48Y2lyY2xlIGN4PSIxMDMiIGN5PSIzNiIgcj0iMTAiIGZpbGw9IiNmMmM1NjUiLz48Y2lyY2xlIGN4PSIyMCIgY3k9Ijk0IiByPSI2IiBmaWxsPSIjZjJjNTY1Ii8+PC9zdmc+Cg==",
       "releases": [
         {
+          "version": "1.0.2",
+          "package": "./light-workshop/releases/1.0.2/light-workshop.pudding-widget.json",
+          "packageHash": "0c67aff3048f4686891d2f00edb8c6d7208f99260450e36c2c4ebb249c48f7be",
+          "requires": {
+            "protocolVersion": 55,
+            "sdkVersion": "1.2.0"
+          }
+        },
+        {
           "version": "1.0.1",
           "package": "./light-workshop/releases/1.0.1/light-workshop.pudding-widget.json",
           "packageHash": "a9831baa0cdc6965d6e2db9a90cdde03f0449ae9bf6f6e1e785ec6d6439f88eb",

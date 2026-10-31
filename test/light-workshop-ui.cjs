@@ -22,20 +22,27 @@ app.whenReady().then(async()=>{
  const click=async(selector)=>{await js(`(()=>{const e=document.querySelector(${JSON.stringify(selector)});if(!e||e.disabled)throw new Error('Missing or disabled '+${JSON.stringify(selector)});e.click()})()`);await wait('!document.querySelector(".lw-hit-grid button[data-cell=D4]").disabled || window.__qa.state.data.game?.mode === "edit" || !!document.querySelector(".is-solved")');await sleep(100);};
  const clickText=async(text)=>{await js(`(()=>{const e=[...document.querySelectorAll('button')].find(e=>e.textContent.trim()===${JSON.stringify(text)});if(!e||e.disabled)throw new Error('Missing or disabled: '+${JSON.stringify(text)});e.click()})()`);await sleep(170);};
  const shot=async name=>{await sleep(230);fs.writeFileSync(out+'/'+name+'.png',(await win.webContents.capturePage()).toPNG());};
+ const layout=()=>js(`(()=>{const board=document.querySelector('.lw-board').getBoundingClientRect(),legend=document.querySelector('.lw-legend').getBoundingClientRect(),footer=document.querySelector('.lw-board-footer').getBoundingClientRect();return{width:innerWidth,height:innerHeight,scrollHeight:document.documentElement.scrollHeight,scrollWidth:document.documentElement.scrollWidth,boardWidth:board.width,boardHeight:board.height,legendBottom:legend.bottom,footerBottom:footer.bottom}})()`);
+ const checkFit=async name=>{const m=await layout();check(name+' '+JSON.stringify(m),m.scrollHeight<=m.height&&m.scrollWidth<=m.width&&m.legendBottom<=m.height&&m.footerBottom<=m.height&&Math.abs(m.boardWidth-m.boardHeight)<1&&m.boardWidth>=300);};
  await win.loadFile(out+'/widget.html');await wait('!!window.__qa && document.querySelectorAll(".lw-hit-grid button").length===36');
  await js('window.__qa.audioCount=0; window.__qa.audioContexts=[]; window.AudioContext=class extends AudioContext{constructor(...args){super(...args);window.__qa.audioContexts.push(this)}createOscillator(){window.__qa.audioCount++;return super.createOscillator()}}; void 0');
  check('initial board renders without overflow',await js('document.documentElement.scrollWidth <= innerWidth'));
  check('light theme applied',await js('getComputedStyle(document.body).backgroundColor')==='rgb(246, 245, 241)');
  check('no AI controls, conversation fields or empty sidebar',await js('!document.querySelector("textarea,select,.lw-ai,.lw-sidebar")'));
  check('game uses the full content width',await js('document.querySelector(".lw-main").clientWidth >= document.querySelector(".lw-layout").clientWidth - 2'));
+ await checkFit('desktop fits board, actions and legend vertically');
  await shot('desktop-light');
+ for(const [width,height] of [[1324,1004],[1060,800],[900,760],[700,850],[390,844]]){
+  win.setContentSize(width,height);await sleep(100);await checkFit('viewport '+width+'x'+height+' fits without scrolling');
+ }
+ await shot('mobile-fit');win.setContentSize(1324,1004);await shot('tall-desktop-fit');win.setContentSize(1060,892);await sleep(100);
  const icon=require('node:url').pathToFileURL(path.join(hub,'extensions/widgets/light-workshop/assets/icon.svg')).href;
  const iw=new BrowserWindow({width:512,height:512,show:false});await iw.loadURL(icon);await sleep(80);fs.writeFileSync(out+'/icon.png',(await iw.webContents.capturePage()).toPNG());iw.destroy();
  const pos=await js('(()=>{const r=document.querySelector("[data-cell=D4]").getBoundingClientRect();return{x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)}})()');
  win.webContents.sendInputEvent({type:'mouseDown',button:'left',clickCount:1,...pos});win.webContents.sendInputEvent({type:'mouseUp',button:'left',clickCount:1,...pos});
  await wait('window.__qa.state.data.game?.history.length===1');
  check('trusted input unlocks synthesized sound',await js('window.__qa.audioCount===2 && window.__qa.audioContexts[0]?.state==="running"'));
- await click('[data-cell=D2]');check('tutorial completes in two rotations',await js('document.querySelector(".is-solved") && window.__qa.state.data.game.history.length===2'));await shot('solved');
+ await click('[data-cell=D2]');check('tutorial completes in two rotations',await js('document.querySelector(".is-solved") && window.__qa.state.data.game.history.length===2'));await checkFit('solved feedback and next-level action fit vertically');await shot('solved');
  const read=await js('window.__qa.invoke("readBoard")');check('actual SDK returns terminal state',read.data?.result?.phase==='solved');
  const stale=await js('window.__qa.invoke("rotateMirror",{cell:"D4"},0)');check('SDK rejects stale write before execution',stale.error?.code==='widget_state_conflict'&&stale.error.executed===false);
  await click('[aria-label="撤销"]');check('undo reopens completed puzzle',await js('!document.querySelector(".is-solved") && window.__qa.state.data.game.history.length===1'));
@@ -60,13 +67,16 @@ app.whenReady().then(async()=>{
  await clickText('新建关卡');check('editor renders tools',await js('document.querySelectorAll(".lw-brushes button").length===5'));
  await click('[data-cell=D4]');await click('[data-cell=D4]');await click('[data-cell=D2]');await click('[data-cell=D2]');
  await js('(()=>{const e=document.querySelector("input");Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value").set.call(e,"我的光路");e.dispatchEvent(new Event("input",{bubbles:true}))})()');
- await clickText('保存关卡');check('save stores the named editable puzzle',await js('window.__qa.storage.data.levels[0]?.title==="我的光路"'));await shot('editor');
+ await clickText('保存关卡');check('save stores the named editable puzzle',await js('window.__qa.storage.data.levels[0]?.title==="我的光路"'));await checkFit('editor and save notice fit vertically');await shot('editor');
+ win.setContentSize(390,844);await sleep(100);check('narrow editor tools follow the board without clipping or overlap',await js('document.documentElement.scrollWidth<=innerWidth && document.querySelector(".lw-sidebar").getBoundingClientRect().top>=document.querySelector(".lw-legend").getBoundingClientRect().bottom'));await js('window.scrollTo(0,document.documentElement.scrollHeight)');check('narrow editor actions remain reachable',await js('document.querySelector(".lw-centered").getBoundingClientRect().bottom<=innerHeight'));await shot('mobile-editor-scrolled');win.setContentSize(1060,892);await js('window.scrollTo(0,0)');await sleep(100);
  await clickText('检查并开始');check('editor starts a validated puzzle on first click',await js('window.__qa.state.data.game.mode==="play" && window.__qa.state.data.game.level.title==="我的光路"'));
  await clickText('我的关卡');check('saved library is visible',await js('document.querySelector(".lw-library").textContent.includes("我的光路")'));
+ await checkFit('saved library fits vertically');
  nativeTheme.themeSource='dark';await shot('desktop-dark');check('dark theme applied',await js('getComputedStyle(document.body).backgroundColor')!=='rgb(246, 245, 241)');
  win.setContentSize(390,844);await shot('mobile-dark');check('mobile has no horizontal overflow',await js('document.documentElement.scrollWidth<=innerWidth'));
  nativeTheme.themeSource='light';await shot('mobile-light');
  win.setContentSize(760,900);await shot('compact');check('compact full-width layout has no overflow',await js('document.documentElement.scrollWidth<=innerWidth'));
+ win.setContentSize(900,540);await sleep(100);const short=await layout();check('short windows preserve usable mirrors and scroll to all actions',short.scrollHeight>short.height&&short.boardWidth>=315&&short.legendBottom<=short.scrollHeight);await js('window.scrollTo(0,document.documentElement.scrollHeight)');check('short window footer remains reachable',await js('document.querySelector(".lw-legend").getBoundingClientRect().bottom<=innerHeight'));await shot('short-scrolled');
  check('no collaboration, assignment or notification requests',await js('!window.__qa.methods.some(m=>m.startsWith("interaction"))'));
  check('no renderer/runtime errors',await js('window.__qa.errors.length===0'));
  fs.writeFileSync(out+'/result.json',JSON.stringify({checks,errors:await js('window.__qa.errors'),heap:await js('performance.memory?.usedJSHeapSize')},null,2));console.log(JSON.stringify({passed:checks.length,artifacts:out}));win.destroy();app.quit();

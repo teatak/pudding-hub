@@ -64,7 +64,7 @@ export default function App() {
           <div className="lw-library">{stored.isLoading?<LoaderCircle className="lw-spinner" size={18}/>:stored.error?<p role="alert">{errorText(stored.error)}</p>:!library.length?<p>{t('emptySaved')}</p>:library.map(l=><div key={l.id}><button className="lw-text-button" disabled={busy} onClick={()=>void perform(c=>loadLevel(l,c))}>{levelName(l)}<ChevronRight size={14}/></button><button className="lw-icon-button" disabled={busy} aria-label={t('delete',{name:levelName(l)})} onClick={()=>void perform(c=>deleteLevel(l.id,c))}><Trash2 size={14}/></button></div>)}</div>}
         <section className={'lw-board-card'+(won?' is-solved':'')}>
           <div className="lw-board-heading"><div><span className="lw-eyebrow">{editing?t('edit'):(localIndex>=0?String(localIndex+1).padStart(2,'0')+' / 06':t('saved'))}</span><h2>{editing?t('edit'):levelName(game.level)}</h2></div><span className="lw-counter">{editing?t('mirrorsCount',{count:board.mirrors.length}):t('moves',{count:game.history.length})}</span></div>
-          <div className="lw-board" aria-label={t('boardLabel')}>
+          <div className="lw-board-space"><div className="lw-board" aria-label={t('boardLabel')}>
             <svg viewBox="0 0 420 420" aria-hidden="true">
               <defs><pattern id="lw-wall" width="8" height="8" patternUnits="userSpaceOnUse"><path d="m-2 2 4-4m-2 10 8-8m-2 10 4-4" stroke="currentColor" strokeWidth="1.5"/></pattern><filter id="lw-glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3"/></filter><linearGradient id="lw-mirror" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#e1f8ff"/><stop offset=".5" stopColor="#5aafbf"/><stop offset="1" stopColor="#c0e1e7"/></linearGradient></defs>
               <rect className="lw-board-surface" x="30" y="30" width="360" height="360" rx="14"/>
@@ -82,7 +82,7 @@ export default function App() {
               const piece=mirror?t('mirror')+' '+mirror.tilt:board.walls.includes(cell)?t('wall'):cell===board.source.cell?t('source'):cell===board.target?t('target'):t('empty');
               return <button key={cell} data-cell={cell} className={mirror?'has-mirror':''} aria-label={t('cellLabel',{cell,piece})} disabled={busy||(!editing&&(!mirror||won))} onClick={()=>void perform(c=>editing?paintCell(cell,brush,direction,c):rotateMirror(cell,c))}/>;
             })}</div>
-          </div>
+          </div></div>
           <div className={'lw-status'+(won?' is-won':'')} role="status">{won?<Check size={18}/>:<span className="lw-status-dot"/>}<span>{status}</span>{won&&localIndex>=0&&localIndex<5&&<button onClick={()=>void perform(c=>loadLevel(levels[localIndex+1],c))} disabled={busy}>{t('next')}<ArrowRight size={16}/></button>}</div>
           <div className="lw-board-footer"><p>{t(editing?'editHelp':'playHelp')}</p>{!editing&&<div><button className="lw-icon-button" disabled={busy||!game.history.length} aria-label={t('undo')} title={t('undo')} onClick={()=>void perform(undoMove)}><Undo2 size={18}/></button><button className="lw-icon-button" disabled={busy} aria-label={t('reset')} title={t('reset')} onClick={()=>void perform(reset)}><RotateCcw size={18}/></button></div>}</div>
         </section>
