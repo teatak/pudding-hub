@@ -12,14 +12,13 @@ const hash = (value) => createHash("sha256").update(value).digest("hex");
 
 test("widget catalog contains all registered widgets with complete, verifiable releases", async () => {
   const names = (await fs.readdir(root, { withFileTypes: true }))
-    .filter((entry) => entry.isDirectory())
+    .filter((entry) => entry.isDirectory() && entry.name !== "gmail-board")
     .map((entry) => entry.name)
     .sort();
   assert.deepEqual(names, [
     "debate",
     "doudizhu",
     "github-board",
-    "gmail-board",
     "gomoku",
     "kanban",
     "notes",
@@ -82,4 +81,40 @@ test("widget catalog contains all registered widgets with complete, verifiable r
       }
     }
   }
+});
+
+test('Gmail Board is withdrawn while published historical packages retain their hashes', async () => {
+  const catalog = await read(path.join(root, 'registry.json'));
+  const withdrawn = await read(path.join(root, 'gmail-board/withdrawn.json'));
+  assert.ok(!catalog.items.some(item => item.id === withdrawn.id));
+  await assert.rejects(fs.access(path.join(root, 'gmail-board/source')));
+  await assert.rejects(fs.access(path.join(root, 'gmail-board/manifest.json')));
+  assert.ok(withdrawn.releases.length > 0);
+  for (const release of withdrawn.releases) {
+    assert.ok(release.reason);
+    const bytes = await fs.readFile(path.resolve(root, release.package));
+    assert.equal(hash(bytes), release.packageHash);
+  }
+});
+
+test('new releases contain all eight metadata locales and retain earlier compatible Gomoku packages', async () => {
+  const catalog = await read(path.join(root, 'registry.json'));
+  const languages=['en','zh-CN','zh-TW','ja','ko','es','de','fr'];
+  for(const item of catalog.items) {
+    const name=item.id.split('/').at(-1);
+    const manifest=await read(path.join(root,name,'manifest.json'));
+    for(const language of languages) {
+      assert.ok(manifest.title[language]?.trim(),`${name}: ${language} title`);
+      assert.ok(manifest.description[language]?.trim(),`${name}: ${language} description`);
+    }
+    const release=item.releases.find(r=>r.version===manifest.version);
+    assert.ok(release,`${name}: current release remains discoverable`);
+    assert.equal(release.requires.sdkVersion,manifest.requires.sdkVersion);
+    if(name==='synology-files')assert.equal(manifest.preview,true);
+    else assert.ok(!manifest.preview,`${name}: stable release`);
+  }
+  const gomoku=catalog.items.find(item=>item.id.endsWith('/gomoku'));
+  const modern=gomoku.releases.find(release=>release.version==='1.0.4');
+  assert.equal(modern.requires.sdkVersion,'1.2.0');
+  assert.ok(gomoku.releases.some(release=>!release.version.includes('-')&&['1','1.0.0','1.1.0'].includes(release.requires.sdkVersion)),'older hosts retain an eligible stable Gomoku release');
 });

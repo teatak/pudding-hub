@@ -1,19 +1,29 @@
 {
   "id": "teatak/pudding-hub/widgets/doudizhu",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "title": {
     "zh-CN": "斗地主",
     "zh-TW": "鬥地主",
-    "en": "Dou Dizhu"
+    "en": "Dou Dizhu",
+    "ja": "闘地主",
+    "ko": "두디주",
+    "es": "Dou Dizhu",
+    "de": "Dou Dizhu",
+    "fr": "Dou Dizhu"
   },
   "description": {
     "zh-CN": "经典三人扑克斗地主，支持叫抢地主与炸弹翻倍对局。",
     "zh-TW": "經典三人撲克鬥地主，支援叫搶地主與炸彈翻倍對局。",
-    "en": "Classic 3-player Dou Dizhu poker game with Call/Rob Landlord and bomb multipliers."
+    "en": "Classic 3-player Dou Dizhu poker game with Call/Rob Landlord and bomb multipliers.",
+    "ja": "地主コール/ロブとボム倍率を備えた、クラシックな3人用斗地主ポーカーゲーム。",
+    "ko": "지주 부르기/빼앗기와 폭탄 배수가 포함된 클래식 3인 더디주 포커 게임.",
+    "es": "Clásico juego de póker Dou Dizhu para 3 jugadores con llamada/robo de Landlord y multiplicadores por bomba.",
+    "de": "Klassisches Dou-Dizhu-Pokerspiel für 3 Spieler mit Landlord-Rufen/-Rauben und Bomben-Multiplikatoren.",
+    "fr": "Jeu de poker Dou Dizhu classique à 3 joueurs avec appel/vol du Landlord et multiplicateurs de bombes."
   },
   "requires": {
     "protocolVersion": 24,
-    "sdkVersion": "1"
+    "sdkVersion": "1.0.0"
   },
   "icon": "./assets/icon.svg"
 }

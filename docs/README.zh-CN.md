@@ -2,7 +2,7 @@
 
 [English](README.md) · [Hub 首页](../README.zh-CN.md)
 
-Pudding 支持两种扩展：**插件**负责接入外部服务，**小组件**负责展示内容和提供交互。两者可以配合使用，也可以独立开发。例如，Gmail 插件提供邮件接口，Gmail 看板小组件用这些接口展示邮件；五子棋小组件则不需要外部服务。
+Pudding 支持两种扩展：**插件**负责接入外部服务，**小组件**负责展示内容和提供交互。两者可以配合使用，也可以独立开发。例如，Gmail 插件提供邮件接口，GitHub 看板小组件用这些接口展示邮件；五子棋小组件则不需要外部服务。
 
 App 是插件的旧名称，已不再作为独立扩展类型。新插件统一使用 `plugin.yaml`。
 
@@ -33,7 +33,7 @@ App 是插件的旧名称，已不再作为独立扩展类型。新插件统一�
 | 示例 | 适合参考的内容 |
 | --- | --- |
 | [共享待办](../extensions/widgets/shared-todo/source/src/App.tsx) | 保存数据、向模型提供操作接口 |
-| [Gmail 看板](../extensions/widgets/gmail-board/source/widget.json) | 声明插件数据来源和查询 |
+| [GitHub 看板](../extensions/widgets/github-board/source/widget.json) | 声明插件数据来源和查询 |
 | [GitHub 插件](../extensions/plugins/github/plugin.yaml) | REST 端点和认证 |
 | [Synology 插件](../extensions/plugins/synology/plugin.yaml) | 自定义服务地址和账号登录 |
 | [Sequential Thinking](../extensions/plugins/sequential-thinking/plugin.yaml) | MCP 端点和不同系统下的启动方式 |

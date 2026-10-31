@@ -1,3 +1,6 @@
+import translatedWords from "./word-locales.json" with { type: "json" };
+import extra from "./locales.json" with { type: "json" };
+import auxiliary from "./extra-ui.json" with { type: "json" };
 import type {
   Seat,
   PlayerRole,
@@ -1219,11 +1222,19 @@ export const WORD_PAIRS_EN: WordPair[] = [
 /**
  * Returns the curated word bank corresponding to the given locale (default: zh-CN).
  */
+function wordLocale(raw?: string): "en" | "zh-CN" | "zh-TW" | keyof typeof translatedWords {
+ const lang = (raw || "en").toLowerCase();
+ if (/^zh-(tw|hk|mo|hant)(-|$)/.test(lang)) return "zh-TW";
+ if (lang === "zh" || lang.startsWith("zh-")) return "zh-CN";
+ const base = lang.split("-")[0];
+ return base === "ja" || base === "ko" || base === "es" || base === "de" || base === "fr" ? base : "en";
+}
 export function getWordPairsForLocale(locale?: string): WordPair[] {
-  const loc = (locale || "zh-CN").toLowerCase();
-  if (loc.startsWith("en")) return WORD_PAIRS_EN;
-  if (loc.includes("tw") || loc.includes("hk")) return WORD_PAIRS_ZHTW;
-  return WORD_PAIRS;
+ const lang = wordLocale(locale);
+ if (lang === "en") return WORD_PAIRS_EN;
+ if (lang === "zh-TW") return WORD_PAIRS_ZHTW;
+ if (lang === "zh-CN") return WORD_PAIRS;
+ return translatedWords[lang] as WordPair[];
 }
 
 /**
@@ -1236,9 +1247,9 @@ export function selectWordPair(
   customUndercover?: string | null,
   locale?: string,
 ): WordPair {
-  const loc = (locale || "zh-CN").toLowerCase();
-  const isEn = loc.startsWith("en");
-  const isTw = loc.includes("tw") || loc.includes("hk");
+  const loc = wordLocale(locale);
+  const isEn = loc === "en";
+  const isTw = loc === "zh-TW";
 
   if (
     category === "custom" &&
@@ -1299,12 +1310,12 @@ export function selectWordPair(
         ];
 
     return {
-      id: `custom-${roundSeed}`,
+      id: `custom-${roundSeed}${["ja", "ko", "es", "de", "fr"].includes(loc) ? "-" + loc : ""}`,
       category: "daily",
       civilianWord: civ,
       undercoverWord: und,
-      civilianClues,
-      undercoverClues,
+      civilianClues: loc === "en" || loc === "zh-CN" || loc === "zh-TW" ? civilianClues : extra[loc].customClues.slice(0, 5).map(clue => clue.replace(/\{count\}/g, String(civ.length))),
+      undercoverClues: loc === "en" || loc === "zh-CN" || loc === "zh-TW" ? undercoverClues : extra[loc].customClues.slice(5).map(clue => clue.replace(/\{count\}/g, String(und.length))),
     };
   }
 
@@ -1503,19 +1514,19 @@ export function applySpeak(
   rawText: string,
 ): { lobby: UndercoverLobby; position: UndercoverPosition } {
   if (l.phase !== "speaking") {
-    throw new Error("当前不是发言陈述阶段");
+    throw new Error("The game is not in the speaking phase");
   }
   if (p.turn !== seat) {
-    throw new Error(`当前尚未轮到 ${shortSeatName(seat)} 发言`);
+    throw new Error(`It is not ${seat}'s turn to speak`);
   }
   const text = rawText.trim();
   if (!text) {
-    throw new Error("发言内容不能为空");
+    throw new Error("Your clue must not be empty");
   }
   const myWord = p.words[seat];
   if (containsOwnSecretWord(text, myWord)) {
     throw new Error(
-      `违规警告：你的发言不能直接包含机密词条「${myWord}」的字面本身！`,
+      "Your clue must not include your secret word",
     );
   }
 
@@ -1615,18 +1626,18 @@ export function applyVote(
   rawReason?: string | null,
 ): { lobby: UndercoverLobby; position: UndercoverPosition } {
   if (l.phase !== "voting") {
-    throw new Error("当前不是指认投票阶段");
+    throw new Error("The game is not in the voting phase");
   }
   if (p.turn !== voter) {
-    throw new Error(`当前尚未轮到 ${shortSeatName(voter)} 投票`);
+    throw new Error(`It is not ${voter}'s turn to vote`);
   }
   if (voter === target) {
-    throw new Error("不能投票指认自己");
+    throw new Error("You cannot vote for yourself");
   }
   const allowedTargets = eligibleVoteTargetsFor(p, voter);
   if (!allowedTargets.includes(target)) {
     throw new Error(
-      `目标必须是当前可被指认的在场席位 (${allowedTargets.map(shortSeatName).join(", ")})`,
+      `Target must be one of the eligible seats: ${allowedTargets.join(", ")}`,
     );
   }
 
@@ -1762,13 +1773,13 @@ export function applyVote(
 
   if (aliveUndercovers.length === 0) {
     winner = "Civilian";
-    winReason = "平民阵营获胜 · 卧底全部落网";
+    winReason = "Civilians Win · All Undercovers Exposed";
   } else if (
     aliveUndercovers.length >= aliveCivilians.length ||
     nextAlive.length <= 2
   ) {
     winner = "Undercover";
-    winReason = "卧底阵营获胜 · 成功潜伏控场";
+    winReason = "Undercovers Win · Infiltration Complete";
   }
 
   if (winner) {
@@ -1846,7 +1857,7 @@ export function applyVote(
 export function chooseBotSpeech(p: UndercoverPosition, seat: Seat): string {
   const myWord = p.words[seat];
   const baseId = p.wordPairId.replace(/-swap$/, "");
-  const allCurated = [...WORD_PAIRS, ...WORD_PAIRS_ZHTW, ...WORD_PAIRS_EN];
+  const allCurated = [...WORD_PAIRS, ...WORD_PAIRS_ZHTW, ...WORD_PAIRS_EN, ...Object.values(translatedWords).flat()];
   const matchedPair =
     allCurated.find(
       (w) =>
@@ -1868,6 +1879,13 @@ export function chooseBotSpeech(p: UndercoverPosition, seat: Seat): string {
     (c) => !alreadyUsedTexts.has(c) && !containsOwnSecretWord(c, myWord),
   );
 
+  const translatedLocale = (Object.keys(translatedWords) as Array<keyof typeof translatedWords>).find(locale => baseId.endsWith("-" + locale));
+  if (translatedLocale) {
+    const dict = auxiliary[translatedLocale];
+    const hints = p.pkRound > 0 ? [dict.botDefense0, dict.botDefense1, dict.botDefense2, ...available] : available;
+    const fallbacks = [dict.botFallback0, dict.botFallback1, dict.botFallback2, dict.botFallback3, dict.botFallback4].map(clue => clue.replace(/\{count\}/g, String(myWord.length)));
+    return [...hints, ...fallbacks].find(clue => !alreadyUsedTexts.has(clue) && !containsOwnSecretWord(clue, myWord)) ?? fallbacks[4];
+  }
   const isEnglish = /^[A-Za-z0-9\s\-\.,]+$/.test(myWord);
 
   if (p.pkRound > 0) {
@@ -1957,6 +1975,11 @@ export function chooseBotVote(
   scored.sort((a, b) => b.score - a.score);
   const chosen = scored[0]?.seat || targets[0];
 
+  const localized = /-(ja|ko|es|de|fr)$/.exec(p.wordPairId.replace(/-swap$/, ""))?.[1];
+  if (localized) {
+    const label = auxiliary[localized as keyof typeof auxiliary].botVoteReason;
+    return { target: chosen, reason: label.replace(/\{target\}/g, chosen) };
+  }
   const isEnglish = /^[A-Za-z0-9\s\-\.,]+$/.test(p.words[voter] || "");
   if (isEnglish) {
     const targetNum = chosen.replace("Seat", "");

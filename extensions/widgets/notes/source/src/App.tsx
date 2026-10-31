@@ -1,3 +1,4 @@
+import { ui } from "./text";
 import { useState, useMemo } from "react";
 import { useStorage, useWidgetLocale } from "@pudding/widget";
 import {
@@ -18,7 +19,7 @@ import {
   readNotes,
 } from "./types";
 import { edit } from "./api";
-import { t, errorText } from "./text";
+import { setLocale, t, errorText } from "./text";
 import "./style.css";
 
 function NoteEmblemIcon({ size = 40 }: { size?: number }) {
@@ -44,7 +45,8 @@ function NoteEmblemIcon({ size = 40 }: { size?: number }) {
 }
 
 export default function App() {
-  useWidgetLocale();
+  const locale = useWidgetLocale();
+  setLocale(locale);
   const storage = useStorage();
 
   const [search, setSearch] = useState("");
@@ -453,7 +455,7 @@ export default function App() {
         ) : (
           <>
             <div className="nt-card-top-bar">
-              <div className="nt-drag-handle" title="拖拽排序">
+              <div className="nt-drag-handle" title={ui("dragSort")}>
                 <GripVertical size={14} />
               </div>
               {note.pinned && (

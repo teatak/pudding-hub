@@ -262,6 +262,7 @@ export default function App() {
   const prevMoveCountRef = useRef(p.moveCount);
   const prevWinnerRef = useRef(p.winner);
   const prevCountdownSecRef = useRef<number | null>(null);
+  const lastReadySoundAtRef = useRef(0);
 
   useEffect(() => {
     if (l.round !== prevRoundRef.current) {
@@ -274,7 +275,10 @@ export default function App() {
       if (l.round > 0) playTapSound();
       return;
     }
-    if (l.ready.length > prevReadyCountRef.current) {
+    // Only play the Ready chime when a player readies in lobby (before countdown starts),
+    // so the 2nd player's ready never collides with the Countdown '3' sound.
+    if (l.ready.length > prevReadyCountRef.current && l.phase === "lobby") {
+      lastReadySoundAtRef.current = Date.now();
       playReadySound();
     }
     prevReadyCountRef.current = l.ready.length;
@@ -318,6 +322,14 @@ export default function App() {
     const sec = Math.max(1, Math.ceil((l.startsAt - now) / 1000));
     if (sec !== prevCountdownSecRef.current) {
       prevCountdownSecRef.current = sec;
+      const sinceReady = Date.now() - lastReadySoundAtRef.current;
+      if (sec === 3 && sinceReady < 280) {
+        const timer = setTimeout(
+          () => playCountdownTickSound(sec),
+          280 - sinceReady,
+        );
+        return () => clearTimeout(timer);
+      }
       playCountdownTickSound(sec);
     }
   }, [l.phase, l.startsAt, run?.status, now]);

@@ -14,3 +14,7 @@ Models call interfaces through `widget_invoke({targetID, expectedStateVersion, n
 - `clearNotes({})`: clear all notes.
 
 This is the `1.0.0` release package, requiring protocol 24 and SDK 1.
+
+## Eight-language update · 1.0.1
+
+Follows Pudding in English, Simplified Chinese, Traditional Chinese, Japanese, Korean, Spanish, German and French. Unsupported locales and missing entries fall back to English. Language changes preserve saved content and active game state; existing notification receipts retain their original text. Published older packages remain unchanged for older SDK hosts.

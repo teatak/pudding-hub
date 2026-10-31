@@ -1,3 +1,4 @@
+import { ui } from "./text";
 import { useEffect, useId, useRef, useState } from "react";
 import {
   pudding,
@@ -822,7 +823,7 @@ export default function App() {
               </strong>
               {incomingVotes.length > 0 && l.phase === "voting" && (
                 <span className="uc-incoming-vote-pill">
-                  🎯 {incomingVotes.length} 票
+                  🎯 {ui("votesCount", { count: incomingVotes.length })}
                 </span>
               )}
             </div>
@@ -897,7 +898,7 @@ export default function App() {
             </div>
           ) : (
             <div className="uc-speech-placeholder">
-              <span>等待本轮发言陈述...</span>
+              <span>{ui("waitingStatements")}</span>
             </div>
           )}
         </div>
@@ -1164,7 +1165,7 @@ export default function App() {
                     return (
                       <div key={cNum} className="uc-timeline-cycle">
                         <div className="uc-cycle-divider">
-                          <span>第 {cNum} 轮审讯记录</span>
+                          <span>{ui("cycleLog", {cycle: cNum})}</span>
                         </div>
 
                         {cycleSpeeches.map((sp) => {
@@ -1173,7 +1174,7 @@ export default function App() {
                             <div key={sp.step} className="uc-log-item is-speech">
                               <span className="uc-log-badge">
                                 {seatShortLabel(sp.seat)} · {sInfo.name}
-                                {sp.isPk ? " (加赛辩护)" : ""}
+                                {sp.isPk ? ` ${ui("pkSuffix")}` : ""}
                               </span>
                               <span className="uc-log-text">“{sp.text}”</span>
                             </div>
@@ -1204,7 +1205,7 @@ export default function App() {
                             }`}
                           >
                             <span>
-                              🚨 {seatLabel(cycleElim.seat)} 被高票公决出局 · 真实身份为{" "}
+                              🚨 {ui("eliminatedRole", {seat: seatLabel(cycleElim.seat)})}{" "}
                               <strong>
                                 {cycleElim.role === "Undercover"
                                   ? t("roleUndercover")
@@ -1227,7 +1228,7 @@ export default function App() {
                     >
                       <div className="uc-victory-headline">
                         <Sparkles size={18} />
-                        <strong>{p.winReason}</strong>
+                        <strong>{ui(p.winner === "Civilian" ? "civilianWin" : "undercoverWin")}</strong>
                       </div>
                       <div className="uc-victory-words">
                         <span>
@@ -1278,7 +1279,7 @@ export default function App() {
                 {/* Secret Word Badge */}
                 <div className="uc-main-word-badge">
                   <div className="uc-envelope-label-row">
-                    <span className="uc-wax-seal">密</span>
+                    <span className="uc-wax-seal">{ui("secretSeal")}</span>
                     <span className="uc-envelope-label">
                       {t("secretCardTitle")}
                     </span>
@@ -1305,7 +1306,7 @@ export default function App() {
                     aria-hidden="true"
                     data-word={
                       l.round === 0
-                        ? "待发牌"
+                        ? ui("notDealt")
                         : maskMyWord
                           ? t("wordHiddenMask")
                           : `「${myWord}」`
@@ -1396,14 +1397,14 @@ export default function App() {
                 ) : isFinished ? (
                   <div className="uc-main-idle-hint">
                     <span>
-                      🏆 {p.winReason}
+                      🏆 {ui(p.winner === "Civilian" ? "civilianWin" : "undercoverWin")}
                     </span>
                   </div>
                 ) : (
                   <div className="uc-main-idle-hint">
                     {bottomLatestSpeech ? (
                       <span className="uc-my-last-clue">
-                        本轮已陈述：“{bottomLatestSpeech.text}”
+                        {ui("saidClue", {clue: bottomLatestSpeech.text})}
                       </span>
                     ) : (
                       <div className="uc-standby-status">
@@ -1415,14 +1416,8 @@ export default function App() {
                         </div>
                         <span>
                           {p.turn
-                            ? `正在等待 ${seatLabel(p.turn)}（${
-                                getPlayerInfo(p.turn).name
-                              }）${
-                                l.phase === "voting"
-                                  ? "进行锁定指认..."
-                                  : "发表线索证词..."
-                              }`
-                            : "审讯进行中..."}
+                            ? ui("waitingNamed", { seat: seatLabel(p.turn), name: getPlayerInfo(p.turn).name, action: ui(l.phase === "voting" ? "waitingVote" : "waitingClue") })
+                            : ui("inProgress")}
                         </span>
                       </div>
                     )}

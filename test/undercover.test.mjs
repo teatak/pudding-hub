@@ -157,7 +157,7 @@ test("Speaking, PK tie-break defense, voting elimination, victory conditions, an
   // Reject speaking if player leaks their own secret word verbatim
   assert.throws(() => {
     applySpeak(l, p, "Seat1", "我手里拿的是拿铁咖啡");
-  }, /不能直接包含机密词条/);
+  }, /Your clue must not include your secret word/);
 
   // All 4 seats speak in Round 1
   for (const seat of ["Seat1", "Seat2", "Seat3", "Seat4"]) {
@@ -173,7 +173,7 @@ test("Speaking, PK tie-break defense, voting elimination, victory conditions, an
   // Cannot vote for oneself
   assert.throws(() => {
     applyVote(l, p, "Seat1", "Seat1", "投自己");
-  }, /不能投票指认自己/);
+  }, /You cannot vote for yourself/);
 
   // Trigger a 2 vs 2 tie between Seat2 and Seat3 -> triggers PK tie-break!
   ({ lobby: l, position: p } = applyVote(l, p, "Seat1", "Seat3", "3号可疑"));

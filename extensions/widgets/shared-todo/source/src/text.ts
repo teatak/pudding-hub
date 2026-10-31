@@ -1,3 +1,13 @@
+import extra from "./locales.json" with { type: "json" };
+export type WidgetLocale = "en" | "zh-CN" | "zh-TW" | "ja" | "ko" | "es" | "de" | "fr";
+export function normalizeLocale(raw?: string): WidgetLocale {
+  const locale = (raw || "en").toLowerCase();
+  if (/^zh-(tw|hk|mo|hant)(-|$)/.test(locale)) return "zh-TW";
+  if (locale === "zh" || locale.startsWith("zh-")) return "zh-CN";
+  const language = locale.split("-")[0];
+  return language === "ja" || language === "ko" || language === "es" || language === "de" || language === "fr" ? language : "en";
+}
+
 import { pudding } from "@pudding/widget";
 export const messages = {
   en: {
@@ -140,13 +150,18 @@ export const messages = {
     descList:
       "按需讀取待辦。status 為 active（預設，未完成）、completed（已完成）或 all。offset 預設 0，limit 預設 50、最多 100。回傳目前頁面、counts、totalMatched、hasMore 和 storageVersion；修改任務請使用其 ID。",
   },
+
+  ja: extra.ja.messages,
+  ko: extra.ko.messages,
+  es: extra.es.messages,
+  de: extra.de.messages,
+  fr: extra.fr.messages,
 } as const;
 export type TextKey = keyof typeof messages.en;
 export function t(key: TextKey, params: Record<string, string | number> = {}) {
   const locale = pudding.locale.read();
-  const table =
-    locale === "zh-CN" || locale === "zh-TW" ? messages[locale] : messages.en;
-  return table[key].replace(
+  const table = messages[normalizeLocale(locale)];
+  return (table[key] ?? messages.en[key] ?? String(key)).replace(
     /\{(\w+)\}/g,
     (match: string, name: string) => String(params[name] ?? match),
   );

@@ -14,3 +14,7 @@ Models call interfaces through `widget_invoke({targetID, expectedStateVersion, n
 Mutation responses contain only changed `tasks` (or `deletedIDs`), counts and storageVersion. The host's stateVersion is page state, while storageVersion describes the shared task data. Missing IDs, duplicate IDs and empty updates reject the entire batch. List tasks when needed to get IDs; successful writes do not resend the full list. The former single-task interfaces have been removed; UI and batch interfaces use the same business functions.
 
 This is the initial public `1.0.0` source package, requiring format 2, protocol 24 and SDK 1. Prerelease widget packages have been removed from the repository. This distribution reset does not delete or rewrite installed development items or their task data. See the [development guide](../../../docs/widget-development.md); use `package-widget shared-todo --dev` during development and only create a formal release after acceptance.
+
+## Eight-language update · 1.0.2
+
+Follows Pudding in English, Simplified Chinese, Traditional Chinese, Japanese, Korean, Spanish, German and French. Unsupported locales and missing entries fall back to English. Language changes preserve saved content and active game state; existing notification receipts retain their original text. Published older packages remain unchanged for older SDK hosts.

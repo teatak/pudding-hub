@@ -1,3 +1,4 @@
+import { setLocale } from "./text";
 import {
   pudding,
   type InteractionContext,
@@ -599,6 +600,7 @@ export const resume = async () => {
 };
 
 function registerInterfaces() {
+  setLocale(pudding.locale.read());
   return [
     pudding.defineInterface({
       name: "ready",

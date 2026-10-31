@@ -49,7 +49,12 @@ test('legacy catalogs retain byte-identical artifacts without authoring sources'
   for(const item of registry.items) {
    const name=(item.name||item.id.split('/').at(-1));
    const author=path.join(current,name);
-   await fs.access(path.join(author,'manifest.json'));
+   if(folder==='widgets' && name==='gmail-board') {
+    const retired=await read(path.join(author,'withdrawn.json'));
+    assert.ok(retired.reason);
+    assert.ok(!(await read(path.join(current,'registry.json'))).items.some(x=>x.id===item.id));
+    await assert.rejects(fs.access(path.join(author,'source')),{code:'ENOENT'});
+   } else await fs.access(path.join(author,'manifest.json'));
    for(const source of folder==='widgets'?['source']:['plugin.yaml','skills'])
     await assert.rejects(fs.access(path.join(legacy,name,source)),{code:'ENOENT'});
    if(folder==='plugins') {

@@ -1,3 +1,4 @@
+import { ui } from "./text";
 import { pudding, type JSONValue } from "@pudding/widget";
 import { z } from "zod";
 import {
@@ -144,13 +145,13 @@ export function registerInterfaces() {
   return [
     pudding.defineInterface({
       name: "listShares",
-      description: "List accessible Synology NAS shared folders",
+      description: ui("descShares"),
       input: z.object({}).strict(),
       run: wrap((_, s) => fetchShares(s)),
     }),
     pudding.defineInterface({
       name: "listFiles",
-      description: "List directory contents (files and folders) within a Synology NAS path",
+      description: ui("descFiles"),
       input: z
         .object({
           folderPath: z.string().default("/"),
@@ -162,7 +163,7 @@ export function registerInterfaces() {
     }),
     pudding.defineInterface({
       name: "searchFiles",
-      description: "Search Synology NAS files across directories by keyword",
+      description: ui("descSearch"),
       input: z
         .object({
           folderPath: z.string().default("/"),
@@ -173,7 +174,7 @@ export function registerInterfaces() {
     }),
     pudding.defineInterface({
       name: "getBoardState",
-      description: "Get the current Synology Files board path and preferences",
+      description: ui("descBoard"),
       input: z.object({}).strict(),
       run: wrap(async (_, s) => {
         const { store } = await readStore(s);

@@ -1,3 +1,4 @@
+import { ui } from "./text";
 import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import {
   pudding,
@@ -281,7 +282,7 @@ function PokerCardFace({
   const rankText = displayRankText(card.rank);
   const sym = suitSymbol(card.suit);
   const isJoker = card.rank === "BJ" || card.rank === "RJ";
-  const suitLabel = isJoker ? (card.rank === "RJ" ? "大" : "小") : sym;
+  const suitLabel = isJoker ? (card.rank === "RJ" ? ui("redJoker") : ui("blackJoker")) : sym;
   const pipLabel = isJoker ? (card.rank === "RJ" ? "👑" : "🃏") : sym;
 
   const content = (

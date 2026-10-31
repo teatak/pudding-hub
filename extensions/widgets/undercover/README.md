@@ -10,3 +10,7 @@
   - 页面内所有机密词条与透视身份标签均通过 CSS 伪元素渲染，防止通过 DOM 文本检视泄露底牌。
 - **精选词库与自定义题库**：内置科技数码、美食饮品、文化娱乐、日常生活等 40+ 组精选高趣味近义词对，同时支持开局前自定义输入平民词与卧底词。
 - **沉浸式侦探审讯剧场**：配备聚光灯跟随动画、火漆机密档案信封、锁定指认准星、出局盖章动效与多层次合成音效。
+
+## Eight-language update · 1.0.0
+
+Follows Pudding in English, Simplified Chinese, Traditional Chinese, Japanese, Korean, Spanish, German and French. Unsupported locales and missing entries fall back to English. Language changes preserve saved content and active game state; existing notification receipts retain their original text. Published older packages remain unchanged for older SDK hosts.

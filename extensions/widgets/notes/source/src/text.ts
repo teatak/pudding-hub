@@ -1,4 +1,16 @@
-export type Locale = "en" | "zh-CN" | "zh-TW";
+import { pudding } from "@pudding/widget";
+import auxiliary from "./extra-ui.json" with { type: "json" };
+import extra from "./locales.json" with { type: "json" };
+export type WidgetLocale = "en" | "zh-CN" | "zh-TW" | "ja" | "ko" | "es" | "de" | "fr";
+export function normalizeLocale(raw?: string): WidgetLocale {
+  const locale = (raw || "en").toLowerCase();
+  if (/^zh-(tw|hk|mo|hant)(-|$)/.test(locale)) return "zh-TW";
+  if (locale === "zh" || locale.startsWith("zh-")) return "zh-CN";
+  const language = locale.split("-")[0];
+  return language === "ja" || language === "ko" || language === "es" || language === "de" || language === "fr" ? language : "en";
+}
+
+export type Locale = WidgetLocale;
 
 export const DICTIONARY = {
   "zh-CN": {
@@ -112,28 +124,24 @@ export const DICTIONARY = {
     cancelled: "Operation cancelled",
     unknownError: "An unexpected error occurred",
   },
+
+  ja: extra.ja.messages,
+  ko: extra.ko.messages,
+  es: extra.es.messages,
+  de: extra.de.messages,
+  fr: extra.fr.messages,
 } as const;
 
 export type MessageKey = keyof (typeof DICTIONARY)["en"];
 
-let currentLocale: Locale = "zh-CN";
+let currentLocale: Locale = "en";
 
-export function setLocale(locale?: string) {
-  if (locale === "zh-TW" || locale === "en") {
-    currentLocale = locale;
-  } else {
-    currentLocale = "zh-CN";
-  }
-}
+export function setLocale(raw?: string) { currentLocale = normalizeLocale(raw); }
 
 export function t(key: MessageKey, params?: Record<string, string | number>): string {
-  const dict = DICTIONARY[currentLocale] || DICTIONARY["zh-CN"];
+  const dict = DICTIONARY[currentLocale] || DICTIONARY.en;
   let text: string = dict[key] || DICTIONARY.en[key] || key;
-  if (params) {
-    for (const [k, v] of Object.entries(params)) {
-      text = text.replaceAll(`{${k}}`, String(v));
-    }
-  }
+  text = text.replace(/\{(\w+)\}/g, (token, key) => params && Object.hasOwn(params, key) ? String(params[key]) : token);
   return text;
 }
 
@@ -141,4 +149,9 @@ export function errorText(err: unknown): string {
   if (err instanceof Error) return err.message;
   if (typeof err === "string") return err;
   return t("unknownError");
+}
+
+export function ui(key: keyof typeof auxiliary.en, params?: Record<string, string | number>): string {
+  const value = auxiliary[normalizeLocale(pudding.locale.read())][key] ?? auxiliary.en[key] ?? key;
+  return value.replace(/\{(\w+)\}/g, (token, name) => params && Object.hasOwn(params, name) ? String(params[name]) : token);
 }

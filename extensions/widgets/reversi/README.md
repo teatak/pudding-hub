@@ -18,3 +18,7 @@ Interfaces are called through `widget_invoke({targetID, expectedStateVersion, na
 - `resign({})`: Resign from the current match.
 
 This is the initial `1.0.0-preview.1` source package, requiring protocol 24 and SDK 1.
+
+## Eight-language update · 1.0.2
+
+Follows Pudding in English, Simplified Chinese, Traditional Chinese, Japanese, Korean, Spanish, German and French. Unsupported locales and missing entries fall back to English. Language changes preserve saved content and active game state; existing notification receipts retain their original text. Published older packages remain unchanged for older SDK hosts.

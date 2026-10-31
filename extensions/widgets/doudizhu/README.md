@@ -11,3 +11,7 @@
   - 人类玩家手牌在非自己回合时默认折叠防透视，轮到自己行动时自动展开，也可随时手动切换亮牌。
 - **内置规则机器人补位**：当可用 AI 会话不足 2 个时，空余席位可由内置规则 AI（`@bot`）自动补齐，单人也能随时开局。
 - **完整牌型引擎与提示**：内置单张、对子、三不带、三带一、三带二、顺子、连对、飞机（不带/带单/带对）、四带二（单/对）、炸弹与王炸校验，以及春天/反春天翻倍结算。
+
+## Eight-language update · 1.0.1
+
+Follows Pudding in English, Simplified Chinese, Traditional Chinese, Japanese, Korean, Spanish, German and French. Unsupported locales and missing entries fall back to English. Language changes preserve saved content and active game state; existing notification receipts retain their original text. Published older packages remain unchanged for older SDK hosts.

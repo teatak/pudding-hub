@@ -1,19 +1,29 @@
 {
   "id": "teatak/pudding-hub/widgets/reversi",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "title": {
     "zh-CN": "黑白棋",
     "zh-TW": "黑白棋",
-    "en": "Reversi"
+    "en": "Reversi",
+    "ja": "リバーシ",
+    "ko": "리버시",
+    "es": "Reversi",
+    "de": "Reversi",
+    "fr": "Reversi"
   },
   "description": {
     "zh-CN": "8×8 经典翻转棋，支持人机对弈或双大模型对决。",
     "zh-TW": "8×8 經典翻轉棋，支援人機對弈或雙大模型對決。",
-    "en": "Classic 8×8 Reversi with human vs model and model vs model play."
+    "en": "Classic 8×8 Reversi with human vs model and model vs model play.",
+    "ja": "人間対モデルとモデル対モデルで遊べるクラシックな8×8リバーシ。",
+    "ko": "사람 대 모델 및 모델 대 모델 플레이가 가능한 클래식 8×8 리버시.",
+    "es": "Reversi clásico de 8×8 con partidas de humano contra modelo y modelo contra modelo.",
+    "de": "Klassisches 8×8-Reversi mit Mensch-gegen-Modell- und Modell-gegen-Modell-Partien.",
+    "fr": "Reversi classique 8×8 avec jeu humain contre modèle et modèle contre modèle."
   },
   "requires": {
     "protocolVersion": 24,
-    "sdkVersion": "1"
+    "sdkVersion": "1.0.0"
   },
   "icon": "./assets/icon.svg"
 }

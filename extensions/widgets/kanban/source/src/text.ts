@@ -1,3 +1,13 @@
+import extra from "./locales.json" with { type: "json" };
+export type WidgetLocale = "en" | "zh-CN" | "zh-TW" | "ja" | "ko" | "es" | "de" | "fr";
+export function normalizeLocale(raw?: string): WidgetLocale {
+  const locale = (raw || "en").toLowerCase();
+  if (/^zh-(tw|hk|mo|hant)(-|$)/.test(locale)) return "zh-TW";
+  if (locale === "zh" || locale.startsWith("zh-")) return "zh-CN";
+  const language = locale.split("-")[0];
+  return language === "ja" || language === "ko" || language === "es" || language === "de" || language === "fr" ? language : "en";
+}
+
 import { pudding } from "@pudding/widget";
 
 export const messages = {
@@ -147,19 +157,21 @@ export const messages = {
     descList:
       "按需查詢看板卡片列表，可按泳道（todo、in_progress、done 或 all）篩選。",
   },
+
+  ja: extra.ja.messages,
+  ko: extra.ko.messages,
+  es: extra.es.messages,
+  de: extra.de.messages,
+  fr: extra.fr.messages,
 } as const;
 
 export type TextKey = keyof typeof messages.en;
 
 export function t(key: TextKey, params?: Record<string, string | number>): string {
-  const loc = (pudding.locale.read() ?? "zh-CN") as keyof typeof messages;
-  const bundle = messages[loc] ?? messages["zh-CN"] ?? messages.en;
+  const loc = normalizeLocale(pudding.locale.read());
+  const bundle = messages[loc] ?? messages.en;
   let text: string = bundle[key] ?? messages.en[key] ?? String(key);
-  if (params) {
-    for (const [k, v] of Object.entries(params)) {
-      text = text.replaceAll(`{${k}}`, String(v));
-    }
-  }
+  text = text.replace(/\{(\w+)\}/g, (token, key) => params && Object.hasOwn(params, key) ? String(params[key]) : token);
   return text;
 }
 

@@ -1,4 +1,14 @@
-export type Locale = "en" | "zh-CN" | "zh-TW";
+import extra from "./locales.json" with { type: "json" };
+export type WidgetLocale = "en" | "zh-CN" | "zh-TW" | "ja" | "ko" | "es" | "de" | "fr";
+export function normalizeLocale(raw?: string): WidgetLocale {
+  const locale = (raw || "en").toLowerCase();
+  if (/^zh-(tw|hk|mo|hant)(-|$)/.test(locale)) return "zh-TW";
+  if (locale === "zh" || locale.startsWith("zh-")) return "zh-CN";
+  const language = locale.split("-")[0];
+  return language === "ja" || language === "ko" || language === "es" || language === "de" || language === "fr" ? language : "en";
+}
+
+export type Locale = WidgetLocale;
 
 export const DICTIONARY = {
   "zh-CN": {
@@ -199,30 +209,24 @@ export const DICTIONARY = {
     unknownError: "An unknown error occurred",
     cancelled: "Operation cancelled",
   },
+
+  ja: extra.ja.messages,
+  ko: extra.ko.messages,
+  es: extra.es.messages,
+  de: extra.de.messages,
+  fr: extra.fr.messages,
 } as const;
 
 export type MessageKey = keyof (typeof DICTIONARY)["en"];
 
-let currentLocale: Locale = "zh-CN";
+let currentLocale: Locale = "en";
 
-export function setLocale(locale: string) {
-  if (locale === "zh-TW" || locale === "zh-HK") {
-    currentLocale = "zh-TW";
-  } else if (locale.startsWith("zh")) {
-    currentLocale = "zh-CN";
-  } else {
-    currentLocale = "en";
-  }
-}
+export function setLocale(raw?: string) { currentLocale = normalizeLocale(raw); }
 
 export function t(key: MessageKey, params?: Record<string, string | number>): string {
-  const dict = DICTIONARY[currentLocale] || DICTIONARY["zh-CN"];
-  let str: string = dict[key] || DICTIONARY["zh-CN"][key] || key;
-  if (params) {
-    for (const [k, v] of Object.entries(params)) {
-      str = str.replace(new RegExp(`\\{${k}\\}`, "g"), String(v));
-    }
-  }
+  const dict = DICTIONARY[currentLocale] || DICTIONARY.en;
+  let str: string = dict[key] || DICTIONARY.en[key] || key;
+  str = str.replace(/\{(\w+)\}/g, (token, key) => params && Object.hasOwn(params, key) ? String(params[key]) : token);
   return str;
 }
 

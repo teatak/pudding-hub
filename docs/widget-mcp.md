@@ -46,7 +46,7 @@ Older versions installed the script directly in the home root. New versions remo
 
 ## Ordinary widgets
 
-Ask the agent directly: “Summarize the mail in the Gmail Board currently open in Pudding.” It calls `widget_targets`, chooses the matching instance, reads `widget_observe` and invokes its interfaces. No candidate registration, player selection, activity run or waiting loop is needed. It completes the user's task in the original agent conversation. If several instances match, clarify which one to use. Hiding or closing an ordinary page revokes access to that target; stale revisions and bindings are also rejected.
+Ask the agent directly: “Summarize the issues in the GitHub Board currently open in Pudding.” It calls `widget_targets`, chooses the matching instance, reads `widget_observe` and invokes its interfaces. No candidate registration, player selection, activity run or waiting loop is needed. It completes the user's task in the original agent conversation. If several instances match, clarify which one to use. Hiding or closing an ordinary page revokes access to that target; stale revisions and bindings are also rejected.
 
 ## Multi-participant activities
 

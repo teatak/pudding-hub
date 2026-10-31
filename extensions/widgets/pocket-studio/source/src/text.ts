@@ -1,16 +1,20 @@
-export type Locale = "zh-CN" | "zh-TW" | "en";
-
-let currentLocale: Locale = "zh-CN";
-
-export function setLocale(locale: string) {
-  if (locale === "zh-TW" || locale === "en") {
-    currentLocale = locale;
-  } else {
-    currentLocale = "zh-CN";
-  }
+import extra from "./locales.json" with { type: "json" };
+export type WidgetLocale = "en" | "zh-CN" | "zh-TW" | "ja" | "ko" | "es" | "de" | "fr";
+export function normalizeLocale(raw?: string): WidgetLocale {
+  const locale = (raw || "en").toLowerCase();
+  if (/^zh-(tw|hk|mo|hant)(-|$)/.test(locale)) return "zh-TW";
+  if (locale === "zh" || locale.startsWith("zh-")) return "zh-CN";
+  const language = locale.split("-")[0];
+  return language === "ja" || language === "ko" || language === "es" || language === "de" || language === "fr" ? language : "en";
 }
 
-export const DICT: Record<string, Record<Locale, string>> = {
+export type Locale = WidgetLocale;
+
+let currentLocale: Locale = "en";
+
+export function setLocale(raw?: string) { currentLocale = normalizeLocale(raw); }
+
+export const DICT: Record<string, Record<"zh-CN" | "zh-TW" | "en", string>> = {
   fileActions: {"zh-CN": "工程与音频", "zh-TW": "工程與音訊", "en": "Project and audio"},
   importProject: {"zh-CN": "导入工程", "zh-TW": "匯入工程", "en": "Import project"},
   exportProject: {"zh-CN": "导出工程", "zh-TW": "匯出工程", "en": "Export project"},
@@ -505,7 +509,7 @@ export const DICT: Record<string, Record<Locale, string>> = {
 export function t(key: string): string {
   const item = DICT[key];
   if (!item) return key;
-  return item[currentLocale] || item["zh-CN"] || key;
+  return (currentLocale === "en" || currentLocale === "zh-CN" || currentLocale === "zh-TW" ? item[currentLocale] : (extra[currentLocale].messages as Record<string, string>)[key]) ?? item.en ?? key;
 }
 
 export function errorText(error: unknown): string {

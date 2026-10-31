@@ -1,21 +1,31 @@
 {
   "id": "teatak/pudding-hub/widgets/synology-files",
-  "version": "1.1.0-preview.1",
+  "version": "1.1.0-preview.2",
   "preview": true,
   "channel": "preview",
   "title": {
     "zh-CN": "群晖文件",
     "zh-TW": "Synology 檔案",
-    "en": "Synology Files"
+    "en": "Synology Files",
+    "ja": "Synologyファイル",
+    "ko": "Synology 파일",
+    "es": "Archivos de Synology",
+    "de": "Synology-Dateien",
+    "fr": "Fichiers Synology"
   },
   "description": {
     "zh-CN": "浏览群晖共享文件夹与目录结构，支持多条件快速检索、文件详情查看与直链下载。",
     "zh-TW": "瀏覽 Synology 共用資料夾與目錄架構，支援多條件快速搜尋、檔案詳細資訊檢視與直接下載。",
-    "en": "Browse Synology NAS shared folders and directory trees, with fast search and file download links."
+    "en": "Browse Synology NAS shared folders and directory trees, with fast search and file download links.",
+    "ja": "Synology NASの共有フォルダーとディレクトリツリーを参照でき、高速検索とファイルのダウンロードリンクを利用できます。",
+    "ko": "Synology NAS 공유 폴더와 디렉터리 트리를 탐색하고, 빠른 검색과 파일 다운로드 링크를 제공합니다.",
+    "es": "Explora las carpetas compartidas y los árboles de directorios del NAS de Synology, con búsqueda rápida y enlaces de descarga de archivos.",
+    "de": "Durchsuchen Sie freigegebene Ordner und Verzeichnisbäume des Synology NAS mit schneller Suche und Links zum Herunterladen von Dateien.",
+    "fr": "Parcourez les dossiers partagés et l'arborescence de répertoires du NAS Synology, avec une recherche rapide et des liens de téléchargement de fichiers."
   },
   "requires": {
     "protocolVersion": 24,
-    "sdkVersion": "1"
+    "sdkVersion": "1.0.0"
   },
   "icon": "./assets/icon.svg"
 }

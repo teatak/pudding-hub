@@ -1,3 +1,4 @@
+import { setLocale } from "./text";
 import { pudding } from "@pudding/widget";
 import { z } from "zod";
 import {
@@ -32,6 +33,7 @@ export async function edit(value: Edit, signal?: AbortSignal) {
 }
 
 function register() {
+  setLocale(pudding.locale.read());
   const content = z
     .string()
     .trim()
@@ -162,4 +164,8 @@ function register() {
   ];
 }
 
-export const interfaces = register();
+export let interfaces = register();
+pudding.locale.subscribe(() => {
+  interfaces.forEach(remove => remove());
+  interfaces = register();
+});

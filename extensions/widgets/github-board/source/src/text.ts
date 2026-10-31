@@ -1,3 +1,13 @@
+import extra from "./locales.json" with { type: "json" };
+export type WidgetLocale = "en" | "zh-CN" | "zh-TW" | "ja" | "ko" | "es" | "de" | "fr";
+export function normalizeLocale(raw?: string): WidgetLocale {
+  const locale = (raw || "en").toLowerCase();
+  if (/^zh-(tw|hk|mo|hant)(-|$)/.test(locale)) return "zh-TW";
+  if (locale === "zh" || locale.startsWith("zh-")) return "zh-CN";
+  const language = locale.split("-")[0];
+  return language === "ja" || language === "ko" || language === "es" || language === "de" || language === "fr" ? language : "en";
+}
+
 import { pudding } from "@pudding/widget";
 
 const en = {
@@ -96,7 +106,7 @@ const en = {
 
 type Key = keyof typeof en;
 
-export const messages: Record<"en" | "zh-CN" | "zh-TW", Record<Key, string>> = {
+export const messages: Record<WidgetLocale, Record<Key, string>> = {
   en,
   "zh-CN": {
     copied: "已复制",
@@ -274,14 +284,19 @@ export const messages: Record<"en" | "zh-CN" | "zh-TW", Record<Key, string>> = {
     descRefresh:
       "重新整理目前連線帳號的 GitHub 讀取快取並回傳 getBoard 摘要，保留所有本機分揀狀態與草稿。",
   },
+
+  ja: extra.ja.messages,
+  ko: extra.ko.messages,
+  es: extra.es.messages,
+  de: extra.de.messages,
+  fr: extra.fr.messages,
 };
 
 export type MessageKey = Key;
 
 export function t(key: Key): string {
   const loc = pudding.locale.read();
-  const table =
-    loc === "zh-CN" || loc === "zh-TW" ? messages[loc] : messages.en;
+  const table = messages[normalizeLocale(loc)];
   return table[key] ?? en[key];
 }
 

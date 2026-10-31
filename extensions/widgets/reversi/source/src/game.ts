@@ -1,3 +1,4 @@
+import { setLocale } from "./text";
 import {
   pudding,
   type InteractionContext,
@@ -353,6 +354,7 @@ function defineGameInterface<T>(
 }
 
 function registerInterfaces() {
+  setLocale(pudding.locale.read());
   const coordinates = { error: errorText("Use columns A–H and rows 1–8") };
   return [
     defineGameInterface({

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sdkVersion": "1",
+  "sdkVersion": "1.0.0",
   "entry": "src/App.tsx",
   "sources": {},
   "operations": {}

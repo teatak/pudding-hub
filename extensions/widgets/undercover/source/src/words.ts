@@ -1,3 +1,6 @@
+import translatedWords from "./word-locales.json" with { type: "json" };
+import extra from "./locales.json" with { type: "json" };
+import auxiliary from "./extra-ui.json" with { type: "json" };
 import type { WordCategory, WordPair } from "./types";
 
 /**
@@ -1195,11 +1198,19 @@ export const WORD_PAIRS_EN: WordPair[] = [
 /**
  * Returns the curated word bank corresponding to the given locale (default: zh-CN).
  */
+function wordLocale(raw?: string): "en" | "zh-CN" | "zh-TW" | keyof typeof translatedWords {
+ const lang = (raw || "en").toLowerCase();
+ if (/^zh-(tw|hk|mo|hant)(-|$)/.test(lang)) return "zh-TW";
+ if (lang === "zh" || lang.startsWith("zh-")) return "zh-CN";
+ const base = lang.split("-")[0];
+ return base === "ja" || base === "ko" || base === "es" || base === "de" || base === "fr" ? base : "en";
+}
 export function getWordPairsForLocale(locale?: string): WordPair[] {
-  const loc = (locale || "zh-CN").toLowerCase();
-  if (loc.startsWith("en")) return WORD_PAIRS_EN;
-  if (loc.includes("tw") || loc.includes("hk")) return WORD_PAIRS_ZHTW;
-  return WORD_PAIRS;
+ const lang = wordLocale(locale);
+ if (lang === "en") return WORD_PAIRS_EN;
+ if (lang === "zh-TW") return WORD_PAIRS_ZHTW;
+ if (lang === "zh-CN") return WORD_PAIRS;
+ return translatedWords[lang] as WordPair[];
 }
 
 /**
@@ -1212,9 +1223,9 @@ export function selectWordPair(
   customUndercover?: string | null,
   locale?: string,
 ): WordPair {
-  const loc = (locale || "zh-CN").toLowerCase();
-  const isEn = loc.startsWith("en");
-  const isTw = loc.includes("tw") || loc.includes("hk");
+  const loc = wordLocale(locale);
+  const isEn = loc === "en";
+  const isTw = loc === "zh-TW";
 
   if (
     category === "custom" &&
@@ -1275,12 +1286,12 @@ export function selectWordPair(
         ];
 
     return {
-      id: `custom-${roundSeed}`,
+      id: `custom-${roundSeed}${["ja", "ko", "es", "de", "fr"].includes(loc) ? "-" + loc : ""}`,
       category: "daily",
       civilianWord: civ,
       undercoverWord: und,
-      civilianClues,
-      undercoverClues,
+      civilianClues: loc === "en" || loc === "zh-CN" || loc === "zh-TW" ? civilianClues : extra[loc].customClues.slice(0, 5).map(clue => clue.replace(/\{count\}/g, String(civ.length))),
+      undercoverClues: loc === "en" || loc === "zh-CN" || loc === "zh-TW" ? undercoverClues : extra[loc].customClues.slice(5).map(clue => clue.replace(/\{count\}/g, String(und.length))),
     };
   }
 

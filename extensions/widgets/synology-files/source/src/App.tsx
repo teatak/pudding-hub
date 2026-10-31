@@ -1,3 +1,4 @@
+import { ui } from "./text";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { useStorage, useWidgetLocale } from "@pudding/widget";
 import {
@@ -62,9 +63,7 @@ function FileIcon({ category, size = 18 }: { category: FileCategory; size?: numb
 
 export function App() {
   const locale = useWidgetLocale();
-  useEffect(() => {
-    setLocale(locale);
-  }, [locale]);
+  setLocale(locale);
 
   const storage = useStorage();
   const store = (storage.data?.data?.synologyFiles as SynologyStore) ?? DEFAULT_STORE;
@@ -250,10 +249,10 @@ export function App() {
         >
           <option value="name-asc">{t("sortByName")} (A-Z)</option>
           <option value="name-desc">{t("sortByName")} (Z-A)</option>
-          <option value="mtime-desc">{t("sortByDate")} (最新)</option>
-          <option value="mtime-asc">{t("sortByDate")} (最早)</option>
-          <option value="size-desc">{t("sortBySize")} (从大到小)</option>
-          <option value="size-asc">{t("sortBySize")} (从小到大)</option>
+          <option value="mtime-desc">{t("sortByDate")} {ui("newest")}</option>
+          <option value="mtime-asc">{t("sortByDate")} {ui("oldest")}</option>
+          <option value="size-desc">{t("sortBySize")} {ui("largest")}</option>
+          <option value="size-asc">{t("sortBySize")} {ui("smallest")}</option>
         </select>
       </header>
 

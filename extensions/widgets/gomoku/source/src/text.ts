@@ -1,3 +1,13 @@
+import extra from "./locales.json" with { type: "json" };
+export type WidgetLocale = "en" | "zh-CN" | "zh-TW" | "ja" | "ko" | "es" | "de" | "fr";
+export function normalizeLocale(raw?: string): WidgetLocale {
+  const locale = (raw || "en").toLowerCase();
+  if (/^zh-(tw|hk|mo|hant)(-|$)/.test(locale)) return "zh-TW";
+  if (locale === "zh" || locale.startsWith("zh-")) return "zh-CN";
+  const language = locale.split("-")[0];
+  return language === "ja" || language === "ko" || language === "es" || language === "de" || language === "fr" ? language : "en";
+}
+
 import { pudding } from "@pudding/widget";
 
 export const messages = {
@@ -386,6 +396,12 @@ export const messages = {
     notifyMoveMessage:
       '輪到{color}。通知已附目前棋盤和 stateVersion。呼叫 widget_invoke，傳本局 targetID、expectedStateVersion、name:"placeStone"、input:{column:"H",row:8,comment:"你就這點水準？"}（範例）。字母欄 A–O，數字列 1–15 由下向上；彈幕可選（最多 40 字），僅用於凌厲嘲諷與心理壓迫，嚴禁生活化閒聊廢話，嚴禁透露算路意圖（如沖四、防守）或劇透勝負關鍵點（如活四、雙活）。只替自己落子，然後等待下次通知。認輸用 name:"resign"、input:{comment:"這局你贏了"}（彈幕可選）；需要歷史時用 name:"readBoard"、input:{includeHistory:true}。',
   },
+
+  ja: extra.ja.messages,
+  ko: extra.ko.messages,
+  es: extra.es.messages,
+  de: extra.de.messages,
+  fr: extra.fr.messages,
 } as const;
 
 export type MessageKey = keyof (typeof messages)["zh-CN"];
@@ -395,8 +411,8 @@ export function t<K extends MessageKey>(
   params?: Record<string, string | number>,
 ): string {
   const locale = pudding.locale.read();
-  const lang = locale === "en" ? "en" : locale === "zh-TW" ? "zh-TW" : "zh-CN";
-  return messages[lang][key].replace(/\{(\w+)\}/g, (token, name) =>
+  const lang = normalizeLocale(locale);
+  return (messages[lang][key] ?? messages.en[key] ?? String(key)).replace(/\{(\w+)\}/g, (token, name) =>
     params && Object.hasOwn(params, name) ? String(params[name]) : token,
   );
 }
@@ -436,5 +452,8 @@ export function errorText(error: unknown) {
   const pair = errors[message];
   if (!pair) return message;
   const locale = pudding.locale.read();
-  return locale === "en" ? message : locale === "zh-TW" ? pair[1] : pair[0];
+  const lang = normalizeLocale(locale);
+  if (lang === "zh-CN") return pair[0];
+  if (lang === "zh-TW") return pair[1];
+  return lang === "en" ? message : (extra[lang].errors as Record<string, string>)[message] ?? message;
 }

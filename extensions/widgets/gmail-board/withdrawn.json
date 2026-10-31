@@ -1,0 +1,126 @@
+{
+  "id": "teatak/pudding-hub/widgets/gmail-board",
+  "reason": "Withdrawn: required Gmail authorization is unavailable.",
+  "releases": [
+    {
+      "version": "1.0.0-preview.10",
+      "package": "./gmail-board/releases/1.0.0-preview.10/gmail-board.pudding-widget.json",
+      "packageHash": "5b84ee47591da76b9001acd48215b6eb2eaaa54ccaf4af03bcc6810eece17e53",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Gmail Board discontinued: required authorization is unavailable."
+    },
+    {
+      "version": "1.0.0-preview.9",
+      "package": "./gmail-board/releases/1.0.0-preview.9/gmail-board.pudding-widget.json",
+      "packageHash": "616a30067d4459205e13d45c21f30817f1505a62470d0a882a51c79f404273ac",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Gmail Board discontinued: required authorization is unavailable."
+    },
+    {
+      "version": "1.0.0-preview.8",
+      "package": "./gmail-board/releases/1.0.0-preview.8/gmail-board.pudding-widget.json",
+      "packageHash": "e2f2ea2ac25cda180edd5a14f83e6254f1241beee2e51f877ca43e2094964742",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Gmail Board discontinued: required authorization is unavailable."
+    },
+    {
+      "version": "1.0.0-preview.7",
+      "package": "./gmail-board/releases/1.0.0-preview.7/gmail-board.pudding-widget.json",
+      "packageHash": "59cc9feee56548154b11c357a2e34a198c5ce68817fd0bc9703608b211a5b082",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Gmail Board discontinued: required authorization is unavailable."
+    },
+    {
+      "version": "1.0.0-preview.6",
+      "package": "./gmail-board/releases/1.0.0-preview.6/gmail-board.pudding-widget.json",
+      "packageHash": "60b5d0df8e64ba5c64636266d05ea3d379b7d181521cbb2ddbcaab6c1bd55706",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Gmail Board discontinued: required authorization is unavailable."
+    },
+    {
+      "version": "1.0.0-preview.5",
+      "package": "./gmail-board/releases/1.0.0-preview.5/gmail-board.pudding-widget.json",
+      "packageHash": "8a1d1dfaac4c78ed810e0c2793137980c86b9ac8a33a53d3f33bc1612923d386",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Gmail Board discontinued: required authorization is unavailable."
+    },
+    {
+      "version": "1.0.0-preview.4",
+      "package": "./gmail-board/releases/1.0.0-preview.4/gmail-board.pudding-widget.json",
+      "packageHash": "d485459ec02b7d8a4c4e340da319fe350580d47e2d62176ec017dde4415f3b2b",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Gmail Board discontinued: required authorization is unavailable."
+    },
+    {
+      "version": "1.0.0-preview.3",
+      "package": "./gmail-board/releases/1.0.0-preview.3/gmail-board.pudding-widget.json",
+      "packageHash": "96a8578423ceda49d34ad78a354a018e0a5b3028673e9d088f043eab113c34af",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Gmail Board discontinued: required authorization is unavailable."
+    },
+    {
+      "version": "1.0.0-preview.2",
+      "package": "./gmail-board/releases/1.0.0-preview.2/gmail-board.pudding-widget.json",
+      "packageHash": "edaf0383598adc16e4ed07085b629cf0e2836db4459ed8cf4babdf8f87846d98",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Gmail Board discontinued: required authorization is unavailable."
+    },
+    {
+      "version": "1.0.0-preview.1",
+      "package": "./gmail-board/releases/1.0.0-preview.1/gmail-board.pudding-widget.json",
+      "packageHash": "b2e54e499c7df0da3c7b01085862fab914fa28673c84b6aee077e84e1e721c8c",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Gmail Board discontinued: required authorization is unavailable."
+    }
+  ]
+}

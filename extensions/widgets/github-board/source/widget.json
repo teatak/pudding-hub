@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sdkVersion": "1",
+  "sdkVersion": "1.0.0",
   "entry": "src/App.tsx",
   "sources": {
     "gh": {
@@ -42,7 +42,10 @@
             "maximum": 50
           }
         },
-        "required": ["page", "limit"],
+        "required": [
+          "page",
+          "limit"
+        ],
         "additionalProperties": false
       },
       "request": {
@@ -78,7 +81,10 @@
             "maximum": 30
           }
         },
-        "required": ["page", "limit"],
+        "required": [
+          "page",
+          "limit"
+        ],
         "additionalProperties": false
       },
       "request": {
@@ -117,7 +123,11 @@
             "maximum": 50
           }
         },
-        "required": ["installationID", "page", "limit"],
+        "required": [
+          "installationID",
+          "page",
+          "limit"
+        ],
         "additionalProperties": false
       },
       "request": {
@@ -155,7 +165,11 @@
           },
           "state": {
             "type": "string",
-            "enum": ["open", "closed", "all"]
+            "enum": [
+              "open",
+              "closed",
+              "all"
+            ]
           },
           "page": {
             "type": "integer",
@@ -168,7 +182,13 @@
             "maximum": 30
           }
         },
-        "required": ["owner", "repo", "state", "page", "limit"],
+        "required": [
+          "owner",
+          "repo",
+          "state",
+          "page",
+          "limit"
+        ],
         "additionalProperties": false
       },
       "request": {
@@ -214,7 +234,11 @@
           },
           "state": {
             "type": "string",
-            "enum": ["open", "closed", "all"]
+            "enum": [
+              "open",
+              "closed",
+              "all"
+            ]
           },
           "page": {
             "type": "integer",
@@ -227,7 +251,13 @@
             "maximum": 30
           }
         },
-        "required": ["owner", "repo", "state", "page", "limit"],
+        "required": [
+          "owner",
+          "repo",
+          "state",
+          "page",
+          "limit"
+        ],
         "additionalProperties": false
       },
       "request": {
@@ -277,7 +307,11 @@
             "maximum": 1000000000
           }
         },
-        "required": ["owner", "repo", "number"],
+        "required": [
+          "owner",
+          "repo",
+          "number"
+        ],
         "additionalProperties": false
       },
       "request": {
@@ -317,7 +351,11 @@
             "maximum": 1000000000
           }
         },
-        "required": ["owner", "repo", "number"],
+        "required": [
+          "owner",
+          "repo",
+          "number"
+        ],
         "additionalProperties": false
       },
       "request": {
@@ -367,7 +405,13 @@
             "maximum": 20
           }
         },
-        "required": ["owner", "repo", "number", "page", "limit"],
+        "required": [
+          "owner",
+          "repo",
+          "number",
+          "page",
+          "limit"
+        ],
         "additionalProperties": false
       },
       "request": {

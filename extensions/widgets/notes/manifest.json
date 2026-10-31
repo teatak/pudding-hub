@@ -1,19 +1,29 @@
 {
   "id": "teatak/pudding-hub/widgets/notes",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "title": {
     "zh-CN": "便签",
     "zh-TW": "便簽",
-    "en": "Sticky Notes"
+    "en": "Sticky Notes",
+    "ja": "付箋",
+    "ko": "스티커 메모",
+    "es": "Notas adhesivas",
+    "de": "Haftnotizen",
+    "fr": "Notes autocollantes"
   },
   "description": {
     "zh-CN": "轻量便签贴纸，记录灵感与备忘待办。",
     "zh-TW": "輕量便簽貼紙，記錄靈感與備忘待辦。",
-    "en": "Color-coded sticky notes for quick memos and ideas."
+    "en": "Color-coded sticky notes for quick memos and ideas.",
+    "ja": "色分けした付箋で、メモやアイデアを手早く記録。",
+    "ko": "빠른 메모와 아이디어를 위한 색상별 스티키 노트.",
+    "es": "Notas adhesivas codificadas por color para apuntes e ideas rápidos.",
+    "de": "Farbcodierte Haftnotizen für schnelle Notizen und Ideen.",
+    "fr": "Notes autocollantes à code couleur pour des mémos et idées rapides."
   },
   "requires": {
     "protocolVersion": 24,
-    "sdkVersion": "1"
+    "sdkVersion": "1.0.0"
   },
   "icon": "./assets/icon.svg"
 }

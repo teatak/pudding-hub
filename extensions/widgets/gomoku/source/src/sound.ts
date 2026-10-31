@@ -26,23 +26,17 @@ function getAudio(): { ctx: AudioContext; out: AudioNode } | null {
       void audioCtx.resume().catch(() => {});
     }
     if (!masterBus && audioCtx) {
-      const shelf = audioCtx.createBiquadFilter();
-      shelf.type = "highshelf";
-      shelf.frequency.value = 2200;
-      shelf.gain.value = 3.5;
-
       const comp = audioCtx.createDynamicsCompressor();
-      comp.threshold.value = -14;
+      comp.threshold.value = -12;
       comp.knee.value = 10;
-      comp.ratio.value = 3.5;
-      comp.attack.value = 0.002;
-      comp.release.value = 0.1;
+      comp.ratio.value = 3;
+      comp.attack.value = 0.001;
+      comp.release.value = 0.08;
 
       masterBus = audioCtx.createGain();
-      masterBus.gain.value = 0.9;
+      masterBus.gain.value = 0.92;
 
-      masterBus.connect(shelf);
-      shelf.connect(comp);
+      masterBus.connect(comp);
       comp.connect(audioCtx.destination);
     }
     return audioCtx && masterBus ? { ctx: audioCtx, out: masterBus } : null;
@@ -60,6 +54,7 @@ function playTone(
   startTime: number,
   peakGain = 0.16,
   type: OscillatorType = "triangle",
+  attackTime = 0.003,
 ) {
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
@@ -71,14 +66,14 @@ function playTone(
       startTime + duration,
     );
   }
-  gain.gain.setValueAtTime(0.0008, startTime);
-  gain.gain.linearRampToValueAtTime(peakGain, startTime + 0.003);
-  gain.gain.exponentialRampToValueAtTime(0.0008, startTime + duration);
+  gain.gain.setValueAtTime(0.0005, startTime);
+  gain.gain.linearRampToValueAtTime(peakGain, startTime + attackTime);
+  gain.gain.exponentialRampToValueAtTime(0.0005, startTime + duration);
 
   osc.connect(gain);
   gain.connect(out);
   osc.start(startTime);
-  osc.stop(startTime + duration + 0.01);
+  osc.stop(startTime + duration + 0.008);
 }
 
 function playNoise(
@@ -128,7 +123,9 @@ function playNoise(
 }
 
 /**
- * Crisp, tight porcelain/agate stone click on the board (清脆利落的云子落盘声，无拖沓滑音).
+ * Physical modal synthesis of a real Go/Gomoku stone tapping a solid Kaya wood board ("嗒/笃" 温润清脆木盘落子声).
+ * Uses coupled wooden plate Chladni modes (1 : 2.42 : 4.38) + stone mineral transient with 0.4ms percussive attack
+ * and zero harsh white-noise hiss or artificial frequency sweeps.
  */
 export function playStoneSound(color: "Black" | "White"): void {
   const audio = getAudio();
@@ -136,55 +133,20 @@ export function playStoneSound(color: "Black" | "White"): void {
   const { ctx, out } = audio;
   const now = ctx.currentTime;
 
-  const isBlack = color === "Black";
+  // Black slate stone is slightly deeper; White clamshell stone is ~half-step brighter
+  const f0 = color === "Black" ? 308 : 328;
 
-  // 1. Ultra-tight porcelain/slate contact click (8ms high-Q resonant impulse)
-  playNoise(
-    ctx,
-    out,
-    0.009,
-    now,
-    isBlack ? 2450 : 2750,
-    isBlack ? 1950 : 2200,
-    0.34,
-    "bandpass",
-    3.2,
-  );
-  playNoise(
-    ctx,
-    out,
-    0.006,
-    now,
-    4600,
-    3200,
-    0.18,
-    "highpass",
-    1.4,
-  );
+  // Mode 1: Kaya wooden board cavity fundamental ("笃" warm body, 45ms decay)
+  playTone(ctx, out, f0, f0 * 0.88, 0.046, now, 0.32, "sine", 0.0004);
 
-  // 2. Short, solid board thud (22ms fast decay, gives weight without any synth "boing")
-  playTone(
-    ctx,
-    out,
-    isBlack ? 250 : 275,
-    isBlack ? 95 : 108,
-    0.024,
-    now,
-    0.28,
-    "sine",
-  );
+  // Mode 2: Hardwood plate primary knock formant ("嗒" woody knock, 24ms decay)
+  playTone(ctx, out, f0 * 2.42, f0 * 2.32, 0.025, now, 0.24, "triangle", 0.0004);
 
-  // 3. Crisp agate/shell ring transient (14ms fixed harmonic)
-  playTone(
-    ctx,
-    out,
-    isBlack ? 1180 : 1320,
-    isBlack ? 1180 : 1320,
-    0.015,
-    now,
-    0.11,
-    "triangle",
-  );
+  // Mode 3: Crisp wood-stone contact mode (13ms fast decay)
+  playTone(ctx, out, f0 * 4.38, f0 * 4.25, 0.013, now, 0.15, "sine", 0.0003);
+
+  // Mode 4: Ultra-short jade/agate mineral click edge (5.5ms transient)
+  playTone(ctx, out, f0 * 8.2, f0 * 7.8, 0.0055, now, 0.08, "sine", 0.0002);
 }
 
 /**
@@ -195,7 +157,8 @@ export function playTapSound(): void {
   if (!audio) return;
   const { ctx, out } = audio;
   const now = ctx.currentTime;
-  playTone(ctx, out, 1046.5, 1046.5, 0.018, now, 0.07, "sine");
+  playTone(ctx, out, 520, 480, 0.022, now, 0.12, "sine", 0.0005);
+  playTone(ctx, out, 1240, 1180, 0.01, now, 0.06, "triangle", 0.0004);
 }
 
 /**
@@ -212,14 +175,14 @@ export function playReadySound(): void {
 }
 
 /**
- * Clean, pure crystal chime beep for countdown (3, 2, 1) — no woodblock/wooden-fish knock!
+ * Clean, pure crystal chime beep for countdown (3, 2, 1).
  */
 export function playCountdownTickSound(secondsLeft = 3): void {
   const audio = getAudio();
   if (!audio) return;
   const { ctx, out } = audio;
   const now = ctx.currentTime;
-  const freq = secondsLeft === 1 ? 987.77 : 783.99; // B5 on final second, G5 on 3 & 2
+  const freq = secondsLeft === 1 ? 987.77 : 783.99;
   playTone(ctx, out, freq, freq, 0.095, now, 0.13, "sine");
   playTone(ctx, out, freq * 2, freq * 2, 0.06, now, 0.035, "triangle");
 }
@@ -267,8 +230,8 @@ export function playEndSound(kind: "resign" | "draw"): void {
   const now = ctx.currentTime;
   const notes =
     kind === "resign"
-      ? [880, 659.25, 587.33] // A5 -> E5 -> D5 clean descending triad
-      : [523.25, 587.33, 783.99]; // C5 -> D5 -> G5 calm neutral resolution
+      ? [880, 659.25, 587.33]
+      : [523.25, 587.33, 783.99];
   notes.forEach((f, i) => {
     const t = now + i * 0.075;
     playTone(ctx, out, f, f, 0.2, t, 0.14, "triangle");

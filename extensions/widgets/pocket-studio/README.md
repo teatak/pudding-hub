@@ -133,3 +133,7 @@ The test previews and commits a batch, reads selected patterns, edits during
 actual Web Audio playback, samples playhead continuity and page navigation,
 checks a human grid edit, verifies rejection without writes, and reloads the song.
 Test audio is muted at the guest output; the Web Audio graph still runs.
+
+## Eight-language update · 1.0.2
+
+Follows Pudding in English, Simplified Chinese, Traditional Chinese, Japanese, Korean, Spanish, German and French. Unsupported locales and missing entries fall back to English. Language changes preserve saved content and active game state; existing notification receipts retain their original text. Published older packages remain unchanged for older SDK hosts.

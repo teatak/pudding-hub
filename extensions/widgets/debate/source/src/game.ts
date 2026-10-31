@@ -1,3 +1,5 @@
+import { ui } from "./text";
+import { setLocale } from "./text";
 import { pudding, type InteractionContext, type JSONValue } from "@pudding/widget";
 import { z } from "zod";
 import {
@@ -445,6 +447,7 @@ export function describeDebate() {
 }
 
 function registerInterfaces() {
+  setLocale(pudding.locale.read());
   return [
     pudding.defineInterface({
       name: "ready",
@@ -478,7 +481,7 @@ function registerInterfaces() {
     }),
     pudding.defineInterface({
       name: "readDebate",
-      description: "Read debate state, topic, arguments, scale score and active phase",
+      description: ui("descDebate"),
       input: z.object({}).strict(),
       run: () => describeDebate(),
     }),

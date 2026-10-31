@@ -1,3 +1,4 @@
+import { setLocale } from "./text";
 import {
   pudding,
   type InteractionContext,
@@ -144,7 +145,7 @@ export function describeTableFor(
     aliveSeats: p.aliveSeats,
     speakingOrder: p.speakingOrder,
     winner: p.winner ?? null,
-    winReason: p.winReason ?? null,
+    winReason: p.winner ? t(p.winner === "Civilian" ? "winnerCivilian" : "winnerUndercover") : null,
     revealedWords: isFinished
       ? {
           civilianWord: p.civilianWord,
@@ -579,6 +580,7 @@ export const resume = async () => {
 };
 
 function registerInterfaces() {
+  setLocale(pudding.locale.read());
   return [
     pudding.defineInterface({
       name: "ready",

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sdkVersion": "1",
+  "sdkVersion": "1.0.0",
   "entry": "src/App.tsx",
   "sources": {
     "syno": {
@@ -43,14 +43,29 @@
           },
           "sortBy": {
             "type": "string",
-            "enum": ["name", "size", "user", "group", "mtime", "atime", "ctime", "crtime", "posix"]
+            "enum": [
+              "name",
+              "size",
+              "user",
+              "group",
+              "mtime",
+              "atime",
+              "ctime",
+              "crtime",
+              "posix"
+            ]
           },
           "sortOrder": {
             "type": "string",
-            "enum": ["asc", "desc"]
+            "enum": [
+              "asc",
+              "desc"
+            ]
           }
         },
-        "required": ["folderPath"],
+        "required": [
+          "folderPath"
+        ],
         "additionalProperties": false
       },
       "request": {
@@ -91,7 +106,10 @@
             "maxLength": 200
           }
         },
-        "required": ["folderPath", "query"],
+        "required": [
+          "folderPath",
+          "query"
+        ],
         "additionalProperties": false
       },
       "request": {

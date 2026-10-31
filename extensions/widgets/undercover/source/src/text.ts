@@ -1,21 +1,23 @@
-import type { Seat, WordCategory } from "./types";
-
-type LocaleKey = "zh-CN" | "zh-TW" | "en";
-
-let currentLocale: LocaleKey = "zh-CN";
-
-export function setLocale(raw: string) {
-  const lower = raw.toLowerCase();
-  if (lower.includes("tw") || lower.includes("hk")) {
-    currentLocale = "zh-TW";
-  } else if (lower.startsWith("en")) {
-    currentLocale = "en";
-  } else {
-    currentLocale = "zh-CN";
-  }
+import auxiliary from "./extra-ui.json" with { type: "json" };
+import extra from "./locales.json" with { type: "json" };
+export type WidgetLocale = "en" | "zh-CN" | "zh-TW" | "ja" | "ko" | "es" | "de" | "fr";
+export function normalizeLocale(raw?: string): WidgetLocale {
+  const locale = (raw || "en").toLowerCase();
+  if (/^zh-(tw|hk|mo|hant)(-|$)/.test(locale)) return "zh-TW";
+  if (locale === "zh" || locale.startsWith("zh-")) return "zh-CN";
+  const language = locale.split("-")[0];
+  return language === "ja" || language === "ko" || language === "es" || language === "de" || language === "fr" ? language : "en";
 }
 
-const dict: Record<LocaleKey, Record<string, string>> = {
+import type { Seat, WordCategory } from "./types";
+
+type LocaleKey = WidgetLocale;
+
+let currentLocale: LocaleKey = "en";
+
+export function setLocale(raw?: string) { currentLocale = normalizeLocale(raw); }
+
+const dict: Record<WidgetLocale, Record<string, string>> = {
   "zh-CN": {
     appTitle: "谁是卧底",
     godViewOn: "上帝视角",
@@ -274,29 +276,32 @@ const dict: Record<LocaleKey, Record<string, string>> = {
     notifyResultMessage:
       "Game over—{winner}! Civilian word: \"{civWord}\", Undercover word: \"{undWord}\".",
   },
+
+  ja: extra.ja.messages,
+  ko: extra.ko.messages,
+  es: extra.es.messages,
+  de: extra.de.messages,
+  fr: extra.fr.messages,
 };
 
 export function t(key: string, params?: Record<string, string | number>): string {
-  const table = dict[currentLocale] || dict["zh-CN"];
-  let raw = table[key] || dict["zh-CN"][key] || key;
-  if (params) {
-    for (const [k, v] of Object.entries(params)) {
-      raw = raw.replaceAll(`{${k}}`, String(v));
-    }
-  }
+  const table = dict[currentLocale] || dict.en;
+  let raw = table[key] || dict.en[key] || key;
+  raw = raw.replace(/\{(\w+)\}/g, (token, key) => params && Object.hasOwn(params, key) ? String(params[key]) : token);
   return raw;
 }
 
 export function seatLabel(seat: Seat): string {
   const num = seat.replace("Seat", "");
-  if (currentLocale === "en") return `Agent #${num}`;
-  return `${num}号探员`;
+  if (currentLocale === "zh-CN") return `${num}号探员`;
+  if (currentLocale === "zh-TW") return `${num}號探員`;
+  const labels = { en: "Agent", ja: "エージェント", ko: "요원", es: "Agente", de: "Agent", fr: "Agent" };
+  return `${labels[currentLocale]} #${num}`;
 }
 
 export function seatShortLabel(seat: Seat): string {
   const num = seat.replace("Seat", "");
-  if (currentLocale === "en") return `#${num}`;
-  return `${num}号`;
+  return currentLocale === "zh-CN" ? `${num}号` : currentLocale === "zh-TW" ? `${num}號` : `#${num}`;
 }
 
 export function getLocale(): LocaleKey {
@@ -304,7 +309,7 @@ export function getLocale(): LocaleKey {
 }
 
 export function botNameForSeat(seat: Seat): string {
-  const names: Record<LocaleKey, Record<Seat, string>> = {
+  const names: Record<"en" | "zh-CN" | "zh-TW", Record<Seat, string>> = {
     "zh-CN": {
       Seat1: "探长·福尔摩斯",
       Seat2: "神探·波洛",
@@ -330,8 +335,8 @@ export function botNameForSeat(seat: Seat): string {
       Seat6: "Prof. Moriarty",
     },
   };
-  const table = names[currentLocale] || names["zh-CN"];
-  return table[seat] || seatLabel(seat);
+  const table = currentLocale === "en" || currentLocale === "zh-CN" || currentLocale === "zh-TW" ? names[currentLocale] : extra[currentLocale].botNames;
+  return table[seat] || names.en[seat] || seatLabel(seat);
 }
 
 export function categoryLabel(cat: WordCategory): string {
@@ -341,4 +346,9 @@ export function categoryLabel(cat: WordCategory): string {
   if (cat === "daily") return t("catDaily");
   if (cat === "custom") return t("catCustom");
   return t("catAll");
+}
+
+export function ui(key: keyof typeof auxiliary.en, params?: Record<string, string | number>): string {
+  const value = auxiliary[currentLocale][key] ?? auxiliary.en[key] ?? key;
+  return value.replace(/\{(\w+)\}/g, (token, name) => params && Object.hasOwn(params, name) ? String(params[name]) : token);
 }

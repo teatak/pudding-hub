@@ -1,17 +1,25 @@
 {
   "id": "teatak/pudding-hub/widgets/gomoku",
-  "version": "1.0.4-preview.10",
-  "preview": true,
-  "channel": "preview",
+  "version": "1.0.4",
   "title": {
     "zh-CN": "五子棋",
     "zh-TW": "五子棋",
-    "en": "Gomoku"
+    "en": "Gomoku",
+    "ja": "五目並べ",
+    "ko": "오목",
+    "es": "Gomoku",
+    "de": "Gomoku",
+    "fr": "Gomoku"
   },
   "description": {
     "en": "Human and session participants share one board.",
     "zh-CN": "人类与会话参与者共用同一棋盘。",
-    "zh-TW": "使用者與對話參與者共用同一棋盤。"
+    "zh-TW": "使用者與對話參與者共用同一棋盤。",
+    "ja": "人間とセッション参加者は1つのボードを共有します。",
+    "ko": "사람과 세션 참가자가 하나의 보드를 공유합니다.",
+    "es": "Los jugadores humanos y los participantes de la sesión comparten un tablero.",
+    "de": "Menschliche Spieler und Sitzungsteilnehmer teilen sich ein Spielbrett.",
+    "fr": "Le joueur humain et les participants à la session partagent un même plateau."
   },
   "requires": {
     "protocolVersion": 55,

@@ -38,3 +38,7 @@ before reloading the updated widget; the new source revision starts its own boar
 Earlier published packages remain unchanged, and stable users keep 1.0.2.
 
 Version 1.0.4-preview.7 adds an optional `comment` (maximum 40 characters) to `resign`. The resignation is stored separately from the score, exposed as `resignation` in action results and result notifications, and shown as a resignation bullet comment; without custom text the UI supplies a localized default. Replay only shows it at the final position. The candidate picker distinguishes connected/waiting, selected/waiting to start, and offline players.
+
+## Eight-language update · 1.0.4
+
+Follows Pudding in English, Simplified Chinese, Traditional Chinese, Japanese, Korean, Spanish, German and French. Unsupported locales and missing entries fall back to English. Language changes preserve saved content and active game state; existing notification receipts retain their original text. Published older packages remain unchanged for older SDK hosts.

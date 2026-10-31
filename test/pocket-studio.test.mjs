@@ -88,7 +88,8 @@ test("Pocket Studio release package exists, is verified, and contains Mario & Do
 
 test("Pocket Studio release matches the exact shipped source and file hashes", async () => {
   const { createHash } = await import("node:crypto");
-  const pkg = JSON.parse(await fs.readFile(path.join(root, "releases/1.0.1/pocket-studio.pudding-widget.json"), "utf8"));
+  const manifest = JSON.parse(await fs.readFile(path.join(root, "manifest.json"), "utf8"));
+  const pkg = JSON.parse(await fs.readFile(path.join(root, "releases", manifest.version, "pocket-studio.pudding-widget.json"), "utf8"));
   for (const [file, content] of Object.entries(pkg.source.files)) {
     assert.equal(await fs.readFile(path.join(root, "source", file), "utf8"), content, file);
     assert.equal(createHash("sha256").update(content).digest("hex"), pkg.fileHashes[file]);

@@ -1,0 +1,1812 @@
+{
+  "ja": [
+    {
+      "id": "tech-1-ja",
+      "category": "tech",
+      "civilianWord": "ChatGPT",
+      "undercoverWord": "Claude",
+      "civilianClues": [
+        "サンフランシスコの有名ラボによって開発された会話型AIアシスタント。",
+        "象徴的な緑色の回転ロゴで、世界的な生成AIブームを切り開きました。",
+        "ナレッジワーカーに広く利用され、コーディング支援や文書の下書き作成に使われています。",
+        "対話型音声モード、キャンバス編集、Plus というプレミアムプランを提供します。"
+      ],
+      "undercoverClues": [
+        "Anthropic によって作られた、思慮深く明瞭な会話型AIアシスタント。",
+        "広大なコンテキストウィンドウと、自然で人間らしい推論スタイルで高く評価されています。",
+        "ソフトウェア開発者から広く信頼され、深いコードベース理解とコーディングに利用されています。",
+        "そのフラッグシップモデル世代シリーズは、Sonnet や Opus などの階層で特徴づけられています。"
+      ]
+    },
+    {
+      "id": "tech-2-ja",
+      "category": "tech",
+      "civilianWord": "イヤホン",
+      "undercoverWord": "補聴器",
+      "civilianClues": [
+        "耳の穴に直接入れる小型のワイヤレスオーディオカプセル。",
+        "ノイズキャンセリング付きのポケットサイズのフリップトップ式バッテリーケースが付属。",
+        "地下鉄、有酸素運動中、ウォーキングのお供になる定番リスニングアイテム。",
+        "ペアの片方を駅のホームの隙間に落とすのは通勤者の悪夢。"
+      ],
+      "undercoverClues": [
+        "耳の中または耳の後ろに装着する目立たない小型電子補助装置。",
+        "マイクで周囲の会話を捉え、音の周波数を明瞭に増幅。",
+        "高齢者が会話を聞き取りやすいよう、専門医が小型の音声増幅装置を調整・設定する。",
+        "日常の聞こえを回復する専門医療機器に分類。"
+      ]
+    },
+    {
+      "id": "tech-3-ja",
+      "category": "tech",
+      "civilianWord": "キーボード",
+      "undercoverWord": "タイプライター",
+      "civilianClues": [
+        "テキストやコマンドを入力するためのキー配列を備えたコンピューター用デスクトップ周辺機器。",
+        "独特の触感とクリック音で入力でき、ゲーマーや作家、ソフトウェア開発者に愛用。",
+        "カラフルなキーキャップ、メカニカルスイッチ、光るRGBライトでカスタマイズされることが多い。",
+        "リニア、クリッキー、タクタイルなどのスイッチ方式で分類。"
+      ],
+      "undercoverClues": [
+        "文字を直接紙に印字するヴィンテージの手動筆記機械。",
+        "キーを押すたびにインクリボンが紙に打ち付けられ、紛れもないカチカチ音が鳴る。",
+        "文書を打つのにコンピューターモニターや電源コンセントは不要。",
+        "回転するローラープラテンと、ベルがチンと鳴る手動キャリッジリターンを備える。"
+      ]
+    },
+    {
+      "id": "tech-4-ja",
+      "category": "tech",
+      "civilianWord": "ドローン",
+      "undercoverWord": "凧",
+      "civilianClues": [
+        "回転するプロペラで空中に浮かぶ遠隔操縦のマルチコプター。",
+        "広大な風景映像を撮影する高精度ジンバルカメラを搭載。",
+        "GPS衛星測位とバッテリー低下時の自動帰還機能を備える。",
+        "航空当局の規制を受け、空港周辺には厳格に指定された飛行禁止区域がある。"
+      ],
+      "undercoverClues": [
+        "骨組みに張った軽量な布でできた、糸でつながれた空力飛行体。",
+        "屋外の安定した自然の風だけで空へ上がる。",
+        "丈夫な糸を巻いた手持ちの糸巻きを使って地上から操る。",
+        "風の吹く広々とした公園の草原に浮かぶ、春の伝統的な風景。"
+      ]
+    },
+    {
+      "id": "tech-5-ja",
+      "category": "tech",
+      "civilianWord": "モバイルバッテリー",
+      "undercoverWord": "発電機",
+      "civilianClues": [
+        "外出先でモバイル機器を充電する携帯用の長方形リチウム電池パック。",
+        "外出中にスマートフォンのバッテリーが切れたときの必需品の旅行の救世主。",
+        "急速充電プロトコルに対応するUSB-AおよびUSB-C出力ポートを搭載。",
+        "空港の保安検査を通過するには、ミリアンペア時容量を明確に表示する必要がある。"
+      ],
+      "undercoverClues": [
+        "機械エネルギーや燃料エネルギーを電流に変換する大型の機械。",
+        "地域の電力網が停止したときに作動し、予備電力を供給。",
+        "ディーゼルやガソリンを燃料にし、工事現場の外で大きな音を立てて動くことが多い。",
+        "病院や電源のない山奥の小屋に欠かせない据え置き型の非常用設備。"
+      ]
+    },
+    {
+      "id": "food-1-ja",
+      "category": "food",
+      "civilianWord": "ラテ",
+      "undercoverWord": "カプチーノ",
+      "civilianClues": [
+        "たっぷりのスチームミルクで作る、イタリア風で人気のエスプレッソ飲料。",
+        "繊細で薄いマイクロフォームで仕上げ、美しいリーフアートで飾られることが多い。",
+        "アメリカーノや濃厚なコルタードより、まろやかでクリーミーで口当たりが滑らか。",
+        "世界中のカフェで朝に最もよく注文されるコーヒー飲料の一つ。"
+      ],
+      "undercoverClues": [
+        "コーヒー、ミルク、厚いフォームを三等分に層にした伝統的なエスプレッソ飲料。",
+        "ココアパウダーを振った、高くふんわりとした泡のドームが載っている。",
+        "ベルベットのような泡の下に、際立って力強くはっきりしたコーヒーの刺激がある。",
+        "イタリアでは朝食の時間帯にのみ、ペストリーとともに楽しまれるのが慣例。"
+      ]
+    },
+    {
+      "id": "food-2-ja",
+      "category": "food",
+      "civilianWord": "コカ・コーラ",
+      "undercoverWord": "ペプシ",
+      "civilianClues": [
+        "有名な鮮やかな赤のアルミ缶で提供される、象徴的な濃い色の炭酸飲料。",
+        "1世紀以上前にアトランタで調合された伝説の秘密レシピのシロップが特徴。",
+        "バーガーやポップコーンに合う、爽やかなバニラとスパイスの炭酸感を届ける。",
+        "そのホリデー広告は歴史的に、現代の陽気なサンタクロースのイメージを広めた。"
+      ],
+      "undercoverClues": [
+        "青・赤・白の円形グローブロゴで知られる有名な甘い炭酸飲料。",
+        "最初の一口で、やや甘めで柑橘が前面に出る風味の広がりが特徴。",
+        "有名な音楽スーパースターやスタジアムのハーフタイムショーのスポンサーとして知られる。",
+        "スーパーの通路でライバルの炭酸飲料を比較する盲飲テストのマーケティングを先駆けた。"
+      ]
+    },
+    {
+      "id": "food-3-ja",
+      "category": "food",
+      "civilianWord": "ハンバーガー",
+      "undercoverWord": "サンドイッチ",
+      "civilianClues": [
+        "味付けしたパティをカットした丸いバンズに挟んだ、温かいファストフード。",
+        "溶けたチェダーチーズ、シャキシャキのレタス、トマトスライス、ピクルス、調味料をトッピング。",
+        "ダイナーで誰にでも愛され、通常は黄金色のフライドポテトとミルクセーキを添えて提供される。",
+        "ドライブスルーのテイクアウトで、紙の包装のまま両手で持って食べる。"
+      ],
+      "undercoverClues": [
+        "スライスしたパンの間にデリミート、チーズ、スプレッドを重ねて作る万能な食事。",
+        "カードゲームを止めずに食べたいと願った18世紀の英国伯爵にちなんで名付けられた。",
+        "四角い食パンを斜めに切った三角形の半分を使ってよく作られる。",
+        "学校の休憩時間やピクニック、オフィスの机で定番の、茶色い紙袋のお弁当の王道。"
+      ]
+    },
+    {
+      "id": "food-4-ja",
+      "category": "food",
+      "civilianWord": "アイスクリーム",
+      "undercoverWord": "アイスキャンディー",
+      "civilianClues": [
+        "甘くしたクリーム、ミルク、砂糖、香料を混ぜて作る濃厚な冷凍乳製品のお菓子。",
+        "ワッフルコーン、カップ、サンデー用ボウルで提供され、ファッジやスプリンクルなどのトッピングが添えられる。",
+        "冷凍中に空気を含むよう撹拌され、なめらかでスクープしやすい食感になる。",
+        "夏の定番で、バニラやチョコチップなどの定番フレーバーとして冷菓専門店で販売される。"
+      ],
+      "undercoverClues": [
+        "平たい木製スティックに刺さった、水ベースの味付き冷凍スナック。",
+        "フルーツジュース、シロップ、ピューレを縦型の型の中で固まるまで凍らせて作る。",
+        "木の持ち手から直接なめたりかじったりする。明るいチェリー色やブルーラズベリー色が多い。",
+        "暑い日差しの下で早く溶けると、色鮮やかなシロップが指に垂れてべたつくことがある。"
+      ]
+    },
+    {
+      "id": "food-5-ja",
+      "category": "food",
+      "civilianWord": "ヨーグルト",
+      "undercoverWord": "牛乳",
+      "civilianClues": [
+        "生きた有益なプロバイオティクス菌で培養したクリーミーな発酵乳製品。",
+        "爽やかな酸味とほのかな甘酸っぱさがあり、はちみつやベリーコンポートで甘みを加えることが多い。",
+        "プラスチックの容器からスプーンですくうか、朝食のフルーツパフェに重ねて食べる。",
+        "ギリシャ式に水切りしたタイプは、濃厚な食感と高いタンパク質含有量で珍重される。"
+      ],
+      "undercoverClues": [
+        "主に乳牛をはじめとする哺乳類が生産する、栄養豊富で体に良い白い液体。",
+        "朝食シリアルにかけたり、熱い紅茶に入れたり、パンケーキの生地に混ぜたりする。",
+        "冷蔵庫の扉部分に、紙製カートンやプラスチック製のガロン容器で保管される。",
+        "全乳、減脂肪乳、低脂肪乳、無脂肪乳などの乳脂肪分レベルで分類される。"
+      ]
+    },
+    {
+      "id": "culture-1-ja",
+      "category": "culture",
+      "civilianWord": "シャーロック・ホームズ",
+      "undercoverWord": "エルキュール・ポアロ",
+      "civilianClues": [
+        "ロンドンのベーカー街221Bを拠点に活動する、伝説的なヴィクトリア朝のコンサルティング探偵。",
+        "ワトソン博士を伴い、卓越した科学的推理で不可解な犯罪事件を解決する。",
+        "象徴的なシルエットは、鹿撃ち帽、インバネスコート、湾曲したパイプが特徴。",
+        "犯罪界の首領モリアーティ教授と知的な頭脳戦を繰り広げる。"
+      ],
+      "undercoverClues": [
+        "丹念にワックスで整えた口ひげで知られる、有名なベルギーの私立探偵。",
+        "オリエント急行のようなセンセーショナルな事件を、自らの小さな灰色の脳細胞の精密さで解決する。",
+        "日常の家事全般において、完璧な秩序、整頓、対称性にこだわる。",
+        "著名な推理作家アガサ・クリスティーが生み出した、世界的に有名な探偵主人公。"
+      ]
+    },
+    {
+      "id": "culture-2-ja",
+      "category": "culture",
+      "civilianWord": "スパイダーマン",
+      "undercoverWord": "バットマン",
+      "civilianClues": [
+        "合成ウェブを使ってマンハッタンの高層ビル間を飛び回る、機知に富んだティーンエイジャーのスーパーヒーロー。",
+        "放射性のクモ類に誤って咬まれたことをきっかけに、アクロバティックな壁歩き能力を獲得した。",
+        "大いなる力には大いなる責任が伴うという不朽の道徳原則に導かれている。",
+        "赤と青のマスク姿のスーツの下には、ピーター・パーカーという優秀な科学専攻の学生がいる。"
+      ],
+      "undercoverClues": [
+        "超人的な力を持たずに犯罪と戦う、ゴッサム・シティの冷徹な自警団の守護者。",
+        "昼は裕福な億万長者の実業家、夜は悪党たちの心に恐怖を刻み込む。",
+        "地下洞窟の指令センターから活動し、忠実な執事アルフレッドの助けを借りている。",
+        "戦術アーマー、コウモリをモチーフにしたエンブレム、特殊ガジェット、流線型の車を装備している。"
+      ]
+    },
+    {
+      "id": "culture-3-ja",
+      "category": "culture",
+      "civilianWord": "ハリー・ポッター",
+      "undercoverWord": "パーシー・ジャクソン",
+      "civilianClues": [
+        "11歳でフクロウの手紙を受け取り、自分の魔法の血筋を知った少年魔法使い。",
+        "闇の帝王から生き延びた際に負った、伝説の稲妻形の傷跡を額に持つ。",
+        "スコットランドの寄宿制魔法学校の城に通い、勇敢な緋色のグリフィンドール寮に組分けされる。",
+        "高速で飛ぶほうきのクィディッチ試合中にゴールデン・スニッチを捕まえる。"
+      ],
+      "undercoverClues": [
+        "自分が神話上のポセイドンの半神の息子だと知る現代の高校生。",
+        "夏はロングアイランドの秘密キャンプで、サテュロスや神話の英雄たちとともに訓練して過ごす。",
+        "水流を操り、水中で呼吸し、剣に変わるペンを武器にする。",
+        "現代アメリカ各地で冒険に出て、神話のギリシャ怪物やオリンポスの神々と対峙する。"
+      ]
+    },
+    {
+      "id": "culture-4-ja",
+      "category": "culture",
+      "civilianWord": "吸血鬼",
+      "undercoverWord": "狼男",
+      "civilianClues": [
+        "人間の血を糧に生きる、ヨーロッパ神話の不死で夜行性のゴシックな怪物。",
+        "ガラスの鏡に姿を映さず、直射日光に触れると致命傷のやけどを負う。",
+        "伝承では、強烈なニンニク、木の杭、聖遺物で追い払えるとされている。",
+        "しばしばトランシルヴァニアの城でベルベットのマントをまとい、飛ぶコウモリに変身する姿で描かれる。"
+      ],
+      "undercoverClues": [
+        "満月の下で意思に反して貪欲な犬型の獣に変身する、呪われた人間。",
+        "恐ろしい怪力、かみそりのような爪、真夜中に響く寒々しい悲しげな遠吠えを備える。",
+        "民間伝承では、唯一の本当の急所は銀の弾丸で撃たれることだとされている。",
+        "原始的な群れで薄暗い森をさまよいながら、人間性を失った悲劇と葛藤する。"
+      ]
+    },
+    {
+      "id": "culture-5-ja",
+      "category": "culture",
+      "civilianWord": "マジシャン",
+      "undercoverWord": "催眠術師",
+      "civilianClues": [
+        "観客を驚かせるためにイリュージョンや手品を披露する芸人。",
+        "シルクハットから白ウサギを取り出し、助手を半分に切り、カードをシャッフルすることで知られる。",
+        "人を惑わす室内手品や舞台のトリックの秘密の方法を決して明かさない。",
+        "黒い舞台用タキシードを着て、細い先端のワンドで劇的に身ぶりをする。"
+      ],
+      "undercoverClues": [
+        "被験者をリラックスした非常に暗示にかかりやすいトランス状態へ導く実践者。",
+        "集中を促すために、揺れる懐中時計やリズミカルで落ち着く語調をよく用いる。",
+        "習慣を断つために、喜劇的な舞台実演や臨床療法セッションを行う。",
+        "指を鳴らして目覚めさせる前に、ボランティアに冗談めいた暗示を演技するよう指示する。"
+      ]
+    },
+    {
+      "id": "daily-1-ja",
+      "category": "daily",
+      "civilianWord": "エレベーター",
+      "undercoverWord": "エスカレーター",
+      "civilianClues": [
+        "建物のシャフト内でケーブルとカウンターウェイトによって吊り上げられる垂直移動用の乗客用かご。",
+        "会社員や住民を高層ビルの各階へ素早く運びます。",
+        "内部のボタンパネル、階表示チャイム、緊急電話警報を備えています。",
+        "早朝のラッシュアワーには、オフィスロビーの廊下で長い行列が発生します。"
+      ],
+      "undercoverClues": [
+        "隣接する階の間で歩行者を運ぶ、電動の移動式金属階段です。",
+        "溝付きのアルミ製ステップがゴム製手すりとともに連続して循環する構造です。",
+        "にぎやかなショッピングモール、空港ターミナル、交通駅でよく見られます。",
+        "マナーとして、片側に立って反対側を歩くことが推奨されます。"
+      ]
+    },
+    {
+      "id": "daily-2-ja",
+      "category": "daily",
+      "civilianWord": "傘",
+      "undercoverWord": "レインコート",
+      "civilianClues": [
+        "柄に取り付けられたヒンジ式の金属骨で支えられる、防水生地の折りたたみ式天蓋です。",
+        "手に持って頭上で開き、突然の雨や強い日差しを防ぎます。",
+        "バス、地下鉄、玄関の雨具置き場などに置き忘れられることがよくあります。",
+        "嵐の豪雨で強い横風に遭うと、予期せず裏返ることがあります。"
+      ],
+      "undercoverClues": [
+        "雨の日に衣服を濡らさないよう作られた、フード付きの防水ウェアジャケットです。",
+        "ボタン、ファスナー、ドローストリングで留められ、両手を自由にして荷物を持ったり自転車に乗ったりできます。",
+        "軽量の合成ナイロン、コーティングされたPVC、通気性のあるGore-Texメンブレンで作られています。",
+        "鮮やかな黄色のタイプは、幼児、漁師、船乗りに定番の防護アイテムです。"
+      ]
+    },
+    {
+      "id": "daily-3-ja",
+      "category": "daily",
+      "civilianWord": "ジェットコースター",
+      "undercoverWord": "観覧車",
+      "civilianClues": [
+        "曲がりくねった鋼鉄の軌道を客車が疾走する遊園地の絶叫アトラクションです。",
+        "急降下、コークスクリュー、逆さまのループによる心臓が高鳴る加速を味わえます。",
+        "乗客は頭上の安全ハーネスバーに固定され、喜びの悲鳴を上げます。",
+        "巨大な電動リフトヒルをゆっくり上昇し、その後猛スピードで急降下します。"
+      ],
+      "undercoverClues": [
+        "密閉された客室を載せた、巨大な垂直回転式の鋼鉄製乗り物です。",
+        "ゆっくり穏やかに回転し、息をのむような街と港のパノラマを楽しめます。",
+        "鮮やかなコンピューター制御のネオンライトで照らされることが多く、ウォーターフロントのランドマークになっています。",
+        "ゆったりとした景観の回転を求めるカップルや観光客に愛されるロマンチックなアトラクションです。"
+      ]
+    },
+    {
+      "id": "daily-4-ja",
+      "category": "daily",
+      "civilianWord": "サングラス",
+      "undercoverWord": "ゴーグル",
+      "civilianClues": [
+        "強いまぶしさから目を守るため、濃い色付きまたは偏光レンズを備えた保護メガネです。",
+        "晴れたビーチ休暇、景色の良いドライブ、夏の散歩で着用するおしゃれなファッションアクセサリーです。",
+        "鼻筋に優しく乗せ、左右のテンプルを両耳の上に掛けます。",
+        "屋外で有害な紫外線から繊細な目の組織を守ります。"
+      ],
+      "undercoverClues": [
+        "目の周りに柔らかなゴム製シーリングパッドを備えた密着型の保護眼鏡です。",
+        "水中水泳やスキーの際に、調節可能なゴムベルトで後頭部に固定します。",
+        "水中や大雪の中でも視界を透明に保つため、曇り止めコーティングが施されている。",
+        "プールの塩素、海水、飛散する薬品のしぶきによる目の痛みを防ぐ。"
+      ]
+    },
+    {
+      "id": "daily-5-ja",
+      "category": "daily",
+      "civilianWord": "パラシュート",
+      "undercoverWord": "パラソル",
+      "civilianClues": [
+        "落下する物体や人の降下速度を落とす、大きな半球形の布製キャノピー。",
+        "スカイダイビング、軍の空挺降下、宇宙船カプセルの着陸時などに展開される。",
+        "2本の操縦トグルを引いて操作し、目標着地点に向けて飛行方向を調整する。",
+        "個人の安全がこれにかかっているため、バックパック式ハーネスへの丁寧で規律ある折りたたみが必要。"
+      ],
+      "undercoverClues": [
+        "主に顔を強い日差しから守る、装飾用の軽量な手持ち日傘。",
+        "繊細な紙、レース、UVカットシルクなどで作られ、華やかな木製ハンドルが付くことが多い。",
+        "晴天のガーデンティーパーティーで、優雅なファッションアクセサリーとして持ち歩かれるのが伝統的。",
+        "暴風や豪雨を想定していないため、嵐用の傘とは異なる。"
+      ]
+    }
+  ],
+  "ko": [
+    {
+      "id": "tech-1-ko",
+      "category": "tech",
+      "civilianWord": "ChatGPT",
+      "undercoverWord": "Claude",
+      "civilianClues": [
+        "샌프란시스코의 유명 연구소가 개발한 대화형 AI 어시스턴트입니다.",
+        "상징적인 초록색 회전 로고로 전 세계 생성형 AI 붐을 이끌었습니다.",
+        "지식 노동자들이 코딩 지원과 문서 초안 작성에 널리 사용합니다.",
+        "대화형 음성 모드, 캔버스 편집, Plus라는 프리미엄 요금제를 제공합니다."
+      ],
+      "undercoverClues": [
+        "Anthropic이 만든 사려 깊고 표현력 좋은 대화형 AI 어시스턴트입니다.",
+        "방대한 컨텍스트 창과 자연스럽고 인간적인 추론 스타일로 호평을 받습니다.",
+        "소프트웨어 개발자들이 코드베이스 심층 이해와 코딩에 널리 신뢰합니다.",
+        "플래그십 모델 세대 시리즈는 Sonnet, Opus 같은 등급으로 구별됩니다."
+      ]
+    },
+    {
+      "id": "tech-2-ko",
+      "category": "tech",
+      "civilianWord": "이어버드",
+      "undercoverWord": "보청기",
+      "civilianClues": [
+        "귀 안쪽에 직접 넣는 작고 무선인 오디오 캡슐입니다.",
+        "소음 차단 기능을 갖춘 주머니 크기 플립탑 배터리 케이스가 포함됩니다.",
+        "지하철, 유산소 운동, 산책 중에 쓰는 기본 청취 동반자입니다.",
+        "한 쌍 중 한쪽을 기차 승강장 틈으로 떨어뜨리는 것은 통근자의 악몽입니다."
+      ],
+      "undercoverClues": [
+        "귀 안이나 뒤에 착용하는 눈에 띄지 않는 초소형 전자 보조 기기입니다.",
+        "마이크로 주변 음성을 포착하고 소리 주파수를 선명하게 증폭합니다.",
+        "청각 전문가가 맞춤 조정하고 프로그래밍하여 고령자가 대화를 따라가도록 돕습니다.",
+        "일상의 청각 선명도를 회복시키는 특수 의료 장비로 분류됩니다."
+      ]
+    },
+    {
+      "id": "tech-3-ko",
+      "category": "tech",
+      "civilianWord": "키보드",
+      "undercoverWord": "타자기",
+      "civilianClues": [
+        "텍스트와 명령을 입력하기 위한 여러 줄의 키가 있는 컴퓨터 데스크톱 주변 기기입니다.",
+        "특유의 촉각적 클릭음으로 입력하며 게이머, 작가, 소프트웨어 코더에게 사랑받습니다.",
+        "종종 다채로운 키캡, 기계식 스위치, 빛나는 RGB 조명으로 커스터마이즈됩니다.",
+        "Linear, Clicky, Tactile 같은 스위치 스타일로 분류됩니다."
+      ],
+      "undercoverClues": [
+        "글자를 실제 종이에 직접 인쇄하는 빈티지 수동 필기 기계입니다.",
+        "키를 누를 때마다 잉크 리본이 종이에 부딪히며 확실한 달칵 소리가 납니다.",
+        "문서를 타이핑하는 데 컴퓨터 모니터나 전원 콘센트가 필요 없습니다.",
+        "회전하는 롤러 플래튼과 종소리가 울리는 수동 캐리지 리턴 기능이 있습니다."
+      ]
+    },
+    {
+      "id": "tech-4-ko",
+      "category": "tech",
+      "civilianWord": "드론",
+      "undercoverWord": "연",
+      "civilianClues": [
+        "회전하는 프로펠러로 공중에 떠 있는 원격 조종 멀티콥터입니다.",
+        "광활한 풍경 영상을 촬영할 수 있는 고화질 짐벌 카메라를 갖추고 있습니다.",
+        "GPS 위성 위치 확인과 배터리 부족 시 자동 복귀 기능이 장착되어 있습니다.",
+        "공항 주변의 엄격히 지정된 비행 금지 구역과 함께 항공 당국의 규제를 받습니다."
+      ],
+      "undercoverClues": [
+        "프레임 위에 펼쳐진 가벼운 천으로 만든 줄로 묶인 공기역학적 비행체입니다.",
+        "야외에서 일정하게 부는 바람을 받아 하늘 높이 떠오르는 물체입니다.",
+        "튼튼한 줄이 감긴 휴대용 릴을 사용해 지상에서 조종합니다.",
+        "바람 부는 탁 트인 공원 초원 위에 떠 있는 전통적인 봄철 풍경입니다."
+      ]
+    },
+    {
+      "id": "tech-5-ko",
+      "category": "tech",
+      "civilianWord": "보조 배터리",
+      "undercoverWord": "발전기",
+      "civilianClues": [
+        "이동 중 모바일 기기를 충전하는 데 사용하는 휴대용 직사각형 리튬 배터리 팩입니다.",
+        "외출 중 스마트폰 배터리가 방전될 때 꼭 필요한 여행 필수품입니다.",
+        "고속 충전 프로토콜을 지원하는 USB-A 및 USB-C 출력 포트가 장착되어 있습니다.",
+        "공항 보안 검색대를 통과하려면 밀리암페어시 용량을 명확히 표시해야 합니다."
+      ],
+      "undercoverClues": [
+        "기계 에너지나 연료 에너지를 전류로 변환하는 중장비 기계입니다.",
+        "동네 전력망이 고장 나면 가동되어 예비 전력을 공급합니다.",
+        "흔히 디젤이나 휘발유로 연료를 공급받으며, 공사장 밖에서 크게 웅웅거린다.",
+        "병원과 전력망이 닿지 않는 외딴 오두막에 없어서는 안 될 고정식 비상 장비."
+      ]
+    },
+    {
+      "id": "food-1-ko",
+      "category": "food",
+      "civilianWord": "라떼",
+      "undercoverWord": "카푸치노",
+      "civilianClues": [
+        "이탈리아식에서 영감을 받은 인기 에스프레소 음료로, 스팀 밀크를 듬뿍 넣어 만든다.",
+        "섬세하고 얇은 마이크로폼 층으로 마무리되며, 종종 예쁜 잎 모양 아트로 장식된다.",
+        "아메리카노나 진한 코르타도보다 부드럽고 크리미하며 매끄럽다.",
+        "전 세계 카페에서 아침에 가장 자주 주문되는 커피 음료 중 하나."
+      ],
+      "undercoverClues": [
+        "커피, 우유, 두꺼운 거품을 각각 3분의 1씩 층층이 쌓은 전통 에스프레소 음료.",
+        "코코아 파우더를 뿌린, 높고 가벼운 거품 돔이 올라가 있다.",
+        "벨벳 같은 거품 아래에 확실히 더 강하고 뚜렷한 커피의 힘이 느껴진다.",
+        "이탈리아에서는 관례적으로 아침 식사 시간에 페이스트리와 함께만 즐긴다."
+      ]
+    },
+    {
+      "id": "food-2-ko",
+      "category": "food",
+      "civilianWord": "코카콜라",
+      "undercoverWord": "펩시",
+      "civilianClues": [
+        "상징적인 짙은 색 탄산음료로, 유명한 선명한 빨간 알루미늄 캔에 담겨 제공된다.",
+        "100여 년 전 애틀랜타에서 개발된 전설적인 비밀 레시피 시럽을 사용한다.",
+        "버거와 팝콘에 잘 어울리는, 바닐라와 향신료의 산뜻한 탄산감을 전한다.",
+        "과거의 휴일 광고는 현대적인 유쾌한 산타클로스 이미지를 대중화했다."
+      ],
+      "undercoverClues": [
+        "파란색, 빨간색, 흰색의 원형 지구 로고로 알아볼 수 있는 유명한 달콤한 탄산음료.",
+        "첫맛에서 약간 더 달고 시트러스가 앞서는 풍미 폭발이 특징이다.",
+        "유명 음악 슈퍼스타와 스타디움 하프타임 공연을 후원한 것으로 유명하다.",
+        "슈퍼마켓 통로에서 경쟁 탄산음료를 비교하는 블라인드 시음 테스트 마케팅 캠페인을 개척했다."
+      ]
+    },
+    {
+      "id": "food-3-ko",
+      "category": "food",
+      "civilianWord": "버거",
+      "undercoverWord": "샌드위치",
+      "civilianClues": [
+        "양념한 패티를 반으로 자른 둥근 번에 넣은 따뜻한 패스트푸드.",
+        "녹인 체다 치즈, 아삭한 상추, 토마토 슬라이스, 피클, 소스가 올라간다.",
+        "보통 황금빛 감자튀김, 밀크셰이크와 함께 나오는 모두가 좋아하는 다이너 메뉴.",
+        "드라이브스루 포장 창구에서 종이 포장지에 싸인 채 두 손으로 움켜쥐고 먹는다."
+      ],
+      "undercoverClues": [
+        "델리 고기, 치즈, 스프레드를 식빵 사이에 겹쳐 만드는 여러 가지로 즐길 수 있는 한 끼.",
+        "카드 게임을 멈추지 않고 먹고 싶어 했던 18세기 영국 백작의 이름을 딴.",
+        "사각형 빵 조각을 대각선으로 잘라 삼각형 반쪽으로 만드는 경우가 많다.",
+        "학교 쉬는 시간, 피크닉, 사무실 책상에서 빠지지 않는 갈색 종이 봉투 도시락의 대표 메뉴."
+      ]
+    },
+    {
+      "id": "food-4-ko",
+      "category": "food",
+      "civilianWord": "아이스크림",
+      "undercoverWord": "아이스크림 바",
+      "civilianClues": [
+        "가당 크림, 우유, 설탕, 향료를 휘저어 만든 진한 냉동 유제품 간식.",
+        "와플 콘, 컵 또는 선디 볼에 담아 퍼지와 스프링클 같은 토핑을 올려 제공됩니다.",
+        "냉동 과정에서 공기를 넣어 휘핑해 부드럽고 스쿱으로 뜰 수 있는 질감을 냅니다.",
+        "바닐라나 초콜릿 칩 같은 클래식 맛으로 전문점에서 파는 여름철 대표 간식입니다."
+      ],
+      "undercoverClues": [
+        "납작한 나무 막대에 꽂힌, 물 베이스에 맛을 낸 상쾌한 냉동 간식입니다.",
+        "과일 주스, 시럽 또는 퓌레를 세로형 몰드 안에서 단단하게 얼려 만듭니다.",
+        "흔히 밝은 체리색이나 블루 라즈베리 색을 띠며, 나무 막대에서 바로 핥거나 베어 먹습니다.",
+        "뜨거운 햇볕 아래에서 너무 빨리 녹으면 끈적한 알록달록한 시럽이 손가락으로 흘러내릴 수 있습니다."
+      ]
+    },
+    {
+      "id": "food-5-ko",
+      "category": "food",
+      "civilianWord": "요거트",
+      "undercoverWord": "우유",
+      "civilianClues": [
+        "살아 있는 유익균(프로바이오틱스)으로 배양한 크리미한 발효 유제품입니다.",
+        "기분 좋은 상큼하고 약간 시큼한 맛이 나며, 흔히 꿀이나 베리 콩포트로 달콤하게 합니다.",
+        "플라스틱 통에서 숟가락으로 떠 먹거나 아침 과일 파르페에 층층이 넣습니다.",
+        "그릭 스타일로 걸러 낸 종류는 걸쭉한 질감과 높은 단백질 함량으로 인기가 많습니다."
+      ],
+      "undercoverClues": [
+        "포유류, 주로 젖소에서 생산되는 영양이 풍부한 건강한 흰색 액체입니다.",
+        "아침 시리얼에 붓거나 뜨거운 차에 넣고, 팬케이크 반죽에 섞기도 합니다.",
+        "냉장고 문 안쪽의 종이팩이나 플라스틱 갤런 용기에 보관합니다.",
+        "전지, 지방 저감, 저지방, 무지방 등 유지방 수준에 따라 분류됩니다."
+      ]
+    },
+    {
+      "id": "culture-1-ko",
+      "category": "culture",
+      "civilianWord": "셜록 홈즈",
+      "undercoverWord": "에르퀼 푸아로",
+      "civilianClues": [
+        "런던 베이커가 221B를 거점으로 활동한 전설적인 빅토리아 시대 컨설팅 탐정입니다.",
+        "왓슨 박사와 함께 뛰어난 과학 수사적 추리로 당황스러운 범죄 사건을 해결합니다.",
+        "상징적인 실루엣은 사냥 모자(디어스토커 캡), 인버네스 망토, 굽은 파이프가 특징입니다.",
+        "범죄 두뇌 모리어티 교수와 지적 두뇌 싸움을 벌입니다."
+      ],
+      "undercoverClues": [
+        "정교하게 왁스로 다듬은 콧수염으로 유명한 벨기에의 저명한 사립 탐정입니다.",
+        "오리엔트 특급 같은 화제의 사건을 작은 회색 세포들의 정밀함에 의지해 해결합니다.",
+        "일상의 모든 가사 문제에서 최고의 질서와 정돈, 대칭에 집착합니다.",
+        "저명한 추리 작가 애거사 크리스티가 창조한 세계적으로 유명한 탐정 주인공입니다."
+      ]
+    },
+    {
+      "id": "culture-2-ko",
+      "category": "culture",
+      "civilianWord": "스파이더맨",
+      "undercoverWord": "배트맨",
+      "civilianClues": [
+        "합성 거미줄로 맨해튼 고층 빌딩 사이를 그네처럼 이동하는 재치 있는 십대 슈퍼히어로입니다.",
+        "우연한 방사능 거미 물림 사고 후 곡예 같은 벽 타기 능력을 얻었습니다.",
+        "큰 힘에는 큰 책임이 따른다는 불멸의 도덕 원칙에 따라 행동합니다.",
+        "빨간색과 파란색 마스크 슈트 아래에는 피터 파커라는 뛰어난 과학도가 있습니다."
+      ],
+      "undercoverClues": [
+        "초인적인 능력 없이 범죄와 싸우는 고담시의 엄숙한 자경단 수호자입니다.",
+        "낮에는 부유한 억만장자 산업가이고, 밤에는 악당의 마음에 공포를 불러일으킵니다.",
+        "충성스러운 집사 앨프레드의 도움을 받아 지하 동굴 지휘 센터에서 활동한다.",
+        "전술 갑옷, 박쥐 문양 엠블럼, 특수 장비, 세련된 자동차로 무장한다."
+      ]
+    },
+    {
+      "id": "culture-3-ko",
+      "category": "culture",
+      "civilianWord": "해리 포터",
+      "undercoverWord": "퍼시 잭슨",
+      "civilianClues": [
+        "열한 살에 부엉이 편지를 받고 자신의 마법 혈통을 알게 된 소년 마법사.",
+        "다크 로드로부터 살아남은 뒤 이마에 전설적인 번개 모양 흉터가 있다.",
+        "스코틀랜드의 마법 학교 성에 다니며, 용감한 진홍색 그리핀도르 기숙사에 배정된다.",
+        "빗자루로 빠르게 날아다니는 퀴디치 경기에서 골든 스니치를 잡는다."
+      ],
+      "undercoverClues": [
+        "자신이 포세이돈의 아들인 신화 속 반신반인임을 알게 된 현대의 고등학생.",
+        "여름마다 롱아일랜드의 비밀 캠프에서 사티로스와 신화 속 영웅들과 함께 훈련한다.",
+        "물의 흐름을 다스리고 물속에서 숨을 쉬며, 검으로 변하는 펜을 사용한다.",
+        "현대 미국 곳곳에서 그리스 신화 속 괴물과 올림포스 신들과 맞서는 모험을 떠난다."
+      ]
+    },
+    {
+      "id": "culture-4-ko",
+      "category": "culture",
+      "civilianWord": "뱀파이어",
+      "undercoverWord": "늑대인간",
+      "civilianClues": [
+        "인간의 피를 먹고 살며 유럽 신화에 등장하는 불멸의 야행성 고딕 괴물.",
+        "유리 거울에 비치지 않으며 직사광선에 닿으면 치명적인 화상을 입는다.",
+        "전승에 따르면 자극적인 마늘, 나무 말뚝, 성물로 물리칠 수 있다.",
+        "흔히 트란실바니아 성 안에서 벨벳 망토를 두르고 날아다니는 박쥐로 변신하는 모습으로 그려진다."
+      ],
+      "undercoverClues": [
+        "보름달 아래에서 의도치 않게 굶주린 개과 짐승으로 변하는 저주받은 인간.",
+        "무시무시한 완력과 날카로운 발톱, 오싹한 비통한 자정의 울부짖음을 지닌다.",
+        "민속 전승에 따르면 이들의 유일한 치명적 약점은 은 탄환에 맞는 것뿐이다.",
+        "원시적인 무리를 지어 그림자 진 숲을 떠돌며 인간성을 잃은 비극과 싸운다."
+      ]
+    },
+    {
+      "id": "culture-5-ko",
+      "category": "culture",
+      "civilianWord": "마술사",
+      "undercoverWord": "최면술사",
+      "civilianClues": [
+        "관객을 놀라게 하려고 환영과 손재주 마술을 선보이는 연예인.",
+        "비단 실크 모자에서 흰 토끼를 꺼내고, 조수를 반으로 자르고, 카드를 섞는 것으로 유명하다.",
+        "사람을 당혹스럽게 하는 살롱 마술과 무대 속임수의 비밀 방법을 절대 밝히지 않는다.",
+        "검은 무대 턱시도를 입고 가느다란 마술봉으로 극적인 제스처를 취한다."
+      ],
+      "undercoverClues": [
+        "대상자를 편안하고 암시에 매우 잘 반응하는 최면 상태로 이끄는 전문가.",
+        "흔히 흔들리는 회중시계나 리듬감 있는 편안한 말투를 사용해 집중을 유도한다.",
+        "습관을 끊기 위해 코믹한 무대 시연이나 임상 치료 세션을 진행한다.",
+        "지원자들에게 익살스러운 암시를 연기하게 한 뒤 손가락을 튕겨 깨운다."
+      ]
+    },
+    {
+      "id": "daily-1-ko",
+      "category": "daily",
+      "civilianWord": "엘리베이터",
+      "undercoverWord": "에스컬레이터",
+      "civilianClues": [
+        "건물 수직 통로 안에서 케이블과 균형추로 끌어올려지는 수직 승객용 차량.",
+        "고층 빌딩의 층과 층 사이에서 직장인과 주민을 빠르게 이동시킵니다.",
+        "내부 버튼 패널, 층 표시 알림음, 비상 전화 경보 장치를 갖추고 있습니다.",
+        "이른 아침 출근 혼잡 시간대에는 기업 로비 복도에서 빽빽한 대기 행렬이 생깁니다."
+      ],
+      "undercoverClues": [
+        "인접한 층 사이에서 보행자를 운반하는 전동 금속 계단입니다.",
+        "고무 손잡이와 나란히 연속 순환하는 홈이 파인 알루미늄 발판을 갖추고 있습니다.",
+        "번화한 쇼핑몰, 공항 터미널, 대중교통역에서 흔히 볼 수 있습니다.",
+        "한쪽은 서는 곳, 다른 쪽은 걷는 곳으로 사용하도록 권장합니다."
+      ]
+    },
+    {
+      "id": "daily-2-ko",
+      "category": "daily",
+      "civilianWord": "우산",
+      "undercoverWord": "비옷",
+      "civilianClues": [
+        "손잡이에서 경첩식 금속 살대를 펼쳐 방수 천막을 세우는 접이식 휴대 도구입니다.",
+        "손에 들고 머리 위로 펼쳐 갑작스러운 비나 강한 햇빛을 막습니다.",
+        "버스나 지하철, 현관의 꽂이에 자주 두고 내리거나 잊혀집니다.",
+        "폭풍우가 몰아칠 때 강한 맞바람을 맞으면 예기치 않게 뒤집힐 수 있습니다."
+      ],
+      "undercoverClues": [
+        "비 오는 날 옷이 젖지 않도록 후드가 달린 방수 재킷입니다.",
+        "단추, 지퍼, 조임끈으로 여며 두 손을 자유롭게 해 가방을 들거나 자전거를 탈 수 있습니다.",
+        "가벼운 합성 나일론, 코팅 PVC, 통기성 고어텍스 막으로 만들어집니다.",
+        "밝은 노란색 제품은 유아, 어부, 선원에게 대표적인 보호 장비 선택지입니다."
+      ]
+    },
+    {
+      "id": "daily-3-ko",
+      "category": "daily",
+      "civilianWord": "롤러코스터",
+      "undercoverWord": "관람차",
+      "civilianClues": [
+        "꼬불꼬불한 강철 선로를 따라 객차가 질주하는 놀이공원의 스릴 놀이기구입니다.",
+        "가파른 낙하, 코크스크루, 거꾸로 도는 루프로 심장이 뛰는 가속감을 선사합니다.",
+        "탑승객은 머리 위 안전 하네스 바에 단단히 고정된 채 즐겁게 소리치고 비명을 지릅니다.",
+        "거대한 전동 리프트 언덕을 천천히 올라간 뒤 엄청난 속도로 아래로 곤두박질칩니다."
+      ],
+      "undercoverClues": [
+        "밀폐된 객실을 싣고 수직으로 회전하는 거대한 강철 구조물입니다.",
+        "도시와 항구의 스카이라인을 감탄스러운 파노라마로 선사하기 위해 느리고 부드럽게 회전합니다.",
+        "종종 생생한 컴퓨터 제어 네온 조명으로 빛나 해안가의 명소를 이룹니다.",
+        "여유로운 경치를 즐기려는 커플과 관광객에게 사랑받는 낭만적인 명소입니다."
+      ]
+    },
+    {
+      "id": "daily-4-ko",
+      "category": "daily",
+      "civilianWord": "선글라스",
+      "undercoverWord": "고글",
+      "civilianClues": [
+        "강한 눈부심으로부터 눈을 보호하기 위해 짙은 색 또는 편광 렌즈를 장착한 보호 안경입니다.",
+        "햇살 좋은 해변 휴가, 드라이브, 여름 산책 때 착용하는 세련된 패션 액세서리입니다.",
+        "콧등에 부드럽게 걸치며 양쪽 귀 뒤로 안경 다리를 고정합니다.",
+        "야외에서 유해한 자외선으로부터 섬세한 눈 조직을 보호합니다."
+      ],
+      "undercoverClues": [
+        "눈가 주변에 부드러운 고무 흡착 패킹을 갖춘 밀착형 보호 안경입니다.",
+        "수중 수영이나 스키를 위해 조절 가능한 탄성 스트랩으로 뒤통수에 고정합니다.",
+        "김서림 방지 코팅으로 물속이나 폭설 속에서도 시야가 선명하게 유지됩니다.",
+        "수영장 염소의 자극, 바닷물, 튀는 화학 물질로부터 눈을 보호합니다."
+      ]
+    },
+    {
+      "id": "daily-5-ko",
+      "category": "daily",
+      "civilianWord": "낙하산",
+      "undercoverWord": "양산",
+      "civilianClues": [
+        "낙하하는 물체나 사람의 하강을 늦추는 대형 반구형 천 캐노피입니다.",
+        "스카이다이빙, 군 공중 투하, 우주선 캡슐 착륙 시 사용됩니다.",
+        "양쪽 조종 토글을 당겨 목표 착륙 지점을 향해 비행 방향을 조종합니다.",
+        "개인 안전이 달려 있으므로 배낭 장비에 꼼꼼하고 규칙적으로 접어 넣어야 합니다."
+      ],
+      "undercoverClues": [
+        "주로 얼굴을 강한 햇빛으로부터 가리는 데 사용하는 장식용 경량 휴대형 햇빛 가리개입니다.",
+        "섬세한 종이, 레이스, 자외선 차단 실크로 만들며 화려한 나무 손잡이가 달린 경우가 많습니다.",
+        "햇살 좋은 가든 티파티에서 우아한 패션 소품으로 애용되어 왔습니다.",
+        "강풍이나 폭우를 위한 것이 아니라는 점에서 폭풍우용 우산과 다릅니다."
+      ]
+    }
+  ],
+  "es": [
+    {
+      "id": "tech-1-es",
+      "category": "tech",
+      "civilianWord": "ChatGPT",
+      "undercoverWord": "Claude",
+      "civilianClues": [
+        "Un asistente de IA conversacional desarrollado por un laboratorio conocido de San Francisco.",
+        "Impulsó el auge mundial de la IA generativa con su icónico logotipo verde giratorio.",
+        "Ampliamente usado por profesionales del conocimiento para asistencia en programación y redacción de textos.",
+        "Ofrece modo de voz interactivo, edición en canvas y un plan premium llamado Plus."
+      ],
+      "undercoverClues": [
+        "Un asistente de IA conversacional reflexivo y elocuente creado por Anthropic.",
+        "Famoso por su amplia ventana de contexto y su estilo de razonamiento natural y humano.",
+        "Ampliamente valorado por desarrolladores de software para comprender a fondo bases de código y programar.",
+        "Su serie insignia de generaciones de modelos se distingue por niveles como Sonnet y Opus."
+      ]
+    },
+    {
+      "id": "tech-2-es",
+      "category": "tech",
+      "civilianWord": "Auriculares de botón",
+      "undercoverWord": "Audífono",
+      "civilianClues": [
+        "Cápsulas de audio inalámbricas y compactas que se colocan directamente dentro del canal auditivo.",
+        "Incluye un estuche de batería abatible de tamaño bolsillo con cancelación de ruido.",
+        "Compañero de escucha habitual en el metro, durante entrenamientos cardiovasculares o al caminar.",
+        "Perder uno de los auriculares por el hueco del andén es la pesadilla de cualquier viajero."
+      ],
+      "undercoverClues": [
+        "Un discreto dispositivo electrónico de asistencia en miniatura que se lleva dentro o detrás de la oreja.",
+        "Capta el habla ambiente mediante micrófonos y amplifica las frecuencias de sonido con claridad.",
+        "Ajustado y programado por audiólogos para ayudar a las personas mayores a seguir conversaciones.",
+        "Se clasifica como equipo médico especializado que restaura la claridad acústica cotidiana."
+      ]
+    },
+    {
+      "id": "tech-3-es",
+      "category": "tech",
+      "civilianWord": "Teclado",
+      "undercoverWord": "Máquina de escribir",
+      "civilianClues": [
+        "Un periférico de escritorio de computadora con filas de teclas para introducir texto y comandos.",
+        "Escribe con clics táctiles distintivos y es apreciado por jugadores, escritores y programadores de software.",
+        "A menudo se personaliza con teclas de colores, interruptores mecánicos y luces RGB brillantes.",
+        "Se clasifica por estilos de interruptor como las variantes Linear, Clicky o Tactile."
+      ],
+      "undercoverClues": [
+        "Un aparato mecánico manual antiguo que imprime caracteres directamente sobre papel físico.",
+        "Cada pulsación golpea una cinta entintada contra el papel con un inconfundible repiqueteo.",
+        "No necesita monitor de computadora ni enchufe para escribir documentos.",
+        "Incluye un rodillo giratorio y un retorno de carro manual que suena con una campanilla."
+      ]
+    },
+    {
+      "id": "tech-4-es",
+      "category": "tech",
+      "civilianWord": "Dron",
+      "undercoverWord": "Cometa",
+      "civilianClues": [
+        "Un multicóptero pilotado a distancia que se mantiene en el aire mediante hélices giratorias.",
+        "Equipado con cámaras estabilizadas de alta definición para capturar amplias imágenes de paisajes.",
+        "Incorpora posicionamiento por satélite GPS y una función de regreso automático con batería baja.",
+        "Regulado por autoridades de aviación con zonas de exclusión aérea estrictamente designadas alrededor de los aeropuertos."
+      ],
+      "undercoverClues": [
+        "Una aeronave aerodinámica atada con cuerda, hecha de tela ligera tensada sobre un armazón.",
+        "Se eleva hacia el cielo impulsada por completo por brisas naturales constantes al aire libre.",
+        "Se controla desde el suelo con un carrete manual enrollado con cuerda resistente.",
+        "Una estampa primaveral tradicional que flota sobre praderas abiertas de parques públicos con brisa."
+      ]
+    },
+    {
+      "id": "tech-5-es",
+      "category": "tech",
+      "civilianWord": "Batería portátil",
+      "undercoverWord": "Generador",
+      "civilianClues": [
+        "Una batería de litio rectangular portátil que se usa para recargar dispositivos móviles en movimiento.",
+        "Un salvavidas de viaje esencial cuando la batería de tu smartphone se agota mientras estás fuera.",
+        "Equipada con puertos de salida USB-A y USB-C compatibles con protocolos de carga rápida.",
+        "Debe mostrar claramente su capacidad en miliamperios-hora para pasar los controles de seguridad del aeropuerto."
+      ],
+      "undercoverClues": [
+        "Una máquina de alta resistencia que convierte energía mecánica o de combustible en corriente eléctrica.",
+        "Entra en acción para suministrar electricidad de respaldo cuando fallan las redes eléctricas del vecindario.",
+        "Suele funcionar con diésel o gasolina y zumba ruidosamente junto a las obras.",
+        "Equipo de emergencia fijo indispensable para hospitales y cabañas remotas aisladas."
+      ]
+    },
+    {
+      "id": "food-1-es",
+      "category": "food",
+      "civilianWord": "Latte",
+      "undercoverWord": "Capuchino",
+      "civilianClues": [
+        "Una popular bebida de espresso de inspiración italiana preparada con abundante leche vaporizada.",
+        "Se termina con una fina y delicada capa de microespuma, a menudo decorada con bonitos dibujos de hojas.",
+        "Más suave, cremoso y sedoso que un americano o un cortado concentrado.",
+        "Una de las bebidas de café matutinas más pedidas en cafeterías de todo el mundo."
+      ],
+      "undercoverClues": [
+        "Una bebida tradicional de espresso con tercios iguales de café, leche y espuma espesa.",
+        "Coronado con una alta y aireada cúpula de espuma cremosa espolvoreada con cacao en polvo.",
+        "Tiene un golpe de café claramente más intenso y marcado bajo su suave capa de espuma.",
+        "En Italia, se disfruta tradicionalmente solo durante el desayuno de la mañana junto con bollería."
+      ]
+    },
+    {
+      "id": "food-2-es",
+      "category": "food",
+      "civilianWord": "Coca-Cola",
+      "undercoverWord": "Pepsi",
+      "civilianClues": [
+        "La icónica bebida gaseosa oscura que se sirve en famosas latas de aluminio rojo brillante.",
+        "Cuenta con un legendario jarabe de receta secreta formulado hace más de un siglo en Atlanta.",
+        "Ofrece una efervescencia nítida de vainilla y especias que marida con hamburguesas y palomitas.",
+        "Su publicidad navideña popularizó históricamente la moderna imagen alegre de Papá Noel."
+      ],
+      "undercoverClues": [
+        "Un famoso refresco carbonatado dulce reconocible por su logotipo circular de globo azul, rojo y blanco.",
+        "Se caracteriza por un sabor inicial un poco más dulce y con notas cítricas.",
+        "Es famosa por patrocinar a grandes superestrellas de la música y el espectáculo de medio tiempo en los estadios.",
+        "Fue pionera en campañas de marketing con pruebas de sabor a ciegas que comparaban refrescos rivales en los pasillos del supermercado."
+      ]
+    },
+    {
+      "id": "food-3-es",
+      "category": "food",
+      "civilianWord": "Hamburguesa",
+      "undercoverWord": "Sándwich",
+      "civilianClues": [
+        "Una comida rápida caliente con una carne sazonada dentro de un pan redondo partido.",
+        "Cubierta con queso cheddar derretido, lechuga crujiente, rodajas de tomate, pepinillos y condimentos.",
+        "Un clásico universal que suele servirse con patatas fritas doradas y batidos.",
+        "Se sostiene con las dos manos dentro de un envoltorio de papel en las ventanillas de autoservicio."
+      ],
+      "undercoverClues": [
+        "Una comida versátil que se prepara colocando capas de fiambres, quesos y untables entre rebanadas de pan.",
+        "Lleva el nombre de un conde británico del siglo XVIII que quería comer sin interrumpir sus partidas de cartas.",
+        "A menudo se prepara con rebanadas de pan cuadradas cortadas en diagonal por la mitad para formar triángulos.",
+        "Un básico indispensable de la comida para llevar en el recreo, los pícnicos y el escritorio de la oficina."
+      ]
+    },
+    {
+      "id": "food-4-es",
+      "category": "food",
+      "civilianWord": "Helado",
+      "undercoverWord": "Paleta",
+      "civilianClues": [
+        "Un rico postre lácteo congelado batido con nata endulzada, leche, azúcar y aromas.",
+        "Se sirve en conos de barquillo, vasos o copas con coberturas como salsa de chocolate y chispas.",
+        "Se bate durante la congelación para incorporar aire, lo que da una textura suave y fácil de servir con cuchara.",
+        "Un clásico del verano que se vende en heladerías en sabores clásicos como vainilla y chocolate con trocitos."
+      ],
+      "undercoverClues": [
+        "Un refrescante postre de agua con sabor, insertado en un palo de madera plano.",
+        "Se elabora congelando zumo de fruta, sirope o puré hasta que solidifique dentro de moldes verticales.",
+        "Se lame o se muerde directamente del palo de madera, a menudo en llamativos tonos cereza o frambuesa azul.",
+        "Puede gotear sirope pegajoso y colorido por los dedos si se derrite demasiado rápido bajo el sol abrasador."
+      ]
+    },
+    {
+      "id": "food-5-es",
+      "category": "food",
+      "civilianWord": "Yogur",
+      "undercoverWord": "Leche",
+      "civilianClues": [
+        "Un producto lácteo fermentado y cremoso, cultivado con bacterias probióticas vivas beneficiosas.",
+        "Tiene un agradable sabor ácido y ligeramente agrio, que a menudo se endulza con miel o compota de frutos rojos.",
+        "Se saca con cuchara de tarrinas de plástico o se mezcla en capas en parfaits de fruta para el desayuno.",
+        "Las variedades coladas al estilo griego son apreciadas por su textura espesa y su alto contenido proteico."
+      ],
+      "undercoverClues": [
+        "Un líquido blanco saludable y rico en nutrientes producido por mamíferos, sobre todo vacas de granja.",
+        "Se vierte sobre cereales de desayuno, se añade al té caliente o se mezcla con la masa de tortitas.",
+        "Se guarda en envases de cartón o garrafas de plástico de un galón en la puerta del refrigerador.",
+        "Se clasifica según su contenido de grasa láctea, como entera, reducida en grasa, baja en grasa o desnatada."
+      ]
+    },
+    {
+      "id": "culture-1-es",
+      "category": "culture",
+      "civilianWord": "Sherlock Holmes",
+      "undercoverWord": "Hercule Poirot",
+      "civilianClues": [
+        "Un legendario detective consultor victoriano que opera desde el 221B de Baker Street, en Londres.",
+        "Resuelve desconcertantes casos criminales mediante brillantes deducciones forenses, acompañado del Dr. Watson.",
+        "Su icónica silueta visual incluye una gorra deerstalker, una capa Inverness y una pipa curva.",
+        "Enfrascado en un duelo intelectual de ingenio contra el genio criminal profesor Moriarty."
+      ],
+      "undercoverClues": [
+        "Un renombrado investigador privado belga, famoso por su bigote cuidadosamente encerado.",
+        "Resuelve casos sensacionales como el del Orient Express basándose en la precisión de sus pequeñas células grises.",
+        "Obsesionado con el orden supremo, la pulcritud y la simetría en todos los asuntos domésticos diarios.",
+        "El famosísimo protagonista detective creado por la célebre autora de misterio Agatha Christie."
+      ]
+    },
+    {
+      "id": "culture-2-es",
+      "category": "culture",
+      "civilianWord": "Spider-Man",
+      "undercoverWord": "Batman",
+      "civilianClues": [
+        "Un ingenioso superhéroe adolescente que se balancea entre los rascacielos de Manhattan con telarañas sintéticas.",
+        "Adquirió habilidades acrobáticas para trepar paredes tras la picadura accidental de un arácnido radiactivo.",
+        "Guiado por el inmortal principio moral de que un gran poder conlleva una gran responsabilidad.",
+        "Bajo el traje enmascarado rojo y azul hay un brillante estudiante de ciencias llamado Peter Parker."
+      ],
+      "undercoverClues": [
+        "El sombrío vigilante protector de Gotham City que lucha contra el crimen sin ningún poder sobrehumano.",
+        "De día, un acaudalado industrial multimillonario; de noche, infunde terror en los corazones villanos.",
+        "Opera desde un centro de mando en una caverna subterránea, ayudado por su fiel mayordomo Alfred.",
+        "Se equipa con armadura táctica, un emblema con temática de murciélago, dispositivos especializados y un coche elegante."
+      ]
+    },
+    {
+      "id": "culture-3-es",
+      "category": "culture",
+      "civilianWord": "Harry Potter",
+      "undercoverWord": "Percy Jackson",
+      "civilianClues": [
+        "El niño mago que descubrió su herencia mágica al recibir una carta con lechuza a los once años.",
+        "Lleva una legendaria cicatriz en forma de rayo en la frente por sobrevivir al Señor Oscuro.",
+        "Asiste a un internado-castillo escocés de magia y es asignado a la valiente casa Gryffindor escarlata.",
+        "Atrapa la snitch dorada durante partidos de quidditch en escoba a alta velocidad."
+      ],
+      "undercoverClues": [
+        "Un estudiante de secundaria moderno que descubre que es el hijo semidiós mitológico de Poseidón.",
+        "Pasa los veranos entrenando en un campamento secreto de Long Island junto a sátiros y héroes mitológicos.",
+        "Controla las corrientes de agua, respira bajo el agua y maneja un bolígrafo que se transforma en espada.",
+        "Se embarca en misiones por la América moderna enfrentándose a monstruos griegos mitológicos y deidades olímpicas."
+      ]
+    },
+    {
+      "id": "culture-4-es",
+      "category": "culture",
+      "civilianWord": "Vampiro",
+      "undercoverWord": "Hombre lobo",
+      "civilianClues": [
+        "Un inmortal monstruo gótico nocturno del mito europeo que se alimenta de sangre humana.",
+        "No proyecta reflejo en espejos de cristal y sufre quemaduras fatales al tocarlo la luz directa del sol.",
+        "La tradición sostiene que se les puede repeler con dientes de ajo de olor penetrante, estacas de madera y reliquias sagradas.",
+        "A menudo se les representa con capas de terciopelo en castillos de Transilvania, transformándose en murciélagos voladores."
+      ],
+      "undercoverClues": [
+        "Un humano maldito que se transforma involuntariamente en una bestia canina voraz bajo la luna llena.",
+        "Dotado de una fuerza física temible, garras afiladas y un aullido escalofriante y lastimero a medianoche.",
+        "El folclore insiste en que su única vulnerabilidad mortal real es recibir un disparo con munición de plata.",
+        "Lucha con la trágica pérdida de su humanidad mientras deambula por bosques sombríos en manadas primitivas."
+      ]
+    },
+    {
+      "id": "culture-5-es",
+      "category": "culture",
+      "civilianWord": "Mago",
+      "undercoverWord": "Hipnotizador",
+      "civilianClues": [
+        "Un artista que realiza ilusiones y juegos de manos para asombrar al público.",
+        "Es conocido por sacar conejos blancos de sombreros de copa de seda, serrar a asistentes por la mitad y barajar cartas.",
+        "Nunca revela los métodos secretos detrás de sus desconcertantes trucos de salón y engaños escénicos.",
+        "Viste esmóquines negros de escenario y gesticula de forma dramática con una fina varita."
+      ],
+      "undercoverClues": [
+        "Un practicante que guía a los sujetos a un estado de trance relajado y altamente sugestionable.",
+        "A menudo utiliza un reloj de bolsillo que se balancea o una cadencia rítmica y relajante para inducir la concentración.",
+        "Realiza demostraciones cómicas en escena o sesiones de terapia clínica para romper hábitos.",
+        "Indica a los voluntarios que actúen según sugerencias humorísticas antes de chasquear los dedos para despertarlos."
+      ]
+    },
+    {
+      "id": "daily-1-es",
+      "category": "daily",
+      "civilianWord": "Ascensor",
+      "undercoverWord": "Escalera mecánica",
+      "civilianClues": [
+        "Una cabina vertical para pasajeros elevada por cables y contrapesos dentro del hueco de un edificio.",
+        "Transporta rápidamente a oficinistas y residentes entre los pisos de los rascacielos.",
+        "Equipado con paneles de botones interiores, avisos sonoros de piso y alarmas de teléfono de emergencia.",
+        "Suele tener colas abarrotadas en los pasillos de los vestíbulos de oficinas durante la hora punta matutina."
+      ],
+      "undercoverClues": [
+        "Un sistema de transporte de peldaños metálicos que traslada a los peatones entre pisos contiguos.",
+        "Equipada con peldaños de aluminio ranurados que circulan continuamente junto a pasamanos de goma.",
+        "Se encuentra habitualmente en centros comerciales concurridos, terminales de aeropuerto y estaciones de transporte público.",
+        "La etiqueta recomienda a los pasajeros colocarse a un lado y caminar por el otro."
+      ]
+    },
+    {
+      "id": "daily-2-es",
+      "category": "daily",
+      "civilianWord": "Paraguas",
+      "undercoverWord": "Impermeable",
+      "civilianClues": [
+        "Una cúpula plegable de tela impermeable sostenida por varillas metálicas articuladas en un mango.",
+        "Se lleva en la mano y se abre por encima para protegerse de lluvias repentinas o del sol intenso.",
+        "A menudo se olvida y se queda en autobuses, metros o paragüeros de entrada.",
+        "Puede voltearse del revés inesperadamente al quedar atrapado en fuertes vientos cruzados durante aguaceros tormentosos."
+      ],
+      "undercoverClues": [
+        "Una chaqueta resistente al agua con capucha, diseñada para mantener la ropa seca en tiempo lluvioso.",
+        "Se abrocha con botones, cremalleras o cordones, liberando ambas manos para llevar bolsas o montar en bicicleta.",
+        "Fabricado con nailon sintético ligero, PVC recubierto o membranas transpirables Gore-Tex.",
+        "Las versiones de color amarillo brillante son una elección protectora clásica para niños pequeños, pescadores y marineros."
+      ]
+    },
+    {
+      "id": "daily-3-es",
+      "category": "daily",
+      "civilianWord": "Montaña rusa",
+      "undercoverWord": "Noria",
+      "civilianClues": [
+        "Una atracción emocionante de parque de atracciones con vagones que corren por vías de acero sinuosas.",
+        "Ofrece una aceleración vertiginosa con caídas pronunciadas, sacacorchos y bucles boca abajo.",
+        "Los pasajeros se sujetan con seguros arneses superiores mientras gritan y chillan de emoción.",
+        "Asciende poco a poco por una enorme pendiente de elevación motorizada antes de caer en picado a velocidad vertiginosa."
+      ],
+      "undercoverClues": [
+        "Una colosal rueda de observación vertical giratoria de acero con cabinas cerradas para pasajeros.",
+        "Gira a un ritmo lento y suave para ofrecer impresionantes vistas panorámicas de la ciudad y el puerto.",
+        "A menudo se ilumina con vibrantes espectáculos de luces neón computerizadas, formando un emblema frente al mar.",
+        "Una atracción romántica muy querida por parejas y turistas que buscan un paseo panorámico y relajado."
+      ]
+    },
+    {
+      "id": "daily-4-es",
+      "category": "daily",
+      "civilianWord": "Gafas de sol",
+      "undercoverWord": "Gafas protectoras",
+      "civilianClues": [
+        "Gafas protectoras con lentes oscuras o polarizadas para proteger los ojos del resplandor intenso.",
+        "Un accesorio de moda elegante que se usa en vacaciones soleadas en la playa, paseos en coche panorámicos y caminatas de verano.",
+        "Se apoyan suavemente sobre el puente de la nariz, con las patillas colocadas sobre ambas orejas.",
+        "Protege los delicados tejidos oculares de los rayos ultravioleta dañinos del sol al aire libre."
+      ],
+      "undercoverClues": [
+        "Anteojos de seguridad ajustados con juntas de sellado de goma suave alrededor de las cuencas oculares.",
+        "Se sujetan en la parte posterior de la cabeza con una correa elástica ajustable para nadar bajo el agua o esquiar.",
+        "Tratado con recubrimientos antivaho para mantener la visión clara bajo el agua o bajo nieve intensa.",
+        "Evita que el cloro irritante de la piscina, el agua salada del océano o las salpicaduras químicas lastimen los ojos."
+      ]
+    },
+    {
+      "id": "daily-5-es",
+      "category": "daily",
+      "civilianWord": "Paracaídas",
+      "undercoverWord": "Sombrilla",
+      "civilianClues": [
+        "Una gran cúpula de tela semiesférica que frena el descenso de un objeto o persona que cae.",
+        "Se despliega durante excursiones de paracaidismo, lanzamientos aerotransportados militares o aterrizajes de cápsulas espaciales.",
+        "Se dirige tirando de dos mandos de control para maniobrar la dirección de vuelo hacia una zona de aterrizaje objetivo.",
+        "Requiere un plegado meticuloso y disciplinado en un arnés de mochila, ya que de ello depende la seguridad personal."
+      ],
+      "undercoverClues": [
+        "Un parasol decorativo y ligero de mano que se usa principalmente para proteger el rostro de la luz solar intensa.",
+        "A menudo se fabrica con papel delicado, encaje o seda que bloquea los rayos UV, con un mango de madera ornamentado.",
+        "Tradicionalmente se lleva como un elegante accesorio de moda durante las meriendas en jardines soleados.",
+        "Se diferencia de los paraguas para tormentas porque no está pensada para vientos fuertes ni lluvias torrenciales."
+      ]
+    }
+  ],
+  "de": [
+    {
+      "id": "tech-1-de",
+      "category": "tech",
+      "civilianWord": "ChatGPT",
+      "undercoverWord": "Claude",
+      "civilianClues": [
+        "Ein dialogfähiger KI-Assistent, der von einem bekannten Labor in San Francisco entwickelt wurde.",
+        "Löste mit seinem ikonischen grünen Drehlogo den weltweiten Boom der generativen KI aus.",
+        "Wird von Wissensarbeitern häufig für Programmierunterstützung und das Erstellen von Textentwürfen genutzt.",
+        "Bietet einen interaktiven Sprachmodus, Canvas-Bearbeitung und eine Premium-Stufe namens Plus."
+      ],
+      "undercoverClues": [
+        "Ein nachdenklicher und wortgewandter dialogfähiger KI-Assistent, entwickelt von Anthropic.",
+        "Berühmt für sein großes Kontextfenster und seinen natürlichen, menschenähnlichen Denkstil.",
+        "Von Softwareentwicklern weithin geschätzt für tiefes Verständnis von Codebasen und Programmierung.",
+        "Seine Flaggschiff-Modellreihe zeichnet sich durch Stufen wie Sonnet und Opus aus."
+      ]
+    },
+    {
+      "id": "tech-2-de",
+      "category": "tech",
+      "civilianWord": "Ohrhörer",
+      "undercoverWord": "Hörgerät",
+      "civilianClues": [
+        "Kompakte kabellose Audiokapseln, die direkt in deinen Gehörgängen platziert werden.",
+        "Wird von einem taschenformatigen Akku-Ladeetui mit Klappdeckel und Geräuschunterdrückung begleitet.",
+        "Der übliche Hörbegleiter in der U-Bahn, beim Cardio-Training oder beim Spazierengehen.",
+        "Wenn eines der beiden kleinen In-Ear-Geräte eines Paares in den Spalt am Bahnsteig fällt, ist das für Pendler ein Albtraum."
+      ],
+      "undercoverClues": [
+        "Ein diskretes elektronisches Mini-Hilfsgerät, das im oder hinter dem Ohr getragen wird.",
+        "Erfasst Sprache aus der Umgebung über Mikrofone und verstärkt Tonfrequenzen klar.",
+        "Wird von Hörakustikern angepasst und programmiert, damit Senioren Gesprächen folgen können.",
+        "Wird als spezialisiertes Medizingerät eingestuft, das die alltägliche Hörklarheit wiederherstellt."
+      ]
+    },
+    {
+      "id": "tech-3-de",
+      "category": "tech",
+      "civilianWord": "Tastatur",
+      "undercoverWord": "Schreibmaschine",
+      "civilianClues": [
+        "Ein Desktop-Zubehör für den Computer mit Tastenreihen zur Eingabe von Text und Befehlen.",
+        "Tippt mit deutlich spürbaren Klicks und wird von Gamern, Schriftstellern und Programmierern geschätzt.",
+        "Wird oft mit bunten Tastenkappen, mechanischen Schaltern und leuchtenden RGB-Lichtern individualisiert.",
+        "Wird nach Schalterstilen wie Linear-, Clicky- oder Tactile-Varianten kategorisiert."
+      ],
+      "undercoverClues": [
+        "Ein klassisches mechanisches Gerät mit Tastatur, das Buchstaben unmittelbar auf Papier überträgt.",
+        "Jeder Tastenanschlag drückt ein Farbband gegen Papier und erzeugt ein unverkennbares Klacken.",
+        "Benötigt weder Computermonitor noch Steckdose, um Dokumente zu tippen.",
+        "Verfügt über eine drehbare Papiertrommel und einen manuellen Wagenrücklauf mit Glockenton."
+      ]
+    },
+    {
+      "id": "tech-4-de",
+      "category": "tech",
+      "civilianWord": "Drohne",
+      "undercoverWord": "Drachen",
+      "civilianClues": [
+        "Ein ferngesteuerter Multikopter, der mit rotierenden Propellern in der Luft schwebt.",
+        "Mit hochauflösenden Gimbal-Kameras ausgestattet, um weitläufige Landschaftsaufnahmen zu machen.",
+        "Verfügt über GPS-Satellitenpositionierung und eine automatische Rückkehrfunktion bei niedrigem Akkustand.",
+        "Wird von Luftfahrtbehörden reguliert, mit streng festgelegten Flugverbotszonen rund um Flughäfen."
+      ],
+      "undercoverClues": [
+        "Ein an einer Leine geführtes aerodynamisches Fluggerät aus leichtem Stoff, der über ein Gestell gespannt ist.",
+        "Erhebt sich in den Himmel, allein angetrieben von stetigen natürlichen Winden im Freien.",
+        "Wird vom Boden aus mit einer handgehaltenen Spule mit reißfester Schnur gesteuert.",
+        "Ein traditioneller Frühlingsanblick, der über windigen offenen Wiesen in öffentlichen Parks schwebt."
+      ]
+    },
+    {
+      "id": "tech-5-de",
+      "category": "tech",
+      "civilianWord": "Powerbank",
+      "undercoverWord": "Generator",
+      "civilianClues": [
+        "Ein tragbarer rechteckiger Lithium-Akku zum Aufladen mobiler Geräte unterwegs.",
+        "Ein unverzichtbarer Reisebegleiter, wenn der Smartphone-Akku unterwegs leer wird.",
+        "Mit USB-A- und USB-C-Ausgangsanschlüssen, die Schnellladeprotokolle unterstützen.",
+        "Muss seine Milliamperestunden-Kapazität deutlich anzeigen, um Flughafen-Sicherheitskontrollen zu passieren."
+      ],
+      "undercoverClues": [
+        "Eine robuste Maschine, die mechanische Energie oder Brennstoffenergie in elektrischen Strom umwandelt.",
+        "Springt ein, um Ersatzstrom zu liefern, wenn die Stromnetze in der Nachbarschaft ausfallen.",
+        "Wird üblicherweise mit Diesel oder Benzin betrieben und brummt laut vor Baustellen.",
+        "Stationäres Notstromgerät, unverzichtbar für Krankenhäuser und abgelegene Hütten ohne Netzanschluss."
+      ]
+    },
+    {
+      "id": "food-1-de",
+      "category": "food",
+      "civilianWord": "Latte",
+      "undercoverWord": "Cappuccino",
+      "civilianClues": [
+        "Ein beliebtes Espressogetränk nach italienischem Vorbild, zubereitet mit viel aufgeschäumter Milch.",
+        "Mit einer zarten, dünnen Schicht Microfoam verfeinert, oft mit hübschem Blattmotiv verziert.",
+        "Milder, cremiger und sanfter als ein Americano oder ein konzentrierter Cortado.",
+        "Einer der am häufigsten bestellten Morgenkaffees in Cafés weltweit."
+      ],
+      "undercoverClues": [
+        "Ein traditionelles Espressogetränk, geschichtet aus je einem Drittel Kaffee, Milch und dickem Schaum.",
+        "Gekrönt von einer hohen, luftigen Haube aus Schaum, bestäubt mit Kakaopulver.",
+        "Hat unter seiner samtigen Schaumkrone einen deutlich kräftigeren, ausgeprägteren Kaffeecharakter.",
+        "Wird in Italien traditionell ausschließlich zum Frühstück zusammen mit Gebäck genossen."
+      ]
+    },
+    {
+      "id": "food-2-de",
+      "category": "food",
+      "civilianWord": "Coca-Cola",
+      "undercoverWord": "Pepsi",
+      "civilianClues": [
+        "Das ikonische dunkle kohlensäurehaltige Erfrischungsgetränk, serviert in berühmten leuchtend roten Aluminiumdosen.",
+        "Basiert auf einem legendären Sirup mit Geheimrezept, der vor über einem Jahrhundert in Atlanta entwickelt wurde.",
+        "Bietet eine knackige Vanille-Gewürz-Kohlensäure, die gut zu Burgern und Popcorn passt.",
+        "Seine Werbung in der Weihnachtszeit hat historisch das moderne Bild des fröhlichen Weihnachtsmanns populär gemacht."
+      ],
+      "undercoverClues": [
+        "Ein berühmtes süßes kohlensäurehaltiges Erfrischungsgetränk, erkennbar am kreisförmigen Logo in Blau, Rot und Weiß.",
+        "Gekennzeichnet durch einen etwas süßeren, zitrusbetonten Geschmacksauftakt.",
+        "Hat berühmtermaßen hochkarätige Musikstars und Halbzeitshows in Stadien gesponsert.",
+        "War Pionier bei Marketingkampagnen mit Blindverkostungen, die konkurrierende Limonaden in Supermarktregalen verglichen."
+      ]
+    },
+    {
+      "id": "food-3-de",
+      "category": "food",
+      "civilianWord": "Burger",
+      "undercoverWord": "Sandwich",
+      "civilianClues": [
+        "Eine warme Fast-Food-Mahlzeit mit einem gewürzten Patty in einem aufgeschnittenen runden Brötchen.",
+        "Belegt mit geschmolzenem Cheddar, knackigem Salat, Tomatenscheiben, Gurken und Saucen.",
+        "Ein weltweiter Diner-Klassiker, meist zusammen mit goldgelben Pommes frites und Milchshakes serviert.",
+        "Wird am Drive-thru-Schalter in Papier eingewickelt mit beiden Händen gehalten."
+      ],
+      "undercoverClues": [
+        "Eine vielseitige Mahlzeit aus geschichtetem Aufschnitt, Käse und Aufstrichen zwischen Brotscheiben.",
+        "Benannt nach einem britischen Earl aus dem 18. Jahrhundert, der essen wollte, ohne sein Kartenspiel zu unterbrechen.",
+        "Wird häufig aus quadratischen Brotscheiben zusammengestellt, die diagonal in dreieckige Hälften geschnitten werden.",
+        "Ein unverzichtbarer Klassiker in der Brotzeitbox für Schulpausen, Picknicks und Bürotische."
+      ]
+    },
+    {
+      "id": "food-4-de",
+      "category": "food",
+      "civilianWord": "Eiscreme",
+      "undercoverWord": "Eis am Stiel",
+      "civilianClues": [
+        "Ein reichhaltiges gefrorenes Milchdessert, hergestellt aus gesüßter Sahne, Milch, Zucker und Aromen.",
+        "Wird in Waffelhörnchen, Bechern oder Eisbechern mit Toppings wie Fudge und Streuseln serviert.",
+        "Während des Gefrierens aufgeschlagen, um Luft einzubringen, was eine glatte und gut portionierbare Konsistenz ergibt.",
+        "Sommerklassiker, der in Eisdielen in klassischen Sorten wie Vanille und Schokoladenstückchen verkauft wird."
+      ],
+      "undercoverClues": [
+        "Ein erfrischender, wasserbasierter aromatisierter gefrorener Snack auf einem flachen Holzstiel.",
+        "Hergestellt, indem Fruchtsaft, Sirup oder Püree in senkrechten Formen fest gefroren wird.",
+        "Wird direkt vom Holzstiel geleckt oder abgebissen, oft in leuchtenden Kirsch- oder Blue-Raspberry-Farbtönen.",
+        "Kann klebrigen, bunten Sirup über die Finger laufen lassen, wenn es unter der heißen Sonne zu schnell schmilzt."
+      ]
+    },
+    {
+      "id": "food-5-de",
+      "category": "food",
+      "civilianWord": "Joghurt",
+      "undercoverWord": "Milch",
+      "civilianClues": [
+        "Ein cremiges fermentiertes Milchprodukt, das mit lebenden, nützlichen probiotischen Bakterien kultiviert wird.",
+        "Hat einen angenehm säuerlichen, leicht herben Geschmack und wird oft mit Honig oder Beerenkompott gesüßt.",
+        "Wird mit einem Löffel aus Plastikbechern gelöffelt oder in Frühstücks-Fruchtparfaits geschichtet.",
+        "Griechische abgetropfte Sorten werden für ihre dicke Konsistenz und ihren hohen Proteingehalt geschätzt."
+      ],
+      "undercoverClues": [
+        "Ein gesundes, weißes, nährstoffreiches Getränk, das Säugetiere bilden, besonders Rinder.",
+        "Wird über Frühstückszerealien gegossen, in heißen Tee gegeben oder in Pfannkuchenteig eingerührt.",
+        "Wird in Pappkartons oder Kunststoff-Gallonenbehältern in der Kühlschranktür aufbewahrt.",
+        "Man unterscheidet Varianten nach dem Fettgehalt der Butter, etwa vollfett, fettreduziert, fettarm oder entrahmte Sorten."
+      ]
+    },
+    {
+      "id": "culture-1-de",
+      "category": "culture",
+      "civilianWord": "Sherlock Holmes",
+      "undercoverWord": "Hercule Poirot",
+      "civilianClues": [
+        "Ein legendärer viktorianischer Beratungsdetektiv mit Büro in der Baker Street 221B in London.",
+        "Löst verblüffende Kriminalfälle durch brillante forensische Deduktion, begleitet von Dr. Watson.",
+        "Die ikonische visuelle Silhouette zeigt eine Deerstalker-Mütze, einen Inverness-Umhang und eine gebogene Pfeife.",
+        "Liefert sich ein intellektuelles Duell mit dem kriminellen Mastermind Professor Moriarty."
+      ],
+      "undercoverClues": [
+        "Ein renommierter belgischer Privatdetektiv, gefeiert für seinen sorgfältig gewachsten Schnurrbart.",
+        "Löst spektakuläre Fälle wie den Orientexpress und verlässt sich dabei auf die Präzision seiner kleinen grauen Zellen.",
+        "Besessen von höchster Ordnung, Sauberkeit und Symmetrie in allen häuslichen Alltagsangelegenheiten.",
+        "Die weltberühmte Detektivfigur, erschaffen von der gefeierten Krimiautorin Agatha Christie."
+      ]
+    },
+    {
+      "id": "culture-2-de",
+      "category": "culture",
+      "civilianWord": "Spider-Man",
+      "undercoverWord": "Batman",
+      "civilianClues": [
+        "Ein schlagfertiger jugendlicher Superheld, der an synthetischen Netzen zwischen Manhattans Wolkenkratzern schwingt.",
+        "Erlangte akrobatische Wandkrabbel-Fähigkeiten nach einem versehentlichen Biss einer radioaktiven Spinne.",
+        "Gelenkt von dem unsterblichen moralischen Grundsatz, dass große Macht große Verantwortung mit sich bringt.",
+        "Unter dem rot-blauen maskierten Anzug steckt ein brillanter Wissenschaftsstudent namens Peter Parker."
+      ],
+      "undercoverClues": [
+        "Der düstere Vigilant und Beschützer von Gotham City, der Verbrechen ohne übermenschliche Kräfte bekämpft.",
+        "Tagsüber ein wohlhabender Milliardär und Industrieller, nachts versetzt er Schurkenherzen in Angst und Schrecken.",
+        "Arbeitet von einem unterirdischen Höhlen-Kommandozentrum aus, unterstützt von seinem loyalen Butler Alfred.",
+        "Rüstet sich mit taktischer Panzerung, einem fledermausförmigen Emblem, Spezialgadgets und einem schnittigen Auto aus."
+      ]
+    },
+    {
+      "id": "culture-3-de",
+      "category": "culture",
+      "civilianWord": "Harry Potter",
+      "undercoverWord": "Percy Jackson",
+      "civilianClues": [
+        "Der Junge, der als Zauberer von seiner magischen Herkunft erfuhr, als er mit elf Jahren einen Brief per Eule erhielt.",
+        "Trägt eine legendäre blitzförmige Narbe auf der Stirn, weil er den Dunklen Lord überlebt hat.",
+        "Besucht ein schottisches Internatsschloss der Zauberei und wird dem mutigen scharlachroten Haus Gryffindor zugeteilt.",
+        "Fängt den Goldenen Schnatz bei rasanten Quidditch-Spielen auf fliegenden Besen."
+      ],
+      "undercoverClues": [
+        "Ein moderner Highschool-Schüler, der entdeckt, dass er der mythologische Halbgott-Sohn von Poseidon ist.",
+        "Verbringt die Sommer mit Training in einem geheimen Camp auf Long Island, zusammen mit Satyrn und mythologischen Helden.",
+        "Beherrscht Wasserströmungen, atmet unter Wasser und führt einen Stift, der sich in ein Schwert verwandelt.",
+        "Bricht zu Quests durch das moderne Amerika auf und stellt sich mythischen griechischen Monstern und olympischen Gottheiten."
+      ]
+    },
+    {
+      "id": "culture-4-de",
+      "category": "culture",
+      "civilianWord": "Vampir",
+      "undercoverWord": "Werwolf",
+      "civilianClues": [
+        "Ein unsterbliches nächtliches gotisches Monster aus europäischer Mythologie, das sich von menschlichem Blut ernährt.",
+        "Wirft kein Spiegelbild in Glasflächen und erleidet tödliche Verbrennungen bei direktem Sonnenlicht.",
+        "Traditionell lassen sie sich mit streng riechenden Knoblauchzehen, Holzpflöcken und heiligen Relikten abwehren.",
+        "Wird oft in Samtumhängen in siebenbürgischen Schlössern dargestellt, wie er sich in fliegende Fledermäuse verwandelt."
+      ],
+      "undercoverClues": [
+        "Ein verfluchter Mensch, der sich bei Vollmond unfreiwillig in eine gefräßige hundeartige Bestie verwandelt.",
+        "Ausgestattet mit furchterregender Körperkraft, messerscharfen Krallen und einem schaurig-traurigen Mitternachtsheulen.",
+        "Der Volksglaube besagt, dass ihre einzige wahre tödliche Schwachstelle darin liegt, mit Silbermunition beschossen zu werden.",
+        "Kämpft mit dem tragischen Verlust der Menschlichkeit, während er in urtümlichen Rudeln durch schattige Wälder streift."
+      ]
+    },
+    {
+      "id": "culture-5-de",
+      "category": "culture",
+      "civilianWord": "Zauberkünstler",
+      "undercoverWord": "Hypnotiseur",
+      "civilianClues": [
+        "Ein Unterhaltungskünstler, der Illusionen und Fingerfertigkeit vorführt, um das Publikum zu verblüffen.",
+        "Bekannt dafür, weiße Kaninchen aus seidenen Zylindern zu ziehen, Assistentinnen zu zersägen und Karten zu mischen.",
+        "Verrät niemals die geheimen Methoden hinter seinen verblüffenden Salonkunststücken und Bühnentäuschungen.",
+        "Trägt schwarze Bühnen-Smokings und gestikuliert dramatisch mit einem schlanken Zauberstab."
+      ],
+      "undercoverClues": [
+        "Ein Praktizierender, der Personen in einen entspannten, stark suggestiblen Trancezustand führt.",
+        "Nutzt oft eine schwingende Taschenuhr oder einen rhythmisch beruhigenden Sprechgesang, um Fokussierung herbeizuführen.",
+        "Führt komödiantische Bühnendemonstrationen oder klinische Therapiesitzungen durch, um Gewohnheiten zu brechen.",
+        "Weist Freiwillige an, humorvolle Suggestionen auszuspielen, bevor er mit den Fingern schnippt, um sie zu wecken."
+      ]
+    },
+    {
+      "id": "daily-1-de",
+      "category": "daily",
+      "civilianWord": "Aufzug",
+      "undercoverWord": "Rolltreppe",
+      "civilianClues": [
+        "Eine vertikale Personenkabine, die von Seilen und Gegengewichten in einem Gebäudeschacht hochgezogen wird.",
+        "Befördert Büroangestellte und Anwohner schnell zwischen den Stockwerken von Wolkenkratzern.",
+        "Ausgestattet mit Bedienpanels im Inneren, Etagen-Signaltönen und Notruftelefonen.",
+        "In den frühen Morgenstoßzeiten bilden sich dichte Warteschlangen in den Fluren der Firmenlobbys."
+      ],
+      "undercoverClues": [
+        "Eine motorisierte Fahrtreppe aus Metallstufen, die Personen zwischen benachbarten Etagen befördert.",
+        "Ausgestattet mit geriffelten Aluminiumstufen, die kontinuierlich neben Gummihandläufen umlaufen.",
+        "Häufig in belebten Einkaufszentren, Flughafenterminals und Verkehrsstationen zu finden.",
+        "Die Etikette empfiehlt Fahrgästen, auf einer Seite zu stehen und auf der anderen zu gehen."
+      ]
+    },
+    {
+      "id": "daily-2-de",
+      "category": "daily",
+      "civilianWord": "Regenschirm",
+      "undercoverWord": "Regenmantel",
+      "civilianClues": [
+        "Ein zusammenklappbares Schirmdach aus wasserdichtem Stoff, das von gelenkigen Metallstreben an einem Griff getragen wird.",
+        "Wird mit der Hand getragen und über den Kopf aufgespannt, um vor plötzlichem Regen oder greller Sonne zu schützen.",
+        "Wird häufig in Bussen, U-Bahnen oder Eingangsständern vergessen und zurückgelassen.",
+        "Kann sich bei starken Seitenwinden während stürmischer Regengüsse unerwartet umstülpen."
+      ],
+      "undercoverClues": [
+        "Eine wasserdichte, tragbare Jacke mit Kapuze, die dafür gemacht ist, Kleidung bei nassem Wetter trocken zu halten.",
+        "Wird mit Knöpfen, Reißverschlüssen oder Kordelzügen befestigt und lässt beide Hände frei zum Tragen von Taschen oder Radfahren.",
+        "Hergestellt aus leichtem synthetischem Nylon, beschichtetem PVC oder atmungsaktiven Gore-Tex-Membranen.",
+        "Leuchtend gelbe Varianten sind eine klassische Schutzwahl für Kleinkinder, Fischer und Seeleute."
+      ]
+    },
+    {
+      "id": "daily-3-de",
+      "category": "daily",
+      "civilianWord": "Achterbahn",
+      "undercoverWord": "Riesenrad",
+      "civilianClues": [
+        "Eine Nervenkitzel-Attraktion in Freizeitparks, bei der Wagen über verschlungene Stahlschienen rasen.",
+        "Liefert atemberaubende Beschleunigung mit steilen Gefällen, Korkenziehern und Überschlagsschleifen.",
+        "Fahrgäste werden in sicheren Überkopf-Bügeln angeschnallt, während sie vor Vergnügen rufen und kreischen.",
+        "Rattert langsam einen hoch aufragenden, motorisierten Auffahrtshügel hinauf, bevor sie mit halsbrecherischer Geschwindigkeit hinabstürzt."
+      ],
+      "undercoverClues": [
+        "Ein kolossales, sich drehendes, aufrechtes Stahl-Aussichtsrad mit geschlossenen Fahrgastkabinen.",
+        "Dreht sich in einem langsamen, sanften Tempo und bietet atemberaubende Panoramablicke auf Skyline und Hafen.",
+        "Oft von lebhaften, computergesteuerten Neonlicht-Installationen beleuchtet, bildet es ein Wahrzeichen an der Uferpromenade.",
+        "Eine beliebte romantische Attraktion für Paare und Ausflügler, die eine entspannte Panoramafahrt suchen."
+      ]
+    },
+    {
+      "id": "daily-4-de",
+      "category": "daily",
+      "civilianWord": "Sonnenbrille",
+      "undercoverWord": "Schutzbrille",
+      "civilianClues": [
+        "Schutzbrille mit dunkel getönten oder polarisierten Gläsern, die die Augen vor greller Blendung schützt.",
+        "Ein stilvolles Modeaccessoire, getragen bei sonnigen Strandurlauben, Panoramafahrten und Sommerpaziergängen.",
+        "Liegt sanft auf dem Nasenrücken und die Bügel ruhen hinter beiden Ohren.",
+        "Schützt empfindliches Augengewebe im Freien vor schädlicher ultravioletter Sonnenstrahlung."
+      ],
+      "undercoverClues": [
+        "Eine eng anliegende Augenschutzausrüstung mit weichen Saugdichtungen aus Gummi rund um die Augenhöhlen.",
+        "Wird mit einem verstellbaren elastischen Band am Hinterkopf befestigt, für Unterwasserschwimmen oder Skifahren.",
+        "Mit Anti-Beschlag-Beschichtungen behandelt, damit die Sicht unter Wasser oder bei starkem Schneefall klar bleibt.",
+        "Schützt die Augen vor stechendem Poolchlor, Meeressalzwasser oder umherfliegenden Chemikalienspritzern."
+      ]
+    },
+    {
+      "id": "daily-5-de",
+      "category": "daily",
+      "civilianWord": "Fallschirm",
+      "undercoverWord": "Sonnenschirm",
+      "civilianClues": [
+        "Eine große halbkugelförmige Stoffkappe, die den Fall eines Objekts oder einer Person abbremst.",
+        "Kommt beim Absprung aus Flugzeugen, bei militärischen Luftlandungen oder bei der Landung von Raumfahrzeugkapseln zum Einsatz.",
+        "Wird durch Ziehen zweier Steuerleinen gelenkt, um die Flugrichtung zu einer Ziel-Landezone zu manövrieren.",
+        "Erfordert sorgfältiges, diszipliniertes Packen in ein Rucksackgeschirr, da die persönliche Sicherheit davon abhängt."
+      ],
+      "undercoverClues": [
+        "Ein dekorativer, leichter Handschirm, der vor allem das Gesicht vor hellem Sonnenschein schützt.",
+        "Oft aus feinem Papier, Spitze oder UV-blockierender Seide mit verziertem Holzgriff gefertigt.",
+        "Wird traditionell als elegantes Modeaccessoire bei sonnigen Garten-Teepartys getragen.",
+        "Unterscheidet sich von Sturmregenschirmen, da er nicht für starken Wind oder Starkregen gedacht ist."
+      ]
+    }
+  ],
+  "fr": [
+    {
+      "id": "tech-1-fr",
+      "category": "tech",
+      "civilianWord": "ChatGPT",
+      "undercoverWord": "Claude",
+      "civilianClues": [
+        "Un assistant IA conversationnel développé par un laboratoire bien connu à San Francisco.",
+        "A lancé l’essor mondial de l’IA générative avec son emblématique logo vert tournant.",
+        "Largement utilisé par les travailleurs du savoir pour l’assistance au codage et la rédaction de textes.",
+        "Propose un mode vocal interactif, l’édition sur canvas et une offre premium nommée Plus."
+      ],
+      "undercoverClues": [
+        "Un assistant IA conversationnel réfléchi et éloquent conçu par Anthropic.",
+        "Réputé pour sa vaste fenêtre de contexte et son style de raisonnement naturel, proche de l’humain.",
+        "Largement apprécié des développeurs pour sa compréhension approfondie des bases de code et le codage.",
+        "Sa série phare de générations de modèles se distingue par des niveaux comme Sonnet et Opus."
+      ]
+    },
+    {
+      "id": "tech-2-fr",
+      "category": "tech",
+      "civilianWord": "Écouteurs",
+      "undercoverWord": "Appareil auditif",
+      "civilianClues": [
+        "De compacts capsules audio sans fil placées directement dans vos conduits auditifs.",
+        "Accompagné d’un étui de charge à clapet de la taille d’une poche, avec réduction de bruit.",
+        "Compagnon d’écoute standard dans le métro, pendant le cardio ou en marchant.",
+        "Perdre une oreillette de la paire dans l’interstice d’un quai de train est un cauchemar pour les navetteurs."
+      ],
+      "undercoverClues": [
+        "Un appareil électronique d’assistance miniature et discret porté dans ou derrière l’oreille.",
+        "Capte la parole ambiante via des microphones et amplifie clairement les fréquences sonores.",
+        "Personnalisé et programmé par des audiologistes pour aider les seniors à suivre les conversations.",
+        "Classé comme équipement médical spécialisé qui restaure la clarté acoustique au quotidien."
+      ]
+    },
+    {
+      "id": "tech-3-fr",
+      "category": "tech",
+      "civilianWord": "Clavier",
+      "undercoverWord": "Machine à écrire",
+      "civilianClues": [
+        "Un périphérique d’ordinateur de bureau doté de rangées de touches pour saisir du texte et des commandes.",
+        "Produit des clics tactiles distincts et est apprécié des joueurs, des écrivains et des développeurs.",
+        "Souvent personnalisé avec des capuchons de touches colorés, des switchs mécaniques et des lumières RGB.",
+        "Classé selon des styles d’interrupteurs comme les variantes Linear, Clicky ou Tactile."
+      ],
+      "undercoverClues": [
+        "Un appareil mécanique vintage à clavier et à frappe, qui dépose les caractères directement sur du papier physique.",
+        "Chaque frappe vient frapper un ruban encreur contre le papier avec un claquement reconnaissable.",
+        "Ne nécessite ni écran d’ordinateur ni prise électrique pour taper des documents.",
+        "Dotée d’un cylindre rotatif et d’un retour chariot manuel qui tinte avec une cloche."
+      ]
+    },
+    {
+      "id": "tech-4-fr",
+      "category": "tech",
+      "civilianWord": "Drone",
+      "undercoverWord": "Cerf-volant",
+      "civilianClues": [
+        "Un multicoptère piloté à distance qui reste en vol stationnaire grâce à des hélices en rotation.",
+        "Équipé de caméras stabilisées haute définition pour capturer de vastes paysages.",
+        "Doté d’un positionnement satellite GPS et d’un retour automatique en cas de batterie faible.",
+        "Réglementé par les autorités aéronautiques avec des zones d’exclusion aérienne strictement définies autour des aéroports."
+      ],
+      "undercoverClues": [
+        "Un engin aérodynamique captif fait d’une toile légère tendue sur une armature.",
+        "S’élève dans le ciel propulsé entièrement par des brises naturelles régulières à l’extérieur.",
+        "Contrôlé depuis le sol à l’aide d’un moulinet tenu à la main et garni d’une ficelle solide.",
+        "Spectacle traditionnel du printemps flottant au-dessus des prairies dégagées et venteuses des parcs publics."
+      ]
+    },
+    {
+      "id": "tech-5-fr",
+      "category": "tech",
+      "civilianWord": "Batterie externe",
+      "undercoverWord": "Générateur",
+      "civilianClues": [
+        "Une batterie lithium rectangulaire portable utilisée pour recharger les appareils mobiles en déplacement.",
+        "Un indispensable en voyage lorsque la batterie de votre smartphone se vide en déplacement.",
+        "Équipé de ports de sortie USB-A et USB-C compatibles avec les protocoles de charge rapide.",
+        "Doit afficher clairement sa capacité en milliampères-heures pour passer les contrôles de sécurité aéroportuaires."
+      ],
+      "undercoverClues": [
+        "Une machine robuste qui convertit l’énergie mécanique ou le carburant en courant électrique.",
+        "Entre en action pour fournir une alimentation de secours lorsque les réseaux électriques du quartier tombent en panne.",
+        "Souvent alimenté au diesel ou à l’essence, il ronronne bruyamment devant les chantiers.",
+        "Équipement d’urgence fixe indispensable aux hôpitaux et aux cabanes isolées hors réseau."
+      ]
+    },
+    {
+      "id": "food-1-fr",
+      "category": "food",
+      "civilianWord": "Latte",
+      "undercoverWord": "Cappuccino",
+      "civilianClues": [
+        "Une boisson espresso populaire d’inspiration italienne préparée avec beaucoup de lait vaporisé.",
+        "Surmonté d’une fine couche délicate de mousse de lait, souvent ornée d’un joli motif de feuille.",
+        "Plus doux, plus crémeux et plus onctueux qu’un Americano ou un cortado concentré.",
+        "L’une des boissons au café du matin les plus commandées dans les cafés du monde entier."
+      ],
+      "undercoverClues": [
+        "Une boisson espresso traditionnelle composée en tiers égaux de café, de lait et de mousse épaisse.",
+        "Couronné d’un dôme haut et aérien de mousse onctueuse saupoudrée de cacao en poudre.",
+        "Présente une attaque café nettement plus corsée et marquée sous sa tête veloutée.",
+        "Traditionnellement dégusté en Italie exclusivement au petit-déjeuner, accompagné de viennoiseries."
+      ]
+    },
+    {
+      "id": "food-2-fr",
+      "category": "food",
+      "civilianWord": "Coca-Cola",
+      "undercoverWord": "Pepsi",
+      "civilianClues": [
+        "La mythique boisson gazeuse sombre servie dans de célèbres canettes en aluminium rouge vif.",
+        "Utilise un sirop à la recette secrète légendaire, formulée il y a plus d’un siècle à Atlanta.",
+        "Offre une effervescence vive aux notes de vanille et d’épices qui accompagne burgers et pop-corn.",
+        "Sa publicité de Noël a historiquement popularisé l’image moderne du joyeux Père Noël."
+      ],
+      "undercoverClues": [
+        "Une célèbre soda sucré gazeux reconnaissable à son logo circulaire bleu, rouge et blanc en forme de globe.",
+        "Caractérisé par une explosion de saveur légèrement plus sucrée et dominée par les agrumes à la première gorgée.",
+        "A célèbrement sponsorisé des superstars de la musique et les spectacles de mi-temps des stades.",
+        "A lancé des campagnes marketing de tests de goût à l’aveugle comparant des sodas rivaux dans les rayons de supermarché."
+      ]
+    },
+    {
+      "id": "food-3-fr",
+      "category": "food",
+      "civilianWord": "Burger",
+      "undercoverWord": "Sandwich",
+      "civilianClues": [
+        "Un repas chaud de restauration rapide avec un steak haché assaisonné logé dans un petit pain rond tranché.",
+        "Surmonté de cheddar fondu, de laitue croquante, de tranches de tomate, de cornichons et de condiments.",
+        "Le favori universel des diners, généralement servi avec des frites dorées et des milkshakes.",
+        "Saisi à deux mains dans un emballage en papier aux guichets des drive-ins de restauration à emporter."
+      ],
+      "undercoverClues": [
+        "Un repas polyvalent préparé en superposant charcuteries, fromages et tartinades entre des tranches de pain.",
+        "Nommé d’après un comte britannique du XVIIIe siècle qui voulait manger sans interrompre ses parties de cartes.",
+        "Souvent assemblé avec des tranches de pain carrées coupées en diagonale en deux triangles.",
+        "Un incontournable du panier-repas pour les pauses à l’école, les pique-niques et les bureaux."
+      ]
+    },
+    {
+      "id": "food-4-fr",
+      "category": "food",
+      "civilianWord": "Glace",
+      "undercoverWord": "Glace à l’eau",
+      "civilianClues": [
+        "Une riche gourmandise glacée à base de produits laitiers, barattée avec de la crème sucrée, du lait, du sucre et des arômes.",
+        "Servi en cornets gaufrés, en coupes ou en bols de sundae avec des garnitures comme le fudge et les vermicelles.",
+        "Fouetté pendant la congélation pour incorporer de l’air, donnant une texture lisse et facile à prélever à la cuillère.",
+        "Incontournable estival vendu dans les glaciers, avec des parfums classiques comme la vanille et les pépites de chocolat."
+      ],
+      "undercoverClues": [
+        "Une collation glacée rafraîchissante à base d’eau aromatisée, montée sur un bâtonnet plat en bois.",
+        "Fabriqué en congelant du jus de fruits, du sirop ou de la purée dans des moules verticaux.",
+        "Léché ou croqué directement sur son bâtonnet en bois, souvent dans des teintes vives de cerise ou de framboise bleue.",
+        "Peut laisser couler un sirop coloré et collant sur vos doigts s’il fond trop vite sous le soleil ardent."
+      ]
+    },
+    {
+      "id": "food-5-fr",
+      "category": "food",
+      "civilianWord": "Yaourt",
+      "undercoverWord": "Lait",
+      "civilianClues": [
+        "Un produit laitier fermenté et crémeux, cultivé avec des bactéries probiotiques vivantes et bénéfiques.",
+        "A une saveur acidulée agréable, légèrement aigrelette, souvent sucrée avec du miel ou une compote de baies.",
+        "Prélevé à la cuillère dans des pots en plastique ou disposé en couches dans des parfaits aux fruits pour le petit-déjeuner.",
+        "Les variétés égouttées à la grecque sont prisées pour leur texture épaisse et leur teneur élevée en protéines."
+      ],
+      "undercoverClues": [
+        "Un liquide blanc nourrissant et riche en nutriments produit par les mammifères, surtout par les vaches.",
+        "Versé sur les céréales du petit-déjeuner, ajouté au thé chaud ou incorporé à la pâte à crêpes.",
+        "Conservé dans des briques en carton ou des bidons en plastique d’un gallon dans la porte du réfrigérateur.",
+        "Classé selon la teneur en matière grasse : entier, allégé, faible en gras ou écrémé."
+      ]
+    },
+    {
+      "id": "culture-1-fr",
+      "category": "culture",
+      "civilianWord": "Sherlock Holmes",
+      "undercoverWord": "Hercule Poirot",
+      "civilianClues": [
+        "Un légendaire détective-conseil victorien exerçant au 221B Baker Street, à Londres.",
+        "Résout des affaires criminelles déroutantes grâce à une brillante déduction médico-légale, accompagné du Dr Watson.",
+        "Sa silhouette emblématique arbore une casquette deerstalker, une cape Inverness et une pipe courbée.",
+        "Engagé dans un duel intellectuel contre le génie criminel Professeur Moriarty."
+      ],
+      "undercoverClues": [
+        "Un célèbre détective privé belge, réputé pour sa moustache méticuleusement cirée.",
+        "Résout des affaires retentissantes comme celle de l’Orient Express en s’appuyant sur la précision de ses petites cellules grises.",
+        "Obsédé par l’ordre absolu, la propreté et la symétrie dans tous les petits détails du quotidien domestique.",
+        "Le célèbre détective protagoniste créé par la romancière de mystère acclamée Agatha Christie."
+      ]
+    },
+    {
+      "id": "culture-2-fr",
+      "category": "culture",
+      "civilianWord": "Spider-Man",
+      "undercoverWord": "Batman",
+      "civilianClues": [
+        "Un super-héros adolescent plein d’esprit qui se balance entre les gratte-ciel de Manhattan sur des toiles synthétiques.",
+        "A acquis des capacités acrobatiques d’escalade des murs après la morsure accidentelle d’un arachnide radioactif.",
+        "Guidé par le principe moral immortel selon lequel un grand pouvoir implique de grandes responsabilités.",
+        "Sous la combinaison masquée rouge et bleue se cache un brillant étudiant en sciences nommé Peter Parker."
+      ],
+      "undercoverClues": [
+        "Le sombre justicier protecteur de Gotham City qui combat le crime sans aucun pouvoir surhumain.",
+        "Le jour, un riche industriel milliardaire ; la nuit, il sème la terreur dans le cœur des malfaiteurs.",
+        "Il opère depuis un centre de commandement dans une caverne souterraine, aidé de son fidèle majordome Alfred.",
+        "S'équipe d'une armure tactique, d'un emblème inspiré de la chauve-souris, de gadgets spécialisés et d'une voiture élégante."
+      ]
+    },
+    {
+      "id": "culture-3-fr",
+      "category": "culture",
+      "civilianWord": "Harry Potter",
+      "undercoverWord": "Percy Jackson",
+      "civilianClues": [
+        "Le jeune sorcier qui a découvert son héritage magique en recevant une lettre apportée par un hibou à onze ans.",
+        "Porte sur le front une cicatrice légendaire en forme d'éclair, séquelle de sa survie au Seigneur des Ténèbres.",
+        "Fréquente un château-internat écossais de sorcellerie, réparti dans la courageuse maison Gryffindor écarlate.",
+        "Attrape le Vif d'or lors de matchs de Quidditch sur balai à grande vitesse."
+      ],
+      "undercoverClues": [
+        "Un lycéen moderne qui découvre être le fils demi-dieu mythologique de Poséidon.",
+        "Passe ses étés à s'entraîner dans un camp secret de Long Island aux côtés de satyres et de héros mythologiques.",
+        "Contrôle les courants d'eau, respire sous l'eau et manie un stylo qui se transforme en épée.",
+        "Part en quête à travers l'Amérique moderne, affrontant des monstres grecs mythiques et des divinités olympiennes."
+      ]
+    },
+    {
+      "id": "culture-4-fr",
+      "category": "culture",
+      "civilianWord": "Vampire",
+      "undercoverWord": "Loup-garou",
+      "civilianClues": [
+        "Un monstre gothique nocturne immortel du folklore européen qui se nourrit de sang humain.",
+        "Ne projette aucun reflet dans les miroirs en verre et subit des brûlures mortelles au contact direct de la lumière du soleil.",
+        "La tradition veut qu'on puisse les repousser avec des gousses d'ail âcres, des pieux en bois et des reliques sacrées.",
+        "Souvent représenté en cape de velours dans des châteaux de Transylvanie, se métamorphosant en chauves-souris volantes."
+      ],
+      "undercoverClues": [
+        "Un humain maudit qui se transforme malgré lui en bête canine vorace sous la pleine lune.",
+        "Doté d'une force physique redoutable, de griffes acérées et d'un hurlement lugubre et glaçant à minuit.",
+        "Le folklore affirme que leur seule véritable vulnérabilité mortelle est d'être touché par des munitions en argent.",
+        "Lutte contre la perte tragique de son humanité tout en errant dans des forêts ombragées en meutes primitives."
+      ]
+    },
+    {
+      "id": "culture-5-fr",
+      "category": "culture",
+      "civilianWord": "Magicien",
+      "undercoverWord": "Hypnotiseur",
+      "civilianClues": [
+        "Un artiste qui exécute des illusions et des tours de passe-passe pour émerveiller le public.",
+        "Connu pour sortir des lapins blancs de hauts-de-forme en soie, scier des assistants en deux et mélanger des cartes.",
+        "Ne révèle jamais les méthodes secrètes derrière ses tours de salon déroutants et ses illusions de scène.",
+        "Porte des smokings de scène noirs et fait des gestes théâtraux avec une fine baguette à embout."
+      ],
+      "undercoverClues": [
+        "Un praticien qui guide les sujets vers un état de transe détendu et très suggestible.",
+        "Utilise souvent une montre de gousset oscillante ou une cadence apaisante et rythmée pour induire la concentration.",
+        "Réalise des démonstrations scéniques comiques ou des séances de thérapie clinique pour briser des habitudes.",
+        "Demande aux volontaires de jouer des suggestions humoristiques avant de claquer des doigts pour les réveiller."
+      ]
+    },
+    {
+      "id": "daily-1-fr",
+      "category": "daily",
+      "civilianWord": "Ascenseur",
+      "undercoverWord": "Escalier mécanique",
+      "civilianClues": [
+        "Une cabine verticale pour passagers, hissée par des câbles et des contrepoids dans la gaine d'un bâtiment.",
+        "Transporte rapidement les employés de bureau et les résidents entre les étages des gratte-ciel.",
+        "Équipé de panneaux de boutons intérieurs, de carillons d'indication d'étage et d'alarmes téléphoniques d'urgence.",
+        "Connaît des files d'attente bondées dans les couloirs du hall d'accueil des entreprises aux heures de pointe matinales."
+      ],
+      "undercoverClues": [
+        "Un dispositif mobile en métal, à marches continues, qui transporte les piétons entre les étages adjacents.",
+        "Équipé de marches en aluminium rainurées qui défilent en continu le long de mains courantes en caoutchouc.",
+        "Couramment présent dans les centres commerciaux animés, les terminaux d'aéroport et les stations de transport.",
+        "L'étiquette invite les passagers à se tenir d'un côté et à marcher de l'autre."
+      ]
+    },
+    {
+      "id": "daily-2-fr",
+      "category": "daily",
+      "civilianWord": "Parapluie",
+      "undercoverWord": "Imperméable",
+      "civilianClues": [
+        "Un dôme repliable en tissu imperméable, soutenu par des baleines métalliques articulées sur un manche.",
+        "Transporté à la main et déployé au-dessus de la tête pour se protéger d'une pluie soudaine ou d'un soleil éclatant.",
+        "Souvent oublié et laissé dans les bus, les métros ou les supports d’entrée conçus pour cet objet de pluie.",
+        "Peut se retourner de façon inattendue lorsqu'il est pris dans de puissants vents latéraux pendant des averses orageuses."
+      ],
+      "undercoverClues": [
+        "Une veste à capuche, résistante à l’eau, conçue pour garder les vêtements au sec par temps humide.",
+        "Se ferme avec des boutons, des fermetures éclair ou des cordons de serrage, libérant les deux mains pour porter des sacs ou faire du vélo.",
+        "Fabriqué en nylon synthétique léger, en PVC enduit ou en membranes Gore-Tex respirantes.",
+        "Les versions jaune vif sont un choix de protection classique pour les tout-petits, les pêcheurs et les marins."
+      ]
+    },
+    {
+      "id": "daily-3-fr",
+      "category": "daily",
+      "civilianWord": "Montagnes russes",
+      "undercoverWord": "Grande roue",
+      "civilianClues": [
+        "Une attraction à sensations fortes de parc d'attractions avec des voitures de passagers qui filent sur des rails en acier tortueux.",
+        "Offre une accélération palpitante avec des chutes abruptes, des vrilles et des loopings tête en bas.",
+        "Les passagers sont sanglés dans des harnais de sécurité suspendus au-dessus d'eux, criant et hurlant de plaisir.",
+        "Grimpe lentement par à-coups une imposante montée motorisée avant de plonger vers le bas à une vitesse vertigineuse."
+      ],
+      "undercoverClues": [
+        "Une immense attraction d’observation en acier, dressée et rotative, avec des cabines fermées pour les passagers.",
+        "Tourne à un rythme lent et doux pour offrir des panoramas à couper le souffle sur la ville et le port.",
+        "Souvent éclairée par des spectacles de néons informatiques éclatants, formant un point de repère en bord de mer.",
+        "Une attraction romantique prisée des couples et des touristes en quête d'un tour panoramique détendu."
+      ]
+    },
+    {
+      "id": "daily-4-fr",
+      "category": "daily",
+      "civilianWord": "Lunettes de soleil",
+      "undercoverWord": "Lunettes de protection",
+      "civilianClues": [
+        "Lunettes de protection dotées de verres teintés foncés ou polarisés pour protéger les yeux d'un éblouissement intense.",
+        "Un accessoire de mode élégant porté lors de vacances ensoleillées à la plage, de balades panoramiques en voiture et de promenades estivales.",
+        "Repose délicatement sur l'arête du nez, les branches latérales passant derrière les deux oreilles.",
+        "Protège les tissus oculaires délicats des rayons ultraviolets nocifs du soleil en extérieur."
+      ],
+      "undercoverClues": [
+        "Un équipement oculaire ajusté, doté de joints souples en caoutchouc autour des orbites.",
+        "Fixées à l'arrière de la tête par une sangle élastique réglable pour la natation sous-marine ou le ski.",
+        "Traité avec des revêtements antibuée pour conserver une vision claire sous l’eau ou dans une neige abondante.",
+        "Empêche le chlore irritant des piscines, l’eau salée de l’océan ou les éclaboussures chimiques de blesser les yeux."
+      ]
+    },
+    {
+      "id": "daily-5-fr",
+      "category": "daily",
+      "civilianWord": "Parachute",
+      "undercoverWord": "Ombrelle",
+      "civilianClues": [
+        "Une grande voilure hémisphérique en tissu qui ralentit la descente d’un objet ou d’une personne en chute.",
+        "Déployé lors de sauts de loisir, de largages militaires aéroportés ou d’atterrissages de capsules spatiales.",
+        "Dirigé en tirant sur deux poignées de commande pour manœuvrer la direction du vol vers une zone d’atterrissage cible.",
+        "Nécessite un pliage méticuleux et discipliné dans son sac-harnais, car la sécurité personnelle en dépend."
+      ],
+      "undercoverClues": [
+        "Un accessoire léger et décoratif tenu à la main, principalement utilisé pour protéger le visage d’un fort ensoleillement.",
+        "Souvent fabriquée en papier délicat, en dentelle ou en soie anti-UV, avec un manche en bois orné.",
+        "Traditionnellement portée comme un accessoire de mode élégant lors de thés en jardin ensoleillés.",
+        "Diffère des parapluies de tempête car elle n’est pas conçue pour les vents violents ni les pluies torrentielles."
+      ]
+    }
+  ]
+}

@@ -1,19 +1,21 @@
+import auxiliary from "./extra-ui.json" with { type: "json" };
+import extra from "./locales.json" with { type: "json" };
+export type WidgetLocale = "en" | "zh-CN" | "zh-TW" | "ja" | "ko" | "es" | "de" | "fr";
+export function normalizeLocale(raw?: string): WidgetLocale {
+  const locale = (raw || "en").toLowerCase();
+  if (/^zh-(tw|hk|mo|hant)(-|$)/.test(locale)) return "zh-TW";
+  if (locale === "zh" || locale.startsWith("zh-")) return "zh-CN";
+  const language = locale.split("-")[0];
+  return language === "ja" || language === "ko" || language === "es" || language === "de" || language === "fr" ? language : "en";
+}
+
 import type { ComboType, Seat } from "./types";
 
-export type Locale = "zh-CN" | "zh-TW" | "en";
+export type Locale = WidgetLocale;
 
-let currentLocale: Locale = "zh-CN";
+let currentLocale: Locale = "en";
 
-export function setLocale(raw: string) {
-  const norm = raw.toLowerCase();
-  if (norm.startsWith("zh-tw") || norm.startsWith("zh-hk")) {
-    currentLocale = "zh-TW";
-  } else if (norm.startsWith("en")) {
-    currentLocale = "en";
-  } else {
-    currentLocale = "zh-CN";
-  }
-}
+export function setLocale(raw?: string) { currentLocale = normalizeLocale(raw); }
 
 export function getLocale(): Locale {
   return currentLocale;
@@ -317,6 +319,12 @@ const dict = {
     notifyResultMessage:
       "Dou Dizhu round finished: {winner} (final multiplier ×{multiplier}).",
   },
+
+  ja: extra.ja.messages,
+  ko: extra.ko.messages,
+  es: extra.es.messages,
+  de: extra.de.messages,
+  fr: extra.fr.messages,
 };
 
 export type TextKey = keyof (typeof dict)["zh-CN"];
@@ -325,13 +333,9 @@ export function t(
   key: TextKey,
   params?: Record<string, string | number>,
 ): string {
-  const table = dict[currentLocale] || dict["zh-CN"];
-  let str = table[key] || dict["zh-CN"][key] || key;
-  if (params) {
-    for (const [k, v] of Object.entries(params)) {
-      str = str.replaceAll(`{${k}}`, String(v));
-    }
-  }
+  const table = dict[currentLocale] || dict.en;
+  let str = table[key] || dict.en[key] || key;
+  str = str.replace(/\{(\w+)\}/g, (token, key) => params && Object.hasOwn(params, key) ? String(params[key]) : token);
   return str;
 }
 
@@ -347,7 +351,7 @@ export function botNameForSeat(seat: Seat): string {
   return t("playerBotSouth");
 }
 
-const comboNames: Record<Locale, Record<ComboType, string>> = {
+const comboNames: Record<"zh-CN" | "zh-TW" | "en", Record<ComboType, string>> = {
   "zh-CN": {
     single: "单张",
     pair: "对子",
@@ -399,9 +403,14 @@ const comboNames: Record<Locale, Record<ComboType, string>> = {
 };
 
 export function comboLabel(type: ComboType, mainRank: string): string {
-  const label = (comboNames[currentLocale] || comboNames["zh-CN"])[type];
+  const label = (currentLocale === "en" || currentLocale === "zh-CN" || currentLocale === "zh-TW" ? comboNames[currentLocale][type] : extra[currentLocale].combos[type]) ?? comboNames.en[type];
   if (type === "rocket") return label;
   const displayRank =
-    mainRank === "BJ" ? "小王" : mainRank === "RJ" ? "大王" : mainRank;
+    mainRank === "BJ" || mainRank === "RJ" ? (currentLocale === "zh-CN" || currentLocale === "zh-TW" ? (mainRank === "BJ" ? "小王" : "大王") : currentLocale === "en" ? (mainRank === "BJ" ? "Black Joker" : "Red Joker") : (extra[currentLocale].ranks[mainRank] ?? (mainRank === "BJ" ? "Black Joker" : "Red Joker"))) : mainRank;
   return `${label} (${displayRank})`;
+}
+
+export function ui(key: keyof typeof auxiliary.en, params?: Record<string, string | number>): string {
+  const value = auxiliary[currentLocale][key] ?? auxiliary.en[key] ?? key;
+  return value.replace(/\{(\w+)\}/g, (token, name) => params && Object.hasOwn(params, name) ? String(params[name]) : token);
 }

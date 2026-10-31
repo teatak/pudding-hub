@@ -199,7 +199,7 @@ if (
   else {
     const names = args.includes("--all")
       ? (await fs.readdir(path.join(ROOT, "extensions/widgets"), { withFileTypes: true }))
-          .filter((e) => e.isDirectory())
+          .filter((e) => e.isDirectory() && fsSync.existsSync(path.join(ROOT, "extensions/widgets", e.name, "manifest.json")))
           .map((e) => e.name)
       : [args.find((a) => !a.startsWith("--"))];
     for (const name of names)

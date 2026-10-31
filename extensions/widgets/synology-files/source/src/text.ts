@@ -1,4 +1,15 @@
-export type Locale = "zh-CN" | "zh-TW" | "en";
+import auxiliary from "./extra-ui.json" with { type: "json" };
+import extra from "./locales.json" with { type: "json" };
+export type WidgetLocale = "en" | "zh-CN" | "zh-TW" | "ja" | "ko" | "es" | "de" | "fr";
+export function normalizeLocale(raw?: string): WidgetLocale {
+  const locale = (raw || "en").toLowerCase();
+  if (/^zh-(tw|hk|mo|hant)(-|$)/.test(locale)) return "zh-TW";
+  if (locale === "zh" || locale.startsWith("zh-")) return "zh-CN";
+  const language = locale.split("-")[0];
+  return language === "ja" || language === "ko" || language === "es" || language === "de" || language === "fr" ? language : "en";
+}
+
+export type Locale = WidgetLocale;
 
 export const translations = {
   "zh-CN": {
@@ -97,28 +108,22 @@ export const translations = {
     notConnectedTitle: "No Synology NAS Connection Found",
     notConnectedDesc: "Please configure your Synology NAS connection in Plugins → Synology NAS first.",
   },
+
+  ja: extra.ja.messages,
+  ko: extra.ko.messages,
+  es: extra.es.messages,
+  de: extra.de.messages,
+  fr: extra.fr.messages,
 };
 
-let currentLocale: Locale = "zh-CN";
+let currentLocale: Locale = "en";
 
-export function setLocale(locale: string) {
-  if (locale.startsWith("zh-TW") || locale.startsWith("zh-HK")) {
-    currentLocale = "zh-TW";
-  } else if (locale.startsWith("en")) {
-    currentLocale = "en";
-  } else {
-    currentLocale = "zh-CN";
-  }
-}
+export function setLocale(raw?: string) { currentLocale = normalizeLocale(raw); }
 
 export function t(key: keyof typeof translations["zh-CN"], params?: Record<string, string | number>): string {
-  const dict = translations[currentLocale] || translations["zh-CN"];
-  let str = dict[key] || translations["zh-CN"][key] || key;
-  if (params) {
-    for (const [k, v] of Object.entries(params)) {
-      str = str.replace(new RegExp(`\\{${k}\\}`, "g"), String(v));
-    }
-  }
+  const dict = translations[currentLocale] || translations.en;
+  let str = dict[key] || translations.en[key] || key;
+  str = str.replace(/\{(\w+)\}/g, (token, key) => params && Object.hasOwn(params, key) ? String(params[key]) : token);
   return str;
 }
 
@@ -131,4 +136,9 @@ export function errorText(error: unknown): string {
   } catch {
     return String(error);
   }
+}
+
+export function ui(key: keyof typeof auxiliary.en, params?: Record<string, string | number>): string {
+  const value = auxiliary[currentLocale][key] ?? auxiliary.en[key] ?? key;
+  return value.replace(/\{(\w+)\}/g, (token, name) => params && Object.hasOwn(params, name) ? String(params[name]) : token);
 }

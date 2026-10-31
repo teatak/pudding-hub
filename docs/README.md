@@ -2,7 +2,7 @@
 
 [中文](README.zh-CN.md) · [Hub home](../README.md)
 
-Pudding has two extension types. **Plugins** connect external services. **Widgets** display content and provide interactive interfaces. They can work together or independently: the Gmail plugin provides mail APIs for the Gmail Board widget, while a Gomoku widget needs no external service.
+Pudding has two extension types. **Plugins** connect external services. **Widgets** display content and provide interactive interfaces. They can work together or independently: the Gmail plugin provides mail APIs for the GitHub Board widget, while a Gomoku widget needs no external service.
 
 App was the old name for a plugin and is no longer a separate extension type. New plugins use `plugin.yaml`.
 
@@ -33,7 +33,7 @@ Selecting an account chooses the data source. Granting clipboard or system notif
 | Example | What it demonstrates |
 | --- | --- |
 | [Shared Todo](../extensions/widgets/shared-todo/source/src/App.tsx) | Persistence and model-callable operations |
-| [Gmail Board](../extensions/widgets/gmail-board/source/widget.json) | Plugin sources and queries |
+| [GitHub Board](../extensions/widgets/github-board/source/widget.json) | Plugin sources and queries |
 | [GitHub plugin](../extensions/plugins/github/plugin.yaml) | REST endpoints and authentication |
 | [Synology plugin](../extensions/plugins/synology/plugin.yaml) | Custom service addresses and account login |
 | [Sequential Thinking](../extensions/plugins/sequential-thinking/plugin.yaml) | MCP endpoints and platform-specific commands |

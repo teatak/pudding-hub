@@ -19,3 +19,7 @@ Use the repository drawer/selector to list and filter by repository, or use GitH
 | `updateCards` | Atomic batch of 1–20 local statuses, notes and follow-up dates |
 | `saveCommentDraft` | Save or clear one local comment/review draft |
 | `refreshBoard` | Refresh GitHub reads without deleting local organization |
+
+## Eight-language update · 1.0.0
+
+Follows Pudding in English, Simplified Chinese, Traditional Chinese, Japanese, Korean, Spanish, German and French. Unsupported locales and missing entries fall back to English. Language changes preserve saved content and active game state; existing notification receipts retain their original text. Published older packages remain unchanged for older SDK hosts.
