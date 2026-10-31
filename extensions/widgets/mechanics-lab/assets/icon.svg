@@ -1,0 +1,23 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="128" height="128" rx="28" fill="#0B1324"/>
+  <rect x="6" y="6" width="116" height="116" rx="23" stroke="#38BDF8" stroke-opacity="0.35" stroke-width="2.5"/>
+  <!-- Coordinate Grid Lines -->
+  <path d="M22 96H106M32 24V104" stroke="#1E293B" stroke-width="2" stroke-linecap="round"/>
+  <!-- Inclined Plane Triangle -->
+  <path d="M26 96L98 96L26 50Z" fill="#1E293B" stroke="#38BDF8" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- Sliding Block on Ramp -->
+  <g transform="translate(54, 60) rotate(32.5)">
+    <rect x="-14" y="-20" width="28" height="20" rx="4" fill="#F59E0B" stroke="#FEF08A" stroke-width="2"/>
+    <!-- Normal Force Vector N -->
+    <path d="M0 -20V-42M0 -42L-5 -36M0 -42L5 -36" stroke="#22C55E" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Net Down-Slope Force Vector -->
+    <path d="M14 -10H38M38 -10L32 -15M38 -10L32 -5" stroke="#38BDF8" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <!-- Gravity Vector G (Vertical Down) -->
+  <path d="M50 56V86M50 86L45 80M50 86L55 80" stroke="#F43F5E" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Parabolic Strobe Trajectory Dots -->
+  <circle cx="62" cy="30" r="3.5" fill="#A855F7"/>
+  <circle cx="76" cy="34" r="3.5" fill="#A855F7"/>
+  <circle cx="89" cy="45" r="3.5" fill="#A855F7"/>
+  <circle cx="100" cy="64" r="4" fill="#FDE047" stroke="#A855F7" stroke-width="2"/>
+</svg>

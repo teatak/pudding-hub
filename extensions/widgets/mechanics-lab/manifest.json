@@ -1,0 +1,21 @@
+{
+  "id": "teatak/pudding-hub/widgets/mechanics-lab",
+  "version": "1.0.0-preview.1",
+  "preview": true,
+  "channel": "preview",
+  "title": {
+    "zh-CN": "经典力学实验室",
+    "zh-TW": "經典力學實驗室",
+    "en": "Mechanics Physics Lab"
+  },
+  "description": {
+    "zh-CN": "面向青少年物理启蒙的模块化互动力学实验台，内置斜面受力正交分解、平抛自由落体对比、动量碰撞与简谐振动，支持受力矢量图、能量守恒监控与 AI 实验导师联调。",
+    "zh-TW": "面向青少年物理啟蒙的模組化互動力學實驗台，內建斜面受力正交分解、平拋自由落體對比、動量碰撞與簡諧振動，支援受力向量圖、能量守恆監控與 AI 實驗導師聯調。",
+    "en": "Modular interactive classical mechanics lab with inclined-plane force decomposition, projectile vs. free-fall strobe comparison, momentum collisions, and harmonic oscillators, with live force vectors, energy bars, and AI Tutor controls."
+  },
+  "requires": {
+    "protocolVersion": 24,
+    "sdkVersion": "1"
+  },
+  "icon": "./assets/icon.svg"
+}
