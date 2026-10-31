@@ -20,6 +20,8 @@ import {
   Trophy,
   UserRound,
   UsersRound,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import { roles } from "./lobby";
 import { fillCandidates } from "./candidates";
@@ -45,6 +47,17 @@ import {
   start,
 } from "./game";
 import { t, errorText } from "./text";
+import {
+  isSoundMuted,
+  toggleSoundMute,
+  playStoneSound,
+  playTapSound,
+  playReadySound,
+  playCountdownTickSound,
+  playGameStartSound,
+  playWinSound,
+  playEndSound,
+} from "./sound";
 import "./style.css";
 
 // New host metadata and subscription methods are optional on older SDK 1 hosts.
@@ -156,6 +169,7 @@ export default function App() {
   const [danmaku, setDanmaku] = useState(true),
     [draft, setDraft] = useState("");
   const [showNumbers, setShowNumbers] = useState(false);
+  const [muted, setMuted] = useState(isSoundMuted());
   const [replay, setReplay] = useState<{
     round: number;
     moveCount: number;
@@ -241,6 +255,72 @@ export default function App() {
     const clock = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(clock);
   }, [l.phase, p.turnStartedAt, p.winner, run?.status]);
+
+  const prevRoundRef = useRef(l.round);
+  const prevPhaseRef = useRef(l.phase);
+  const prevReadyCountRef = useRef(l.ready.length);
+  const prevMoveCountRef = useRef(p.moveCount);
+  const prevWinnerRef = useRef(p.winner);
+  const prevCountdownSecRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (l.round !== prevRoundRef.current) {
+      prevRoundRef.current = l.round;
+      prevPhaseRef.current = l.phase;
+      prevReadyCountRef.current = l.ready.length;
+      prevMoveCountRef.current = p.moveCount;
+      prevWinnerRef.current = p.winner;
+      prevCountdownSecRef.current = null;
+      if (l.round > 0) playTapSound();
+      return;
+    }
+    if (l.ready.length > prevReadyCountRef.current) {
+      playReadySound();
+    }
+    prevReadyCountRef.current = l.ready.length;
+
+    if (l.phase === "playing" && prevPhaseRef.current === "countdown") {
+      playGameStartSound();
+    }
+    prevPhaseRef.current = l.phase;
+
+    let winTimer: ReturnType<typeof setTimeout> | undefined;
+    const moved = p.moveCount > prevMoveCountRef.current;
+    if (moved) {
+      const lastMove = p.history.at(-1);
+      const color: Color = lastMove?.stone === "W" ? "White" : "Black";
+      playStoneSound(color);
+    }
+    prevMoveCountRef.current = p.moveCount;
+
+    if (p.winner && !prevWinnerRef.current) {
+      if (p.resigned) {
+        playEndSound("resign");
+      } else if (p.winner === "draw") {
+        playEndSound("draw");
+      } else if (moved) {
+        winTimer = setTimeout(() => playWinSound(), 95);
+      } else {
+        playWinSound();
+      }
+    }
+    prevWinnerRef.current = p.winner;
+    return () => {
+      if (winTimer) clearTimeout(winTimer);
+    };
+  }, [l.round, l.phase, l.ready.length, p.moveCount, p.winner, p.resigned, p.history]);
+
+  useEffect(() => {
+    if (l.phase !== "countdown" || l.startsAt === null || run?.status !== "running") {
+      prevCountdownSecRef.current = null;
+      return;
+    }
+    const sec = Math.max(1, Math.ceil((l.startsAt - now) / 1000));
+    if (sec !== prevCountdownSecRef.current) {
+      prevCountdownSecRef.current = sec;
+      playCountdownTickSound();
+    }
+  }, [l.phase, l.startsAt, run?.status, now]);
   const chosenPlayer = (id: string): Player | undefined => {
     if (id === me)
       return {
@@ -357,11 +437,28 @@ export default function App() {
           <div className="gd-game-actions">
             <button
               className="gd-button gd-icon-toggle"
+              id="toggle-sound"
+              title={t("toggleSound")}
+              aria-label={t("toggleSound")}
+              aria-pressed={!muted}
+              onClick={() => {
+                const nextMuted = toggleSoundMute();
+                setMuted(nextMuted);
+                if (!nextMuted) playTapSound();
+              }}
+            >
+              {muted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+            </button>
+            <button
+              className="gd-button gd-icon-toggle"
               id="move-numbers"
               title={t("showMoveNumbers")}
               aria-label={t("showMoveNumbers")}
               aria-pressed={showNumbers}
-              onClick={() => setShowNumbers((v) => !v)}
+              onClick={() => {
+                playTapSound();
+                setShowNumbers((v) => !v);
+              }}
             >
               <ListOrdered size={16} />
             </button>
@@ -369,7 +466,10 @@ export default function App() {
               className="gd-button gd-icon-toggle gd-danmaku-toggle"
               aria-label={t("toggleComments")}
               aria-pressed={danmaku}
-              onClick={() => setDanmaku((v) => !v)}
+              onClick={() => {
+                playTapSound();
+                setDanmaku((v) => !v);
+              }}
             >
               {danmaku ? (
                 <MessagesSquare size={16} />
@@ -819,12 +919,20 @@ export default function App() {
                       title={t("previousMove")}
                       aria-label={t("previousMove")}
                       disabled={view.moveCount === 0}
-                      onClick={() =>
+                      onClick={() => {
+                        const nextCount = view.moveCount - 1;
+                        if (nextCount > 0) {
+                          playStoneSound(
+                            p.history[nextCount - 1]?.stone === "W" ? "White" : "Black",
+                          );
+                        } else {
+                          playTapSound();
+                        }
                         setReplay({
                           round: l.round,
-                          moveCount: view.moveCount - 1,
-                        })
-                      }
+                          moveCount: nextCount,
+                        });
+                      }}
                     >
                       <ChevronLeft size={16} />
                     </button>
@@ -840,12 +948,20 @@ export default function App() {
                         current: view.moveCount,
                         total: p.moveCount,
                       })}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        const nextCount = Number(e.target.value);
+                        if (nextCount > 0) {
+                          playStoneSound(
+                            p.history[nextCount - 1]?.stone === "W" ? "White" : "Black",
+                          );
+                        } else {
+                          playTapSound();
+                        }
                         setReplay({
                           round: l.round,
-                          moveCount: Number(e.target.value),
-                        })
-                      }
+                          moveCount: nextCount,
+                        });
+                      }}
                     />
                     <button
                       className="gd-button gd-icon-toggle"
@@ -853,12 +969,16 @@ export default function App() {
                       title={t("nextMove")}
                       aria-label={t("nextMove")}
                       disabled={view.moveCount === p.moveCount}
-                      onClick={() =>
+                      onClick={() => {
+                        const nextCount = view.moveCount + 1;
+                        playStoneSound(
+                          p.history[nextCount - 1]?.stone === "W" ? "White" : "Black",
+                        );
                         setReplay({
                           round: l.round,
-                          moveCount: view.moveCount + 1,
-                        })
-                      }
+                          moveCount: nextCount,
+                        });
+                      }}
                     >
                       <ChevronRight size={16} />
                     </button>

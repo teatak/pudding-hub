@@ -247,6 +247,17 @@
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0Ij4KICA8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgcng9IjIwIiBmaWxsPSIjMTZBMzRBIi8+CiAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+CiAgICA8cmVjdCB4PSIyOCIgeT0iMjgiIHdpZHRoPSI3MiIgaGVpZ2h0PSI3MiIgcng9IjgiLz4KICAgIDxwYXRoIGQ9Ik00NiAyOHY3Mk02NCAyOHY3Mk04MiAyOHY3Mk0yOCA0Nmg3Mk0yOCA2NGg3Mk0yOCA4Mmg3MiIvPgogIDwvZz4KICA8Y2lyY2xlIGN4PSI0NiIgY3k9IjQ2IiByPSI4IiBmaWxsPSIjZmZmZmZmIi8+CiAgPGNpcmNsZSBjeD0iODIiIGN5PSI2NCIgcj0iOCIgZmlsbD0iI2ZmZmZmZiIvPgogIDxjaXJjbGUgY3g9IjY0IiBjeT0iODIiIHI9IjgiIGZpbGw9IiMxMTE4MjciLz4KICA8Y2lyY2xlIGN4PSI2NCIgY3k9IjgyIiByPSI2IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMyIvPgo8L3N2Zz4K",
       "releases": [
         {
+          "version": "1.0.4-preview.9",
+          "package": "./gomoku/releases/1.0.4-preview.9/gomoku.pudding-widget.json",
+          "packageHash": "86015b6d3488e86a26e7cf04943f22ed3e37288f2faab54af6f99455d2076fa5",
+          "requires": {
+            "protocolVersion": 55,
+            "sdkVersion": "1.2.0"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
           "version": "1.0.4-preview.8",
           "package": "./gomoku/releases/1.0.4-preview.8/gomoku.pudding-widget.json",
           "packageHash": "cc241b53e8420e086290e98c3f79cf95454648313fede0f12b7ba88521efa988",
