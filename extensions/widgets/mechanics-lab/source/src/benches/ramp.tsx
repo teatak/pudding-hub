@@ -63,6 +63,45 @@ export interface RampState {
 export const RAMP_LENGTH = 8.0; // 斜面总长度 8.0 m
 export const INITIAL_S = 1.2; // 初始放置位置距离斜面顶端 1.2 m
 
+function renderForceTag(
+  x: number,
+  y: number,
+  text: string,
+  color: string,
+  align: "start" | "middle" | "end" = "middle",
+) {
+  const charLen = text.length;
+  const w = charLen * 7 + 10;
+  const h = 18;
+  const rectX = align === "start" ? 0 : align === "end" ? -w : -w / 2;
+  const textX = align === "start" ? w / 2 : align === "end" ? -w / 2 : 0;
+
+  return (
+    <g transform={`translate(${x}, ${y})`}>
+      <rect
+        x={rectX}
+        y={-h / 2}
+        width={w}
+        height={h}
+        rx={4}
+        fill="rgba(11, 19, 36, 0.95)"
+        stroke={color}
+        strokeWidth="1.2"
+      />
+      <text
+        x={textX}
+        y={3.8}
+        textAnchor="middle"
+        fill={color}
+        fontSize="10.5"
+        fontWeight="800"
+      >
+        {text}
+      </text>
+    </g>
+  );
+}
+
 function computeRampForces(params: RampParams, v: number) {
   const rad = (params.angleDeg * Math.PI) / 180;
   const weight = params.mass * params.gravity;
@@ -493,15 +532,23 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
     // 滑块尺寸随质量自适应 (46 ~ 56px)
     const blockW = Math.round(44 + Math.min(12, params.mass * 1.2));
     const blockH = Math.round(28 + Math.min(8, params.mass * 0.8));
+    const halfW = blockW / 2;
+    const halfH = blockH / 2;
 
-    // 矢量长度缩放与地面防穿透限制
-    const vScale = 1.9;
-    const gxPx = Math.min(85, f.gx * vScale);
-    const gyPx = Math.min(85, f.gy * vScale);
-    const normalPx = gyPx;
-    const frictionPx = Math.max(-85, Math.min(85, f.friction * vScale));
-    const maxWeightDist = Math.max(20, 395 - blockSurfaceY);
-    const weightPx = Math.min(f.weight * vScale, maxWeightDist);
+    // 矢量长度：确保力存在时稳稳伸出滑块边缘，随受力成比例延长，彻底杜绝所有箭头缩在滑块内挤压
+    const scaleForce = (val: number, minExt: number, maxTotal: number) => {
+      const abs = Math.abs(val);
+      if (abs < 0.05) return 0;
+      const len = Math.min(maxTotal, minExt + abs * 2.3);
+      return Math.sign(val) * len;
+    };
+
+    const gxPx = scaleForce(f.gx, halfW + 14, 94);
+    const frictionPx = scaleForce(f.friction, -(halfW + 14), 86);
+    const normalPx = Math.abs(scaleForce(f.normal, halfH + 24, 96));
+    const gyPx = Math.abs(scaleForce(f.gy, halfH + 18, 88));
+    const maxWeightDist = Math.max(35, 395 - blockSurfaceY);
+    const weightPx = Math.min(maxWeightDist, Math.max(halfH + 26, f.weight * 2.3));
 
     // 精细状态流转判断
     let statusText = "";
@@ -725,28 +772,42 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
             stroke="#fef08a"
             strokeWidth="1.8"
           />
-          {/* 滑块质量文字标签 */}
-          <text
-            x={0}
-            y={-blockH / 2 + 4}
-            textAnchor="middle"
-            fill="#0f172a"
-            fontSize="11.5"
-            fontWeight="800"
-          >
-            {params.mass}kg
-          </text>
 
-          {/* 受力分析正交分解矢量图：全高对比鲜艳矢量配色 + 暗色描边保护，彻底杜绝黑模糊 */}
+          {/* 滑块质量文字标签：移至滑块内顶部，带深色独立衬底，彻底避开质心与所有受力箭头 */}
+          <g transform={`translate(0, ${-blockH + 11})`}>
+            <rect
+              x={-16}
+              y={-8}
+              width={32}
+              height={15}
+              rx={3}
+              fill="rgba(15, 23, 42, 0.88)"
+            />
+            <text
+              x={0}
+              y={3.5}
+              textAnchor="middle"
+              fill="#fef08a"
+              fontSize="10.5"
+              fontWeight="800"
+            >
+              {params.mass}kg
+            </text>
+          </g>
+
+          {/* 受力分析正交分解矢量图：全高对比鲜艳矢量配色 + 独立徽章标签防遮挡 */}
           {showVectors && (
             <g transform={`translate(0, ${-blockH / 2})`}>
+              {/* 质心交汇小锚点 */}
+              <circle cx={0} cy={0} r={2.5} fill="#fef08a" stroke="#0f172a" strokeWidth="1" />
+
               {/* 正交分解平行四边形虚线 */}
               <line
                 x1={gxPx}
                 y1={0}
                 x2={gxPx}
                 y2={gyPx}
-                stroke="rgba(251, 191, 36, 0.6)"
+                stroke="rgba(251, 191, 36, 0.55)"
                 strokeWidth="1.4"
                 strokeDasharray="3 3"
               />
@@ -755,74 +816,40 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
                 y1={gyPx}
                 x2={gxPx}
                 y2={gyPx}
-                stroke="rgba(251, 191, 36, 0.6)"
+                stroke="rgba(251, 191, 36, 0.55)"
                 strokeWidth="1.4"
                 strokeDasharray="3 3"
               />
 
-              {/* Gx = mg sinθ (沿斜面向下分力) */}
+              {/* Gx = mg sinθ (沿斜面向下分力，向右延伸至滑块外开阔区) */}
               {Math.abs(gxPx) > 1.5 && (
                 <g>
-                  <line x1={0} y1={0} x2={gxPx} y2={0} stroke="#fbbf24" strokeWidth="2.4" />
+                  <line x1={0} y1={0} x2={gxPx} y2={0} stroke="#fbbf24" strokeWidth="2.5" />
                   <polygon
                     points={`${gxPx},0 ${gxPx - 6},-3.5 ${gxPx - 6},3.5`}
                     fill="#fbbf24"
                   />
-                  <text
-                    x={gxPx * 0.5}
-                    y={-7}
-                    textAnchor="middle"
-                    fill="#fef08a"
-                    stroke="rgba(10, 15, 29, 0.9)"
-                    strokeWidth="2.5"
-                    paintOrder="stroke fill"
-                    fontSize="10"
-                    fontWeight="750"
-                  >
-                    Gx={f.gx.toFixed(1)}N
-                  </text>
+                  {renderForceTag(gxPx + 6, 0, `Gx=${f.gx.toFixed(1)}N`, "#fbbf24", "start")}
                 </g>
               )}
 
-              {/* Gy = mg cosθ (垂直斜面分力) */}
+              {/* Gy = mg cosθ (垂直斜面分力，向下延伸至滑块下方) */}
               <g>
                 <line x1={0} y1={0} x2={0} y2={gyPx} stroke="#94a3b8" strokeWidth="1.8" strokeDasharray="3 2" />
-                <text
-                  x={7}
-                  y={gyPx * 0.6}
-                  fill="#cbd5e1"
-                  stroke="rgba(10, 15, 29, 0.9)"
-                  strokeWidth="2.5"
-                  paintOrder="stroke fill"
-                  fontSize="9.5"
-                  fontWeight="600"
-                >
-                  Gy={f.gy.toFixed(1)}N
-                </text>
+                {renderForceTag(8, gyPx + 8, `Gy=${f.gy.toFixed(1)}N`, "#cbd5e1", "start")}
               </g>
 
-              {/* 支持力 N (垂直斜面向上) */}
+              {/* 支持力 N (垂直斜面向上，向上延伸至滑块上方开阔区) */}
               <g>
                 <line x1={0} y1={0} x2={0} y2={-normalPx} stroke="#22c55e" strokeWidth="2.6" />
                 <polygon
                   points={`0,${-normalPx} -3.5,${-normalPx + 6} 3.5,${-normalPx + 6}`}
                   fill="#22c55e"
                 />
-                <text
-                  x={7}
-                  y={-normalPx * 0.6}
-                  fill="#86efac"
-                  stroke="rgba(10, 15, 29, 0.9)"
-                  strokeWidth="2.5"
-                  paintOrder="stroke fill"
-                  fontSize="10"
-                  fontWeight="750"
-                >
-                  N={f.normal.toFixed(1)}N
-                </text>
+                {renderForceTag(8, -normalPx - 2, `N=${f.normal.toFixed(1)}N`, "#22c55e", "start")}
               </g>
 
-              {/* 摩擦力 f */}
+              {/* 摩擦力 f (沿斜面向上，向左延伸至滑块左侧开阔区，与 Gx 彻底分离) */}
               {Math.abs(frictionPx) > 2 && (
                 <g>
                   <line x1={0} y1={0} x2={frictionPx} y2={0} stroke="#f97316" strokeWidth="2.4" />
@@ -832,41 +859,18 @@ export const rampBench: ExperimentBench<RampParams, RampState> = {
                     },3.5`}
                     fill="#f97316"
                   />
-                  <text
-                    x={frictionPx * 0.5}
-                    y={-7}
-                    textAnchor="middle"
-                    fill="#fdba74"
-                    stroke="rgba(10, 15, 29, 0.9)"
-                    strokeWidth="2.5"
-                    paintOrder="stroke fill"
-                    fontSize="10"
-                    fontWeight="750"
-                  >
-                    f={Math.abs(f.friction).toFixed(1)}N
-                  </text>
+                  {renderForceTag(frictionPx - 6, 0, `f=${Math.abs(f.friction).toFixed(1)}N`, "#f97316", "end")}
                 </g>
               )}
 
-              {/* 竖直向下的重力 G = mg (地面防穿透) */}
+              {/* 竖直向下的重力 G = mg (地面防穿透，在尖端左下方清晰标注) */}
               <g transform={`rotate(${-params.angleDeg})`}>
                 <line x1={0} y1={0} x2={0} y2={weightPx} stroke="#eab308" strokeWidth="2.6" />
                 <polygon
                   points={`0,${weightPx} -4,${weightPx - 6} 4,${weightPx - 6}`}
                   fill="#eab308"
                 />
-                <text
-                  x={-42}
-                  y={weightPx * 0.6}
-                  fill="#fde047"
-                  stroke="rgba(10, 15, 29, 0.9)"
-                  strokeWidth="2.5"
-                  paintOrder="stroke fill"
-                  fontSize="10"
-                  fontWeight="800"
-                >
-                  G={f.weight.toFixed(1)}N
-                </text>
+                {renderForceTag(-8, weightPx + 8, `G=${f.weight.toFixed(1)}N`, "#fde047", "end")}
               </g>
             </g>
           )}

@@ -468,6 +468,17 @@
       "icon": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIyOCIgZmlsbD0iIzBCMTMyNCIvPgogIDxyZWN0IHg9IjYiIHk9IjYiIHdpZHRoPSIxMTYiIGhlaWdodD0iMTE2IiByeD0iMjMiIHN0cm9rZT0iIzM4QkRGOCIgc3Ryb2tlLW9wYWNpdHk9IjAuMzUiIHN0cm9rZS13aWR0aD0iMi41Ii8+CiAgPCEtLSBDb29yZGluYXRlIEdyaWQgTGluZXMgLS0+CiAgPHBhdGggZD0iTTIyIDk2SDEwNk0zMiAyNFYxMDQiIHN0cm9rZT0iIzFFMjkzQiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8IS0tIEluY2xpbmVkIFBsYW5lIFRyaWFuZ2xlIC0tPgogIDxwYXRoIGQ9Ik0yNiA5Nkw5OCA5NkwyNiA1MFoiIGZpbGw9IiMxRTI5M0IiIHN0cm9rZT0iIzM4QkRGOCIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8IS0tIFNsaWRpbmcgQmxvY2sgb24gUmFtcCAtLT4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg1NCwgNjApIHJvdGF0ZSgzMi41KSI+CiAgICA8cmVjdCB4PSItMTQiIHk9Ii0yMCIgd2lkdGg9IjI4IiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iI0Y1OUUwQiIgc3Ryb2tlPSIjRkVGMDhBIiBzdHJva2Utd2lkdGg9IjIiLz4KICAgIDwhLS0gTm9ybWFsIEZvcmNlIFZlY3RvciBOIC0tPgogICAgPHBhdGggZD0iTTAgLTIwVi00Mk0wIC00MkwtNSAtMzZNMCAtNDJMNSAtMzYiIHN0cm9rZT0iIzIyQzU1RSIgc3Ryb2tlLXdpZHRoPSIyLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogICAgPCEtLSBOZXQgRG93bi1TbG9wZSBGb3JjZSBWZWN0b3IgLS0+CiAgICA8cGF0aCBkPSJNMTQgLTEwSDM4TTM4IC0xMEwzMiAtMTVNMzggLTEwTDMyIC01IiBzdHJva2U9IiMzOEJERjgiIHN0cm9rZS13aWR0aD0iMi44IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8L2c+CiAgPCEtLSBHcmF2aXR5IFZlY3RvciBHIChWZXJ0aWNhbCBEb3duKSAtLT4KICA8cGF0aCBkPSJNNTAgNTZWODZNNTAgODZMNDUgODBNNTAgODZMNTUgODAiIHN0cm9rZT0iI0Y0M0Y1RSIgc3Ryb2tlLXdpZHRoPSIyLjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDwhLS0gUGFyYWJvbGljIFN0cm9iZSBUcmFqZWN0b3J5IERvdHMgLS0+CiAgPGNpcmNsZSBjeD0iNjIiIGN5PSIzMCIgcj0iMy41IiBmaWxsPSIjQTg1NUY3Ii8+CiAgPGNpcmNsZSBjeD0iNzYiIGN5PSIzNCIgcj0iMy41IiBmaWxsPSIjQTg1NUY3Ii8+CiAgPGNpcmNsZSBjeD0iODkiIGN5PSI0NSIgcj0iMy41IiBmaWxsPSIjQTg1NUY3Ii8+CiAgPGNpcmNsZSBjeD0iMTAwIiBjeT0iNjQiIHI9IjQiIGZpbGw9IiNGREUwNDciIHN0cm9rZT0iI0E4NTVGNyIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPgo=",
       "releases": [
         {
+          "version": "1.0.2-preview.2",
+          "package": "./mechanics-lab/releases/1.0.2-preview.2/mechanics-lab.pudding-widget.json",
+          "packageHash": "215a792a2452208d462d45ec86a25dd4fbbc0fcbbbcbcb3a5d67c2b0b4c9102b",
+          "requires": {
+            "protocolVersion": 24,
+            "sdkVersion": "1.0.0"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
           "version": "1.0.2-preview.1",
           "package": "./mechanics-lab/releases/1.0.2-preview.1/mechanics-lab.pudding-widget.json",
           "packageHash": "ad199e221c7c158fe76b8aeaf72a34c091c9a0ac9a85b6747a86cedb423e6620",
