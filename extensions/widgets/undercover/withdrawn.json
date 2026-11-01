@@ -1,0 +1,136 @@
+{
+  "releases": [
+    {
+      "version": "1.0.0-preview.11",
+      "package": "./undercover/releases/1.0.0-preview.11/undercover.pudding-widget.json",
+      "packageHash": "669ebf2f9f05a766b7476796970d33b53b98e8bbed20d7215b019bf7e529ccdc",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.0; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.0-preview.10",
+      "package": "./undercover/releases/1.0.0-preview.10/undercover.pudding-widget.json",
+      "packageHash": "438608f4e4207b4b55e972b2ec2a904d152b94a880c3b3a7916a720e26f82fd7",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.0; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.0-preview.9",
+      "package": "./undercover/releases/1.0.0-preview.9/undercover.pudding-widget.json",
+      "packageHash": "bd63c378c79396729d61024c5bd50b6c9aff9213e2a38d6185277b6b07ff95ef",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.0; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.0-preview.8",
+      "package": "./undercover/releases/1.0.0-preview.8/undercover.pudding-widget.json",
+      "packageHash": "1e8921ffc71558479ded415baecc810f09039a860c64967af8666476a39cab69",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.0; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.0-preview.7",
+      "package": "./undercover/releases/1.0.0-preview.7/undercover.pudding-widget.json",
+      "packageHash": "d3a7d81587fb91b8e7d49ae24ac27e24aae288189f89008364c54761dcf0c33d",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.0; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.0-preview.6",
+      "package": "./undercover/releases/1.0.0-preview.6/undercover.pudding-widget.json",
+      "packageHash": "3b0420a0aa74d7b40fe6e95cbd50fccdc4a7cc2e438a35ed8cd2a868de73ca31",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.0; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.0-preview.5",
+      "package": "./undercover/releases/1.0.0-preview.5/undercover.pudding-widget.json",
+      "packageHash": "9b2de52b2ddfa36602c55561619009276d1c069c865b32bb58e90c86e4625d89",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.0; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.0-preview.4",
+      "package": "./undercover/releases/1.0.0-preview.4/undercover.pudding-widget.json",
+      "packageHash": "a1ba19cd265c739080ddada1967971eb54d8bff0af4c03368dd65613295bec3f",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.0; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.0-preview.3",
+      "package": "./undercover/releases/1.0.0-preview.3/undercover.pudding-widget.json",
+      "packageHash": "49a3ddb3400232f5c5e402f1137bcc3c589c1c333bb8c274120ced8542d78287",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.0; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.0-preview.2",
+      "package": "./undercover/releases/1.0.0-preview.2/undercover.pudding-widget.json",
+      "packageHash": "9fd061c48ff392dbae992dd89f81a93d88e4e9a0b43c22892c208a3252115f35",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.0; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.0-preview.1",
+      "package": "./undercover/releases/1.0.0-preview.1/undercover.pudding-widget.json",
+      "packageHash": "836ef07c86c36dde94636a9dee7af6434a19a5fdd590b4fab40077556b61fb84",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.0; retained as an immutable archive and no longer offered for new installation."
+    }
+  ]
+}

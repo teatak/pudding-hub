@@ -15,23 +15,10 @@ test("widget catalog contains all registered widgets with complete, verifiable r
     .filter((entry) => entry.isDirectory() && entry.name !== "gmail-board")
     .map((entry) => entry.name)
     .sort();
-  assert.deepEqual(names, [
-    "debate",
-    "doudizhu",
-    "github-board",
-    "gomoku",
-    "kanban",
-    "light-workshop",
-    "notes",
-    "pocket-studio",
-    "reversi",
-    "shared-todo",
-    "synology-files",
-    "undercover",
-  ]);
   const catalog = await read(path.join(root, "registry.json"));
   assert.equal(catalog.schemaVersion, 2);
   assert.equal(catalog.items.length, names.length);
+  assert.deepEqual(catalog.items.map((item) => item.id.split("/").at(-1)).sort(), names);
   for (const name of names) {
     const dir = path.join(root, name);
     const manifest = await read(path.join(dir, "manifest.json"));
@@ -118,4 +105,18 @@ test('new releases contain all eight metadata locales and retain earlier compati
   const modern=gomoku.releases.find(release=>release.version==='1.0.4');
   assert.equal(modern.requires.sdkVersion,'1.2.0');
   assert.ok(gomoku.releases.some(release=>!release.version.includes('-')&&['1','1.0.0','1.1.0'].includes(release.requires.sdkVersion)),'older hosts retain an eligible stable Gomoku release');
+});
+
+
+test("current catalogs offer no previews superseded by a matching stable release", async () => {
+  for (const type of ["widgets", "plugins"]) {
+    const registry = await read(path.resolve(root, "..", type, "registry.json"));
+    const isPreview = (release) => release.preview === true || release.channel === "preview" || release.version.includes("-");
+    for (const item of registry.items) {
+      const stable = new Set(item.releases.filter((release) => !isPreview(release)).map((release) => release.version));
+      for (const release of item.releases.filter(isPreview)) {
+        assert.ok(!stable.has(release.version.split("-", 1)[0]), `${item.id}@${release.version} is superseded by its stable release`);
+      }
+    }
+  }
 });

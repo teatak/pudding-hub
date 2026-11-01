@@ -1,0 +1,40 @@
+{
+  "releases": [
+    {
+      "version": "1.0.0-preview.3",
+      "package": "./github-board/releases/1.0.0-preview.3/github-board.pudding-widget.json",
+      "packageHash": "7817ca4d28dcf6aa4b1def0e2f8b643f020c4129b56d94687c6f01c3677afab1",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.0; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.0-preview.2",
+      "package": "./github-board/releases/1.0.0-preview.2/github-board.pudding-widget.json",
+      "packageHash": "43460d797049c9e6a1301f298b29bd328d2fcf39b42e2b5df32b5908b2674225",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.0; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.0-preview.1",
+      "package": "./github-board/releases/1.0.0-preview.1/github-board.pudding-widget.json",
+      "packageHash": "8dfc9a4ea47dcf40cdea39a162a46e18d6b81750d79da255ee14231df48d4152",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.0; retained as an immutable archive and no longer offered for new installation."
+    }
+  ]
+}

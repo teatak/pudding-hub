@@ -1,0 +1,52 @@
+{
+  "releases": [
+    {
+      "version": "1.0.2-preview.3",
+      "package": "./mechanics-lab/releases/1.0.2-preview.3/mechanics-lab.pudding-widget.json",
+      "packageHash": "e1a291e3066762ed215a296fd3693b8dcdb80ae8a56e9703abaca55947357cd3",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1.0.0"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.2; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.2-preview.2",
+      "package": "./mechanics-lab/releases/1.0.2-preview.2/mechanics-lab.pudding-widget.json",
+      "packageHash": "215a792a2452208d462d45ec86a25dd4fbbc0fcbbbcbcb3a5d67c2b0b4c9102b",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1.0.0"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.2; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.2-preview.1",
+      "package": "./mechanics-lab/releases/1.0.2-preview.1/mechanics-lab.pudding-widget.json",
+      "packageHash": "ad199e221c7c158fe76b8aeaf72a34c091c9a0ac9a85b6747a86cedb423e6620",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1.0.0"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.2; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.0-preview.1",
+      "package": "./mechanics-lab/releases/1.0.0-preview.1/mechanics-lab.pudding-widget.json",
+      "packageHash": "439082b0d3fb675af51eede2efe240c205e5eac3616a3fb73f12e98962a8d5df",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1.0.0"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.0; retained as an immutable archive and no longer offered for new installation."
+    }
+  ]
+}

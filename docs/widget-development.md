@@ -176,6 +176,8 @@ Before publishing a stable update, compile the exact package with the oldest sup
 
 For previews, use a distinct version such as 1.1.0-preview.1 and set `"preview": true` in manifest.json. A version suffix or channel alone does not mark a widget as preview. Users enable widget previews in Settings → Advanced; plugin previews have a separate switch. Turning the switch off does not downgrade or uninstall an existing preview.
 
+After publishing a stable release, move preview records with the same base version to `withdrawn.json` and name the stable version that supersedes them. Keep previews without a matching stable release in the installation catalog.
+
 To withdraw a broken release, move its catalog release record into that widget's `withdrawn.json` (`{"releases": [...]}`) and add a `reason`. Keep the package at its original URL unchanged. Catalog checks verify withdrawn package hashes too and reject versions listed in both places. Withdrawal stops new catalog installations; it does not remove or downgrade installed copies.
 
 ### Updating installed widgets

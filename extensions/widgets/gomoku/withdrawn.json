@@ -8,7 +8,139 @@
         "protocolVersion": 24,
         "sdkVersion": "1"
       },
-      "reason": "Withdrawn because candidate metadata access fails TypeScript compilation with Desktop v0.8.1. Use stable 1.0.2 or 1.0.4-preview.1."
+      "reason": "Withdrawn because candidate metadata access fails TypeScript compilation with Desktop v0.8.1. Use stable 1.0.2 on older hosts, or stable 1.0.4 on Widget SDK 1.2.0 hosts."
+    },
+    {
+      "version": "1.0.4-preview.11",
+      "package": "./gomoku/releases/1.0.4-preview.11/gomoku.pudding-widget.json",
+      "packageHash": "c26657d480f5a9914584b17bdb43f8770a2edc137898f20a0b9d5f4e85573cee",
+      "requires": {
+        "protocolVersion": 55,
+        "sdkVersion": "1.2.0"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.4; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.4-preview.10",
+      "package": "./gomoku/releases/1.0.4-preview.10/gomoku.pudding-widget.json",
+      "packageHash": "ffc450dc6483858193cc9ab51736a3576bdc618d0a3061092678d7ae74bfc69b",
+      "requires": {
+        "protocolVersion": 55,
+        "sdkVersion": "1.2.0"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.4; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.4-preview.9",
+      "package": "./gomoku/releases/1.0.4-preview.9/gomoku.pudding-widget.json",
+      "packageHash": "86015b6d3488e86a26e7cf04943f22ed3e37288f2faab54af6f99455d2076fa5",
+      "requires": {
+        "protocolVersion": 55,
+        "sdkVersion": "1.2.0"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.4; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.4-preview.8",
+      "package": "./gomoku/releases/1.0.4-preview.8/gomoku.pudding-widget.json",
+      "packageHash": "cc241b53e8420e086290e98c3f79cf95454648313fede0f12b7ba88521efa988",
+      "requires": {
+        "protocolVersion": 55,
+        "sdkVersion": "1.2.0"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.4; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.4-preview.7",
+      "package": "./gomoku/releases/1.0.4-preview.7/gomoku.pudding-widget.json",
+      "packageHash": "46f08cdd94039476862812e0bf93fa8b6bcb6881f91790b8ae527a4b707b6701",
+      "requires": {
+        "protocolVersion": 55,
+        "sdkVersion": "1.2.0"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.4; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.4-preview.6",
+      "package": "./gomoku/releases/1.0.4-preview.6/gomoku.pudding-widget.json",
+      "packageHash": "59ee6026054ae0e416dbc6ae4af647d26f832f21b25ca23bf34e565b615ed195",
+      "requires": {
+        "protocolVersion": 55,
+        "sdkVersion": "1.2.0"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.4; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.4-preview.5",
+      "package": "./gomoku/releases/1.0.4-preview.5/gomoku.pudding-widget.json",
+      "packageHash": "c727489aab2d932ccb3a292d8ea163f8c575d8f7b37022695948a0f32bcdf895",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.4; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.4-preview.4",
+      "package": "./gomoku/releases/1.0.4-preview.4/gomoku.pudding-widget.json",
+      "packageHash": "8a724c865a6319215eb446c3824536ad97a7abcd9404d5346a72410b9581196b",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.4; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.4-preview.3",
+      "package": "./gomoku/releases/1.0.4-preview.3/gomoku.pudding-widget.json",
+      "packageHash": "b280e65bb824f2877636ceefbcbba23946426947db5e10f267335a15e3836d66",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.4; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.4-preview.2",
+      "package": "./gomoku/releases/1.0.4-preview.2/gomoku.pudding-widget.json",
+      "packageHash": "3ae88c8a27784aae8a788990bf7fc7897a31a43d4ce27ab497db9b11562feb16",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.4; retained as an immutable archive and no longer offered for new installation."
+    },
+    {
+      "version": "1.0.4-preview.1",
+      "package": "./gomoku/releases/1.0.4-preview.1/gomoku.pudding-widget.json",
+      "packageHash": "af7bc6ca2441c93915d93bfc0cb87c4929113bc6770e455ab070f96b58f07ecf",
+      "requires": {
+        "protocolVersion": 24,
+        "sdkVersion": "1"
+      },
+      "channel": "preview",
+      "preview": true,
+      "reason": "Superseded by stable 1.0.4; retained as an immutable archive and no longer offered for new installation."
     }
   ]
 }
