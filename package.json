@@ -8,7 +8,8 @@
     "package-plugin": "node scripts/package-plugin.mjs",
     "package-plugins": "node scripts/package-plugin.mjs --all",
     "test": "node --experimental-strip-types --test test/*.test.mjs",
-    "test:light-workshop-ui": "node test/light-workshop-ui.cjs"
+    "test:light-workshop-ui": "node test/light-workshop-ui.cjs",
+    "test:gomoku-ui": "node test/gomoku-ui.cjs"
   },
   "devDependencies": {
     "yaml": "^2.9.0"

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { fillCandidates, playerIdentities, retainedPlayer } from '../extensions/widgets/gomoku/source/src/candidates.ts';
+import { fillCandidates, playerIdentities, retainedPlayer, roundCandidates } from '../extensions/widgets/gomoku/source/src/candidates.ts';
 import { createRequire, Module } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { initial, place, record } from '../extensions/widgets/gomoku/source/src/rules.ts';
@@ -18,6 +18,20 @@ test('manual deselection is retained; removal and offline status free the slot',
   assert.deepEqual(fillCandidates(['b'], [agent('a'), agent('b')], new Set(['a', 'b'])), ['b']);
   assert.deepEqual(fillCandidates(['a'], [agent('b')], new Set(['a'])), ['b']);
   assert.deepEqual(fillCandidates(['a', 'conversation'], [agent('a', false), session, agent('b')], new Set(['a'])), ['conversation', 'b']);
+});
+
+test('rematches retain the original players and never substitute newly joined agents', () => {
+  const candidates = [
+    { ...agent('external-a'), participantID:'black' },
+    { ...agent('external-b'), participantID:'white' },
+    { ...agent('new-agent'), participantID:'new' },
+  ];
+  assert.deepEqual(roundCandidates(['black','white'],candidates),['external-a','external-b']);
+  assert.deepEqual(roundCandidates(['human','white'],candidates,'human'),['@me','external-b']);
+  assert.deepEqual(roundCandidates(['black','white'],candidates.map(c=>({...c,connected:c.id!=='external-a'}))),['external-b']);
+  assert.deepEqual(roundCandidates(['black','white'],candidates.slice(1)),['external-b']);
+  assert.deepEqual(roundCandidates(['missing','white'],candidates),['external-b']);
+  assert.deepEqual(roundCandidates(['black','white'],[]),[]);
 });
 
 test('round identities retain player names and profiles after disconnect, removal and JSON reload', () => {

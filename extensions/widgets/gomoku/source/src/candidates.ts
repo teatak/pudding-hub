@@ -3,6 +3,14 @@ type Candidate = { id: string; kind?: "session" | "external"; connected?: boolea
 type Participant = { id: string; name: string; kind: "session" | "external" | "human" };
 type ProfileCandidate = Candidate & { participantID?: string; name: string; model: PlayerIdentity["model"] };
 
+// A rematch keeps its actual players. Newly joined agents may fill the initial
+// picker, but must never silently replace an offline player in a later round.
+export function roundCandidates(players: string[], candidates: (Candidate & { participantID?: string })[], humanID?: string) {
+  return players.flatMap(id => id === humanID ? ["@me"] : candidates
+    .filter(candidate => candidate.participantID === id && candidate.connected !== false)
+    .map(candidate => candidate.id));
+}
+
 // Display metadata belongs to the saved round, independently of its live
 // activity lease. Presence and permission to play always come from the host.
 export function retainedPlayer(id: string, participant: Participant | undefined,

@@ -8,6 +8,7 @@ import {
 } from "@pudding/widget";
 import {
   Check,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   History,
@@ -19,12 +20,11 @@ import {
   Swords,
   Trophy,
   UserRound,
-  UsersRound,
   Volume2,
   VolumeX,
 } from "lucide-react";
 import { roles, type PlayerIdentity } from "./lobby";
-import { fillCandidates, retainedPlayer } from "./candidates";
+import { fillCandidates, retainedPlayer, roundCandidates } from "./candidates";
 import {
   size,
   letters,
@@ -156,6 +156,7 @@ export default function App() {
   const seenAgents = useRef(new Set<string>());
   const [selected, setSelected] = useState<string[]>([]);
   const [picker, setPicker] = useState(false);
+  const roundMenu = useRef<HTMLDetailsElement>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<{
     cause: unknown;
@@ -367,22 +368,16 @@ export default function App() {
   const act = (ready: boolean) =>
     perform(() => pudding.interaction.handle((c) => changeReadiness(ready, c)));
   function openRound(choosePlayers = false) {
+    if (roundMenu.current) roundMenu.current.open = false;
     void perform(async () => {
       // Connections may arrive after the board opened. Refresh only the picker;
       // participant identity and game state still come from the shared run.
       const current: Candidates = await pudding.interaction.candidates();
       setCandidates(current);
-      const available = new Set([me, ...current.sessions.filter((s) => s.connected !== false).map((s) => s.id)]);
-      const previous = (l.round
-        ? l.players.flatMap((id) =>
-            id === human?.id
-              ? [me]
-              : current.sessions
-                  .filter((s) => s.participantID === id)
-                  .map((s) => s.id),
-          )
-        : selected).filter((id) => available.has(id));
-      const choice = fillCandidates(previous, current.sessions, seenAgents.current);
+      const humanID = human?.id || l.players.find(id => l.identities?.[id]?.human);
+      const choice = l.round
+        ? roundCandidates(l.players, current.sessions, humanID)
+        : fillCandidates(selected, current.sessions, seenAgents.current);
       current.sessions.filter(s => s.kind === "external" && s.connected !== false).forEach(s => seenAgents.current.add(s.id));
       setSelected(choice);
       if (choosePlayers || choice.length !== 2) {
@@ -486,7 +481,7 @@ export default function App() {
                 onClick={() => void perform(() => pudding.interaction.resume())}
               >
                 <Play size={14} />
-                {t("continueGame")}
+                {t(connectionLost ? "recoveringGame" : "continueGame")}
               </button>
             )}
             {run?.status === "running" && !!l.round && !p.winner && (
@@ -500,21 +495,10 @@ export default function App() {
                 {t("pauseGame")}
               </button>
             )}
-            {!!l.round && (p.winner || run?.status === "paused") && (
-              <button
-                className="gd-button gd-icon-toggle"
-                id="change-players"
-                title={t("changePlayers")}
-                aria-label={t("changePlayers")}
-                disabled={busy || !candidates || connectionLost}
-                onClick={() => openRound(true)}
-              >
-                <UsersRound size={16} />
-              </button>
-            )}
             {(!l.round || p.winner || run?.status === "paused") && (
+              <div className="gd-round-actions">
               <button
-                className="gd-button gd-main-action"
+                className={"gd-button gd-main-action gd-round-start" + (p.winner || !l.round ? " is-primary" : "")}
                 id="start"
                 disabled={busy || !candidates || connectionLost}
                 onClick={() => openRound()}
@@ -526,6 +510,45 @@ export default function App() {
                     ? t("rematch")
                     : t("newGame")}
               </button>
+              <details
+                ref={roundMenu}
+                className="gd-round-menu"
+                onBlur={event => {
+                  if (!event.currentTarget.contains(event.relatedTarget)) event.currentTarget.open = false;
+                }}
+                onKeyDown={event => {
+                  if (event.key === "Escape") {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    event.currentTarget.open = false;
+                    event.currentTarget.querySelector("summary")?.focus();
+                  }
+                }}
+              >
+                <summary
+                  className="gd-button gd-round-trigger"
+                  aria-label={t("gameOptions")}
+                  aria-disabled={busy || !candidates || connectionLost}
+                  tabIndex={busy || !candidates || connectionLost ? -1 : 0}
+                  onClick={event => {
+                    if (busy || !candidates || connectionLost) event.preventDefault();
+                  }}
+                >
+                  <ChevronDown size={14} />
+                </summary>
+                <div className="gd-round-options" role="group" aria-label={t("gameOptions")}>
+                  <button
+                    type="button"
+                    className="gd-button"
+                    id="change-players"
+                    disabled={busy || !candidates || connectionLost}
+                    onClick={() => openRound(true)}
+                  >
+                    {t(l.round ? "changePlayers" : "selectPlayers")}
+                  </button>
+                </div>
+              </details>
+              </div>
             )}
           </div>
         </header>
