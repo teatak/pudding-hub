@@ -230,6 +230,9 @@
   height: 100%;
   display: block;
 }
+.gd-avatar:has(img) {
+  background: transparent;
+}
 .gd-player-identity {
   min-width: 0;
 }
