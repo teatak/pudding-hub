@@ -1,8 +1,6 @@
 {
   "id": "teatak/pudding-hub/widgets/mechanics-lab",
-  "version": "1.0.2-preview.3",
-  "preview": true,
-  "channel": "preview",
+  "version": "1.0.2",
   "title": {
     "en": "Mechanics Physics Lab",
     "zh-CN": "经典力学实验室",
