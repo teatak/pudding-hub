@@ -107,7 +107,7 @@
       "notifyWaitingMoveSummary": "{color} の番",
       "notifyMoveMessage": "{color} の手番です。現在の盤面と stateVersion が添付されています。この targetID、expectedStateVersion、name:\"placeStone\", input:{column:\"H\",row:8,comment:\"それだけ？\"} で widget_invoke を呼び出します（例）。列 A–O、行 1–15（下から上）。任意コメント（最大40文字）は鋭い挑発と心理的圧力のみに使用してください。雑談は不可で、戦略・計画中の攻撃・重要な盤面状態（活四、双三など）を決して明かさないでください。自分の側だけを打ち、次の通知を待ってください。投了するには name:\"resign\", input:{comment:\"お見事！\"} を使用します（comment は任意）。履歴は必要な場合のみ name:\"readBoard\", input:{includeHistory:true} で読んでください。",
       "connectionReconnecting": "接続が切れたため対局を一時停止しました。自動で再接続しています。",
-      "connectionRestoredPaused": "接続が復元されました。対局は一時停止中です。続行できます。"
+      "connectionRestoredPaused": "対局を復元しました。現在は一時停止中です。"
     },
     "errors": {
       "Only the user can assign participants and start an activity": "参加者の割り当てとアクティビティの開始はユーザーのみが行えます",
@@ -242,7 +242,7 @@
       "notifyWaitingMoveSummary": "{color} 차례",
       "notifyMoveMessage": "{color} 차례입니다. 현재 보드와 stateVersion이 첨부되어 있습니다. 이 targetID, expectedStateVersion으로 widget_invoke를 name:\"placeStone\", input:{column:\"H\",row:8,comment:\"그게 다야?\"}(예시)로 호출하세요. 열 A–O, 행 1–15는 아래에서 위입니다; comment는 선택 사항(최대 40자)이며 날카로운 도발과 심리적 압박에만 사용하세요—가벼운 잡담은 금지하고, 자신의 전략이나 계획된 공격, 중요한 보드 상태(열린 사, 이중 삼 등)를 절대 공개하지 마세요. 자신의 진영만 둔 뒤 다음 알림을 기다리세요. 기권하려면 name:\"resign\", input:{comment:\"좋은 승부였어!\"}(comment 선택)를 사용하세요; 필요할 때만 name:\"readBoard\", input:{includeHistory:true}로 기록을 읽으세요.",
       "connectionReconnecting": "연결이 끊겨 대국이 일시정지되었습니다. 자동으로 다시 연결하고 있습니다.",
-      "connectionRestoredPaused": "연결이 복구되었습니다. 대국은 일시정지 상태이며 계속할 수 있습니다."
+      "connectionRestoredPaused": "대국이 복원되었으며 현재 일시정지 상태입니다."
     },
     "errors": {
       "Only the user can assign participants and start an activity": "사용자만 참가자를 배정하고 활동을 시작할 수 있습니다",
@@ -377,7 +377,7 @@
       "notifyWaitingMoveSummary": "Turno de {color}",
       "notifyMoveMessage": "Turno de {color}. Se adjuntan el tablero actual y stateVersion. Llama a widget_invoke con este targetID, expectedStateVersion, name:\"placeStone\", input:{column:\"H\",row:8,comment:\"¿Eso es todo lo que tienes?\"} (ejemplo). Columnas A–O, filas 1–15 de abajo arriba; el comentario es opcional (máx. 40 caracteres) solo para provocaciones mordaces y presión psicológica: nada de charla informal y nunca reveles tu estrategia, ataques planeados ni estados críticos del tablero (nada de cuatro abierto, doble tres, etc.). Juega solo tu bando y luego espera la siguiente notificación. Para rendirte, usa name:\"resign\", input:{comment:\"¡Bien jugado!\"} (comentario opcional); lee el historial solo cuando sea necesario mediante name:\"readBoard\", input:{includeHistory:true}.",
       "connectionReconnecting": "Conexión perdida. La partida está en pausa mientras se restablece automáticamente.",
-      "connectionRestoredPaused": "Conexión restablecida. La partida está en pausa; puedes continuar."
+      "connectionRestoredPaused": "Partida restaurada. Actualmente está en pausa."
     },
     "errors": {
       "Only the user can assign participants and start an activity": "Solo el usuario puede asignar participantes e iniciar una actividad",
@@ -512,7 +512,7 @@
       "notifyWaitingMoveSummary": "{color} am Zug",
       "notifyMoveMessage": "{color} ist am Zug. Das aktuelle Brett und stateVersion sind angehängt. Rufe widget_invoke mit dieser targetID, expectedStateVersion, name:\"placeStone\", input:{column:\"H\",row:8,comment:\"Ist das alles, was du drauf hast?\"} auf (Beispiel). Spalten A–O, Reihen 1–15 von unten nach oben; comment ist optional (max. 40 Zeichen) nur für scharfe Provokationen und psychologischen Druck – kein lockerer Smalltalk und verrate niemals deine Strategie, geplante Angriffe oder kritische Brettzustände (keine offene Vier, doppelte Drei usw.). Spiele nur deine Seite und warte dann auf die nächste Benachrichtigung. Zum Aufgeben verwende name:\"resign\", input:{comment:\"Gut gespielt!\"} (comment optional); lies den Verlauf nur bei Bedarf über name:\"readBoard\", input:{includeHistory:true}.",
       "connectionReconnecting": "Verbindung unterbrochen. Das Spiel pausiert, während die Verbindung automatisch wiederhergestellt wird.",
-      "connectionRestoredPaused": "Verbindung wiederhergestellt. Das Spiel ist pausiert und kann fortgesetzt werden."
+      "connectionRestoredPaused": "Spiel wiederhergestellt. Derzeit pausiert."
     },
     "errors": {
       "Only the user can assign participants and start an activity": "Nur der Nutzer kann Teilnehmer zuweisen und eine Aktivität starten",
@@ -647,7 +647,7 @@
       "notifyWaitingMoveSummary": "{color} doit jouer",
       "notifyMoveMessage": "À {color} de jouer. Le plateau actuel et stateVersion sont joints. Appelez widget_invoke avec ce targetID, expectedStateVersion, name:\"placeStone\", input:{column:\"H\",row:8,comment:\"C’est tout ce que tu sais faire ?\"} (exemple). Colonnes A–O, lignes 1–15 de bas en haut ; comment est facultatif (40 caractères max) pour des piques acérées et de la pression psychologique uniquement — pas de bavardage, et ne révélez jamais votre stratégie, vos attaques prévues ou des états critiques du plateau (pas de quatre ouvert, double trois, etc.). Jouez uniquement votre camp, puis attendez la prochaine notification. Pour concéder, utilisez name:\"resign\", input:{comment:\"Bien joué !\"} (comment facultatif) ; lisez l’historique uniquement si nécessaire via name:\"readBoard\", input:{includeHistory:true}.",
       "connectionReconnecting": "Connexion perdue. La partie est en pause pendant le rétablissement automatique.",
-      "connectionRestoredPaused": "Connexion rétablie. La partie est en pause ; vous pouvez continuer."
+      "connectionRestoredPaused": "Partie restaurée. Elle est actuellement en pause."
     },
     "errors": {
       "Only the user can assign participants and start an activity": "Seul l’utilisateur peut attribuer les participants et démarrer une activité",
