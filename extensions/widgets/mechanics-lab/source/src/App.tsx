@@ -3,11 +3,11 @@
  * 经典力学实验室 (Mechanics Lab) — 零耦合公共外壳视图 (`src/App.tsx`)
  * ============================================================================
  *
- * 【宿主外壳职责】
- * 1. 动态读取 `BENCH_REGISTRY` 渲染顶部实验台切换栏（无论注册了 2 个、4 个还是 N 个实验台）。
- * 2. 提供统一的物理仿真时钟循环（常速 1.0x / 慢镜 0.25x / 单步 +0.02s / 重置）。
- * 3. 自动渲染当前实验台的能量守恒柱状图（动能 Ek、势能 Ep、摩擦热能 Q）。
- * 4. 自动渲染右侧声明式参数滑块、经典教学预设卡片、底部实时物理量仪表盘与示波器曲线。
+ * 【信息层级与布局设计】
+ * 1. 第一眼看实验：顶部仅保留标题与实验台切换；主画布紧随其下成为视觉中心。
+ * 2. 第二眼找操作：画布正下方集中放置唯一主按钮（开始/暂停）与轻量辅助控制（单步、重置、倍速、视图开关）；
+ *    右侧栏精简为紧凑预设选择器（选中后展示单条说明）与对齐良好的参数滑杆列表。
+ * 3. 最后读解释：画布下方以无边框大字号数字展示关键物理量读数；能量分布、公式与原理解析置于次级可折叠区。
  */
 
 import React, { useEffect, useState } from "react";
@@ -17,15 +17,8 @@ import {
   Pause,
   RotateCcw,
   StepForward,
-  Compass,
-  Grid,
   Volume2,
   VolumeX,
-  Gauge,
-  Sparkles,
-  Activity,
-  BookOpen,
-  Sliders,
 } from "lucide-react";
 import { BENCH_REGISTRY, getBenchById } from "./benches";
 import {
@@ -51,9 +44,8 @@ export default function App() {
   const persisted = readLabPersistedState();
   const [lab, setLab] = useState<LabPersistedState>(persisted);
   const [muted, setMuted] = useState(isSoundMuted());
-  const [activePresetId, setActivePresetId] = useState<string | null>(null);
+  const [activePresetId, setActivePresetId] = useState<string>("");
 
-  // 同步外部 MCP 接口（如 AI 导师调用 configureExperiment / loadPreset）引起的状态变更
   useEffect(() => {
     setLab(readLabPersistedState());
   }, [
@@ -61,6 +53,8 @@ export default function App() {
     persisted.running,
     persisted.slowMotion,
     persisted.showVectors,
+    persisted.showVectorDetails,
+    persisted.showGrid,
     JSON.stringify(persisted.paramsByBench),
   ]);
 
@@ -72,7 +66,6 @@ export default function App() {
     activeBench.createInitialState(activeParams);
   const activeWave = lab.waveformByBench[activeBench.id] ?? [];
 
-  // 统一物理仿真时钟循环 (50Hz tick = 20ms)
   useEffect(() => {
     if (!lab.running) return;
     const dt = lab.slowMotion ? 0.005 : 0.02;
@@ -135,7 +128,7 @@ export default function App() {
 
   function handleSelectBench(benchId: string) {
     playUiClick();
-    setActivePresetId(null);
+    setActivePresetId("");
     const target = getBenchById(benchId);
     const params =
       lab.paramsByBench[target.id] ?? target.getDefaultParams();
@@ -151,7 +144,7 @@ export default function App() {
   }
 
   function handleChangeParam(key: string, value: number) {
-    setActivePresetId(null);
+    setActivePresetId("");
     const nextParams = { ...activeParams, [key]: value };
     const freshState = activeBench.createInitialState(nextParams);
     commitLab({
@@ -174,14 +167,20 @@ export default function App() {
     });
   }
 
-  function handleLoadPreset(presetId: string, presetParams: Record<string, number>) {
+  function handleSelectPreset(presetId: string) {
+    if (!presetId) {
+      setActivePresetId("");
+      return;
+    }
+    const preset = activeBench.presets.find((p) => p.id === presetId);
+    if (!preset) return;
     playUiClick();
-    setActivePresetId(presetId);
-    const nextParams = { ...presetParams };
+    setActivePresetId(preset.id);
+    const nextParams = { ...preset.params };
     const freshState = activeBench.createInitialState(nextParams);
     commitLab({
       ...lab,
-      running: true,
+      running: false,
       paramsByBench: {
         ...lab.paramsByBench,
         [activeBench.id]: nextParams,
@@ -239,10 +238,14 @@ export default function App() {
       waveformByBench: {
         ...lab.waveformByBench,
         [activeBench.id]: [
-          activeBench.sampleWaveform(freshState, activeParams),
+          activeBench.sampleWaveform(freshState, nextParamsOrDefault(activeParams)),
         ],
       },
     });
+  }
+
+  function nextParamsOrDefault(p: Record<string, number>) {
+    return p;
   }
 
   function handleStepOnce() {
@@ -275,19 +278,28 @@ export default function App() {
   const epPct = Math.min(100, (energy.potential / safeTotalE) * 100);
   const qPct = Math.min(100, (energy.thermal / safeTotalE) * 100);
 
+  const selectedPreset = activeBench.presets.find(
+    (p) => p.id === activePresetId,
+  );
+  const detailLabel =
+    locale === "zh-TW"
+      ? "分力與數值"
+      : locale === "en"
+      ? "Components & Values"
+      : "分力与数值";
+  const customPresetPlaceholder =
+    locale === "zh-TW"
+      ? "選擇教學預設場景…"
+      : locale === "en"
+      ? "Select a preset scenario…"
+      : "选择经典教学预设…";
+
   return (
     <div className="ml-app">
-      {/* 顶部导航栏：标题 + 动态实验台切换 Tab */}
+      {/* 1. 极简顶栏：仅保留标题与实验台切换 */}
       <header className="ml-topbar">
-        <div className="ml-brand">
-          <span className="ml-logo-dot" />
-          <div>
-            <h1>{t("appTitle")}</h1>
-            <small>{loc(activeBench.subtitle, locale)}</small>
-          </div>
-        </div>
+        <h1 className="ml-title">{t("appTitle")}</h1>
 
-        {/* 实验台插件切换 Tabs（完全由 BENCH_REGISTRY 动态驱动） */}
         <nav className="ml-bench-tabs" aria-label="Experiment Benches">
           {BENCH_REGISTRY.map((bench) => (
             <button
@@ -304,77 +316,169 @@ export default function App() {
         </nav>
       </header>
 
-      {/* 主工作区：左侧物理实验舞台与仪表，右侧参数滑块与经典预设 */}
+      {/* 2. 主工作区：左侧实验画布与分层数据，右侧精简参数栏 */}
       <main className="ml-workspace">
         <section className="ml-stage-column">
-          {/* 辅助工具栏：受力矢量图 + 坐标标尺 + 音效开关（空间独立，绝不折行） */}
-          <div className="ml-stage-tools">
-            <button
-              type="button"
-              className={`ml-chip-btn ${lab.showVectors ? "is-on" : ""}`}
-              onClick={() => {
-                playUiClick();
-                commitLab({ ...lab, showVectors: !lab.showVectors });
-              }}
-              title={t("toggleVectors")}
+          {/* 实验画布主角区 */}
+          <div className="ml-canvas-surface">
+            <svg
+              viewBox="0 0 760 400"
+              className="ml-stage-svg"
+              preserveAspectRatio="xMidYMid meet"
             >
-              <Compass size={14} />
-              <span>{t("toggleVectors")}</span>
-            </button>
+              {activeBench.renderStage({
+                params: activeParams,
+                state: activeState,
+                showVectors: lab.showVectors,
+                showVectorDetails: lab.showVectorDetails,
+                showGrid: lab.showGrid,
+                locale,
+                onChangeParam: handleChangeParam,
+              })}
+            </svg>
 
-            <button
-              type="button"
-              className={`ml-chip-btn ${lab.showGrid ? "is-on" : ""}`}
-              onClick={() => {
-                playUiClick();
-                commitLab({ ...lab, showGrid: !lab.showGrid });
-              }}
-              title={t("toggleGrid")}
-            >
-              <Grid size={14} />
-              <span>{t("toggleGrid")}</span>
-            </button>
+            {/* 画布下方集中控制栏：左侧主操作+回放控制，右侧轻量视图开关 */}
+            <div className="ml-transport-bar">
+              <div className="ml-transport-main">
+                <button
+                  type="button"
+                  className={`ml-play-btn ${lab.running ? "is-running" : ""}`}
+                  onClick={handleTogglePlay}
+                >
+                  {lab.running ? <Pause size={14} /> : <Play size={14} />}
+                  <span>{lab.running ? t("btnPause") : t("btnPlay")}</span>
+                </button>
 
-            <button
-              type="button"
-              className={`ml-chip-btn is-icon ${!muted ? "is-on" : ""}`}
-              onClick={() => {
-                const nextMuted = toggleSoundMute();
-                setMuted(nextMuted);
-                if (!nextMuted) playUiClick();
-              }}
-              title={t("toggleSound")}
-              aria-label={t("toggleSound")}
-            >
-              {muted ? <VolumeX size={14} /> : <Volume2 size={14} />}
-            </button>
+                <button
+                  type="button"
+                  className="ml-ghost-btn"
+                  onClick={handleStepOnce}
+                  disabled={lab.running}
+                >
+                  <StepForward size={14} />
+                  <span>{t("btnStep")}</span>
+                </button>
+
+                <button
+                  type="button"
+                  className="ml-ghost-btn"
+                  onClick={handleReset}
+                >
+                  <RotateCcw size={14} />
+                  <span>{t("btnReset")}</span>
+                </button>
+
+                <button
+                  type="button"
+                  className={`ml-ghost-btn ${lab.slowMotion ? "is-active" : ""}`}
+                  onClick={() => {
+                    playUiClick();
+                    commitLab({ ...lab, slowMotion: !lab.slowMotion });
+                  }}
+                >
+                  <span>
+                    {lab.slowMotion ? t("speedSlow") : t("speedNormal")}
+                  </span>
+                </button>
+              </div>
+
+              <div className="ml-transport-toggles">
+                <button
+                  type="button"
+                  className={`ml-toggle-pill ${lab.showVectors ? "is-on" : ""}`}
+                  onClick={() => {
+                    playUiClick();
+                    commitLab({ ...lab, showVectors: !lab.showVectors });
+                  }}
+                >
+                  {t("toggleVectors")}
+                </button>
+
+                {lab.showVectors && (
+                  <button
+                    type="button"
+                    className={`ml-toggle-pill ${
+                      lab.showVectorDetails ? "is-on" : ""
+                    }`}
+                    onClick={() => {
+                      playUiClick();
+                      commitLab({
+                        ...lab,
+                        showVectorDetails: !lab.showVectorDetails,
+                      });
+                    }}
+                  >
+                    {detailLabel}
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  className={`ml-toggle-pill ${lab.showGrid ? "is-on" : ""}`}
+                  onClick={() => {
+                    playUiClick();
+                    commitLab({ ...lab, showGrid: !lab.showGrid });
+                  }}
+                >
+                  {t("toggleGrid")}
+                </button>
+
+                <button
+                  type="button"
+                  className={`ml-toggle-pill is-icon ${!muted ? "is-on" : ""}`}
+                  onClick={() => {
+                    const nextMuted = toggleSoundMute();
+                    setMuted(nextMuted);
+                    if (!nextMuted) playUiClick();
+                  }}
+                  title={t("toggleSound")}
+                  aria-label={t("toggleSound")}
+                >
+                  {muted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+                </button>
+              </div>
+            </div>
           </div>
 
-          {/* 实验台顶部公式铭牌 + 机械能守恒实时进度条 */}
-          <div className="ml-stage-hud">
-            <div className="ml-formula-pill">
-              <span className="ml-formula-tag">FORMULA</span>
-              <code>{activeBench.formulaBadge}</code>
-            </div>
-
-            <div className="ml-energy-monitor">
-              <div className="ml-energy-labels">
-                <span className="is-ek">
-                  {t("energyKinetic")}: {energy.kinetic.toFixed(1)}J
+          {/* 3. 关键读数区：大字号数字 + 弱化单位，无边框平铺 */}
+          <div className="ml-readout-strip" aria-label={t("panelTelemetry")}>
+            {telemetry.map((item) => (
+              <div key={item.id} className="ml-readout-item">
+                <span className="ml-readout-label">
+                  {loc(item.label, locale)}{" "}
+                  <var className="ml-readout-sym">{item.symbol}</var>
                 </span>
-                <span className="is-ep">
-                  {t("energyPotential")}: {energy.potential.toFixed(1)}J
+                <div className="ml-readout-val">
+                  <strong>{item.value}</strong>
+                  {item.unit && <small>{item.unit}</small>}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* 4. 次级解释区：能量分布条 + 公式 + 可折叠原理推导 */}
+          <div className="ml-secondary-area">
+            <div className="ml-energy-row">
+              <div className="ml-energy-meta">
+                <span className="ml-energy-item is-ek">
+                  <i></i>
+                  {t("energyKinetic")} {energy.kinetic.toFixed(1)} J
+                </span>
+                <span className="ml-energy-item is-ep">
+                  <i></i>
+                  {t("energyPotential")} {energy.potential.toFixed(1)} J
                 </span>
                 {energy.thermal > 0.05 && (
-                  <span className="is-q">
-                    {t("energyThermal")}: {energy.thermal.toFixed(1)}J
+                  <span className="ml-energy-item is-q">
+                    <i></i>
+                    {t("energyThermal")} {energy.thermal.toFixed(1)} J
                   </span>
                 )}
-                <strong className="is-total">
-                  {t("energyTotal")}: {energy.total.toFixed(1)}J
-                </strong>
+                <span className="ml-energy-total">
+                  {t("energyTotal")} {energy.total.toFixed(1)} J
+                </span>
               </div>
-              <div className="ml-energy-bar-track">
+              <div className="ml-energy-track">
                 <div
                   className="ml-energy-seg is-ek"
                   style={{ width: `${ekPct}%` }}
@@ -389,126 +493,63 @@ export default function App() {
                 />
               </div>
             </div>
-          </div>
 
-          {/* 物理实验主画布 (760x400 标准坐标系) */}
-          <div className="ml-canvas-box">
-            <svg
-              viewBox="0 0 760 400"
-              className="ml-stage-svg"
-              preserveAspectRatio="xMidYMid meet"
-            >
-              {activeBench.renderStage({
-                params: activeParams,
-                state: activeState,
-                showVectors: lab.showVectors,
-                showGrid: lab.showGrid,
-                locale,
-                onChangeParam: handleChangeParam,
-              })}
-            </svg>
-
-            {/* 播放 / 暂停 / 单步 / 慢动作 控制浮动台 */}
-            <div className="ml-transport-bar">
-              <button
-                type="button"
-                className={`ml-play-btn ${lab.running ? "is-running" : ""}`}
-                onClick={handleTogglePlay}
-              >
-                {lab.running ? <Pause size={15} /> : <Play size={15} />}
-                <span>{lab.running ? t("btnPause") : t("btnPlay")}</span>
-              </button>
-
-              <button
-                type="button"
-                className="ml-ctrl-btn"
-                onClick={handleStepOnce}
-                disabled={lab.running}
-              >
-                <StepForward size={14} />
-                <span>{t("btnStep")}</span>
-              </button>
-
-              <button
-                type="button"
-                className="ml-ctrl-btn"
-                onClick={handleReset}
-              >
-                <RotateCcw size={14} />
-                <span>{t("btnReset")}</span>
-              </button>
-
-              <button
-                type="button"
-                className={`ml-ctrl-btn ${lab.slowMotion ? "is-active" : ""}`}
-                onClick={() => {
-                  playUiClick();
-                  commitLab({ ...lab, slowMotion: !lab.slowMotion });
-                }}
-              >
-                <Gauge size={14} />
-                <span>
-                  {lab.slowMotion ? t("speedSlow") : t("speedNormal")}
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* 底部双栏：实时物理量测量仪 + 纸带打点波形记录仪 */}
-          <div className="ml-bottom-grid">
-            <div className="ml-telemetry-card">
-              <div className="ml-card-head">
-                <Activity size={13} />
-                <span>{t("panelTelemetry")}</span>
-              </div>
-              <div className="ml-telemetry-items">
-                {telemetry.map((item) => (
-                  <div
-                    key={item.id}
-                    className={`ml-stat-box is-${item.highlight || "default"}`}
-                  >
-                    <small>{loc(item.label, locale)}</small>
-                    <strong>
-                      <em>{item.symbol} = </em>
-                      {item.value}
-                      <span> {item.unit}</span>
-                    </strong>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="ml-waveform-card">
-              <div className="ml-card-head">
-                <BookOpen size={13} />
-                <span>{t("panelPrinciple")}</span>
-              </div>
-              <p className="ml-principle-text">
+            <details className="ml-principle-details">
+              <summary className="ml-principle-summary">
+                <span className="ml-summary-title">{t("panelPrinciple")}</span>
+                <code className="ml-summary-formula">
+                  {activeBench.formulaBadge}
+                </code>
+              </summary>
+              <p className="ml-principle-body">
                 {loc(activeBench.principleNote, locale)}
               </p>
-            </div>
+            </details>
           </div>
         </section>
 
-        {/* 右侧控制栏：声明式参数滑块 + 经典预设场景 */}
+        {/* 右侧精简侧栏：紧凑预设选择器 + 统一对齐参数滑杆 */}
         <aside className="ml-sidebar">
-          <div className="ml-side-card">
-            <div className="ml-card-head">
-              <Sliders size={13} />
-              <span>{t("panelParams")}</span>
-            </div>
+          <div className="ml-sidebar-group">
+            <label className="ml-section-label" htmlFor="ml-preset-select">
+              {t("panelPresets")}
+            </label>
+            <select
+              id="ml-preset-select"
+              className="ml-preset-select"
+              value={activePresetId}
+              onChange={(e) => handleSelectPreset(e.target.value)}
+            >
+              <option value="">{customPresetPlaceholder}</option>
+              {activeBench.presets.map((preset) => (
+                <option key={preset.id} value={preset.id}>
+                  {loc(preset.title, locale)}
+                </option>
+              ))}
+            </select>
+            {selectedPreset && (
+              <p className="ml-preset-caption">
+                {loc(selectedPreset.description, locale)}
+              </p>
+            )}
+          </div>
+
+          <div className="ml-sidebar-group">
+            <div className="ml-section-label">{t("panelParams")}</div>
             <div className="ml-sliders-list">
               {activeBench.paramSpecs.map((spec) => {
                 const val = activeParams[spec.key] ?? spec.defaultValue;
                 return (
                   <label key={spec.key} className="ml-slider-row">
                     <div className="ml-slider-top">
-                      <span>
-                        {loc(spec.label, locale)} (<code>{spec.symbol}</code>)
+                      <span className="ml-param-name">
+                        {loc(spec.label, locale)}{" "}
+                        <var className="ml-param-sym">{spec.symbol}</var>
                       </span>
-                      <strong>
-                        {val} {spec.unit}
-                      </strong>
+                      <span className="ml-param-val">
+                        <strong>{val}</strong>
+                        {spec.unit && <small> {spec.unit}</small>}
+                      </span>
                     </div>
                     <input
                       type="range"
@@ -523,28 +564,6 @@ export default function App() {
                   </label>
                 );
               })}
-            </div>
-          </div>
-
-          <div className="ml-side-card">
-            <div className="ml-card-head">
-              <Sparkles size={13} />
-              <span>{t("panelPresets")}</span>
-            </div>
-            <div className="ml-presets-list">
-              {activeBench.presets.map((preset) => (
-                <button
-                  key={preset.id}
-                  type="button"
-                  className={`ml-preset-btn ${
-                    preset.id === activePresetId ? "is-active" : ""
-                  }`}
-                  onClick={() => handleLoadPreset(preset.id, preset.params)}
-                >
-                  <strong>{loc(preset.title, locale)}</strong>
-                  <small>{loc(preset.description, locale)}</small>
-                </button>
-              ))}
             </div>
           </div>
         </aside>

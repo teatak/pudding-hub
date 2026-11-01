@@ -2,17 +2,6 @@
  * ============================================================================
  * 实验台插件 4：弹簧振子与简谐运动实验台 (`src/benches/harmonic.tsx`)
  * ============================================================================
- *
- * 【可维护性验证（Phase 2 新增插件）】
- * 本文件同样作为独立插件加入，无需改动已有实验台或公共外壳，仅在 `src/benches/index.ts` 注册。
- *
- * 【教学目标】
- * 1. 胡克定律与回复力：F = -k · x，加速度 a = -(k/m) · x 始终指向平衡位置 (x = 0)。
- * 2. 简谐运动固有周期公式：T = 2π · √(m / k)，验证固有周期只由质量 m 和劲度系数 k 决定，
- *    与初始振幅 A 无关（等时性）！
- * 3. 动能与弹性势能的周期性交替转化：
- *    - 在最大位移处 (x = ±A)：速度 v = 0，动能 Ek = 0，弹性势能 Ep = ½kA² 最大；
- *    - 在平衡位置处 (x = 0)：势能 Ep = 0，速度达到最大，动能 Ek 最大。
  */
 
 import React from "react";
@@ -25,13 +14,9 @@ import type {
 } from "../types";
 
 export interface HarmonicParams extends Record<string, number> {
-  /** 弹簧劲度系数 k (N/m) */
   stiffness: number;
-  /** 振子质量 m (kg) */
   mass: number;
-  /** 初始拉伸位移振幅 x0 (m) */
   amplitude: number;
-  /** 阻尼系数 c (N·s/m，0 表示无阻尼理想简谐振动) */
   damping: number;
 }
 
@@ -44,6 +29,52 @@ export interface HarmonicState {
   initialEnergy: number;
   waveTrail: { t: number; x: number }[];
   completed: boolean;
+}
+
+function renderShmArrow(
+  x1: number,
+  y: number,
+  dx: number,
+  color: string,
+  label: string,
+  labelAbove: boolean,
+) {
+  if (Math.abs(dx) < 5) return null;
+  const x2 = x1 + dx;
+  const dir = Math.sign(dx);
+  const bx = x2 - dir * 7;
+  return (
+    <g>
+      <line
+        x1={x1}
+        y1={y}
+        x2={bx}
+        y2={y}
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <polygon
+        points={`${x2},${y} ${bx},${y - 3.2} ${bx},${y + 3.2}`}
+        fill={color}
+      />
+      <text
+        x={x1 + dx * 0.5}
+        y={labelAbove ? y - 7 : y + 14}
+        textAnchor="middle"
+        fill={color}
+        fontSize="11"
+        fontWeight="600"
+        style={{
+          paintOrder: "stroke",
+          stroke: "var(--ml-canvas-bg)",
+          strokeWidth: "3.5px",
+        }}
+      >
+        {label}
+      </text>
+    </g>
+  );
 }
 
 export const harmonicBench: ExperimentBench<HarmonicParams, HarmonicState> = {
@@ -68,14 +99,14 @@ export const harmonicBench: ExperimentBench<HarmonicParams, HarmonicState> = {
     de: "Verifiziert Hookesches Gesetz, Periodenformel und periodische Energieumwandlung",
     fr: "Vérifie la loi de Hooke, la formule de période et la conversion cyclique d'énergie",
   },
-  formulaBadge: "F = -k·x - c·v , T = 2π·√(m / k) , E = ½mv² + ½kx²",
+  formulaBadge: "F = −k·x − c·v , T = 2π·√(m / k) , E = ½mv² + ½kx²",
   principleNote: {
     "zh-CN":
-      "弹簧振子受到的回复力 F = -kx 大小与位移成正比、方向始终指向平衡位置 O。在无阻尼 (c=0) 情况下，振子在平衡位置速度最大（动能 Ek 最大、势能 Ep=0），在两端最大位移处速度为零（动能 Ek=0、势能 Ep 最大），固有周期 T = 2π√(m/k) 与振幅无关！",
+      "弹簧振子受到的回复力 F = -kx 大小与位移成正比、方向始终指向平衡位置 O。在无阻尼 (c=0) 情况下，振子在平衡位置速度最大（动能 Ek 最大、势能 Ep=0），在两端最大位移处速度为零（动能 Ek=0、势能 Ep 最大），固有周期 T = 2π√(m/k) 与振幅无关。",
     "zh-TW":
-      "彈簧振子受到的回復力 F = -kx 大小與位移成正比、方向始終指向平衡位置 O。在無阻尼 (c=0) 情況下，振子在平衡位置速度最大（動能 Ek 最大、勢能 Ep=0），在兩端最大位移處速度為零（動能 Ek=0、勢能 Ep 最大），固有週期 T = 2π√(m/k) 與振幅無關！",
+      "彈簧振子受到的回復力 F = -kx 大小與位移成正比、方向始終指向平衡位置 O。在無阻尼 (c=0) 情況下，振子在平衡位置速度最大（動能 Ek 最大、勢能 Ep=0），在兩端最大位移處速度為零（動能 Ek=0、勢能 Ep 最大），固有週期 T = 2π√(m/k) 與振幅無關。",
     en:
-      "Restoring force F = -kx points toward equilibrium O (x = 0). Kinetic energy Ek and elastic potential energy Ep = ½kx² trade places twice every period T = 2π√(m/k), which is independent of amplitude!",
+      "Restoring force F = -kx points toward equilibrium O (x = 0). Kinetic energy Ek and elastic potential energy Ep = ½kx² trade places twice every period T = 2π√(m/k), which is independent of amplitude.",
   },
   waveformLabels: {
     primary: {
@@ -203,8 +234,6 @@ export const harmonicBench: ExperimentBench<HarmonicParams, HarmonicState> = {
   ): BenchStepResult<HarmonicState> {
     if (state.completed) return { state };
 
-    // 当无阻尼 (c = 0) 时使用精确解析解保证长时间运行能量 100% 守恒无数值漂移；
-    // 有阻尼时使用 Velocity-Verlet 对称积分
     const omega0 = Math.sqrt(params.stiffness / params.mass);
     const nextT = state.t + dt;
     let nextX: number;
@@ -232,7 +261,6 @@ export const harmonicBench: ExperimentBench<HarmonicParams, HarmonicState> = {
     }
 
     const soundEvents: BenchStepResult<HarmonicState>["soundEvents"] = [];
-    // 经过平衡位置 x = 0 时触发节拍器轻响
     if (
       (state.x > 0 && nextX <= 0) ||
       (state.x < 0 && nextX >= 0)
@@ -306,7 +334,7 @@ export const harmonicBench: ExperimentBench<HarmonicParams, HarmonicState> = {
       {
         id: "forceF",
         label: { "zh-CN": "胡克回复力", "zh-TW": "虎克回復力", en: "Restoring F" },
-        symbol: "-kx",
+        symbol: "F",
         value: restoringForce.toFixed(1),
         unit: "N",
         highlight: "rose",
@@ -341,6 +369,8 @@ export const harmonicBench: ExperimentBench<HarmonicParams, HarmonicState> = {
     params,
     state,
     showVectors,
+    showVectorDetails = false,
+    showGrid,
   }: BenchStageProps<HarmonicParams, HarmonicState>) {
     const wallX = 75;
     const eqX = 390;
@@ -349,170 +379,179 @@ export const harmonicBench: ExperimentBench<HarmonicParams, HarmonicState> = {
     const blockX = eqX + state.x * pxPerMeter;
     const restoringForce = -params.stiffness * state.x;
 
-    // 生成弹簧锯齿折线路径
     const coils = 14;
-    const startSpringX = wallX + 12;
-    const endSpringX = blockX - 28;
+    const startSpringX = wallX + 10;
+    const endSpringX = blockX - 26;
     const springSpan = Math.max(40, endSpringX - startSpringX);
     const coilPts: string[] = [`M ${wallX} ${trackY}`, `L ${startSpringX} ${trackY}`];
     for (let i = 0; i < coils; i++) {
       const cx = startSpringX + ((i + 0.5) / coils) * springSpan;
-      const cy = trackY + (i % 2 === 0 ? -15 : 15);
+      const cy = trackY + (i % 2 === 0 ? -13 : 13);
       coilPts.push(`L ${cx.toFixed(1)} ${cy}`);
     }
     coilPts.push(`L ${endSpringX.toFixed(1)} ${trackY}`);
 
-    // 底部实时滚动 x-t 纸带正弦轨迹
-    const waveBaseY = 325;
+    const waveBaseY = 322;
     const waveRightX = 680;
     const wavePoints = state.waveTrail
       .map((pt, idx) => {
         const dtAgo = state.t - pt.t;
         const wx = waveRightX - dtAgo * 115;
-        const wy = waveBaseY - pt.x * 24;
+        const wy = waveBaseY - pt.x * 22;
         return `${idx === 0 ? "M" : "L"} ${wx.toFixed(1)} ${wy.toFixed(1)}`;
       })
       .join(" ");
 
     return (
       <g>
-        {/* 左侧固定墙面与光滑导轨 */}
-        <rect x={wallX - 10} y={105} width={10} height={115} rx={2} fill="var(--ml-canvas-ground)" />
-        <line x1={wallX} y1={220} x2={710} y2={220} stroke="var(--ml-canvas-ground)" strokeWidth="2.5" />
+        {showGrid && (
+          <g stroke="var(--ml-canvas-grid)" strokeWidth="1">
+            {[-2, -1, 0, 1, 2].map((m) => (
+              <line
+                key={`hm-${m}`}
+                x1={eqX + m * pxPerMeter}
+                y1={50}
+                x2={eqX + m * pxPerMeter}
+                y2={230}
+              />
+            ))}
+          </g>
+        )}
+
+        {/* 固定墙面与导轨 */}
+        <rect
+          x={wallX - 8}
+          y={115}
+          width={8}
+          height={96}
+          rx={2}
+          fill="var(--ml-ramp-surface)"
+          stroke="var(--ml-ramp-edge)"
+          strokeWidth="1.25"
+        />
+        <line
+          x1={wallX - 8}
+          y1={211}
+          x2={705}
+          y2={211}
+          stroke="var(--ml-canvas-ground)"
+          strokeWidth="1.5"
+        />
 
         {/* 平衡位置 O (x = 0) 基准虚线 */}
         <line
           x1={eqX}
-          y1={85}
+          y1={82}
           x2={eqX}
-          y2={245}
-          stroke="#fbbf24"
-          strokeWidth="1.8"
-          strokeDasharray="5 4"
+          y2={232}
+          stroke="var(--ml-text-dim)"
+          strokeWidth="1.25"
+          strokeDasharray="4 4"
         />
         <text
           x={eqX}
-          y={76}
+          y={72}
           textAnchor="middle"
-          fill="#fde047"
-          fontSize="11.5"
-          fontWeight="800"
+          fill="var(--ml-text-muted)"
+          fontSize="11"
+          fontWeight="500"
         >
-          平衡位置 O (x = 0)
+          平衡位置 x = 0
         </text>
 
         {/* 弹簧折线 */}
         <path
           d={coilPts.join(" ")}
           fill="none"
-          stroke="#94a3b8"
-          strokeWidth="2.8"
+          stroke="var(--ml-text-muted)"
+          strokeWidth="2"
           strokeLinejoin="round"
         />
 
         {/* 振子滑块 */}
-        <g transform={`translate(${blockX}, ${trackY})`}>
+        <g>
           <rect
-            x={-28}
-            y={-28}
-            width={56}
-            height={56}
-            rx={8}
-            fill="#0284c7"
-            stroke="#7dd3fc"
-            strokeWidth="2.5"
+            x={blockX - 26}
+            y={trackY - 26}
+            width={52}
+            height={52}
+            rx={6}
+            fill="var(--ml-block-fill)"
+            stroke="var(--ml-block-stroke)"
+            strokeWidth="1.5"
           />
           <text
-            x={0}
-            y={5}
+            x={blockX}
+            y={trackY + 4}
             textAnchor="middle"
-            fill="#ffffff"
-            fontSize="12"
-            fontWeight="800"
+            fill="var(--ml-block-text)"
+            fontSize="11"
+            fontWeight="700"
           >
-            {params.mass}kg
+            {params.mass} kg
           </text>
 
           {showVectors && (
             <g>
-              {/* 回复力 F = -kx (红色箭头，始终指向平衡位置 O) */}
-              {Math.abs(restoringForce) > 0.5 && (
-                <>
-                  <line
-                    x1={0}
-                    y1={-40}
-                    x2={restoringForce * 2.2}
-                    y2={-40}
-                    stroke="#f43f5e"
-                    strokeWidth="3"
-                  />
-                  <text
-                    x={restoringForce * 1.1}
-                    y={-48}
-                    textAnchor="middle"
-                    fill="#fda4af"
-                    fontSize="10.5"
-                    fontWeight="700"
-                  >
-                    F={restoringForce.toFixed(1)}N
-                  </text>
-                </>
-              )}
-
-              {/* 瞬时速度 v (绿色箭头) */}
-              {Math.abs(state.v) > 0.1 && (
-                <>
-                  <line
-                    x1={0}
-                    y1={42}
-                    x2={state.v * 14}
-                    y2={42}
-                    stroke="#22c55e"
-                    strokeWidth="3"
-                  />
-                  <text
-                    x={state.v * 7}
-                    y={58}
-                    textAnchor="middle"
-                    fill="#86efac"
-                    fontSize="10.5"
-                    fontWeight="700"
-                  >
-                    v={state.v.toFixed(1)}m/s
-                  </text>
-                </>
-              )}
+              {Math.abs(restoringForce) > 0.5 &&
+                renderShmArrow(
+                  blockX,
+                  trackY - 38,
+                  restoringForce * 2.0,
+                  "var(--ml-force-f)",
+                  showVectorDetails
+                    ? `F = ${restoringForce.toFixed(1)} N`
+                    : "F = −kx",
+                  true,
+                )}
+              {Math.abs(state.v) > 0.1 &&
+                renderShmArrow(
+                  blockX,
+                  trackY + 46,
+                  state.v * 13,
+                  "var(--ml-force-n)",
+                  showVectorDetails ? `v = ${state.v.toFixed(1)} m/s` : "v",
+                  false,
+                )}
             </g>
           )}
         </g>
 
-        {/* 底部纸带正弦轨迹记录区 */}
+        {/* 底部轻量时域波形带（无重色边框） */}
         <rect
           x={65}
-          y={265}
+          y={268}
           width={635}
-          height={115}
-          rx={8}
-          fill="rgba(15, 23, 42, 0.85)"
-          stroke="rgba(56, 189, 248, 0.25)"
+          height={108}
+          rx={6}
+          fill="var(--ml-panel-subtle)"
+          opacity="0.7"
         />
         <line
           x1={75}
           y1={waveBaseY}
           x2={685}
           y2={waveBaseY}
-          stroke="rgba(148, 163, 184, 0.25)"
-          strokeDasharray="4 4"
+          stroke="var(--ml-text-dim)"
+          strokeWidth="1"
+          strokeDasharray="3 3"
+          opacity="0.35"
         />
-        <text x={82} y={284} fill="#7dd3fc" fontSize="10.5" fontWeight="700">
-          📈 实时简谐波形记录 x(t) = A·cos(ωt)
+        <text
+          x={80}
+          y={285}
+          fill="var(--ml-text-muted)"
+          fontSize="11"
+          fontWeight="500"
+        >
+          位移波形 x(t)
         </text>
         {wavePoints && (
           <path
             d={wavePoints}
             fill="none"
-            stroke="#38bdf8"
-            strokeWidth="2.4"
+            stroke="var(--ml-primary)"
+            strokeWidth="2"
           />
         )}
       </g>

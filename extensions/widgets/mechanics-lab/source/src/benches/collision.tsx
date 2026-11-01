@@ -2,19 +2,6 @@
  * ============================================================================
  * 实验台插件 3：动量守恒与一维弹性/非弹性碰撞实验台 (`src/benches/collision.tsx`)
  * ============================================================================
- *
- * 【可维护性验证（Phase 2 新增插件）】
- * 本文件是在第 1、2 号实验台（`ramp.tsx`、`projectile.tsx`）和公共外壳（`App.tsx`、`game.ts`）
- * 开发完成后独立新增的第 3 号实验台插件。新增本实验台时，未修改 `ramp.tsx`、`projectile.tsx`、
- * `App.tsx` 或 `game.ts` 中的任何一行代码，仅在 `src/benches/index.ts` 中追加注册。
- *
- * 【教学目标】
- * 1. 验证动量守恒定律：不论碰撞是完全弹性 (e = 1) 还是完全非弹性粘合 (e = 0)，
- *    系统总动量 p_total = m1·v1 + m2·v2 在碰撞前后严格保持恒定！
- * 2. 一维碰撞通用解析公式（恢复系数 e = -(v1' - v2') / (v1 - v2)）：
- *    - v1' = [m1·v1 + m2·v2 - m2·e·(v1 - v2)] / (m1 + m2)
- *    - v2' = [m1·v1 + m2·v2 + m1·e·(v1 - v2)] / (m1 + m2)
- * 3. 观察能量转化：当 e < 1 时，部分机械能转化为碰撞内能 Q = Ek_初 - Ek_末，但总能量依然守恒。
  */
 
 import React from "react";
@@ -27,15 +14,10 @@ import type {
 } from "../types";
 
 export interface CollisionParams extends Record<string, number> {
-  /** 左球 A 质量 m1 (kg) */
   mass1: number;
-  /** 右球 B 质量 m2 (kg) */
   mass2: number;
-  /** 左球 A 初速度 v1 (m/s，向右为正) */
   v1Init: number;
-  /** 右球 B 初速度 v2 (m/s，向右为正，负值表示相向运动) */
   v2Init: number;
-  /** 恢复系数 e (1.0 = 完全弹性碰撞，0.0 = 完全非弹性粘合) */
   restitution: number;
 }
 
@@ -56,7 +38,53 @@ const TRACK_MIN_X = -6.0;
 const TRACK_MAX_X = 6.0;
 
 function radiusForMass(m: number): number {
-  return 0.35 + Math.sqrt(m) * 0.1; // 物理气垫导轨球半径 (m)
+  return 0.35 + Math.sqrt(m) * 0.1;
+}
+
+function renderHorizVector(
+  x1: number,
+  y: number,
+  dx: number,
+  color: string,
+  label: string,
+) {
+  if (Math.abs(dx) < 5) return null;
+  const x2 = x1 + dx;
+  const dir = Math.sign(dx);
+  const headLen = 7;
+  const bx = x2 - dir * headLen;
+  return (
+    <g>
+      <line
+        x1={x1}
+        y1={y}
+        x2={bx}
+        y2={y}
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <polygon
+        points={`${x2},${y} ${bx},${y - 3.2} ${bx},${y + 3.2}`}
+        fill={color}
+      />
+      <text
+        x={x1 + dx * 0.5}
+        y={y - 8}
+        textAnchor="middle"
+        fill={color}
+        fontSize="11"
+        fontWeight="600"
+        style={{
+          paintOrder: "stroke",
+          stroke: "var(--ml-canvas-bg)",
+          strokeWidth: "3.5px",
+        }}
+      >
+        {label}
+      </text>
+    </g>
+  );
 }
 
 export const collisionBench: ExperimentBench<CollisionParams, CollisionState> =
@@ -82,14 +110,14 @@ export const collisionBench: ExperimentBench<CollisionParams, CollisionState> =
       de: "Untersucht elastischen Geschwindigkeitsaustausch, inelastisches Zusammenkleben und Impulserhaltung",
       fr: "Explore l'échange de vitesse élastique, le choc inélastique et la conservation de quantité de mouvement",
     },
-    formulaBadge: "m₁v₁ + m₂v₂ = m₁v₁' + m₂v₂' , e = |v₂' - v₁'| / |v₁ - v₂|",
+    formulaBadge: "m₁v₁ + m₂v₂ = m₁v₁' + m₂v₂' , e = |v₂' − v₁'| / |v₁ − v₂|",
     principleNote: {
       "zh-CN":
-        "在光滑水平气垫导轨上，两球系统不受外力，无论发生完全弹性碰撞（e=1，机械能守恒）还是完全非弹性碰撞（e=0，两球粘在一起，损失最大动能转化为内能 Q），碰撞前后的总动量 p_总 = m₁v₁ + m₂v₂ 永远严格不变！特别地，当两球质量相等 (m₁=m₂) 且发生完全弹性碰撞时，两球会直接交换速度。",
+        "在光滑水平气垫导轨上，两球系统不受外力，无论发生完全弹性碰撞（e=1，机械能守恒）还是完全非弹性碰撞（e=0，两球粘在一起，损失动能转化为内能 Q），碰撞前后的总动量 p_总 = m₁v₁ + m₂v₂ 永远严格不变。当两球质量相等 (m₁=m₂) 且 e=1 时，两球直接交换速度。",
       "zh-TW":
-        "在光滑水平氣墊導軌上，兩球系統不受外力，無論發生完全彈性碰撞（e=1，機械能守恆）還是完全非彈性碰撞（e=0，兩球黏在一起，損失最大動能轉化為內能 Q），碰撞前後的總動量 p_總 = m₁v₁ + m₂v₂ 永遠嚴格不變！特別地，當兩球質量相等 (m₁=m₂) 且發生完全彈性碰撞時，兩球會直接交換速度。",
+        "在光滑水平氣墊導軌上，兩球系統不受外力，無論發生完全彈性碰撞（e=1，機械能守恆）還是完全非彈性碰撞（e=0，兩球黏在一起，損失動能轉化為內能 Q），碰撞前後的總動量 p_總 = m₁v₁ + m₂v₂ 永遠嚴格不變。當兩球質量相等 (m₁=m₂) 且 e=1 時，兩球直接交換速度。",
       en:
-        "On a frictionless air track, total linear momentum p = m1·v1 + m2·v2 is strictly conserved for any restitution e ∈ [0, 1]. When m1 = m2 and e = 1, the two spheres exchange velocities upon impact!",
+        "On a frictionless air track, total linear momentum p = m1·v1 + m2·v2 is strictly conserved for any restitution e ∈ [0, 1]. When m1 = m2 and e = 1, the two spheres exchange velocities upon impact.",
     },
     waveformLabels: {
       primary: {
@@ -244,7 +272,6 @@ export const collisionBench: ExperimentBench<CollisionParams, CollisionState> =
       const soundEvents: BenchStepResult<CollisionState>["soundEvents"] = [];
 
       if (!collided && nextX2 - nextX1 <= minDist && state.v1 > state.v2) {
-        // 发生一维碰撞：严格应用动量守恒 + 恢复系数公式
         const m1 = params.mass1;
         const m2 = params.mass2;
         const u1 = state.v1;
@@ -320,11 +347,11 @@ export const collisionBench: ExperimentBench<CollisionParams, CollisionState> =
         {
           id: "pTotal",
           label: {
-            "zh-CN": "系统总动量 (守恒)",
-            "zh-TW": "系統總動量 (守恆)",
+            "zh-CN": "系统总动量",
+            "zh-TW": "系統總動量",
             en: "Total Momentum",
           },
-          symbol: "p_总",
+          symbol: "p",
           value: pTotal.toFixed(2),
           unit: "kg·m/s",
           highlight: "amber",
@@ -393,10 +420,11 @@ export const collisionBench: ExperimentBench<CollisionParams, CollisionState> =
       params,
       state,
       showVectors,
+      showVectorDetails = false,
       showGrid,
     }: BenchStageProps<CollisionParams, CollisionState>) {
       const centerX = 380;
-      const trackY = 235;
+      const trackY = 248;
       const pxPerMeter = 52;
 
       const r1Px = radiusForMass(params.mass1) * pxPerMeter;
@@ -417,10 +445,10 @@ export const collisionBench: ExperimentBench<CollisionParams, CollisionState> =
                 const px = centerX + m * pxPerMeter;
                 return (
                   <g key={`cm-${m}`}>
-                    <line x1={px} y1={40} x2={px} y2={330} />
+                    <line x1={px} y1={40} x2={px} y2={trackY + 26} />
                     <text
                       x={px}
-                      y={trackY + 62}
+                      y={trackY + 46}
                       textAnchor="middle"
                       fill="var(--ml-text-dim)"
                       fontSize="10"
@@ -433,120 +461,91 @@ export const collisionBench: ExperimentBench<CollisionParams, CollisionState> =
             </g>
           )}
 
-          {/* 水平精密气垫导轨 */}
+          {/* 轻量水平导轨 */}
           <rect
             x={55}
-            y={trackY + 26}
+            y={trackY + 22}
             width={650}
-            height={14}
-            rx={4}
+            height={8}
+            rx={2}
             fill="var(--ml-ramp-surface)"
-            stroke="var(--ml-canvas-ground)"
-            strokeWidth="1.8"
+            stroke="var(--ml-ramp-edge)"
+            strokeWidth="1.25"
           />
 
           {/* 左球 A */}
-          <g transform={`translate(${x1Px}, ${trackY - r1Px + 24})`}>
+          <g>
             <circle
-              cx={0}
-              cy={0}
+              cx={x1Px}
+              cy={trackY - r1Px + 22}
               r={r1Px}
-              fill="#0284c7"
-              stroke="#7dd3fc"
-              strokeWidth="2.5"
+              fill="var(--ml-primary)"
+              stroke="var(--ml-canvas-bg)"
+              strokeWidth="1.5"
             />
             <text
-              x={0}
-              y={4}
+              x={x1Px}
+              y={trackY - r1Px + 26}
               textAnchor="middle"
               fill="#ffffff"
-              fontSize="11.5"
-              fontWeight="800"
+              fontSize="11"
+              fontWeight="700"
             >
-              A ({params.mass1}kg)
+              A · {params.mass1}kg
             </text>
-            {showVectors && Math.abs(state.v1) > 0.05 && (
-              <g>
-                <line
-                  x1={0}
-                  y1={-r1Px - 14}
-                  x2={state.v1 * 14}
-                  y2={-r1Px - 14}
-                  stroke="#38bdf8"
-                  strokeWidth="3"
-                />
-                <text
-                  x={state.v1 * 7}
-                  y={-r1Px - 22}
-                  textAnchor="middle"
-                  fill="#7dd3fc"
-                  fontSize="10.5"
-                  fontWeight="700"
-                >
-                  v₁={state.v1.toFixed(1)}m/s
-                </text>
-              </g>
-            )}
+            {showVectors &&
+              Math.abs(state.v1) > 0.05 &&
+              renderHorizVector(
+                x1Px,
+                trackY - r1Px * 2 + 6,
+                state.v1 * 14,
+                "var(--ml-primary)",
+                showVectorDetails ? `v₁ = ${state.v1.toFixed(1)} m/s` : "v₁",
+              )}
           </g>
 
           {/* 右球 B */}
-          <g transform={`translate(${x2Px}, ${trackY - r2Px + 24})`}>
+          <g>
             <circle
-              cx={0}
-              cy={0}
+              cx={x2Px}
+              cy={trackY - r2Px + 22}
               r={r2Px}
-              fill="#d97706"
-              stroke="#fde047"
-              strokeWidth="2.5"
+              fill="var(--ml-block-fill)"
+              stroke="var(--ml-block-stroke)"
+              strokeWidth="1.5"
             />
             <text
-              x={0}
-              y={4}
+              x={x2Px}
+              y={trackY - r2Px + 26}
               textAnchor="middle"
-              fill="#ffffff"
-              fontSize="11.5"
-              fontWeight="800"
+              fill="var(--ml-block-text)"
+              fontSize="11"
+              fontWeight="700"
             >
-              B ({params.mass2}kg)
+              B · {params.mass2}kg
             </text>
-            {showVectors && Math.abs(state.v2) > 0.05 && (
-              <g>
-                <line
-                  x1={0}
-                  y1={-r2Px - 14}
-                  x2={state.v2 * 14}
-                  y2={-r2Px - 14}
-                  stroke="#fbbf24"
-                  strokeWidth="3"
-                />
-                <text
-                  x={state.v2 * 7}
-                  y={-r2Px - 22}
-                  textAnchor="middle"
-                  fill="#fde047"
-                  fontSize="10.5"
-                  fontWeight="700"
-                >
-                  v₂={state.v2.toFixed(1)}m/s
-                </text>
-              </g>
-            )}
+            {showVectors &&
+              Math.abs(state.v2) > 0.05 &&
+              renderHorizVector(
+                x2Px,
+                trackY - r2Px * 2 + 6,
+                state.v2 * 14,
+                "var(--ml-force-g)",
+                showVectorDetails ? `v₂ = ${state.v2.toFixed(1)} m/s` : "v₂",
+              )}
           </g>
 
-          {/* 顶部动量守恒实时对比仪表 */}
-          <g transform="translate(24, 24)">
-            <rect
-              x={0}
+          {/* 左上角轻量动量守恒文字 */}
+          <g transform="translate(24, 28)">
+            <circle cx={0} cy={-4} r={3.5} fill="var(--ml-primary)" />
+            <text
+              x={10}
               y={0}
-              width={360}
-              height={34}
-              rx={7}
-              fill="rgba(15, 23, 42, 0.88)"
-              stroke="rgba(251, 191, 36, 0.4)"
-            />
-            <text x={12} y={21} fill="#fde047" fontSize="11.5" fontWeight="800">
-              ⚖️ 动量守恒：p₁({p1.toFixed(1)}) + p₂({p2.toFixed(1)}) = p_总(
-              {pTotal.toFixed(1)} kg·m/s)
+              fill="var(--ml-text-muted)"
+              fontSize="12"
+              fontWeight="500"
+            >
+              动量守恒：p₁ ({p1.toFixed(1)}) + p₂ ({p2.toFixed(1)}) = {pTotal.toFixed(1)} kg·m/s
             </text>
           </g>
         </g>

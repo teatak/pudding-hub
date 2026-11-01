@@ -19,6 +19,7 @@ export interface LabPersistedState {
   running: boolean;
   slowMotion: boolean;
   showVectors: boolean;
+  showVectorDetails: boolean;
   showGrid: boolean;
   paramsByBench: Record<string, Record<string, number>>;
   stateByBench: Record<string, unknown>;
@@ -58,7 +59,8 @@ export function createDefaultLabState(): LabPersistedState {
     running: false,
     slowMotion: false,
     showVectors: true,
-    showGrid: true,
+    showVectorDetails: false,
+    showGrid: false,
     paramsByBench,
     stateByBench,
     waveformByBench,
@@ -72,7 +74,6 @@ export function readLabPersistedState(): LabPersistedState {
   if (!raw || !raw.activeBenchId) {
     return createDefaultLabState();
   }
-  // 动态补齐后续升级新增的实验台默认状态，确保旧存档无缝兼容新实验台插件！
   const defaults = createDefaultLabState();
   return {
     ...defaults,
@@ -153,6 +154,7 @@ export function describeLabSnapshot(lab = readLabPersistedState()): JSONValue {
     running: lab.running,
     slowMotion: lab.slowMotion,
     showVectors: lab.showVectors,
+    showVectorDetails: lab.showVectorDetails,
     params,
     energy: {
       kineticJ: Number(energy.kinetic.toFixed(2)),

@@ -3,46 +3,39 @@
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "PingFang SC", sans-serif;
   font-synthesis: none;
 
-  /* Pudding 风格中性双模调色板 */
-  --ml-bg: light-dark(#f8fafc, #090e17);
-  --ml-panel: light-dark(#ffffff, #111827);
-  --ml-panel-subtle: light-dark(#f1f5f9, #1a2234);
-  --ml-border: light-dark(#e2e8f0, #1f293d);
-  --ml-border-hover: light-dark(#cbd5e1, #334155);
-  --ml-text: light-dark(#0f172a, #f8fafc);
+  /* 现代克制的中性色调色板，兼容明暗主题 */
+  --ml-bg: light-dark(#f8fafc, #0b0f17);
+  --ml-surface: light-dark(#ffffff, #111827);
+  --ml-surface-subtle: light-dark(#f1f5f9, #161f30);
+  --ml-text: light-dark(#0f172a, #f1f5f9);
   --ml-text-muted: light-dark(#64748b, #94a3b8);
   --ml-text-dim: light-dark(#94a3b8, #64748b);
 
-  /* 主题与功能品牌色 */
+  /* 唯一主强调色 */
   --ml-primary: light-dark(#0284c7, #38bdf8);
-  --ml-primary-hover: light-dark(#0369a1, #0ea5e9);
-  --ml-primary-bg: light-dark(#f0f9ff, rgba(56, 189, 248, 0.12));
-  --ml-primary-border: light-dark(#bae6fd, rgba(56, 189, 248, 0.3));
+  --ml-primary-soft: light-dark(rgba(2, 132, 199, 0.08), rgba(56, 189, 248, 0.12));
 
-  /* 物理能量守恒监测条配色 */
-  --ml-ek: #22c55e;
-  --ml-ep: #38bdf8;
-  --ml-q: #fb7185;
-  --ml-etotal: #fde047;
+  /* 物理向量语义色（仅用于表达物理含义） */
+  --ml-force-g: light-dark(#d97706, #fbbf24);
+  --ml-force-n: light-dark(#059669, #34d399);
+  --ml-force-f: light-dark(#e11d48, #fb7185);
+  --ml-force-ext: light-dark(#0284c7, #38bdf8);
+  --ml-force-comp: light-dark(#64748b, #94a3b8);
 
-  /* 受力矢量标准鲜明配色（绝不发黑，高对比度物理可视化） */
-  --ml-force-drive: #fbbf24;
-  --ml-force-n: #22c55e;
-  --ml-force-f: #f97316;
-  --ml-force-g: #eab308;
-  --ml-force-gy: #94a3b8;
-  --ml-force-ext: #38bdf8;
+  /* 能量分布语义色 */
+  --ml-ek: light-dark(#10b981, #34d399);
+  --ml-ep: light-dark(#0284c7, #38bdf8);
+  --ml-q: light-dark(#f43f5e, #fb7185);
 
-  /* 画布工程图风格变量 */
-  --ml-canvas-bg: light-dark(#ffffff, #070c14);
-  --ml-canvas-border: light-dark(#e2e8f0, #1e293b);
-  --ml-canvas-grid: light-dark(rgba(148, 163, 184, 0.25), rgba(148, 163, 184, 0.08));
-  --ml-canvas-ground: #475569;
-  --ml-ramp-surface: light-dark(rgba(226, 232, 240, 0.8), rgba(30, 41, 59, 0.8));
-  --ml-ramp-edge: #38bdf8;
-  --ml-block-fill: rgba(245, 158, 11, 0.92);
-  --ml-block-stroke: #fef08a;
-  --ml-block-text: #0f172a;
+  /* 画布与实验器材低对比配色 */
+  --ml-canvas-bg: light-dark(#ffffff, #0f172a);
+  --ml-canvas-grid: light-dark(rgba(15, 23, 42, 0.045), rgba(248, 250, 252, 0.045));
+  --ml-canvas-ground: light-dark(#cbd5e1, #334155);
+  --ml-ramp-surface: light-dark(#f1f5f9, #182234);
+  --ml-ramp-edge: light-dark(#cbd5e1, #334155);
+  --ml-block-fill: light-dark(#f59e0b, #f59e0b);
+  --ml-block-stroke: light-dark(#d97706, #fde68a);
+  --ml-block-text: #ffffff;
 }
 
 * {
@@ -59,253 +52,325 @@ body,
   background: var(--ml-bg);
   color: var(--ml-text);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
   color: inherit;
 }
 
 button {
   cursor: pointer;
+  border: none;
+  background: none;
   -webkit-tap-highlight-color: transparent;
-  transition: all 0.14s ease;
+  transition: background-color 0.14s ease, color 0.14s ease, opacity 0.14s ease;
 }
 
 button:disabled {
-  opacity: 0.45;
+  opacity: 0.38;
   cursor: default;
 }
 
-/* 整体应用框架容器 */
+/* 整体布局：去边框化，依靠留白与浅底色分区 */
 .ml-app {
   width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 10px 14px 14px;
-  gap: 10px;
-  background: radial-gradient(
-    circle at 50% 25%,
-    light-dark(#f8fafc, #0e172a) 0%,
-    light-dark(#f1f5f9, #060b14) 100%
-  );
+  padding: 16px 20px 20px;
+  gap: 14px;
+  background: var(--ml-bg);
 }
 
-/* 顶部现代导航栏 */
+/* 1. 顶栏：仅保留标题与分段切换器 */
 .ml-topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 8px 14px;
-  border-radius: 12px;
-  background: var(--ml-panel);
-  border: 1px solid var(--ml-border);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-.ml-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.ml-logo-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--ml-primary);
-  box-shadow: 0 0 8px var(--ml-primary);
-  flex-shrink: 0;
-}
-
-.ml-brand h1 {
-  font-size: 14px;
-  font-weight: 700;
+.ml-title {
+  font-size: 16px;
+  font-weight: 650;
   color: var(--ml-text);
-  letter-spacing: -0.3px;
+  letter-spacing: -0.02em;
 }
 
-.ml-brand small {
-  display: block;
-  font-size: 11px;
-  color: var(--ml-text-muted);
-  margin-top: 1px;
-  max-width: 380px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* 分段选项卡选择器 (macOS / iOS 原生风格) */
 .ml-bench-tabs {
   display: inline-flex;
-  background: var(--ml-panel-subtle);
+  background: var(--ml-surface-subtle);
   padding: 3px;
-  border-radius: 9px;
+  border-radius: 8px;
   gap: 2px;
-  border: 1px solid var(--ml-border);
 }
 
 .ml-tab-btn {
   padding: 5px 12px;
-  border-radius: 7px;
-  border: 1px solid transparent;
-  background: transparent;
+  border-radius: 6px;
   color: var(--ml-text-muted);
-  font-size: 11.5px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 550;
   white-space: nowrap;
 }
 
 .ml-tab-btn:hover:not(.is-active) {
   color: var(--ml-text);
-  background: light-dark(rgba(0, 0, 0, 0.04), rgba(255, 255, 255, 0.05));
 }
 
 .ml-tab-btn.is-active {
-  background: var(--ml-panel);
+  background: var(--ml-surface);
   color: var(--ml-text);
-  border-color: var(--ml-border);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-/* 主舞台上方独立辅助工具栏（杜绝在顶栏挤压折行） */
-.ml-stage-tools {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.ml-chip-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 28px;
-  padding: 0 11px;
-  border-radius: 7px;
-  border: 1px solid var(--ml-border);
-  background: var(--ml-panel);
-  color: var(--ml-text-muted);
-  font-size: 11.5px;
-  font-weight: 550;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.ml-chip-btn:hover {
-  border-color: var(--ml-border-hover);
-  color: var(--ml-text);
-}
-
-.ml-chip-btn.is-on {
-  border-color: var(--ml-primary-border);
-  background: var(--ml-primary-bg);
-  color: var(--ml-primary);
-}
-
-.ml-chip-btn.is-icon {
-  padding: 0 9px;
-}
-
-/* 主工作区栅格：尽量扩大实验主舞台 */
+/* 2. 主工作区双栏 */
 .ml-workspace {
   flex: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 265px;
-  gap: 12px;
-  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) 256px;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 820px) {
+  .ml-workspace {
+    grid-template-columns: 1fr;
+  }
 }
 
 .ml-stage-column {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  min-width: 0;
-  min-height: 0;
-}
-
-/* 实验台上方信息条：公式铭牌 + 能量守恒柱 */
-.ml-stage-hud {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 7px 12px;
-  border-radius: 10px;
-  background: var(--ml-panel);
-  border: 1px solid var(--ml-border);
-}
-
-.ml-formula-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 11.5px;
+  gap: 16px;
   min-width: 0;
 }
 
-.ml-formula-tag {
-  font-size: 9px;
-  font-weight: 750;
-  padding: 2px 5px;
-  border-radius: 4px;
-  background: var(--ml-primary-bg);
-  color: var(--ml-primary);
-  border: 1px solid var(--ml-primary-border);
-  letter-spacing: 0.5px;
-}
-
-.ml-formula-pill code {
-  color: var(--ml-text);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 11.5px;
-  font-weight: 600;
-  white-space: nowrap;
+/* 实验画布容器：干净无描边，让实验画面成为视觉焦点 */
+.ml-canvas-surface {
+  background: var(--ml-canvas-bg);
+  border-radius: 12px;
   overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* 现代克制的能量守恒监视条 */
-.ml-energy-monitor {
-  flex: 1;
-  min-width: 250px;
-  max-width: 440px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
 }
 
-.ml-energy-labels {
+.ml-stage-svg {
+  width: 100%;
+  height: auto;
+  min-height: 350px;
+  max-height: 460px;
+  display: block;
+}
+
+/* 画布正下方集中操作栏 */
+.ml-transport-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 10.5px;
-  font-variant-numeric: tabular-nums;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 16px;
+  background: var(--ml-surface);
+}
+
+.ml-transport-main {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* 唯一主操作按钮 */
+.ml-play-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border-radius: 7px;
+  background: var(--ml-primary);
+  color: #ffffff;
+  font-size: 12.5px;
   font-weight: 600;
 }
 
-.ml-energy-labels .is-ek {
-  color: var(--ml-ek);
-}
-.ml-energy-labels .is-ep {
-  color: var(--ml-ep);
-}
-.ml-energy-labels .is-q {
-  color: var(--ml-q);
-}
-.ml-energy-labels .is-total {
-  color: var(--ml-text);
-  font-weight: 700;
+.ml-play-btn:hover {
+  opacity: 0.92;
 }
 
-.ml-energy-bar-track {
-  height: 6px;
+.ml-play-btn.is-running {
+  background: var(--ml-text);
+  color: var(--ml-surface);
+}
+
+/* 轻量无描边辅助按钮 */
+.ml-ghost-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: var(--ml-text-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.ml-ghost-btn:hover:not(:disabled) {
+  background: var(--ml-surface-subtle);
+  color: var(--ml-text);
+}
+
+.ml-ghost-btn.is-active {
+  background: var(--ml-primary-soft);
+  color: var(--ml-primary);
+  font-weight: 600;
+}
+
+/* 右侧轻量视图开关 */
+.ml-transport-toggles {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.ml-toggle-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  color: var(--ml-text-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.ml-toggle-pill:hover {
+  background: var(--ml-surface-subtle);
+  color: var(--ml-text);
+}
+
+.ml-toggle-pill.is-on {
+  background: var(--ml-primary-soft);
+  color: var(--ml-primary);
+  font-weight: 600;
+}
+
+.ml-toggle-pill.is-icon {
+  padding: 5px 8px;
+}
+
+/* 3. 关键物理量读数条：无边框、大字号数字、弱化单位 */
+.ml-readout-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+  gap: 12px 20px;
+  padding: 4px 4px;
+}
+
+.ml-readout-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ml-readout-label {
+  font-size: 11.5px;
+  color: var(--ml-text-muted);
+  font-weight: 450;
+}
+
+.ml-readout-sym {
+  font-style: normal;
+  color: var(--ml-text-dim);
+  margin-left: 2px;
+}
+
+.ml-readout-val {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ml-readout-val strong {
+  font-size: 20px;
+  font-weight: 650;
+  color: var(--ml-text);
+  letter-spacing: -0.02em;
+}
+
+.ml-readout-val small {
+  font-size: 11.5px;
+  color: var(--ml-text-dim);
+  font-weight: 500;
+}
+
+/* 4. 次级信息区：能量守恒与可折叠公式原理 */
+.ml-secondary-area {
+  background: var(--ml-surface-subtle);
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ml-energy-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ml-energy-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 11.5px;
+  color: var(--ml-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.ml-energy-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ml-energy-item i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.ml-energy-item.is-ek i {
+  background: var(--ml-ek);
+}
+.ml-energy-item.is-ep i {
+  background: var(--ml-ep);
+}
+.ml-energy-item.is-q i {
+  background: var(--ml-q);
+}
+
+.ml-energy-total {
+  margin-left: auto;
+  font-weight: 600;
+  color: var(--ml-text);
+}
+
+.ml-energy-track {
+  height: 4px;
   border-radius: 999px;
-  background: var(--ml-panel-subtle);
-  border: 1px solid var(--ml-border);
+  background: light-dark(rgba(15, 23, 42, 0.07), rgba(255, 255, 255, 0.08));
   display: flex;
   overflow: hidden;
 }
@@ -324,209 +389,146 @@ button:disabled {
   background: var(--ml-q);
 }
 
-/* 核心物理实验主画布卡片（充分扩大视觉空间） */
-.ml-canvas-box {
-  position: relative;
-  flex: 1;
-  min-height: 380px;
-  border-radius: 12px;
-  background: var(--ml-canvas-bg);
-  border: 1px solid var(--ml-canvas-border);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.ml-stage-svg {
-  width: 100%;
-  flex: 1;
-  min-height: 340px;
-  max-height: 480px;
-  display: block;
-}
-
-/* 浮动控制栏（极简毛玻璃质感） */
-.ml-transport-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: light-dark(rgba(255, 255, 255, 0.94), rgba(15, 23, 42, 0.92));
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-top: 1px solid var(--ml-border);
-}
-
-.ml-play-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 16px;
-  border-radius: 8px;
-  border: 1px solid var(--ml-primary);
-  background: var(--ml-primary);
-  color: light-dark(#ffffff, #090e17);
-  font-size: 11.5px;
-  font-weight: 650;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-.ml-play-btn:hover {
-  filter: brightness(1.08);
-}
-
-.ml-play-btn.is-running {
-  background: light-dark(#475569, #334155);
-  border-color: light-dark(#475569, #475569);
-  color: #ffffff;
-}
-
-.ml-ctrl-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 11px;
-  border-radius: 8px;
-  border: 1px solid var(--ml-border);
-  background: var(--ml-panel);
-  color: var(--ml-text);
-  font-size: 11.5px;
-  font-weight: 550;
-}
-
-.ml-ctrl-btn:hover:not(:disabled) {
-  border-color: var(--ml-border-hover);
-  background: var(--ml-panel-subtle);
-}
-
-.ml-ctrl-btn.is-active {
-  border-color: var(--ml-primary-border);
-  color: var(--ml-primary);
-  background: var(--ml-primary-bg);
-}
-
-/* 底部仪表网格 */
-.ml-bottom-grid {
-  display: grid;
-  grid-template-columns: 1.25fr 1fr;
-  gap: 10px;
-}
-
-.ml-telemetry-card,
-.ml-waveform-card,
-.ml-side-card {
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: var(--ml-panel);
-  border: 1px solid var(--ml-border);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.ml-card-head {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--ml-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-}
-
-.ml-card-head svg {
-  color: var(--ml-primary);
-}
-
-.ml-telemetry-items {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
-  gap: 7px;
-}
-
-.ml-stat-box {
-  padding: 6px 8px;
-  border-radius: 7px;
-  background: var(--ml-panel-subtle);
-  border: 1px solid var(--ml-border);
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.ml-stat-box small {
-  font-size: 10px;
-  color: var(--ml-text-muted);
-}
-
-.ml-stat-box strong {
+/* 可折叠原理与公式说明 */
+.ml-principle-details {
   font-size: 12px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: var(--ml-text);
-}
-
-.ml-stat-box strong em {
-  font-style: normal;
-  font-weight: 500;
-  color: var(--ml-text-dim);
-}
-
-.ml-stat-box strong span {
-  font-size: 10px;
-  font-weight: 500;
   color: var(--ml-text-muted);
 }
 
-.ml-principle-text {
-  font-size: 11.5px;
-  line-height: 1.6;
-  color: var(--ml-text);
-  overflow-y: auto;
-  max-height: 90px;
+.ml-principle-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  padding: 2px 0;
 }
 
-/* 右侧参数与预设控制栏 */
+.ml-principle-summary::-webkit-details-marker {
+  display: none;
+}
+
+.ml-summary-title {
+  font-weight: 550;
+  color: var(--ml-text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ml-summary-title::before {
+  content: "▸";
+  font-size: 11px;
+  transition: transform 0.15s ease;
+}
+
+.ml-principle-details[open] .ml-summary-title::before {
+  transform: rotate(90deg);
+}
+
+.ml-summary-formula {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11.5px;
+  color: var(--ml-text);
+}
+
+.ml-principle-body {
+  margin-top: 8px;
+  line-height: 1.65;
+  color: var(--ml-text-muted);
+  font-size: 12px;
+}
+
+/* 5. 右侧精简控制栏：无嵌套卡片，紧凑预设选择器 + 宽松对齐滑杆 */
 .ml-sidebar {
+  background: var(--ml-surface);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.ml-sidebar-group {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  min-width: 0;
+}
+
+.ml-section-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ml-text);
+}
+
+.ml-preset-select {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 7px;
+  border: none;
+  background: var(--ml-surface-subtle);
+  color: var(--ml-text);
+  font-size: 12px;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+}
+
+.ml-preset-select:focus {
+  box-shadow: 0 0 0 2px var(--ml-primary-soft);
+}
+
+.ml-preset-caption {
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ml-text-muted);
+  padding: 2px 2px 0;
 }
 
 .ml-sliders-list {
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 16px;
 }
 
 .ml-slider-row {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  font-size: 11px;
+  gap: 6px;
   cursor: pointer;
 }
 
 .ml-slider-top {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
+  font-size: 12px;
+}
+
+.ml-param-name {
   color: var(--ml-text-muted);
 }
 
-.ml-slider-top code {
-  color: var(--ml-primary);
-  font-family: inherit;
-  font-weight: 700;
+.ml-param-sym {
+  font-style: normal;
+  color: var(--ml-text-dim);
+  margin-left: 2px;
 }
 
-.ml-slider-top strong {
-  color: var(--ml-text);
+.ml-param-val {
   font-variant-numeric: tabular-nums;
+  color: var(--ml-text);
+}
+
+.ml-param-val strong {
+  font-weight: 600;
+}
+
+.ml-param-val small {
+  font-size: 11px;
+  color: var(--ml-text-dim);
 }
 
 .ml-slider-row input[type="range"] {
@@ -534,53 +536,7 @@ button:disabled {
   accent-color: var(--ml-primary);
   height: 4px;
   border-radius: 999px;
-  background: var(--ml-panel-subtle);
+  background: var(--ml-surface-subtle);
   outline: none;
   cursor: pointer;
-}
-
-/* 经典预设卡片列表与激活态高亮 */
-.ml-presets-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.ml-preset-btn {
-  text-align: left;
-  padding: 8px 10px;
-  border-radius: 8px;
-  background: var(--ml-panel-subtle);
-  border: 1px solid var(--ml-border);
-  color: var(--ml-text);
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.ml-preset-btn:hover {
-  background: light-dark(#f1f5f9, #1f2b42);
-  border-color: var(--ml-border-hover);
-}
-
-.ml-preset-btn.is-active {
-  border-color: var(--ml-primary);
-  background: var(--ml-primary-bg);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-}
-
-.ml-preset-btn strong {
-  font-size: 11px;
-  font-weight: 650;
-  color: var(--ml-text);
-}
-
-.ml-preset-btn.is-active strong {
-  color: var(--ml-primary);
-}
-
-.ml-preset-btn small {
-  font-size: 10px;
-  color: var(--ml-text-muted);
-  line-height: 1.4;
 }

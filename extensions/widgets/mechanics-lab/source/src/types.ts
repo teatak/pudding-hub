@@ -59,7 +59,7 @@ export interface BenchPresetSpec<TParams extends Record<string, number> = Record
 
 /**
  * 机械能与热损耗实时分解（单位：焦耳 J）。
- * 宿主外壳使用此结构自动渲染顶部的“机械能守恒实时柱状图”。
+ * 宿主外壳使用此结构自动渲染次级能量守恒进度条。
  */
 export interface EnergyBreakdown {
   /** 动能 Ek (J) */
@@ -73,7 +73,7 @@ export interface EnergyBreakdown {
 }
 
 /**
- * 底部或侧边仪表盘展示的单条实时物理量读数。
+ * 实时物理量读数项。
  */
 export interface TelemetryItem {
   id: string;
@@ -124,9 +124,11 @@ export interface BenchStageProps<
   params: TParams;
   state: TState;
   showVectors: boolean;
+  /** 按需显示正交辅助分力与详细受力数值 */
+  showVectorDetails?: boolean;
   showGrid: boolean;
   locale: LocaleKey;
-  /** 允许实验台在画布内直接回调更新某个参数（例如拖拽改变倾角或初位置） */
+  /** 允许实验台在画布内直接回调更新某个参数 */
   onChangeParam: (key: keyof TParams & string, value: number) => void;
 }
 
@@ -146,9 +148,9 @@ export interface ExperimentBench<
   title: LocalizedText;
   /** 实验台一句话教学副标题 */
   subtitle: LocalizedText;
-  /** 核心物理公式说明（展示在实验台公式铭牌上） */
+  /** 核心物理公式说明 */
   formulaBadge: string;
-  /** 面向孩子的通俗原理解析卡片文案 */
+  /** 面向孩子的通俗原理解析文案 */
   principleNote: LocalizedText;
   /** 示波器曲线标签 */
   waveformLabels: {

@@ -2,19 +2,6 @@
  * ============================================================================
  * 实验台插件 2：抛体运动与平抛/自由落体同屏对比实验台 (`src/benches/projectile.tsx`)
  * ============================================================================
- *
- * 【教学目标】
- * 1. 运动的独立性与合成原理（伽利略平抛分解）：
- *    - 水平方向：不受外力（忽略阻力时），做匀速直线运动 vx(t) = v0 · cos(θ)，x(t) = vx · t
- *    - 竖直方向：只受重力，做匀变速直线运动 vy(t) = v0 · sin(θ) - g · t
- * 2. 平抛 vs 自由落体同屏对照球：
- *    - 当仰角 θ = 0°（平抛）时，左侧同步释放一颗“自由落体对照球”。
- *    - 频闪相机每 0.2s 打点一次并画出水平连接虚线，孩子可直观看到两球在任意时刻始终处于同一高度！
- * 3. 斜抛射程与星球重力对比：
- *    - 在无阻力平地条件下，45° 仰角射程最大；月球 (g=1.6 m/s²) 射程是地球的 6 倍。
- *
- * 【插件独立性保证】
- * 本文件只依赖 `../types` 的 `ExperimentBench` 契约，与其他实验台完全解耦。
  */
 
 import React from "react";
@@ -27,15 +14,10 @@ import type {
 } from "../types";
 
 export interface ProjectileParams extends Record<string, number> {
-  /** 发射仰角 θ (°)，0° 即为水平平抛 */
   launchAngleDeg: number;
-  /** 发射初速度 v0 (m/s) */
   initialSpeed: number;
-  /** 发射台离地高度 h0 (m) */
   towerHeight: number;
-  /** 重力加速度 g (m/s²) */
   gravity: number;
-  /** 靶心水平距离 targetX (m) */
   targetDistance: number;
 }
 
@@ -62,7 +44,67 @@ export interface ProjectileState {
   completed: boolean;
 }
 
-const BALL_MASS = 1.0; // 1.0 kg 标准实验球
+const BALL_MASS = 1.0;
+
+function renderArrow(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  color: string,
+  label: string,
+  offsetX: number,
+  offsetY: number,
+  anchor: "start" | "middle" | "end" = "start",
+) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const len = Math.hypot(dx, dy);
+  if (len < 4) return null;
+  const ux = dx / len;
+  const uy = dy / len;
+  const px = -uy;
+  const py = ux;
+  const headLen = 7;
+  const headW = 3.2;
+  const bx = x2 - ux * headLen;
+  const by = y2 - uy * headLen;
+
+  return (
+    <g>
+      <line
+        x1={x1}
+        y1={y1}
+        x2={bx}
+        y2={by}
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <polygon
+        points={`${x2},${y2} ${bx + px * headW},${by + py * headW} ${
+          bx - px * headW
+        },${by - py * headW}`}
+        fill={color}
+      />
+      <text
+        x={x2 + offsetX}
+        y={y2 + offsetY}
+        textAnchor={anchor}
+        fill={color}
+        fontSize="11"
+        fontWeight="600"
+        style={{
+          paintOrder: "stroke",
+          stroke: "var(--ml-canvas-bg)",
+          strokeWidth: "3.5px",
+        }}
+      >
+        {label}
+      </text>
+    </g>
+  );
+}
 
 export const projectileBench: ExperimentBench<
   ProjectileParams,
@@ -89,14 +131,14 @@ export const projectileBench: ExperimentBench<
     de: "Vergleicht waagerechten Wurf und freien Fall im Stroboskop-Verfahren",
     fr: "Compare le tir horizontal et la chute libre simultanée par stroboscopie",
   },
-  formulaBadge: "x(t) = v₀·cosθ·t , y(t) = h₀ + v₀·sinθ·t - ½gt²",
+  formulaBadge: "x(t) = v₀·cosθ·t , y(t) = h₀ + v₀·sinθ·t − ½gt²",
   principleNote: {
     "zh-CN":
-      "曲线运动可分解为两个相互独立的直线运动：水平方向不受力，保持匀速（频闪点水平间距相等）；竖直方向只受重力，加速度恒为 g。当仰角 θ = 0°（平抛）时，平抛球与同时释放的自由落体球在每一瞬间高度完全相同，证明水平速度不影响下落快慢！",
+      "曲线运动可分解为两个相互独立的直线运动：水平方向不受力，保持匀速（频闪点水平间距相等）；竖直方向只受重力，加速度恒为 g。当仰角 θ = 0°（平抛）时，平抛球与同时释放的自由落体球在每一瞬间高度完全相同，证明水平速度不影响下落快慢。",
     "zh-TW":
-      "曲線運動可分解為兩個相互獨立的直線運動：水平方向不受力，保持勻速（頻閃點水平間距相等）；豎直方向只受重力，加速度恆為 g。當仰角 θ = 0°（平拋）時，平拋球與同時釋放的自由落體球在每一瞬間高度完全相同，證明水平速度不影響下落快慢！",
+      "曲線運動可分解為兩個相互獨立的直線運動：水平方向不受力，保持勻速（頻閃點水平間距相等）；豎直方向只受重力，加速度恆為 g。當仰角 θ = 0°（平拋）時，平拋球與同時釋放的自由落體球在每一瞬間高度完全相同，證明水平速度不影響下落快慢。",
     en:
-      "Projectile motion is the superposition of constant horizontal velocity (vx = v0·cosθ) and vertical gravitational acceleration (ay = -g). A horizontal projectile (θ = 0°) and a dropped ball hit the ground at the exact same instant!",
+      "Projectile motion is the superposition of constant horizontal velocity (vx = v0·cosθ) and vertical gravitational acceleration (ay = -g). A horizontal projectile (θ = 0°) and a dropped ball hit the ground at the exact same instant.",
   },
   waveformLabels: {
     primary: {
@@ -155,7 +197,7 @@ export const projectileBench: ExperimentBench<
     {
       key: "targetDistance",
       label: { "zh-CN": "地面靶心距离", "zh-TW": "地面靶心距離", en: "Target Dist" },
-      symbol: "X_靶",
+      symbol: "X",
       unit: "m",
       min: 10,
       max: 60,
@@ -295,7 +337,6 @@ export const projectileBench: ExperimentBench<
     let hitTarget = state.hitTarget;
 
     if (nextY <= 0 && nextT > 0.02) {
-      // 精确求解落地时刻 t_land: h0 + vy0*t - 0.5*g*t^2 = 0
       const disc = Math.max(
         0,
         vy0 * vy0 + 2 * params.gravity * params.towerHeight,
@@ -369,7 +410,6 @@ export const projectileBench: ExperimentBench<
 
   computeTelemetry(
     state: ProjectileState,
-    params: ProjectileParams,
   ): TelemetryItem[] {
     return [
       {
@@ -444,11 +484,12 @@ export const projectileBench: ExperimentBench<
     params,
     state,
     showVectors,
+    showVectorDetails = false,
     showGrid,
   }: BenchStageProps<ProjectileParams, ProjectileState>) {
-    const originX = 95;
-    const groundY = 345;
-    const scale = 9.2; // 1m = 9.2px (65m = 598px, 32m = 294px)
+    const originX = 100;
+    const groundY = 338;
+    const scale = 9.2;
 
     const toPxX = (m: number) => originX + m * scale;
     const toPxY = (m: number) => groundY - m * scale;
@@ -474,7 +515,6 @@ export const projectileBench: ExperimentBench<
 
     return (
       <g>
-        {/* 坐标网格与米制标尺 */}
         {showGrid && (
           <g>
             {Array.from({ length: 7 }, (_, i) => {
@@ -484,7 +524,7 @@ export const projectileBench: ExperimentBench<
                 <g key={`gx-${m}`}>
                   <line
                     x1={px}
-                    y1={20}
+                    y1={24}
                     x2={px}
                     y2={groundY}
                     stroke="var(--ml-canvas-grid)"
@@ -501,20 +541,20 @@ export const projectileBench: ExperimentBench<
                 </g>
               );
             })}
-            {Array.from({ length: 4 }, (_, i) => {
+            {Array.from({ length: 3 }, (_, i) => {
               const m = (i + 1) * 10;
               const py = toPxY(m);
               return (
                 <g key={`gy-${m}`}>
                   <line
-                    x1={40}
+                    x1={48}
                     y1={py}
-                    x2={730}
+                    x2={712}
                     y2={py}
                     stroke="var(--ml-canvas-grid)"
                   />
                   <text
-                    x={32}
+                    x={40}
                     y={py + 4}
                     textAnchor="end"
                     fill="var(--ml-text-dim)"
@@ -528,28 +568,26 @@ export const projectileBench: ExperimentBench<
           </g>
         )}
 
-        {/* 地面 */}
         <line
-          x1={25}
+          x1={48}
           y1={groundY}
-          x2={735}
+          x2={712}
           y2={groundY}
           stroke="var(--ml-canvas-ground)"
-          strokeWidth="2.5"
+          strokeWidth="1.5"
           strokeLinecap="round"
         />
 
-        {/* 发射高台 */}
         {params.towerHeight > 0 && (
           <rect
-            x={originX - 18}
+            x={originX - 16}
             y={towerTopY}
-            width={36}
+            width={32}
             height={groundY - towerTopY}
-            rx={3}
+            rx={2}
             fill="var(--ml-ramp-surface)"
             stroke="var(--ml-ramp-edge)"
-            strokeWidth="2"
+            strokeWidth="1.25"
           />
         )}
 
@@ -558,31 +596,31 @@ export const projectileBench: ExperimentBench<
           <ellipse
             cx={0}
             cy={0}
-            rx={20}
-            ry={5}
-            fill={state.hitTarget ? "rgba(34, 197, 94, 0.45)" : "rgba(239, 68, 68, 0.35)"}
-            stroke={state.hitTarget ? "#4ade80" : "#f87171"}
-            strokeWidth="2"
+            rx={18}
+            ry={4.5}
+            fill={state.hitTarget ? "rgba(16, 185, 129, 0.25)" : "rgba(225, 29, 72, 0.16)"}
+            stroke={state.hitTarget ? "var(--ml-force-n)" : "var(--ml-force-f)"}
+            strokeWidth="1.5"
           />
           <circle
             cx={0}
             cy={0}
-            r={4}
-            fill={state.hitTarget ? "#fde047" : "#ef4444"}
+            r={3}
+            fill={state.hitTarget ? "var(--ml-force-n)" : "var(--ml-force-f)"}
           />
           <text
             x={0}
-            y={32}
+            y={22}
             textAnchor="middle"
-            fill={state.hitTarget ? "#86efac" : "#fca5a5"}
-            fontSize="10.5"
-            fontWeight="700"
+            fill="var(--ml-text-muted)"
+            fontSize="11"
+            fontWeight="500"
           >
-            🎯 靶心 {params.targetDistance}m {state.hitTarget ? "（命中!）" : ""}
+            {params.targetDistance} m {state.hitTarget ? "✓" : ""}
           </text>
         </g>
 
-        {/* 平抛模式 (θ = 0°) 时展示同步自由落体对照球与等高水平虚线 */}
+        {/* 平抛 vs 自由落体同屏对比 */}
         {params.launchAngleDeg === 0 && params.towerHeight > 0 && (
           <g>
             <line
@@ -590,8 +628,10 @@ export const projectileBench: ExperimentBench<
               y1={towerTopY}
               x2={freeFallPxX}
               y2={groundY}
-              stroke="rgba(168, 85, 247, 0.35)"
+              stroke="var(--ml-text-dim)"
+              strokeWidth="1"
               strokeDasharray="3 3"
+              opacity="0.4"
             />
             {state.strobes.map((st, idx) => (
               <g key={`ff-st-${idx}`}>
@@ -600,36 +640,38 @@ export const projectileBench: ExperimentBench<
                   y1={toPxY(st.freeFallY)}
                   x2={toPxX(st.x)}
                   y2={toPxY(st.y)}
-                  stroke="rgba(168, 85, 247, 0.28)"
-                  strokeDasharray="4 4"
+                  stroke="var(--ml-text-dim)"
+                  strokeWidth="1"
+                  strokeDasharray="3 3"
+                  opacity="0.32"
                 />
                 <circle
                   cx={freeFallPxX}
                   cy={toPxY(st.freeFallY)}
-                  r={4}
-                  fill="rgba(192, 132, 252, 0.55)"
+                  r={3}
+                  fill="var(--ml-text-muted)"
+                  opacity="0.45"
                 />
               </g>
             ))}
             <circle
               cx={freeFallPxX}
               cy={freeFallPxY}
-              r={8}
-              fill="#a855f7"
-              stroke="#f3e8ff"
-              strokeWidth="1.8"
+              r={7}
+              fill="var(--ml-text-muted)"
+              stroke="var(--ml-canvas-bg)"
+              strokeWidth="1.5"
             />
           </g>
         )}
 
-        {/* 抛物线连续轨迹与频闪相机点 */}
         {trailPath && (
           <path
             d={trailPath}
             fill="none"
-            stroke="#38bdf8"
-            strokeWidth="2.2"
-            strokeOpacity="0.8"
+            stroke="var(--ml-primary)"
+            strokeWidth="1.8"
+            strokeOpacity="0.75"
           />
         )}
         {state.strobes.map((st, idx) => (
@@ -637,90 +679,64 @@ export const projectileBench: ExperimentBench<
             key={`pr-st-${idx}`}
             cx={toPxX(st.x)}
             cy={toPxY(st.y)}
-            r={3.8}
-            fill="#fde047"
-            fillOpacity="0.8"
+            r={3}
+            fill="var(--ml-primary)"
+            fillOpacity="0.65"
           />
         ))}
 
-        {/* 抛体主球与速度正交分解矢量 (vx, vy, v) */}
-        <g transform={`translate(${ballPxX}, ${ballPxY})`}>
-          <circle
-            cx={0}
-            cy={0}
-            r={9}
-            fill="#f59e0b"
-            stroke="#fef08a"
-            strokeWidth="2"
-          />
+        {/* 抛体主球与速度分解箭头 */}
+        <g>
           {showVectors && (
             <g>
-              {/* 水平分速度 vx (恒定不变) */}
-              <line
-                x1={0}
-                y1={0}
-                x2={state.vx * 2.8}
-                y2={0}
-                stroke="#22c55e"
-                strokeWidth="2.4"
-              />
-              <polygon
-                points={`${state.vx * 2.8},0 ${state.vx * 2.8 - 6},-3.5 ${
-                  state.vx * 2.8 - 6
-                },3.5`}
-                fill="#22c55e"
-              />
-              <text
-                x={state.vx * 2.8 + 5}
-                y={4}
-                fill="#86efac"
-                fontSize="10"
-                fontWeight="700"
-              >
-                vx={state.vx.toFixed(1)}
-              </text>
-
-              {/* 竖直分速度 vy */}
-              {Math.abs(state.vy) > 0.3 && (
-                <>
-                  <line
-                    x1={0}
-                    y1={0}
-                    x2={0}
-                    y2={-state.vy * 2.4}
-                    stroke="#f43f5e"
-                    strokeWidth="2.4"
-                  />
-                  <text
-                    x={8}
-                    y={-state.vy * 2.4}
-                    fill="#fda4af"
-                    fontSize="10"
-                    fontWeight="700"
-                  >
-                    vy={state.vy.toFixed(1)}
-                  </text>
-                </>
+              {renderArrow(
+                ballPxX,
+                ballPxY,
+                ballPxX + state.vx * 2.5,
+                ballPxY,
+                "var(--ml-force-n)",
+                showVectorDetails ? `vx = ${state.vx.toFixed(1)} m/s` : "vx",
+                6,
+                4,
+                "start",
               )}
+              {Math.abs(state.vy) > 0.3 &&
+                renderArrow(
+                  ballPxX,
+                  ballPxY,
+                  ballPxX,
+                  ballPxY - state.vy * 2.2,
+                  "var(--ml-force-f)",
+                  showVectorDetails ? `vy = ${state.vy.toFixed(1)} m/s` : "vy",
+                  8,
+                  4,
+                  "start",
+                )}
             </g>
           )}
+          <circle
+            cx={ballPxX}
+            cy={ballPxY}
+            r={8}
+            fill="var(--ml-block-fill)"
+            stroke="var(--ml-block-stroke)"
+            strokeWidth="1.5"
+          />
         </g>
 
-        {/* 顶部实验说明铭牌 */}
-        <g transform="translate(20, 22)">
-          <rect
-            x={0}
+        {/* 左上角轻量说明文字 */}
+        <g transform="translate(24, 28)">
+          <circle cx={0} cy={-4} r={3.5} fill="var(--ml-primary)" />
+          <text
+            x={10}
             y={0}
-            width={295}
-            height={30}
-            rx={6}
-            fill="rgba(15, 23, 42, 0.85)"
-            stroke="rgba(56, 189, 248, 0.35)"
-          />
-          <text x={12} y={19} fill="#e2e8f0" fontSize="11.5" fontWeight="700">
+            fill="var(--ml-text-muted)"
+            fontSize="12"
+            fontWeight="500"
+          >
             {params.launchAngleDeg === 0
-              ? "🟣 紫球：自由落体对照 | 🟠 橙球：平抛（时刻等高）"
-              : `🚀 斜抛仰角 ${params.launchAngleDeg}° · 最大高度 ${state.maxHeight.toFixed(1)}m`}
+              ? `平抛与左侧自由落体对照球时刻等高 · y = ${state.y.toFixed(1)} m`
+              : `斜抛仰角 ${params.launchAngleDeg}° · 最高点 ${state.maxHeight.toFixed(1)} m`}
           </text>
         </g>
       </g>
