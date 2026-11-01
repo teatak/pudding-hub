@@ -366,16 +366,22 @@ export default function App() {
   const commenter = latestComment && players.find(player => player?.id === l.seats[latestComment.role]);
   const act = (ready: boolean) =>
     perform(() => pudding.interaction.handle((c) => changeReadiness(ready, c)));
+  const canOpenRound = !l.round || !!p.winner || run?.status === "paused";
+  const roundChoice = (sessions: SessionCandidate[]) => {
+    const humanID = human?.id || l.players.find(id => l.identities?.[id]?.human);
+    return l.round
+      ? roundCandidates(l.players, sessions, humanID)
+      : fillCandidates(selected, sessions, seenAgents.current);
+  };
+  const showPlayerSelection = canOpenRound && !connectionLost && !!candidates &&
+    roundChoice(candidates.sessions).length === 2;
   function openRound(choosePlayers = false) {
     void perform(async () => {
       // Connections may arrive after the board opened. Refresh only the picker;
       // participant identity and game state still come from the shared run.
       const current: Candidates = await pudding.interaction.candidates();
       setCandidates(current);
-      const humanID = human?.id || l.players.find(id => l.identities?.[id]?.human);
-      const choice = l.round
-        ? roundCandidates(l.players, current.sessions, humanID)
-        : fillCandidates(selected, current.sessions, seenAgents.current);
+      const choice = roundChoice(current.sessions);
       current.sessions.filter(s => s.kind === "external" && s.connected !== false).forEach(s => seenAgents.current.add(s.id));
       setSelected(choice);
       if (choosePlayers || choice.length !== 2) {
@@ -493,8 +499,9 @@ export default function App() {
                 {t("pauseGame")}
               </button>
             )}
-            {(!l.round || p.winner || run?.status === "paused") && (
+            {canOpenRound && (
               <>
+              {showPlayerSelection && (
               <button
                 type="button"
                 className="gd-button gd-icon-toggle"
@@ -506,6 +513,7 @@ export default function App() {
               >
                 <UsersRound size={16} />
               </button>
+              )}
               <button
                 className={"gd-button gd-main-action" + (p.winner || !l.round ? " is-primary" : "")}
                 id="start"

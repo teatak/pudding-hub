@@ -17,8 +17,8 @@ if (!process.versions.electron) {
         if(expectedVersion!==f.state.version)throw Error('widget_state_conflict');
         f.state={version:f.state.version+1,data};f.notify();return f.state;
       }},locale:{read:()=>f.locale,subscribe:()=>()=>{}},
-        interaction:{read:()=>f.run,candidates:async()=>({sessions:f.candidates}),onResume:cb=>{f.onResume=cb;return()=>{}},handle:fn=>fn({}),
-          connect:async({sessionIDs})=>{f.calls.push({method:'connect',sessionIDs});f.run={...f.run,participants:[{id:'human',kind:'human',name:'Human'},...sessionIDs.map(id=>{const c=f.candidates.find(c=>c.id===id);return{id:c.participantID,kind:c.kind,name:c.name}})]};f.notify();return f.run},
+        interaction:{read:()=>f.run,candidates:async()=>({sessions:f.candidates}),onCandidatesChanged:cb=>{f.candidateListeners.add(cb);return()=>f.candidateListeners.delete(cb)},onResume:cb=>{f.onResume=cb;return()=>{}},handle:fn=>fn({}),
+          connect:async({sessionIDs})=>{f.calls.push({method:'connect',sessionIDs});f.run={...(f.run||{id:'fixture',status:'running',receipts:[]}),participants:[{id:'human',kind:'human',name:'Human'},...sessionIDs.map(id=>{const c=f.candidates.find(c=>c.id===id);return{id:c.participantID,kind:c.kind,name:c.name}})]};f.notify();return f.run},
           pause:async()=>{f.calls.push({method:'pause'});f.run={...f.run,status:'paused',reason:''};f.notify();return f.run},
           resume:async()=>{f.calls.push({method:'resume'});f.run={...f.run,status:'running',reason:''};f.notify();await f.onResume?.();return f.run},
           setRequests:async()=>f.run,notify:async notice=>{f.calls.push({method:'notify',notice});return f.run}},
@@ -40,8 +40,9 @@ if (!process.versions.electron) {
     const state = {version:0,data:{lobby:{round:1,players:['a','b'],phase:'playing',seats:{Black:'a',White:'b'},ready:['a','b'],startsAt:null},position:{history:[],resigned:null,turnStartedAt:null,turnElapsedMS:0}}};
     const run = {id:'fixture',status:'running',participants,receipts:[]};
     const candidates = [...participants,{id:'c',kind:'external',name:'New agent'}].map(p=>({...p,participantID:p.id,model:{id:'flash',name:'DeepSeek Flash',icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><circle cx="12" cy="12" r="12" fill="cornflowerblue"/></svg>'}}));
-    const fixture=`window.AudioContext=undefined;window.__fixture={state:${JSON.stringify(state)},run:${JSON.stringify(run)},candidates:${JSON.stringify(candidates)},locale:'zh-CN',listeners:new Set(),errors:[],calls:[]};
+    const fixture=`window.AudioContext=undefined;window.__fixture={state:${JSON.stringify(state)},run:${JSON.stringify(run)},candidates:${JSON.stringify(candidates)},locale:'zh-CN',listeners:new Set(),candidateListeners:new Set(),errors:[],calls:[]};
       const f=window.__fixture;f.notify=()=>{for(const cb of f.listeners)cb()};
+      f.setCandidates=cs=>{f.candidates=cs;for(const cb of f.candidateListeners)cb()};
       f.history=h=>{f.state={version:f.state.version+1,data:{...f.state.data,position:{...f.state.data.position,history:h}}};f.notify()};
       window.addEventListener('error',e=>f.errors.push(String(e.error||e.message)));window.addEventListener('unhandledrejection',e=>f.errors.push(String(e.reason)));`;
     fs.writeFileSync(out+'/widget.html',`<!doctype html><html><head><meta charset="utf-8"><style>body{margin:0}html{color-scheme:light}</style><link rel="stylesheet" href="widget.css"></head><body><div id="root"></div><script>${fixture}</script><script src="widget.js"></script></body></html>`);
@@ -56,9 +57,15 @@ if (!process.versions.electron) {
   let win;const checks=[];const delay=ms=>new Promise(r=>setTimeout(r,ms));
   app.whenReady().then(async()=>{
     win=new BrowserWindow({width:1100,height:900,show:false,webPreferences:{contextIsolation:true,nodeIntegration:false,backgroundThrottling:false}});
-    const js=s=>win.webContents.executeJavaScript(s,true);
+    const js=async s=>{try{return await win.webContents.executeJavaScript(s,true)}catch(cause){throw new Error('Widget UI test script failed:\n'+s,{cause})}};
     const wait=async(s)=>{for(let i=0;i<100;i++){if(await js(s))return;await delay(30)}throw Error('Timed out '+s)};
     await win.loadFile(out+'/widget.html');await wait('document.querySelectorAll("[data-player-id]").length===2&&document.querySelectorAll("[data-speech-move]").length===0');
+    for(const phase of ['lobby','countdown','playing']){
+      await js(`{const f=window.__fixture;f.state={version:f.state.version+1,data:{...f.state.data,lobby:{...f.state.data.lobby,phase:${JSON.stringify(phase)},ready:${JSON.stringify(phase==='lobby'?[]:['a','b'])},startsAt:${phase==='countdown'?'Date.now()+10000':'null'}}}};f.notify()}`);
+      await delay(50);
+      assert.ok(await js(`!!document.querySelector('#pause')&&!document.querySelector('#start')&&!document.querySelector('#change-players')`),'preparation, countdown and play use their existing pause action: '+phase);
+    }
+    checks.push('preparation, countdown and active play hide start and player-selection actions');
     const geometry=()=>js(`(()=>{const rect=e=>{const r=e.getBoundingClientRect();return[r.x,r.y,r.width,r.height]};return[rect(document.querySelector('[role="group"][data-replaying]')),...[...document.querySelectorAll('[data-player-id]')].map(rect)]})()`);
     const history=async h=>{await js(`window.__fixture.history(${JSON.stringify(h)})`);await delay(400)};
     for(const theme of ['light','dark']){
@@ -69,20 +76,21 @@ if (!process.versions.electron) {
           await history([{column:'H',row:8,stone:'B',comment}]);
           assert.deepEqual(await geometry(),before,'comment changes keep board and cards fixed');
           await wait('!!document.querySelector("[data-speech-move]")');
-          assert.ok(await js(`(()=>{const p=document.querySelector('[data-speech-move]').getBoundingClientRect();const spot=document.querySelector('[data-row="15"][data-column="H"]');const r=spot.getBoundingClientRect();return p.bottom<=r.y+r.height/2&&spot.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))})()`),'overlay leaves the top row accessible');
+          assert.ok(await js(`(()=>{const p=document.querySelector('[data-speech-move]').getBoundingClientRect();const board=document.querySelector('[role="group"][data-replaying]').getBoundingClientRect();const spot=document.querySelector('[data-row="15"][data-column="H"]');const r=spot.getBoundingClientRect();return p.height<=30&&p.bottom+3<=board.top&&spot.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))})()`),'compact captions occupy their own row and never overlap the board');
           await js('document.querySelector(".gd-danmaku-toggle").click()');await wait('!document.querySelector("[data-speech-move]")');assert.deepEqual(await geometry(),before);
           await js('document.querySelector(".gd-danmaku-toggle").click()');await wait('!!document.querySelector("[data-speech-move]")');assert.deepEqual(await geometry(),before);
         }
         assert.ok(await js('document.documentElement.scrollWidth<=innerWidth'),'no horizontal overflow');
         await js(`window.__fixture.run={...window.__fixture.run,status:'paused',reason:''};window.__fixture.notify()`);
         await wait(`!!document.querySelector('#resume')`);
+        assert.ok(await js(`!!document.querySelector('#change-players')`),'a complete pair can be changed separately from continuing');
         assert.deepEqual(await geometry(),before,'pausing and showing the separate actions keeps board/cards fixed');
         assert.ok(await js(`(()=>{const r=document.querySelector('.gd-game-actions').getBoundingClientRect();return r.left>=0&&r.right<=innerWidth})()`),'paused actions fit the viewport');
         await js(`window.__fixture.run={...window.__fixture.run,status:'running'};window.__fixture.notify()`);
         await wait(`!!document.querySelector('#pause')`);
         await delay(400);
         fs.writeFileSync(out+'/'+theme+'-'+width+'.png',(await win.webContents.capturePage()).toPNG());
-        checks.push(theme+' '+width+': stable board/cards with empty, short, long and toggled comments; top row accessible');
+        checks.push(theme+' '+width+': compact reserved caption row; stable board/cards with empty, short, long and toggled comments; top row accessible');
       }
     }
     await js(`window.__fixture.run={...window.__fixture.run,status:'paused',reason:'restored'};window.__fixture.notify()`);
@@ -105,6 +113,7 @@ if (!process.versions.electron) {
     assert.deepEqual(await js(`window.__fixture.state.data.lobby.seats`),{Black:'b',White:'a'});
     assert.deepEqual(await js(`window.__fixture.state.data.lobby.ready`),[]);
     assert.deepEqual(await js(`window.__fixture.state.data.position.history`),[]);
+    assert.ok(await js(`!document.querySelector('#change-players')`),'preparing the next round hides player selection');
     checks.push('continue retains the current round; the separate new-game action reuses players, swaps colors and requests readiness');
     await js(`document.querySelector('#pause').click()`);await wait(`!!document.querySelector('#start')`);
     const saved=await js(`window.__fixture.state`);
@@ -114,7 +123,9 @@ if (!process.versions.electron) {
     await js(`document.querySelector('dialog .gd-picker-actions button:last-child').click()`);
     await wait(`!document.querySelector('dialog')`);
     assert.deepEqual(await js(`window.__fixture.state`),saved,'cancelling player selection keeps the current game');
-    await js(`window.__fixture.candidates=window.__fixture.candidates.map(c=>({...c,connected:c.id!=='a'}));document.querySelector('#start').click()`);
+    await js(`window.__fixture.setCandidates(window.__fixture.candidates.map(c=>({...c,connected:c.id!=='a'})))`);
+    await wait(`!document.querySelector('#change-players')`);
+    await js(`document.querySelector('#start').click()`);
     await wait(`!!document.querySelector('dialog[open]')`);
     assert.equal(await js(`window.__fixture.calls.some(c=>c.method==='connect')`),false,'a new agent is never substituted automatically');
     assert.ok(await js(`!document.querySelector('[data-session="c"]').checked`));
@@ -126,7 +137,7 @@ if (!process.versions.electron) {
     checks.push('selection can be cancelled; an offline original player opens the picker and replacement requires an explicit choice');
     await js(`window.__fixture.run={...window.__fixture.run,status:'paused',reason:'connection_lost'};window.__fixture.notify()`);
     await wait(`document.querySelector('#resume')?.textContent.trim()==='正在恢复…'`);
-    assert.ok(await js(`document.querySelector('#resume').disabled&&document.querySelector('#start').disabled&&document.querySelector('#change-players').disabled`));
+    assert.ok(await js(`document.querySelector('#resume').disabled&&document.querySelector('#start').disabled&&!document.querySelector('#change-players')`));
     checks.push('reconnection is an automatic disabled state rather than a manual continue action');
     for(const locale of ['en','zh-CN','zh-TW','ja','ko','es','de','fr']){
       await js(`window.__fixture.locale=${JSON.stringify(locale)};window.__fixture.notify()`);await delay(50);
@@ -139,14 +150,39 @@ if (!process.versions.electron) {
     assert.equal(await js(`document.querySelector('summary')`),null,'no dropdown remains');
     await delay(250);fs.writeFileSync(out+'/separate-actions-dark-mobile.png',(await win.webContents.capturePage()).toPNG());
     checks.push('finished games show separate rematch and player-icon actions; all eight languages fit the narrow toolbar');
-    await js(`window.__fixture.calls=[];window.__fixture.run=null;window.__fixture.state={version:window.__fixture.state.version+1,data:{lobby:{round:0,players:[],phase:'lobby',seats:{},ready:[],startsAt:null},position:{history:[],resigned:null,turnStartedAt:null,turnElapsedMS:0}}};window.__fixture.notify()`);
-    await wait(`document.querySelector('#start')?.textContent.trim()==='开一局'&&!document.querySelector('#change-players').disabled`);
+    await js(`window.__fixture.calls=[];window.__fixture.setCandidates(window.__fixture.candidates.map(c=>({...c,connected:c.id!=='b'})))`);
+    await wait(`!document.querySelector('#change-players')`);
+    await js(`document.querySelector('#start').click()`);await wait(`!!document.querySelector('dialog[open]')`);
+    assert.equal(await js(`window.__fixture.calls.length`),0,'a finished game with an offline player asks for selection instead of connecting');
+    await js(`document.querySelector('dialog .gd-picker-actions button:last-child').click()`);await wait(`!document.querySelector('dialog')`);
+    checks.push('finished games with an incomplete pair offer only rematch, which opens player selection');
+    await js(`window.__fixture.calls=[];window.__fixture.run=null;window.__fixture.setCandidates([]);window.__fixture.state={version:window.__fixture.state.version+1,data:{lobby:{round:0,players:[],phase:'lobby',seats:{},ready:[],startsAt:null},position:{history:[],resigned:null,turnStartedAt:null,turnElapsedMS:0}}};window.__fixture.notify()`);
+    await wait(`document.querySelector('#start')?.textContent.trim()==='开一局'&&!document.querySelector('#start').disabled&&!document.querySelector('#change-players')`);
+    await js(`document.querySelector('#start').click()`);await wait(`!!document.querySelector('dialog[open]')`);
+    assert.equal(await js(`window.__fixture.calls.length`),0,'starting with no players opens selection');
+    await delay(250);fs.writeFileSync(out+'/initial-player-picker-dark-mobile.png',(await win.webContents.capturePage()).toPNG());
+    await js(`document.querySelector('dialog .gd-picker-actions button:last-child').click()`);await wait(`!document.querySelector('dialog')`);
+    await js(`window.__fixture.setCandidates([{id:'b',participantID:'b',kind:'session',name:'Player 2',model:{id:'flash',name:'DeepSeek Flash'}}])`);
+    await delay(50);
+    await js(`document.querySelector('#start').click()`);await wait(`!!document.querySelector('dialog[open]')`);
+    await js(`document.querySelector('[data-session="b"]').click();document.querySelector('dialog .gd-picker-actions button:last-child').click()`);
+    await wait(`!document.querySelector('dialog')&&!document.querySelector('#change-players')`);
+    await js(`document.querySelector('#start').click()`);await wait(`!!document.querySelector('dialog[open]')`);
+    assert.equal(await js(`window.__fixture.calls.length`),0,'one selected player still needs the picker');
+    await js(`document.querySelector('[data-session="@me"]').click();document.querySelector('dialog .gd-picker-actions button:last-child').click()`);
+    await wait(`!document.querySelector('dialog')&&!!document.querySelector('#change-players')`);
     assert.ok(await js(`document.querySelector('#change-players').title.includes('选择棋手')`),'unstarted games label the initial player-selection icon');
     assert.doesNotMatch(await js(`document.querySelector('#change-players').title`),/(?:\.{3}|…)$/u);
     await js(`document.querySelector('#change-players').click()`);await wait(`!!document.querySelector('dialog[open]')`);
     assert.equal(await js(`window.__fixture.calls.length`),0,'selecting initial players never starts a round');
-    await delay(250);fs.writeFileSync(out+'/initial-player-picker-dark-mobile.png',(await win.webContents.capturePage()).toPNG());
-    checks.push('the initial player icon opens selection without ellipses and without starting a game');
+    await js(`document.querySelector('dialog .gd-picker-actions button:last-child').click()`);await wait(`!document.querySelector('dialog')`);
+    await delay(250);fs.writeFileSync(out+'/initial-ready-actions-dark-mobile.png',(await win.webContents.capturePage()).toPNG());
+    await js(`document.querySelector('#start').click()`);
+    await wait(`window.__fixture.state.data.lobby.round===1&&window.__fixture.calls.some(c=>c.method==='connect')`);
+    assert.deepEqual(await js(`window.__fixture.calls.find(c=>c.method==='connect').sessionIDs`),['b']);
+    assert.deepEqual(await js(`window.__fixture.state.data.lobby.players.sort()`),['b','human']);
+    assert.ok(await js(`!document.querySelector('#change-players')`));
+    checks.push('initial games with zero/one player use the start button to select; a complete pair exposes the player icon and starts directly');
     assert.deepEqual(await js('window.__fixture.errors'),[]);
     fs.writeFileSync(out+'/result.json',JSON.stringify({passed:true,checks,errors:[]},null,2));console.log(JSON.stringify({passed:checks.length,artifacts:out}));
     win.destroy();app.quit();

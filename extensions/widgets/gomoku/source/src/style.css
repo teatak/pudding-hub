@@ -344,7 +344,7 @@
 .gd-board-area {
   grid-area: board;
   width: 100%;
-  max-width: min(600px, max(240px, calc(100dvh - 400px)));
+  max-width: min(600px, max(240px, calc(100dvh - 432px)));
   min-width: 0;
   margin: 0 auto;
 }
@@ -379,33 +379,25 @@
   aspect-ratio: 1;
 }
 .gd-board-comments {
-  position: absolute;
-  z-index: 3;
-  top: 0;
-  left: 6px;
-  right: 6px;
-  height: 32px;
-  transform: translateY(-50%);
+  height: 28px;
+  margin-bottom: 4px;
   display: flex;
   align-items: center;
-  pointer-events: none;
   color: var(--gd-text);
-  font-size: 14px;
-  line-height: 24px;
+  font-size: 12px;
+  line-height: 20px;
 }
 .gd-board-comment {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   width: 100%;
   height: 100%;
   min-width: 0;
-  padding: 3px 8px;
+  padding: 1px 6px;
   border: 1px solid var(--gd-edge);
-  border-radius: 8px;
-  background: light-dark(#fffffff2, #262626f2);
-  box-shadow: 0 3px 12px #00000014;
-  pointer-events: auto;
+  border-radius: 6px;
+  background: var(--gd-panel);
 }
 .gd-comment-author {
   display: flex;
@@ -414,8 +406,8 @@
   flex: none;
 }
 .gd-comment-author .gd-avatar {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 }
 .gd-comment-author .gd-avatar svg {
   width: 18px;
@@ -682,7 +674,7 @@
     grid-template-columns: minmax(0, 1fr);
   }
   .gd-board-area {
-    max-width: min(600px, max(240px, calc(100dvh - 176px)));
+    max-width: min(600px, max(240px, calc(100dvh - 208px)));
   }
 }
 @container gomoku (max-width:539px) {
@@ -711,7 +703,7 @@
     top: 122px;
   }
   .gd-board-area {
-    max-width: min(600px, max(240px, calc(100dvh - 448px)));
+    max-width: min(600px, max(240px, calc(100dvh - 480px)));
   }
 }
 @container gomoku (max-width:419px) {
@@ -722,7 +714,7 @@
     grid-template-columns: minmax(0, 1fr);
   }
   .gd-board-area {
-    max-width: min(600px, max(240px, calc(100dvh - 652px)));
+    max-width: min(600px, max(240px, calc(100dvh - 684px)));
   }
   .gd-game-actions {
     gap: 6px;
