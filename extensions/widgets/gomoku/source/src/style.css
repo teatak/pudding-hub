@@ -1,6 +1,7 @@
 .gd-product {
   --gd-caption-height: 28px;
   --gd-caption-gap: 4px;
+  --gd-caption-offset: 6px;
   --gd-bg: light-dark(#ffffff, oklch(0.19 0 0));
   --gd-panel: light-dark(#fafafa, oklch(0.26 0 0));
   --gd-raised: light-dark(#f0f0f0, oklch(0.3 0 0));
@@ -381,6 +382,8 @@
   aspect-ratio: 1;
 }
 .gd-board-comments {
+  position: relative;
+  top: calc(-1 * var(--gd-caption-offset));
   height: var(--gd-caption-height);
   margin-bottom: var(--gd-caption-gap);
   display: flex;
@@ -667,6 +670,9 @@
   margin-top: 14px;
 }
 @container gomoku (min-width:680px) {
+  .gd-board-comments {
+    --gd-caption-offset: 12px;
+  }
   .gd-arena {
     grid-template-columns: minmax(0, 1fr) 268px;
     grid-template-areas: "board players";

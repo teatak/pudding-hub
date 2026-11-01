@@ -78,6 +78,8 @@ if (!process.versions.electron) {
           const top=await js(`document.querySelector('.gd-arena').getBoundingClientRect().top`);
           assert.ok(Math.abs(before[1][1]-top)<0.5,'narrow-screen cards have no leading caption spacer');
         }
+        const captionGaps=await js(`(()=>{const caption=document.querySelector('.gd-board-comments').getBoundingClientRect();const board=document.querySelector('[role="group"][data-replaying]').getBoundingClientRect();const previous=${width>=680?"document.querySelector('.gd-game-title')":"document.querySelector('.gd-players')"}.getBoundingClientRect();return{above:caption.top-previous.bottom,below:board.top-caption.bottom}})()`);
+        assert.ok(captionGaps.above>0&&Math.abs(captionGaps.above-captionGaps.below)<0.5,'captions have equal space above and below: '+JSON.stringify(captionGaps));
         for(const comment of ['落子天元','这是一个很长的落子短评，用于验证文字滚动时棋盘和棋手卡片都保持原位。'.repeat(3)]){
           await history([{column:'H',row:8,stone:'B',comment}]);
           assert.deepEqual(await geometry(),before,'comment changes keep board and cards fixed');
@@ -96,7 +98,7 @@ if (!process.versions.electron) {
         await wait(`!!document.querySelector('#pause')`);
         await delay(400);
         fs.writeFileSync(out+'/'+theme+'-'+width+'.png',(await win.webContents.capturePage()).toPNG());
-        checks.push(theme+' '+width+': aligned wide-screen cards/no leading narrow-screen spacer; compact reserved caption row; stable board/cards with empty, short, long and toggled comments; top row accessible');
+        checks.push(theme+' '+width+': equal caption gaps '+captionGaps.above+'px/'+captionGaps.below+'px; aligned wide-screen cards/no leading narrow-screen spacer; stable board/cards with empty, short, long and toggled comments; top row accessible');
       }
     }
     await js(`window.__fixture.run={...window.__fixture.run,status:'paused',reason:'restored'};window.__fixture.notify()`);
