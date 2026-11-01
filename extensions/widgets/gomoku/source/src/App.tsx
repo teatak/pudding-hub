@@ -181,6 +181,11 @@ export default function App() {
   const members = run?.participants.map((p) => p.id).join(",") || "";
   const human = run?.participants.find((p) => p.kind === "human");
   const humanRole = human && roles.find((role) => l.seats[role] === human.id);
+  // Pause reasons are optional host metadata on earlier SDK 1.2 compilers.
+  const pauseReason = (run as (NonNullable<typeof run> & { reason?: string }) | null)?.reason;
+  const connectionLost = run?.status === "paused" && pauseReason === "connection_lost";
+  const connectionPaused = !!l.round && !p.winner && run?.status === "paused" &&
+    (connectionLost || pauseReason === "restored");
   const myTurn =
     run?.status === "running" &&
     !!humanRole &&
@@ -473,10 +478,10 @@ export default function App() {
                 <MessageSquareOff size={16} />
               )}
             </button>
-            {run?.status === "paused" && (
+            {run?.status === "paused" && !p.winner && (
               <button
                 className="gd-button is-primary gd-main-action"
-                disabled={busy}
+                disabled={busy || connectionLost}
                 id="resume"
                 onClick={() => void perform(() => pudding.interaction.resume())}
               >
@@ -501,7 +506,7 @@ export default function App() {
                 id="change-players"
                 title={t("changePlayers")}
                 aria-label={t("changePlayers")}
-                disabled={busy || !candidates}
+                disabled={busy || !candidates || connectionLost}
                 onClick={() => openRound(true)}
               >
                 <UsersRound size={16} />
@@ -511,19 +516,24 @@ export default function App() {
               <button
                 className="gd-button gd-main-action"
                 id="start"
-                disabled={busy || !candidates}
+                disabled={busy || !candidates || connectionLost}
                 onClick={() => openRound()}
               >
                 <Play size={14} />
                 {!l.round
                   ? t("play")
-                  : run?.status === "paused"
-                    ? t("newGame")
-                    : t("rematch")}
+                  : p.winner
+                    ? t("rematch")
+                    : t("newGame")}
               </button>
             )}
           </div>
         </header>
+        {connectionPaused && !error && (
+          <div className="gd-alert" role="status" data-connection-paused>
+            <span>{t(connectionLost ? "connectionReconnecting" : "connectionRestoredPaused")}</span>
+          </div>
+        )}
         {error && (
           <div className="gd-alert" role="alert">
             <span>{errorText(error.cause)}</span>
