@@ -26,6 +26,7 @@ import {
   type Lobby,
 } from "./lobby";
 import { t, errorText } from "./text";
+import { playerIdentities } from "./candidates";
 
 export const position = () => {
   const saved = pudding.state.read().data.position as unknown as
@@ -101,7 +102,7 @@ export function readBoard(context: InteractionContext, includeHistory = false) {
           id
             ? {
                 participantID: id,
-                name: run?.participants.find((p) => p.id === id)?.name,
+                name: run?.participants.find((p) => p.id === id)?.name || l.identities?.[id]?.name || null,
                 ready: l.ready.includes(id),
               }
             : null,
@@ -263,8 +264,11 @@ export const start = (sessionIDs: string[], includeMe: boolean) =>
     const players = run.participants
       .filter((p) => p.kind !== "human" || includeMe)
       .map((p) => p.id);
+    const candidates = await pudding.interaction.candidates();
+    const next = newLobby(previous, players);
+    next.identities = playerIdentities(run.participants.filter(p => players.includes(p.id)), candidates.sessions);
     await pudding.interaction.setRequests([]);
-    await save(newLobby(previous, players), initial());
+    await save(next, initial());
     if (run.status === "paused") await pudding.interaction.resume();
     await publish();
   });

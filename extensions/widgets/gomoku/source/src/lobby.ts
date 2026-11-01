@@ -1,4 +1,11 @@
 export const roles = ["Black", "White"] as const;
+export type PlayerIdentity = {
+  id: string;
+  name: string;
+  human: boolean;
+  external?: boolean;
+  model?: { id: string; name: string; icon: string };
+};
 export type Lobby = {
   round: number;
   players: string[];
@@ -6,6 +13,7 @@ export type Lobby = {
   seats: Record<string, string>;
   ready: string[];
   startsAt: number | null;
+  identities?: Record<string, PlayerIdentity>;
 };
 export const emptyLobby = (): Lobby => ({
   round: 0,

@@ -23,8 +23,8 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
-import { roles } from "./lobby";
-import { fillCandidates } from "./candidates";
+import { roles, type PlayerIdentity } from "./lobby";
+import { fillCandidates, retainedPlayer } from "./candidates";
 import {
   size,
   letters,
@@ -68,12 +68,7 @@ const interaction = pudding.interaction as typeof pudding.interaction & {
   removeCandidate?: (input: { id: string }) => Promise<null>;
 };
 const removeCandidate = interaction.removeCandidate;
-type Player = {
-  id: string;
-  name: string;
-  human: boolean;
-  model?: SessionCandidate["model"];
-  external?: boolean;
+type Player = PlayerIdentity & {
   connected?: boolean;
 };
 const me = "@me";
@@ -349,20 +344,9 @@ export default function App() {
     ? l.players.map((id) => {
         const participant = run?.participants.find((p) => p.id === id);
         const candidate = candidates?.sessions.find((s) => s.participantID === id);
-        const external = (candidate ?? knownPlayers.current.get(id))?.kind === "external";
-        return participant
-          ? {
-              id,
-              name:
-                participant.kind === "human"
-                  ? t("playOnBoard")
-                  : participant.name,
-              human: participant.kind === "human",
-              model: candidate?.model ?? knownPlayers.current.get(id)?.model,
-              external,
-              connected: external ? candidate?.connected ?? false : undefined,
-            }
-          : undefined;
+        const player = retainedPlayer(id, participant, candidate || knownPlayers.current.get(id), l.identities?.[id]);
+        return player ? { ...player, name: player.human ? t("playOnBoard") : player.name,
+          connected: player.external ? candidate?.connected ?? false : undefined } : undefined;
       })
     : selected.map(chosenPlayer);
   const commentIndex = view.history.map(move => !!move.comment).lastIndexOf(true);
@@ -405,7 +389,7 @@ export default function App() {
     });
   }
   const title =
-    run?.status === "paused"
+    !p.winner && run?.status === "paused"
       ? t("gamePaused")
       : !l.round
         ? t("waitingToStart")
