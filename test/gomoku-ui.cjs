@@ -76,7 +76,7 @@ if (!process.versions.electron) {
         assert.ok(await js('document.documentElement.scrollWidth<=innerWidth'),'no horizontal overflow');
         await js(`window.__fixture.run={...window.__fixture.run,status:'paused',reason:''};window.__fixture.notify()`);
         await wait(`!!document.querySelector('#resume')`);
-        assert.deepEqual(await geometry(),before,'pausing and showing the split button keeps board/cards fixed');
+        assert.deepEqual(await geometry(),before,'pausing and showing the separate actions keeps board/cards fixed');
         assert.ok(await js(`(()=>{const r=document.querySelector('.gd-game-actions').getBoundingClientRect();return r.left>=0&&r.right<=innerWidth})()`),'paused actions fit the viewport');
         await js(`window.__fixture.run={...window.__fixture.run,status:'running'};window.__fixture.notify()`);
         await wait(`!!document.querySelector('#pause')`);
@@ -88,13 +88,10 @@ if (!process.versions.electron) {
     await js(`window.__fixture.run={...window.__fixture.run,status:'paused',reason:'restored'};window.__fixture.notify()`);
     await wait(`document.querySelector('[data-connection-paused]')?.textContent==='棋局已恢复，当前处于暂停状态'`);
     const pausedGeometry=await geometry();
-    await js(`document.querySelector('summary').focus();document.querySelector('summary').click()`);
-    await wait(`document.querySelector('details').open`);
-    assert.ok(await js(`document.querySelector('#change-players').textContent.trim()`));
-    assert.deepEqual(await geometry(),pausedGeometry,'opening options keeps the board fixed');
-    await js(`document.querySelector('summary').dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}))`);
-    await wait(`!document.querySelector('details').open`);
-    assert.ok(await js(`document.activeElement===document.querySelector('summary')`),'Escape returns focus to the arrow');
+    assert.ok(await js(`document.querySelector('#change-players').querySelector('svg')&&document.querySelector('#change-players').getAttribute('aria-label')===document.querySelector('#change-players').title`),'player selection is a labelled icon button');
+    assert.equal(await js(`document.querySelector('#change-players').textContent.trim()`),'');
+    assert.ok(await js(`(()=>{const e=document.querySelector('#resume'),r=e.getBoundingClientRect();return e.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))})()`),'the floating recovery notice never covers the continue action');
+    await delay(250);fs.writeFileSync(out+'/paused-separate-actions-dark-mobile.png',(await win.webContents.capturePage()).toPNG());
     const prior=await js(`({lobby:window.__fixture.state.data.lobby,history:window.__fixture.state.data.position.history})`);
     await js(`window.__fixture.calls=[];document.querySelector('#resume').click()`);
     await wait(`window.__fixture.run.status==='running'&&!document.querySelector('#resume')`);
@@ -108,10 +105,10 @@ if (!process.versions.electron) {
     assert.deepEqual(await js(`window.__fixture.state.data.lobby.seats`),{Black:'b',White:'a'});
     assert.deepEqual(await js(`window.__fixture.state.data.lobby.ready`),[]);
     assert.deepEqual(await js(`window.__fixture.state.data.position.history`),[]);
-    checks.push('continue retains the current round; the main split action reuses players, swaps colors and requests readiness');
+    checks.push('continue retains the current round; the separate new-game action reuses players, swaps colors and requests readiness');
     await js(`document.querySelector('#pause').click()`);await wait(`!!document.querySelector('#start')`);
     const saved=await js(`window.__fixture.state`);
-    await js(`window.__fixture.calls=[];document.querySelector('summary').click();document.querySelector('#change-players').click()`);
+    await js(`window.__fixture.calls=[];document.querySelector('#change-players').click()`);
     await wait(`!!document.querySelector('dialog[open]')`);
     assert.deepEqual(await js(`window.__fixture.state`),saved,'choosing players does not change the current game');
     await js(`document.querySelector('dialog .gd-picker-actions button:last-child').click()`);
@@ -129,7 +126,7 @@ if (!process.versions.electron) {
     checks.push('selection can be cancelled; an offline original player opens the picker and replacement requires an explicit choice');
     await js(`window.__fixture.run={...window.__fixture.run,status:'paused',reason:'connection_lost'};window.__fixture.notify()`);
     await wait(`document.querySelector('#resume')?.textContent.trim()==='正在恢复…'`);
-    assert.ok(await js(`document.querySelector('#resume').disabled&&document.querySelector('#start').disabled&&document.querySelector('summary').getAttribute('aria-disabled')==='true'`));
+    assert.ok(await js(`document.querySelector('#resume').disabled&&document.querySelector('#start').disabled&&document.querySelector('#change-players').disabled`));
     checks.push('reconnection is an automatic disabled state rather than a manual continue action');
     for(const locale of ['en','zh-CN','zh-TW','ja','ko','es','de','fr']){
       await js(`window.__fixture.locale=${JSON.stringify(locale)};window.__fixture.notify()`);await delay(50);
@@ -137,13 +134,19 @@ if (!process.versions.electron) {
     }
     await js(`window.__fixture.locale='zh-CN';window.__fixture.run={...window.__fixture.run,status:'paused',reason:'restored'};window.__fixture.history([{column:'A',row:1,stone:'B'},{column:'A',row:15,stone:'W'},{column:'B',row:1,stone:'B'},{column:'C',row:15,stone:'W'},{column:'C',row:1,stone:'B'},{column:'E',row:15,stone:'W'},{column:'D',row:1,stone:'B'},{column:'G',row:15,stone:'W'},{column:'E',row:1,stone:'B'}])`);
     await wait(`!document.querySelector('#resume')&&document.querySelector('#start')?.textContent.trim()==='再来一局'`);
-    await js(`document.querySelector('summary').focus();document.querySelector('summary').click()`);await wait(`document.querySelector('details').open`);
-    assert.ok(await js(`document.querySelector('#change-players').textContent.trim()`));
-    await delay(100);
-    const menu=await js(`(()=>{const e=document.querySelector('#change-players'),r=e.getBoundingClientRect();return{open:document.querySelector('details').open,rect:[r.x,r.y,r.width,r.height],hit:e.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))}})()`);
-    assert.ok(menu.hit,'the opened menu must be visible and clickable: '+JSON.stringify(menu));
-    fs.writeFileSync(out+'/split-button-dark-mobile.png',(await win.webContents.capturePage()).toPNG());
-    checks.push('finished games show rematch and its player menu; all eight languages fit the narrow toolbar');
+    const icon=await js(`(()=>{const e=document.querySelector('#change-players'),r=e.getBoundingClientRect();return{label:e.getAttribute('aria-label'),text:e.textContent.trim(),hit:e.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))}})()`);
+    assert.ok(icon.hit&&icon.label&&!icon.text,'the separate player icon must be visible and clickable');
+    assert.equal(await js(`document.querySelector('summary')`),null,'no dropdown remains');
+    await delay(250);fs.writeFileSync(out+'/separate-actions-dark-mobile.png',(await win.webContents.capturePage()).toPNG());
+    checks.push('finished games show separate rematch and player-icon actions; all eight languages fit the narrow toolbar');
+    await js(`window.__fixture.calls=[];window.__fixture.run=null;window.__fixture.state={version:window.__fixture.state.version+1,data:{lobby:{round:0,players:[],phase:'lobby',seats:{},ready:[],startsAt:null},position:{history:[],resigned:null,turnStartedAt:null,turnElapsedMS:0}}};window.__fixture.notify()`);
+    await wait(`document.querySelector('#start')?.textContent.trim()==='开一局'&&!document.querySelector('#change-players').disabled`);
+    assert.ok(await js(`document.querySelector('#change-players').title.includes('选择棋手')`),'unstarted games label the initial player-selection icon');
+    assert.doesNotMatch(await js(`document.querySelector('#change-players').title`),/(?:\.{3}|…)$/u);
+    await js(`document.querySelector('#change-players').click()`);await wait(`!!document.querySelector('dialog[open]')`);
+    assert.equal(await js(`window.__fixture.calls.length`),0,'selecting initial players never starts a round');
+    await delay(250);fs.writeFileSync(out+'/initial-player-picker-dark-mobile.png',(await win.webContents.capturePage()).toPNG());
+    checks.push('the initial player icon opens selection without ellipses and without starting a game');
     assert.deepEqual(await js('window.__fixture.errors'),[]);
     fs.writeFileSync(out+'/result.json',JSON.stringify({passed:true,checks,errors:[]},null,2));console.log(JSON.stringify({passed:checks.length,artifacts:out}));
     win.destroy();app.quit();

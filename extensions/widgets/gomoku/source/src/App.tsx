@@ -8,7 +8,6 @@ import {
 } from "@pudding/widget";
 import {
   Check,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   History,
@@ -20,6 +19,7 @@ import {
   Swords,
   Trophy,
   UserRound,
+  UsersRound,
   Volume2,
   VolumeX,
 } from "lucide-react";
@@ -156,7 +156,6 @@ export default function App() {
   const seenAgents = useRef(new Set<string>());
   const [selected, setSelected] = useState<string[]>([]);
   const [picker, setPicker] = useState(false);
-  const roundMenu = useRef<HTMLDetailsElement>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<{
     cause: unknown;
@@ -368,7 +367,6 @@ export default function App() {
   const act = (ready: boolean) =>
     perform(() => pudding.interaction.handle((c) => changeReadiness(ready, c)));
   function openRound(choosePlayers = false) {
-    if (roundMenu.current) roundMenu.current.open = false;
     void perform(async () => {
       // Connections may arrive after the board opened. Refresh only the picker;
       // participant identity and game state still come from the shared run.
@@ -496,9 +494,20 @@ export default function App() {
               </button>
             )}
             {(!l.round || p.winner || run?.status === "paused") && (
-              <div className="gd-round-actions">
+              <>
               <button
-                className={"gd-button gd-main-action gd-round-start" + (p.winner || !l.round ? " is-primary" : "")}
+                type="button"
+                className="gd-button gd-icon-toggle"
+                id="change-players"
+                title={t(l.round ? "changePlayers" : "selectPlayers")}
+                aria-label={t(l.round ? "changePlayers" : "selectPlayers")}
+                disabled={busy || !candidates || connectionLost}
+                onClick={() => openRound(true)}
+              >
+                <UsersRound size={16} />
+              </button>
+              <button
+                className={"gd-button gd-main-action" + (p.winner || !l.round ? " is-primary" : "")}
                 id="start"
                 disabled={busy || !candidates || connectionLost}
                 onClick={() => openRound()}
@@ -510,45 +519,7 @@ export default function App() {
                     ? t("rematch")
                     : t("newGame")}
               </button>
-              <details
-                ref={roundMenu}
-                className="gd-round-menu"
-                onBlur={event => {
-                  if (!event.currentTarget.contains(event.relatedTarget)) event.currentTarget.open = false;
-                }}
-                onKeyDown={event => {
-                  if (event.key === "Escape") {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    event.currentTarget.open = false;
-                    event.currentTarget.querySelector("summary")?.focus();
-                  }
-                }}
-              >
-                <summary
-                  className="gd-button gd-round-trigger"
-                  aria-label={t("gameOptions")}
-                  aria-disabled={busy || !candidates || connectionLost}
-                  tabIndex={busy || !candidates || connectionLost ? -1 : 0}
-                  onClick={event => {
-                    if (busy || !candidates || connectionLost) event.preventDefault();
-                  }}
-                >
-                  <ChevronDown size={14} />
-                </summary>
-                <div className="gd-round-options" role="group" aria-label={t("gameOptions")}>
-                  <button
-                    type="button"
-                    className="gd-button"
-                    id="change-players"
-                    disabled={busy || !candidates || connectionLost}
-                    onClick={() => openRound(true)}
-                  >
-                    {t(l.round ? "changePlayers" : "selectPlayers")}
-                  </button>
-                </div>
-              </details>
-              </div>
+              </>
             )}
           </div>
         </header>

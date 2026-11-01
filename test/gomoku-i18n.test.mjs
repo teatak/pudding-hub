@@ -31,6 +31,14 @@ test("all game locales have matching keys and interpolation parameters", () => {
   }
 });
 
+test("initial and later-round player-selection labels omit trailing ellipses in every locale", () => {
+  for (const [locale, dictionary] of Object.entries(messages)) {
+    for (const key of ["selectPlayers", "changePlayers"]) {
+      assert.doesNotMatch(dictionary[key], /(?:\.{3}|…)\s*$/u, `${locale}: ${key}`);
+    }
+  }
+});
+
 test("notification interpolation preserves dollars, braces and Unicode in names", () => {
   const name = "棋手 $& $$ $` $' {result} 🎮";
   for (const [locale, expected] of [

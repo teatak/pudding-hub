@@ -99,55 +99,6 @@
   min-width: 88px;
   white-space: nowrap;
 }
-.gd-round-actions {
-  display: inline-flex;
-  flex-shrink: 0;
-}
-.gd-round-start {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-}
-.gd-round-menu {
-  position: relative;
-}
-.gd-round-trigger {
-  width: 28px;
-  padding: 0;
-  list-style: none;
-  border-left: 0;
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-}
-.gd-round-trigger::-webkit-details-marker {
-  display: none;
-}
-.gd-round-start.is-primary + .gd-round-menu > .gd-round-trigger {
-  color: var(--gd-on-accent);
-  background: var(--gd-accent);
-  border-color: var(--gd-accent);
-}
-.gd-round-trigger[aria-disabled="true"] {
-  opacity: 0.5;
-  cursor: default;
-}
-.gd-round-options {
-  position: absolute;
-  z-index: 10;
-  top: calc(100% + 6px);
-  right: 0;
-  min-width: 160px;
-  padding: 4px;
-  border: 1px solid var(--gd-edge);
-  border-radius: 8px;
-  background: var(--gd-panel);
-  box-shadow: 0 4px 16px #0000001f;
-}
-.gd-round-options .gd-button {
-  width: 100%;
-  justify-content: flex-start;
-  border: 0;
-  white-space: nowrap;
-}
 .gd-icon-toggle {
   width: 36px;
   padding: 0;
@@ -747,11 +698,17 @@
   .gd-game-actions .gd-button {
     font-size: 12px;
   }
+  .gd-game-actions .gd-main-action {
+    padding-inline: 8px;
+  }
   .gd-game-actions .gd-main-action svg {
     display: none;
   }
   .gd-game-actions .gd-icon-toggle {
     width: 32px;
+  }
+  .gd-content > .gd-alert {
+    top: 122px;
   }
   .gd-board-area {
     max-width: min(600px, max(240px, calc(100dvh - 448px)));
