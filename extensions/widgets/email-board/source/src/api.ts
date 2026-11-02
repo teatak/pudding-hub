@@ -17,24 +17,38 @@ import {
   type Card,
 } from "./model";
 import { t, errorText } from "./text";
+import { sharedQuery } from "./requests";
 
 // One controller/cache per guest binding. A connection change creates a new guest.
-// Shared cache requests own their cancellation signal; one UI/model caller must
-// never cancel the same request still used by another reader.
+// Shared cache observers retain requests while another UI/model reader uses them.
 export function createMailbox(client: QueryClient) {
   const known = new Set<string>();
   const readReceipts = new Map<string, Promise<void>>();
   const profileSchema = z.object({mailboxID:accountSchema,address:z.string(),configRevision:z.string()});
   let current: z.infer<typeof profileSchema> | undefined;
-  const loadProfile = async () => {
-    const next = profileSchema.parse((await pudding.query("profile")).data);
-    if (current && (current.mailboxID !== next.mailboxID || current.configRevision !== next.configRevision)) known.clear();
-    current = next;
-    return next;
+  let profileRequest: Promise<z.infer<typeof profileSchema>> | undefined;
+  const loadProfile = () => {
+    if (profileRequest) return profileRequest;
+    const pending = pudding.query("profile").then(result => {
+      const next = profileSchema.parse(result.data);
+      if (current && (current.mailboxID !== next.mailboxID || current.configRevision !== next.configRevision)) known.clear();
+      current = next;
+      return next;
+    });
+    profileRequest = pending;
+    const clear = () => { profileRequest = undefined; };
+    void pending.then(clear, clear);
+    return pending;
   };
-  const profile = async () => (await loadProfile()).mailboxID;
+  const profile = async (signal?: AbortSignal) => {
+    signal?.throwIfAborted();
+    const next = await loadProfile();
+    signal?.throwIfAborted();
+    return next.mailboxID;
+  };
   const address = () => current?.address ?? "";
   const ensure = async (account: string, signal?: AbortSignal) => {
+    signal?.throwIfAborted();
     const p = await loadProfile();
     if (p.mailboxID !== accountSchema.parse(account)) throw new Error("wrongAccount");
     signal?.throwIfAborted();
@@ -52,14 +66,14 @@ export function createMailbox(client: QueryClient) {
     signal?: AbortSignal,
   ) {
     const identity = await ensure(account, signal);
-    const result = await client.fetchQuery({
+    const result = await sharedQuery(client, {
       queryKey: ["email", "page", account, identity.configRevision, q, cursor, limit],
       staleTime: 60000,
       queryFn: async ({signal:pageSignal}) => {
         const listing = listSchema.parse((await pudding.query("list", {...identity,q,cursor,limit}, {signal:pageSignal})).data);
         return {items:listing.messages.map(messageSummary), nextCursor:listing.nextCursor || null};
       },
-    });
+    }, signal);
     signal?.throwIfAborted();
     result.items.forEach((x) => known.add(x.id));
     return result;
@@ -122,7 +136,7 @@ export function createMailbox(client: QueryClient) {
     };
   }
   async function board(signal?: AbortSignal) {
-    const account = await profile(),
+    const account = await profile(signal),
       p = await list(account, "", "", 20, signal);
     return {
       account,
@@ -144,10 +158,10 @@ export function createMailbox(client: QueryClient) {
     signal?: AbortSignal,
   ) {
     const identity = await ensure(account, signal);
-    const message = await client.fetchQuery({
+    const message = await sharedQuery(client, {
       queryKey:["email","message",account,identity.configRevision,id], staleTime:60000,
       queryFn:async ({signal:readSignal}) => messageSchema.parse((await pudding.query("message",{...identity,id},{signal:readSignal})).data),
-    });
+    }, signal);
     if (message.id !== id) throw new Error("Message ID mismatch");
     signal?.throwIfAborted(); known.add(id);
     const s=await storage(signal);

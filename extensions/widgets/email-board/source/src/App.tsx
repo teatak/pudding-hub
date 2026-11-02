@@ -514,7 +514,7 @@ export default function App() {
   );
   const profile = useQuery({
     queryKey: ["email-board-view", "account"],
-    queryFn: () => mail.profile(),
+    queryFn: ({ signal }) => mail.profile(signal),
     retry: false,
   });
   const account = profile.data;

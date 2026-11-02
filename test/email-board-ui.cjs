@@ -109,15 +109,32 @@ if (!process.versions.electron) {
     win.setContentSize(1500,1000);
     await waitInner(`${doc}.defaultView.getComputedStyle(${doc}.querySelector('#original-card')).padding==='40px'`);
     await wait(`Math.abs(parseFloat(document.querySelector('.gb-email-frame').style.height)-${wide})<2`);
+    await js(`window.__frameHeights=[];window.__measuredHeights=[];window.__bodyObserver=new ResizeObserver(entries=>window.__measuredHeights.push(entries[0].contentRect.height));window.__bodyObserver.observe(document.querySelector('.gb-email-frame'));window.__sampling=true;(()=>{const sample=()=>{if(!window.__sampling)return;window.__frameHeights.push(document.querySelector('.gb-email-frame').getBoundingClientRect().height);requestAnimationFrame(sample)};sample()})()`);
     // Repeat width changes and settle after images/layout have updated; observe
     // browser error events, which don't necessarily appear as console errors.
-    for (const width of [1000,1400,920,1500]) {
+    for (const width of [1420,1340,1260,1180,1100,1020,940,920,1000,1080,1160,1240,1320,1400,1500]) {
       win.setContentSize(width,1000);
-      await pause(120);
+      await pause(40);
     }
     await waitInner(`${doc}.defaultView.getComputedStyle(${doc}.querySelector('#original-card')).padding==='40px'`);
     await wait(`Math.abs(parseFloat(document.querySelector('.gb-email-frame').style.height)-${wide})<2`);
+    await js('window.__sampling=false;window.__bodyObserver.disconnect()');
+    const heights=await js('window.__frameHeights.concat(window.__measuredHeights)');
+    assert.ok(heights.length>8,'sample live layout while dragging between window sizes');
+    assert.ok(Math.min(...heights)>300,'visible email must not collapse while resizing: '+JSON.stringify(heights));
     assert.deepEqual(await js('window.__runtimeErrors'),[],'responsive changes must not trigger window runtime errors');
+    win.setContentSize(2400,1000);
+    await pause(150);
+    assert.ok(await js(`document.querySelector('.gb-inbox').getBoundingClientRect().width<=420`),'mail list has a maximum width on a wide window');
+    const border=await js(`getComputedStyle(document.querySelector('.gb-card')).borderBottomColor`);
+    const cardPoint=await js(`(()=>{const r=document.querySelector('.gb-card').getBoundingClientRect();return {x:Math.round(r.x+50),y:Math.round(r.y+30)}})()`);
+    win.webContents.sendInputEvent({type:'mouseMove',...cardPoint});
+    await pause(50);
+    assert.equal(await js(`document.querySelector('.gb-card').matches(':hover')`),true);
+    assert.equal(await js(`getComputedStyle(document.querySelector('.gb-card')).borderBottomColor`),border,'hover keeps the normal subtle separator');
+    assert.match(await js(`getComputedStyle(document.querySelector('.gb-card')).boxShadow`),/rgb\(37, 99, 235\)/,'selected mail keeps its blue marker');
+    win.setContentSize(1500,1000);
+    await wait(`Math.abs(parseFloat(document.querySelector('.gb-email-frame').style.height)-${wide})<2`);
     await win.webContents.capturePage().then(image=>fs.writeFileSync(out+'/rich.png',image.toPNG()));
     await js(`document.querySelectorAll('.gb-view-toggle button')[1].click()`);
     await wait(`document.querySelector('.gb-plain-body')?.textContent==='Plain alternative'`);
@@ -126,7 +143,7 @@ if (!process.versions.electron) {
     await waitInner(`!!document.querySelector('#original-card')`);
     assert.equal(await inner(`${doc}.defaultView.getComputedStyle(${doc}.documentElement).colorScheme`),'light');
     assert.deepEqual(await js('window.__runtimeErrors'),[],'rich/plain remounts must not trigger window runtime errors');
-    console.log('PASS: encoded names; default image loading; isolated original styles; responsive layout and shrinking height without runtime errors; declared spacer-image gaps; script removal; safe link forwarding; rich/plain toggle and dark host. Screenshot: '+out+'/rich.png');
+    console.log('PASS: encoded names; default image loading; isolated original styles; continuous resize without body collapse or runtime errors; capped list width and subtle hover separator; declared spacer-image gaps; script removal; safe link forwarding; rich/plain toggle and dark host. Screenshot: '+out+'/rich.png');
     win.destroy();app.quit();
   }).catch(error=>{console.error(error);app.exit(1)});
 }

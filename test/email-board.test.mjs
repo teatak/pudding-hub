@@ -125,3 +125,60 @@ test('a configuration change during a request rejects stale results; storage con
  identity.configRevision='r2';release();await assert.rejects(pending,/email_connection_changed/);gate=null;
  await api.list(account);saved.version=3;await assert.rejects(api.edit(account,0,[{id:message.id,note:'stale'}]),/conflict/);assert.equal(saved.data.emailBoard,undefined);
 });
+
+test('overlapping mailbox identity checks share one request without caching credential revisions',async t=>{
+ const account=await api.profile(),query=globalThis.__emailSDK.query;let profiles=0;
+ globalThis.__emailSDK.query=async(name,p,options)=>{
+  if(name==='profile')profiles++;
+  await new Promise(resolve=>setTimeout(resolve,3));
+  if(name==='message'){options.signal.throwIfAborted();return {data:{...message,id:p.id,text:p.id,attachments:[]}}}
+  return query(name,p,options);
+ };
+ t.after(()=>{globalThis.__emailSDK.query=query});
+ const results=await Promise.all(Array.from({length:12},(_,i)=>api.read(account,'message_'+i)));
+ assert.equal(profiles,1);assert.equal(results.length,12);
+ identity.configRevision='r2';await api.read(account,'message_1');assert.equal(profiles,2);
+});
+
+function controlledMessages(t){
+ const original=globalThis.__emailSDK.query,entered=[],aborted=[],release=new Map();
+ globalThis.__emailSDK.query=async(name,p,options)=>{
+  if(name!=='message')return original(name,p,options);
+  entered.push(p.id);
+  return new Promise((resolve,reject)=>{
+   const stop=()=>{aborted.push(p.id);reject(options.signal.reason)};
+   options.signal.addEventListener('abort',stop,{once:true});
+   release.set(p.id,()=>{options.signal.removeEventListener('abort',stop);resolve({data:{...message,id:p.id,text:p.id,attachments:[]}})});
+  });
+ };
+ t.after(()=>{globalThis.__emailSDK.query=original});
+ return {entered,aborted,release};
+}
+async function until(check){for(let i=0;i<100;i++){if(check())return;await new Promise(resolve=>setTimeout(resolve,1))}assert.fail('request did not reach expected state')}
+
+test('switching messages cancels unused reads and skips an already obsolete selection',async t=>{
+ const account=await api.profile(),control=controlledMessages(t),old=new AbortController(),queued=new AbortController();
+ const oldRead=api.read(account,'message_old',0,5,old.signal),oldResult=Promise.allSettled([oldRead]);
+ await until(()=>control.entered.includes('message_old'));
+ const retained=api.read(account,'message_retained');
+ await until(()=>control.entered.includes('message_retained'));
+ const queuedRead=api.read(account,'message_queued',0,5,queued.signal),queuedResult=Promise.allSettled([queuedRead]);
+ queued.abort();
+ const latest=api.read(account,'message_latest');old.abort();
+ await until(()=>control.entered.includes('message_latest'));
+ assert.ok(control.aborted.includes('message_old'));assert.ok(!control.entered.includes('message_queued'));
+ control.release.get('message_retained')();control.release.get('message_latest')();
+ assert.equal((await retained).id,'message_retained');assert.equal((await latest).id,'message_latest');
+ for(const [result] of [await oldResult,await queuedResult]){assert.equal(result.status,'rejected');assert.equal(result.reason.name,'AbortError')}
+});
+
+test('cancelling a UI reader preserves the same message request still used by a model reader',async t=>{
+ const account=await api.profile(),control=controlledMessages(t),ui=new AbortController();
+ const uiRead=api.read(account,'message_shared',0,5,ui.signal),uiResult=Promise.allSettled([uiRead]);
+ await until(()=>control.entered.includes('message_shared'));
+ const modelRead=api.read(account,'message_shared');await new Promise(resolve=>setTimeout(resolve,0));
+ ui.abort();assert.deepEqual(control.aborted,[]);
+ control.release.get('message_shared')();
+ assert.equal((await modelRead).id,'message_shared');assert.equal((await uiResult)[0].reason.name,'AbortError');
+ assert.deepEqual(control.entered,['message_shared']);
+});

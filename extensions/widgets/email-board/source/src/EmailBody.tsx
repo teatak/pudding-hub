@@ -34,7 +34,6 @@ export function EmailBody({ document, title }: { document: string; title: string
   }, [document]);
   useEffect(() => {
     const element = frame.current!;
-    element.style.height = "1px";
     const receive = (event: MessageEvent) => {
       if (event.source !== element.contentWindow || event.data?.type !== "pudding-email-body" || event.data.id !== content.id) return;
       const { height, href } = event.data;
@@ -49,17 +48,10 @@ export function EmailBody({ document, title }: { document: string; title: string
       }
     };
     window.addEventListener("message", receive);
-    let width = element.clientWidth, pending = 0;
-    const container = new ResizeObserver(() => {
-      if (element.clientWidth === width) return;
-      width = element.clientWidth;
-      cancelAnimationFrame(pending);
-      // Writing an observed size inside its delivery cycle triggers a browser
-      // loop error. Apply the width-driven reset in the next animation frame.
-      pending = requestAnimationFrame(() => { pending = 0; element.style.height = "1px"; });
-    });
-    container.observe(element);
-    return () => { window.removeEventListener("message", receive); container.disconnect(); cancelAnimationFrame(pending); };
+    // The child observes its content and viewport width. Never collapse the
+    // live frame to measure it: that makes the body flash during a resize.
+    return () => { window.removeEventListener("message", receive); };
+
   }, [content]);
   return <iframe ref={frame} className="gb-email-frame" title={title} sandbox="allow-scripts" referrerPolicy="no-referrer" srcDoc={content.html} />;
 }
