@@ -1,7 +1,7 @@
 id: email
 api_version: 1.2.0
 name: Email
-version: 1.0.0-preview.1
+version: 1.0.0-preview.2
 description: Read and search iCloud, Gmail and custom IMAP mail; send new messages and replies over SMTP.
 auth:
   required: true

@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="4" y="10" width="56" height="44" rx="10" fill="#52677d"/><path d="m12 21 20 15 20-15M12 45l13-13m27 13L39 32" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="email-surface" x1="8" y1="4" x2="56" y2="62" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4B9FFF"/>
+      <stop offset="1" stop-color="#2463EB"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#email-surface)"/>
+  <rect x="13" y="19" width="38" height="28" rx="5" fill="#FFFFFF"/>
+  <path d="m15 22 14.2 11.1a4.5 4.5 0 0 0 5.6 0L49 22" stroke="#347DF3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

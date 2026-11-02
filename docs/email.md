@@ -6,6 +6,8 @@ Requires protocol 58 / Plugin API 1.2 and the matching Desktop. Install the Emai
 - Gmail: imap.gmail.com:993 (TLS), smtp.gmail.com:465 (TLS), full email address and a Google app password. Two-step verification is required; some managed/protected accounts cannot use app passwords. [Google setup](https://support.google.com/mail/answer/185833).
 - Custom: supply both hosts, ports and TLS/STARTTLS modes. Certificates must be trusted by the system. Optional login overrides default to the email address; an unset SMTP password defaults to the main password. SMTP supports PLAIN and LOGIN. OAuth-only providers, plaintext transport and certificate bypasses are unsupported.
 
+The iCloud and Gmail forms ask only for a connection name, email address and app password. Server and login settings are automatic. The custom IMAP/SMTP form exposes the full server and optional login settings.
+
 Credentials use the encrypted host store and are write-only in settings. Blank secret edits preserve existing values; clearing an optional SMTP password is explicit. Saving authenticates both protocols without sending. Password rotation preserves mailbox identity, bindings and drafts. A different IMAP server/login requires a new connection and explicit selection. Configuration revisions reject stale reads and concurrent saves.
 
 The board reads INBOX on demand, one card per message. Search is plain text, not Gmail syntax; each page searches up to 5,000 UID positions and an empty page can still have older results. Lists fetch metadata only. Text is bounded to 64 KiB, HTML becomes inert text, remote images are never loaded, and attachments expose metadata only. Reads do not mark messages read.

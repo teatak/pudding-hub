@@ -117,8 +117,19 @@
         "de": "Lesen Sie iCloud-, Gmail- oder eigene IMAP/SMTP-Postfächer und verwalten Sie lokale Kategorien, Notizen und Entwürfe.",
         "fr": "Lisez vos e-mails iCloud, Gmail ou IMAP/SMTP et organisez les catégories, notes et brouillons locaux."
       },
-      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3QgeD0iNCIgeT0iMTAiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0NCIgcng9IjEwIiBmaWxsPSIjNTI2NzdkIi8+PHBhdGggZD0ibTEyIDIxIDIwIDE1IDIwLTE1TTEyIDQ1bDEzLTEzbTI3IDEzTDM5IDMyIiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+Cg==",
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImVtYWlsLXN1cmZhY2UiIHgxPSI4IiB5MT0iNCIgeDI9IjU2IiB5Mj0iNjIiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgICAgPHN0b3Agc3RvcC1jb2xvcj0iIzRCOUZGRiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMyNDYzRUIiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHg9IjIiIHk9IjIiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcng9IjE2IiBmaWxsPSJ1cmwoI2VtYWlsLXN1cmZhY2UpIi8+CiAgPHJlY3QgeD0iMTMiIHk9IjE5IiB3aWR0aD0iMzgiIGhlaWdodD0iMjgiIHJ4PSI1IiBmaWxsPSIjRkZGRkZGIi8+CiAgPHBhdGggZD0ibTE1IDIyIDE0LjIgMTEuMWE0LjUgNC41IDAgMCAwIDUuNiAwTDQ5IDIyIiBzdHJva2U9IiMzNDdERjMiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=",
       "releases": [
+        {
+          "version": "1.0.0-preview.2",
+          "package": "./email-board/releases/1.0.0-preview.2/email-board.pudding-widget.json",
+          "packageHash": "ce60c7af16cd8d690053d7c3f0ea0549a75de80255370f9a682ef8efe73f0261",
+          "requires": {
+            "protocolVersion": 58,
+            "sdkVersion": "1.0.0"
+          },
+          "channel": "preview",
+          "preview": true
+        },
         {
           "version": "1.0.0-preview.1",
           "package": "./email-board/releases/1.0.0-preview.1/email-board.pudding-widget.json",

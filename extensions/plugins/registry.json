@@ -72,9 +72,9 @@
         "en": "Connect iCloud, Gmail or custom IMAP/SMTP to search, read and send email."
       },
       "icon": {
-        "svg": "./email/releases/1.0.0-preview.1/assets/icon.svg"
+        "svg": "./email/releases/1.0.0-preview.2/assets/icon.svg"
       },
-      "icon_sha256": "5bc0eafab7b703caa34496d997a883f3c96e31f050a5c0fa67a8e783601e326a",
+      "icon_sha256": "d8e539ace68c58585f94af4ce113594c94f0fe4f684a0dea63361b026fe75d08",
       "tags": [
         "email",
         "imap",
@@ -83,6 +83,18 @@
         "gmail"
       ],
       "releases": [
+        {
+          "version": "1.0.0-preview.2",
+          "manifest": "./email/releases/1.0.0-preview.2/manifest.json",
+          "package": "./email/releases/1.0.0-preview.2/email.pudding-plugin.json",
+          "package_sha256": "44a96fda6310a3733cab3bbff575b06518c521afb91819910b5ee9fc78c4d427",
+          "requires": {
+            "pudding_plugin": "1.2.0"
+          },
+          "released_at": "2026-11-02",
+          "channel": "preview",
+          "preview": true
+        },
         {
           "version": "1.0.0-preview.1",
           "manifest": "./email/releases/1.0.0-preview.1/manifest.json",

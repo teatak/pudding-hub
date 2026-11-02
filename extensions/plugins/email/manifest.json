@@ -8,7 +8,7 @@
     "zh-TW": "郵件",
     "en": "Email"
   },
-  "version": "1.0.0-preview.1",
+  "version": "1.0.0-preview.2",
   "description": {
     "zh-CN": "通过 IMAP/SMTP 连接 iCloud、Gmail 或自定义邮箱，搜索、阅读及发送邮件。",
     "zh-TW": "透過 IMAP/SMTP 連接 iCloud、Gmail 或自訂信箱，搜尋、閱讀及寄送郵件。",
@@ -22,9 +22,9 @@
     "skills/mailbox/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.0-preview.1/manifest.json",
-  "package": "./releases/1.0.0-preview.1/email.pudding-plugin.json",
-  "package_sha256": "f278c06638a2e1085b53df349840e4722a23d1ae81320c949ba067b776336a25",
+  "manifest": "./releases/1.0.0-preview.2/manifest.json",
+  "package": "./releases/1.0.0-preview.2/email.pudding-plugin.json",
+  "package_sha256": "44a96fda6310a3733cab3bbff575b06518c521afb91819910b5ee9fc78c4d427",
   "requires": {
     "pudding_plugin": "1.2.0"
   },
