@@ -1,0 +1,40 @@
+{
+  "kind": "pudding.plugin.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/plugins/email",
+  "name": "email",
+  "title": {
+    "zh-CN": "邮件",
+    "zh-TW": "郵件",
+    "en": "Email"
+  },
+  "version": "1.0.0-preview.1",
+  "description": {
+    "zh-CN": "通过 IMAP/SMTP 连接 iCloud、Gmail 或自定义邮箱，搜索、阅读及发送邮件。",
+    "zh-TW": "透過 IMAP/SMTP 連接 iCloud、Gmail 或自訂信箱，搜尋、閱讀及寄送郵件。",
+    "en": "Connect iCloud, Gmail or custom IMAP/SMTP to search, read and send email."
+  },
+  "icon": {
+    "svg": "./assets/icon.svg"
+  },
+  "files": [
+    "plugin.yaml",
+    "skills/mailbox/SKILL.md",
+    "assets/icon.svg"
+  ],
+  "manifest": "./releases/1.0.0-preview.1/manifest.json",
+  "package": "./releases/1.0.0-preview.1/email.pudding-plugin.json",
+  "package_sha256": "f278c06638a2e1085b53df349840e4722a23d1ae81320c949ba067b776336a25",
+  "requires": {
+    "pudding_plugin": "1.2.0"
+  },
+  "tags": [
+    "email",
+    "imap",
+    "smtp",
+    "icloud",
+    "gmail"
+  ],
+  "channel": "preview",
+  "preview": true
+}

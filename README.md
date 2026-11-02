@@ -7,6 +7,8 @@ Pudding Hub is Pudding's official extension repository. It contains source and i
 - **Plugins** connect external services for models and widgets.
 - **Widgets** provide interactive interfaces. They may use plugins or run independently.
 
+[Email setup guide](docs/email.md) for iCloud, Gmail and custom IMAP/SMTP.
+
 ## Developer documentation
 
 Start at the [developer index](docs/README.md):

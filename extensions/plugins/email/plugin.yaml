@@ -1,0 +1,55 @@
+id: email
+api_version: 1.2.0
+name: Email
+version: 1.0.0-preview.1
+description: Read and search iCloud, Gmail and custom IMAP mail; send new messages and replies over SMTP.
+auth:
+  required: true
+  methods:
+    - id: icloud
+      type: basic
+      label: iCloud
+      default: true
+    - id: gmail
+      type: basic
+      label: Gmail
+    - id: custom
+      type: basic
+      label: IMAP / SMTP
+connection:
+  fields:
+    - id: imapHost
+      label: IMAP host
+      placeholder: imap.example.com
+    - id: imapPort
+      label: IMAP port
+      placeholder: "993"
+    - id: imapSecurity
+      label: IMAP encryption
+    - id: smtpHost
+      label: SMTP host
+      placeholder: smtp.example.com
+    - id: smtpPort
+      label: SMTP port
+      placeholder: "587"
+    - id: smtpSecurity
+      label: SMTP encryption
+    - id: imapUsername
+      label: IMAP login override
+      description: Optional. Uses the email address when empty.
+    - id: smtpUsername
+      label: SMTP login override
+      description: Optional. Uses the email address when empty.
+    - id: smtpPassword
+      label: SMTP password override
+      description: Optional. Uses the main password when not set.
+      secret: true
+icon:
+  svg: assets/icon.svg
+endpoints:
+  email:
+    kind: rest
+    adapter: email
+    description: Host-managed IMAP/SMTP adapter; get /profile first, then include its mailboxID and configRevision on every request.
+skills:
+  - skills/mailbox/SKILL.md

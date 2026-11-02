@@ -59,6 +59,45 @@
       ]
     },
     {
+      "id": "teatak/pudding-hub/plugins/email",
+      "name": "email",
+      "title": {
+        "zh-CN": "邮件",
+        "zh-TW": "郵件",
+        "en": "Email"
+      },
+      "description": {
+        "zh-CN": "通过 IMAP/SMTP 连接 iCloud、Gmail 或自定义邮箱，搜索、阅读及发送邮件。",
+        "zh-TW": "透過 IMAP/SMTP 連接 iCloud、Gmail 或自訂信箱，搜尋、閱讀及寄送郵件。",
+        "en": "Connect iCloud, Gmail or custom IMAP/SMTP to search, read and send email."
+      },
+      "icon": {
+        "svg": "./email/releases/1.0.0-preview.1/assets/icon.svg"
+      },
+      "icon_sha256": "5bc0eafab7b703caa34496d997a883f3c96e31f050a5c0fa67a8e783601e326a",
+      "tags": [
+        "email",
+        "imap",
+        "smtp",
+        "icloud",
+        "gmail"
+      ],
+      "releases": [
+        {
+          "version": "1.0.0-preview.1",
+          "manifest": "./email/releases/1.0.0-preview.1/manifest.json",
+          "package": "./email/releases/1.0.0-preview.1/email.pudding-plugin.json",
+          "package_sha256": "f278c06638a2e1085b53df349840e4722a23d1ae81320c949ba067b776336a25",
+          "requires": {
+            "pudding_plugin": "1.2.0"
+          },
+          "released_at": "2026-11-02",
+          "channel": "preview",
+          "preview": true
+        }
+      ]
+    },
+    {
       "id": "teatak/pudding-hub/plugins/feishu",
       "name": "feishu",
       "title": {

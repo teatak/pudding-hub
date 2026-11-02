@@ -7,6 +7,8 @@ Pudding Hub 是 Pudding 的官方扩展仓库，保存插件、小组件的源�
 - **插件**接入外部服务，供模型或小组件调用。
 - **小组件**提供可交互的界面，可以使用插件数据，也可以独立运行。
 
+[邮件插件与看板配置指引](docs/email.zh-CN.md)（iCloud、Gmail、自定义 IMAP/SMTP）。
+
 ## 开发文档
 
 从[开发文档总览](docs/README.zh-CN.md)选择入口：

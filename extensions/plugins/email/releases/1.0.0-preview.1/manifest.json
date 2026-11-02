@@ -1,0 +1,22 @@
+{
+  "kind": "pudding.plugin.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/plugins/email",
+  "name": "email",
+  "title": {
+    "zh-CN": "邮件",
+    "zh-TW": "郵件",
+    "en": "Email"
+  },
+  "version": "1.0.0-preview.1",
+  "icon": {
+    "svg": "./assets/icon.svg"
+  },
+  "package": "./email.pudding-plugin.json",
+  "package_sha256": "f278c06638a2e1085b53df349840e4722a23d1ae81320c949ba067b776336a25",
+  "requires": {
+    "pudding_plugin": "1.2.0"
+  },
+  "channel": "preview",
+  "preview": true
+}

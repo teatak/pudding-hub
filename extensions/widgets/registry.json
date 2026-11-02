@@ -96,6 +96,43 @@
       ]
     },
     {
+      "id": "teatak/pudding-hub/widgets/email-board",
+      "title": {
+        "zh-CN": "邮件看板",
+        "zh-TW": "郵件看板",
+        "en": "Email Board",
+        "ja": "メールボード",
+        "ko": "메일 보드",
+        "es": "Tablero de correo",
+        "de": "E-Mail-Board",
+        "fr": "Tableau des e-mails"
+      },
+      "description": {
+        "zh-CN": "连接 iCloud、Gmail 或自定义 IMAP/SMTP 邮箱，阅读邮件、整理本地分类、备注和回复草稿。",
+        "zh-TW": "連接 iCloud、Gmail 或自訂 IMAP/SMTP 信箱，閱讀郵件、整理本機分類、備註及回覆草稿。",
+        "en": "Read iCloud, Gmail or custom IMAP/SMTP mail and organize local cards, notes and reply drafts.",
+        "ja": "iCloud、Gmail、独自の IMAP/SMTP メールを読み、ローカルの分類・メモ・返信下書きを整理します。",
+        "ko": "iCloud, Gmail 또는 사용자 지정 IMAP/SMTP 메일을 읽고 로컬 분류, 메모와 답장 초안을 정리합니다.",
+        "es": "Lee correo de iCloud, Gmail o IMAP/SMTP personalizado y organiza categorías, notas y borradores locales.",
+        "de": "Lesen Sie iCloud-, Gmail- oder eigene IMAP/SMTP-Postfächer und verwalten Sie lokale Kategorien, Notizen und Entwürfe.",
+        "fr": "Lisez vos e-mails iCloud, Gmail ou IMAP/SMTP et organisez les catégories, notes et brouillons locaux."
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHJlY3QgeD0iNCIgeT0iMTAiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0NCIgcng9IjEwIiBmaWxsPSIjNTI2NzdkIi8+PHBhdGggZD0ibTEyIDIxIDIwIDE1IDIwLTE1TTEyIDQ1bDEzLTEzbTI3IDEzTDM5IDMyIiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+Cg==",
+      "releases": [
+        {
+          "version": "1.0.0-preview.1",
+          "package": "./email-board/releases/1.0.0-preview.1/email-board.pudding-widget.json",
+          "packageHash": "c759c567f517e980779b6e24fd32742e1810a289ba9c18af24478008106a225c",
+          "requires": {
+            "protocolVersion": 58,
+            "sdkVersion": "1.0.0"
+          },
+          "channel": "preview",
+          "preview": true
+        }
+      ]
+    },
+    {
       "id": "teatak/pudding-hub/widgets/github-board",
       "title": {
         "zh-CN": "GitHub 看板",

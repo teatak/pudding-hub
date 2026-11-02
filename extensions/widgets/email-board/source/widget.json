@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "sdkVersion": "1",
+  "entry": "src/App.tsx",
+  "sources": {
+    "mail": {
+      "pluginID": "email",
+      "endpoint": "email"
+    }
+  },
+  "operations": {
+    "profile": {
+      "source": "mail",
+      "kind": "rest",
+      "effectHint": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "request": {
+        "method": "GET",
+        "path": "/profile"
+      }
+    },
+    "list": {
+      "source": "mail",
+      "kind": "rest",
+      "effectHint": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "mailboxID": {
+            "type": "string",
+            "maxLength": 67
+          },
+          "configRevision": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "q": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "cursor": {
+            "type": "string",
+            "maxLength": 2048
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "required": [
+          "mailboxID",
+          "configRevision",
+          "q",
+          "cursor",
+          "limit"
+        ],
+        "additionalProperties": false
+      },
+      "request": {
+        "method": "GET",
+        "path": "/messages",
+        "query": {
+          "mailboxID": {
+            "$input": "/mailboxID"
+          },
+          "configRevision": {
+            "$input": "/configRevision"
+          },
+          "q": {
+            "$input": "/q"
+          },
+          "cursor": {
+            "$input": "/cursor"
+          },
+          "limit": {
+            "$input": "/limit"
+          },
+          "folder": "INBOX"
+        }
+      }
+    },
+    "message": {
+      "source": "mail",
+      "kind": "rest",
+      "effectHint": "read",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "mailboxID": {
+            "type": "string",
+            "maxLength": 67
+          },
+          "configRevision": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "id": {
+            "type": "string",
+            "maxLength": 2048
+          }
+        },
+        "required": [
+          "mailboxID",
+          "configRevision",
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "request": {
+        "method": "GET",
+        "path": "/messages/{id}",
+        "query": {
+          "mailboxID": {
+            "$input": "/mailboxID"
+          },
+          "configRevision": {
+            "$input": "/configRevision"
+          }
+        },
+        "pathParams": {
+          "id": {
+            "$input": "/id"
+          }
+        }
+      }
+    }
+  }
+}
