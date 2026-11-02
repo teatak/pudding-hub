@@ -120,6 +120,17 @@
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImVtYWlsLXN1cmZhY2UiIHgxPSI4IiB5MT0iNCIgeDI9IjU2IiB5Mj0iNjIiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgICAgPHN0b3Agc3RvcC1jb2xvcj0iIzQ1OUJGRiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMyNTYzRUIiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8Y2xpcFBhdGggaWQ9ImVtYWlsLWVudmVsb3BlIj4KICAgICAgPHJlY3QgeD0iMTMiIHk9IjE4IiB3aWR0aD0iMzgiIGhlaWdodD0iMjciIHJ4PSI0LjUiLz4KICAgIDwvY2xpcFBhdGg+CiAgPC9kZWZzPgogIDxyZWN0IHg9IjIiIHk9IjIiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcng9IjE2IiBmaWxsPSJ1cmwoI2VtYWlsLXN1cmZhY2UpIi8+CiAgPGcgY2xpcC1wYXRoPSJ1cmwoI2VtYWlsLWVudmVsb3BlKSI+CiAgICA8cmVjdCB4PSIxMyIgeT0iMTgiIHdpZHRoPSIzOCIgaGVpZ2h0PSIyNyIgZmlsbD0iI0ZGRkZGRiIvPgogICAgPHBhdGggZD0iTTEyIDIwLjUgMjguOCAzMi43QzMwLjcgMzQuMSAzMy4zIDM0LjEgMzUuMiAzMi43TDUyIDIwLjUiIHN0cm9rZT0idXJsKCNlbWFpbC1zdXJmYWNlKSIgc3Ryb2tlLXdpZHRoPSIyLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDwvZz4KPC9zdmc+Cg==",
       "releases": [
         {
+          "version": "1.0.0-preview.6",
+          "package": "./email-board/releases/1.0.0-preview.6/email-board.pudding-widget.json",
+          "packageHash": "f8a64b0f2044c8cb7875c2bdc2526947f8c38d6c8a63c2639c4008cb1770ae94",
+          "requires": {
+            "protocolVersion": 61,
+            "sdkVersion": "1.0.0"
+          },
+          "channel": "preview",
+          "preview": true
+        },
+        {
           "version": "1.0.0-preview.5",
           "package": "./email-board/releases/1.0.0-preview.5/email-board.pudding-widget.json",
           "packageHash": "51e262403f376ce0607388038a6f88e664bf2c74a59be16b8fcbeed26e0c7fe3",

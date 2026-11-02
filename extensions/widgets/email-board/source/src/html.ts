@@ -1,54 +1,45 @@
 import DOMPurify from "dompurify";
 
-// Preserve email typography and table layouts without active content, remote
-// resources, page-wide styles or positioning outside the message body.
-const styles = new Set([
-  "color", "background-color", "font-family", "font-size", "font-style",
-  "font-weight", "font-variant", "line-height", "letter-spacing", "word-spacing",
-  "text-align", "text-decoration", "text-indent", "text-transform", "white-space",
-  "word-break", "overflow-wrap", "vertical-align", "display", "width", "max-width",
-  "min-width", "height", "max-height", "min-height", "border", "border-color",
-  "border-style", "border-width", "border-radius", "border-collapse", "border-spacing",
-  "border-top", "border-right", "border-bottom", "border-left", "margin", "margin-top",
-  "margin-right", "margin-bottom", "margin-left", "padding", "padding-top",
-  "padding-right", "padding-bottom", "padding-left", "list-style-type",
-]);
-
+// Render this complete document only inside EmailBody's opaque-origin sandbox.
+// Email styles and images must not share the widget's document or CSS.
 export function sanitizeEmailHtml(html: string): string {
-  const fragment = DOMPurify.sanitize(html, {
-    RETURN_DOM_FRAGMENT: true,
-    ALLOWED_TAGS: [
-      "a", "abbr", "b", "blockquote", "br", "caption", "center", "code", "col",
-      "colgroup", "dd", "del", "div", "dl", "dt", "em", "font", "h1", "h2", "h3",
-      "h4", "h5", "h6", "hr", "i", "li", "ol", "p", "pre", "s", "small", "span",
-      "strong", "sub", "sup", "table", "tbody", "td", "tfoot", "th", "thead", "tr",
-      "u", "ul",
-    ],
-    ALLOWED_ATTR: [
-      "href", "title", "lang", "dir", "style", "align", "valign", "width", "height",
-      "colspan", "rowspan", "cellpadding", "cellspacing", "border", "color", "bgcolor",
-      "face", "size", "start", "type",
-    ],
+  if (!html.trim()) return "";
+  const root = DOMPurify.sanitize(html, {
+    WHOLE_DOCUMENT: true,
+    RETURN_DOM: true,
+    USE_PROFILES: { html: true },
+    ADD_TAGS: ["style"],
+    FORBID_TAGS: ["script", "iframe", "frame", "frameset", "object", "embed", "form", "input", "button", "select", "textarea", "base", "link", "meta", "audio", "video", "source", "track", "template"],
+    FORBID_ATTR: ["srcdoc", "srcset", "ping", "action", "formaction", "autofocus", "contenteditable", "nonce"],
     ALLOW_DATA_ATTR: false,
-    ALLOW_ARIA_ATTR: false,
-    ALLOWED_URI_REGEXP: /^(?:https?:\/\/|mailto:)/i,
-  });
-  for (const element of fragment.querySelectorAll<HTMLElement>("[style]")) {
-    const clean = fragment.ownerDocument.createElement("span").style;
-    for (const property of Array.from(element.style)) {
-      const value = element.style.getPropertyValue(property);
-      if (styles.has(property) && !/(?:url|image-set|expression|var|attr)\s*\(|[\\@]/i.test(value)) {
-        clean.setProperty(property, value);
-      }
-    }
-    if (clean.cssText) element.setAttribute("style", clean.cssText);
-    else element.removeAttribute("style");
-  }
-  for (const link of fragment.querySelectorAll("a[href]")) {
+  }) as HTMLElement;
+  const document = root.ownerDocument;
+  const head = root.querySelector("head")!;
+  const charset = document.createElement("meta");
+  charset.setAttribute("charset", "utf-8");
+  const policy = document.createElement("meta");
+  policy.httpEquiv = "Content-Security-Policy";
+  policy.content = "default-src 'none'; script-src 'none'; style-src 'unsafe-inline'; img-src https: data:; font-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; form-action 'none'; base-uri 'none'";
+  const referrer = document.createElement("meta");
+  referrer.name = "referrer";
+  referrer.content = "no-referrer";
+  const defaults = document.createElement("style");
+  defaults.textContent = "html{color-scheme:light;background:#fff}body{margin:0;color:#202124;font:14px/1.5 Arial,Helvetica,sans-serif;overflow-wrap:break-word}img{max-width:100%;height:auto}";
+  head.prepend(charset, policy, referrer, defaults);
+  for (const link of root.querySelectorAll("a[href]")) {
+    const href = link.getAttribute("href")!.trim().replace(/^\/\//, "https://");
+    if (/^(https?:\/\/|mailto:)/i.test(href)) link.setAttribute("href", href);
+    else link.removeAttribute("href");
     link.setAttribute("target", "_blank");
     link.setAttribute("rel", "noopener noreferrer");
   }
-  const container = fragment.ownerDocument.createElement("div");
-  container.append(fragment);
-  return container.innerHTML;
+  for (const image of root.querySelectorAll("img")) {
+    const src = (image.getAttribute("src") ?? "").trim().replace(/^\/\//, "https://");
+    if (/^https:\/\//i.test(src) || /^data:image\/(?:png|jpeg|gif|webp|avif);base64,[a-z0-9+/=\s]+$/i.test(src)) image.setAttribute("src", src);
+    else image.removeAttribute("src");
+    image.setAttribute("referrerpolicy", "no-referrer");
+    image.setAttribute("loading", "lazy");
+    image.setAttribute("decoding", "async");
+  }
+  return "<!doctype html>" + root.outerHTML;
 }

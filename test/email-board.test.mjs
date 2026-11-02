@@ -30,6 +30,7 @@ const dom=new JSDOM('');
 globalThis.window=dom.window;
 const {sanitizeEmailHtml}=await import(new URL('html.ts',source));
 delete globalThis.window;
+const {decodeHeaderWords,parseSender}=await import(new URL('headers.ts',source));
 hook.deregister();
 let api;
 beforeEach(()=>{identity={mailboxID:'mb_'+'a'.repeat(64),address:'user@example.org',configRevision:'r1'};saved={version:0,data:{gmailBoard:{legacy:'untouched'}}};requests=[];defs=new Map();gate=null;htmlBody=undefined;unread=true;readFailure=false;readGate=null;api=createMailbox(new QueryClient({defaultOptions:{queries:{retry:false,gcTime:0}}}));registerInterfaces(api)});
@@ -78,22 +79,39 @@ test('failed Seen synchronization keeps unread and readable content, with explic
  assert.equal((await api.list(identity.mailboxID)).items[0].unread,true);
  assert.equal(requests.filter(r=>r.name==='markRead').length,2);
 });
-test('rich text preserves tables, typography and safe links while removing active content and remote resources',()=>{
- const html=sanitizeEmailHtml(`<style>body{display:none}</style><script>alert(1)</script>
- <form action="https://tracker.test"><input autofocus></form><iframe src="https://tracker.test"></iframe>
- <img src="https://tracker.test/pixel" onerror="alert(1)"><svg><a href="javascript:alert(1)">bad</a></svg>
- <table class="gb-app" id="root" style="width:100%;background:url(https://tracker.test);position:fixed;z-index:999">
- <tr><td style="color:rgb(1,2,3);padding:12px;background-image:image-set(url(https://tracker.test) 1x)"><strong>Hello</strong></td></tr></table>
- <a href="https://example.org/read" ping="https://tracker.test" onclick="alert(1)">Read</a>
- <a href="mailto:demo@example.org">Reply</a><a href="jav&#x61;script:alert(1)">bad link</a>
- <a href="data:text/html,evil">bad data</a><a href="/relative">relative</a>`);
+test('isolated rich document retains original styles and default images but removes active markup',()=>{
+ const html=sanitizeEmailHtml(`<!doctype html><html><head><style>.card{border-radius:24px;background:#f5ffed}@media(max-width:600px){.card{padding:12px}}</style>
+ <meta http-equiv="refresh" content="0;url=https://evil.test"><link rel="stylesheet" href="https://evil.test/style.css"><base href="https://evil.test/"></head><body>
+ <script>parent.__unsafe=true</script><form action="https://evil.test"><input autofocus></form><iframe src="https://evil.test"></iframe>
+ <img src="https://images.test/avatar.png" onerror="alert(1)"><img src="//images.test/logo.png"><img src="data:image/png;base64,aGVsbG8=">
+ <img src="http://images.test/plain.png"><img src="data:image/svg+xml,evil"><img src="cid:attachment">
+ <svg><a href="javascript:alert(1)">bad</a></svg>
+ <table class="card" id="email-card" style="width:100%;border-bottom:1px solid #ddd;border-radius:32px"><tr><td style="color:rgb(1,2,3);padding:12px"><strong>Hello</strong></td></tr></table>
+ <a href="https://example.org/read" ping="https://evil.test" onclick="alert(1)">Read</a><a href="mailto:demo@example.org">Reply</a>
+ <a href="jav&#x61;script:alert(1)">bad link</a><a href="data:text/html,evil">bad data</a><a href="/relative">relative</a></body></html>`);
  const view=new JSDOM(html).window.document;
- assert.ok(view.querySelector('table td strong'));assert.equal(view.querySelector('strong').textContent,'Hello');
- assert.equal(view.querySelector('table').style.width,'100%');assert.equal(view.querySelector('td').style.padding,'12px');assert.equal(view.querySelector('td').style.color,'rgb(1, 2, 3)');
- assert.equal(view.querySelectorAll('script,style,form,input,iframe,img,svg,[class],[id],[onclick],[onerror],[ping]').length,0);
- assert.ok(!html.includes('tracker.test'));assert.ok(!html.includes('position:'));assert.ok(!html.includes('z-index:'));
+ const table=view.querySelector('table');assert.equal(table.id,'email-card');assert.equal(table.className,'card');
+ assert.equal(table.style.width,'100%');assert.equal(table.style.borderRadius,'32px');assert.equal(view.querySelector('td').style.padding,'12px');
+ assert.ok([...view.querySelectorAll('style')].some(s=>s.textContent.includes('@media(max-width:600px)')));
+ assert.equal(view.querySelectorAll('script,form,input,iframe,svg,base,link,[http-equiv="refresh"],[onclick],[onerror],[ping]').length,0);
+ const csp=view.querySelector('meta[http-equiv="Content-Security-Policy"]');assert.equal(csp.parentNode,view.head);
+ for(const directive of ["script-src 'none'","frame-src 'none'","form-action 'none'","font-src 'none'","img-src https: data:"])assert.ok(csp.content.includes(directive));
+ assert.equal(view.head.querySelector('meta[name="referrer"]').content,'no-referrer');
+ const images=[...view.querySelectorAll('img')];assert.deepEqual(images.map(i=>i.getAttribute('src')),['https://images.test/avatar.png','https://images.test/logo.png','data:image/png;base64,aGVsbG8=',null,null,null]);
+ assert.ok(images.every(i=>i.getAttribute('referrerpolicy')==='no-referrer'));
  const links=[...view.querySelectorAll('a[href]')];assert.deepEqual(links.map(a=>a.getAttribute('href')),['https://example.org/read','mailto:demo@example.org']);
  assert.ok(links.every(a=>a.target==='_blank'&&a.rel==='noopener noreferrer'));
+ assert.equal(sanitizeEmailHtml('  '),'');
+});
+test('MIME display names decode Q, Base64, folded adjacent words and declared charsets without changing addresses',()=>{
+ const q='=?utf-8?q?Google_=E4=BD=BF=E7=94=A8=E6=8A=80=E5=B7=A7?=';
+ assert.equal(decodeHeaderWords(q),'Google 使用技巧');
+ assert.equal(decodeHeaderWords('=?UTF-8?B?5L2g5aW9?= \r\n =?utf-8?Q?_=E4=B8=96=E7=95=8C?='),'你好 世界');
+ assert.equal(decodeHeaderWords('=?iso-8859-1?Q?Andr=E9?='),'André');
+ assert.equal(decodeHeaderWords('=?gbk?B?1tDOxA==?='),'中文');
+ for(const raw of ['plain_name','=?unknown?Q?abc?=','=?UTF-8?Q?bad=GG?=','=?UTF-8?B?not%base64?='])assert.equal(decodeHeaderWords(raw),raw);
+ assert.deepEqual(parseSender('"'+q+'" <sender_name@example.org>'),{name:'Google 使用技巧',email:'sender_name@example.org',full:'Google 使用技巧 <sender_name@example.org>'});
+ assert.equal(parseSender('<plain_name@example.org>').name,'plain_name');
 });
 test('switching mailbox rejects old-account edits and isolates local data',async()=>{
  const old=await api.profile();await api.list(old);await api.edit(old,0,[{id:message.id,note:'Mailbox A only'}]);

@@ -514,51 +514,13 @@ body {
   color: var(--text);
   background: rgba(127, 127, 127, 0.15);
 }
-.gb-email-html {
-  contain: content;
-  isolation: isolate;
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--text);
-  overflow-x: auto;
-  max-width: 100%;
-  word-break: break-word;
-}
-.gb-email-html img {
-  max-width: 100% !important;
-  height: auto !important;
-}
-.gb-email-html table {
-  max-width: 100% !important;
-}
-.gb-email-html a {
-  color: #3b82f6;
-  text-decoration: underline;
-  cursor: pointer;
-}
-.gb-email-html [align="center" i],
-.gb-email-html center {
-  text-align: -webkit-center;
-  text-align: center;
-}
-.gb-email-html table[align="center" i],
-.gb-email-html [align="center" i] table,
-.gb-email-html [style*="text-align: center" i] table,
-.gb-email-html [style*="text-align:center" i] table,
-.gb-email-html center table {
-  margin-left: auto;
-  margin-right: auto;
-}
-.gb-email-html [align="center" i] img,
-.gb-email-html [style*="text-align: center" i] img,
-.gb-email-html [style*="text-align:center" i] img,
-.gb-email-html [style*="text-align: -webkit-center" i] img,
-.gb-email-html [style*="text-align:-webkit-center" i] img,
-.gb-email-html center img,
-.gb-email-html img[align="center" i],
-.gb-email-html img[align="middle" i] {
-  margin-left: auto !important;
-  margin-right: auto !important;
+.gb-email-frame {
+  display: block;
+  width: 100%;
+  height: 320px;
+  border: 0;
+  background: #fff;
+  color-scheme: light;
 }
 .gb-truncated {
   margin-top: 8px;

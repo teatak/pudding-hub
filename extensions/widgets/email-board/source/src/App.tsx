@@ -22,6 +22,8 @@ import { t, errorText } from "./text";
 import "./style.css";
 import { copyError } from "./copy";
 import { sanitizeEmailHtml } from "./html";
+import { decodeHeaderWords, parseSender } from "./headers";
+import { EmailBody } from "./EmailBody";
 
 function ErrorBox({
   error,
@@ -73,22 +75,6 @@ function ErrorBox({
     </div>
   );
 }
-function parseSender(raw: string) {
-  const trimmed = raw.trim();
-  const match = trimmed.match(/^(.*?)\s*<([^>]+)>$/);
-  if (match) {
-    let name = match[1].trim().replace(/^["']|["']$/g, "");
-    const email = match[2].trim();
-    if (!name) name = email.split("@")[0] || email;
-    return { name, email, full: raw };
-  }
-  return {
-    name: trimmed.split("@")[0] || trimmed,
-    email: trimmed.includes("@") ? trimmed : "",
-    full: raw,
-  };
-}
-
 function SenderAvatar({ name }: { name: string }) {
   const letter = (name.trim()[0] || "?").toUpperCase();
   return (
@@ -215,8 +201,8 @@ function MessageCard({
               {new Date(m.date).toLocaleString(pudding.locale.read())}
             </time>
           </div>
-          <p className="gb-recipient" title={m.to}>
-            To: {m.to || "me"}
+          <p className="gb-recipient" title={decodeHeaderWords(m.to)}>
+            To: {decodeHeaderWords(m.to) || "me"}
           </p>
         </div>
         {html && (
@@ -241,7 +227,7 @@ function MessageCard({
 
       <div className="gb-message-content">
         {viewMode === "html" && html
-          ? <div className="gb-email-html" dangerouslySetInnerHTML={{ __html: html }} />
+          ? <EmailBody document={html} title={t("messageTab")} />
           : <FormattedText text={m.text} />}
       </div>
 
@@ -687,7 +673,7 @@ export default function App() {
                 onClick={() => setSelected(item.id)}
               >
                 <div className="gb-card-top">
-                  <span title={item.from}>{item.from}</span>
+                  <span title={decodeHeaderWords(item.from)}>{decodeHeaderWords(item.from)}</span>
                   <time>
                     {new Date(item.updatedAt).toLocaleDateString(locale, {
                       month: "short",
