@@ -67,12 +67,12 @@
         "en": "Email"
       },
       "description": {
-        "zh-CN": "通过 IMAP/SMTP 连接 iCloud、Gmail 或自定义邮箱，搜索、阅读及发送邮件。",
-        "zh-TW": "透過 IMAP/SMTP 連接 iCloud、Gmail 或自訂信箱，搜尋、閱讀及寄送郵件。",
-        "en": "Connect iCloud, Gmail or custom IMAP/SMTP to search, read and send email."
+        "zh-CN": "连接常用邮箱或自定义 IMAP/SMTP，搜索、阅读及发送邮件。",
+        "zh-TW": "連接常用信箱或自訂 IMAP/SMTP，搜尋、閱讀及寄送郵件。",
+        "en": "Connect popular email providers or custom IMAP/SMTP to search, read and send mail."
       },
       "icon": {
-        "svg": "./email/releases/1.0.0-preview.2/assets/icon.svg"
+        "svg": "./email/releases/1.0.0-preview.3/assets/icon.svg"
       },
       "icon_sha256": "d8e539ace68c58585f94af4ce113594c94f0fe4f684a0dea63361b026fe75d08",
       "tags": [
@@ -83,6 +83,18 @@
         "gmail"
       ],
       "releases": [
+        {
+          "version": "1.0.0-preview.3",
+          "manifest": "./email/releases/1.0.0-preview.3/manifest.json",
+          "package": "./email/releases/1.0.0-preview.3/email.pudding-plugin.json",
+          "package_sha256": "a10dd546fd079d0cf2c2a59eec28bdf0f15c258b42005d838c05b7a6bf514035",
+          "requires": {
+            "pudding_plugin": "1.3.0"
+          },
+          "released_at": "2026-11-02",
+          "channel": "preview",
+          "preview": true
+        },
         {
           "version": "1.0.0-preview.2",
           "manifest": "./email/releases/1.0.0-preview.2/manifest.json",
