@@ -39,7 +39,8 @@ export function EmailBody({ document, title }: { document: string; title: string
       if (event.source !== element.contentWindow || event.data?.type !== "pudding-email-body" || event.data.id !== content.id) return;
       const { height, href } = event.data;
       if (typeof height === "number" && Number.isFinite(height)) {
-        element.style.height = `${Math.max(1, Math.min(Math.ceil(height), 30000))}px`;
+        const nextHeight = `${Math.max(1, Math.min(Math.ceil(height), 30000))}px`;
+        if (element.style.height !== nextHeight) element.style.height = nextHeight;
       }
       if (typeof href === "string" && /^(https?:\/\/|mailto:)/i.test(href)) {
         // The widget guest intercepts and cancels navigation, opening safe
@@ -48,12 +49,17 @@ export function EmailBody({ document, title }: { document: string; title: string
       }
     };
     window.addEventListener("message", receive);
-    let width = element.clientWidth;
+    let width = element.clientWidth, pending = 0;
     const container = new ResizeObserver(() => {
-      if (element.clientWidth !== width) { width = element.clientWidth; element.style.height = "1px"; }
+      if (element.clientWidth === width) return;
+      width = element.clientWidth;
+      cancelAnimationFrame(pending);
+      // Writing an observed size inside its delivery cycle triggers a browser
+      // loop error. Apply the width-driven reset in the next animation frame.
+      pending = requestAnimationFrame(() => { pending = 0; element.style.height = "1px"; });
     });
     container.observe(element);
-    return () => { window.removeEventListener("message", receive); container.disconnect(); };
+    return () => { window.removeEventListener("message", receive); container.disconnect(); cancelAnimationFrame(pending); };
   }, [content]);
   return <iframe ref={frame} className="gb-email-frame" title={title} sandbox="allow-scripts" referrerPolicy="no-referrer" srcDoc={content.html} />;
 }

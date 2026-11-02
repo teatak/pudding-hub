@@ -16,7 +16,11 @@ if (!process.versions.electron) {
       .spacer{height:180px}@media(max-width:600px){.card{padding:12px}.spacer{height:360px}}
       </style><script>parent.__escaped=true</script></head><body><div class="card" id="original-card">
       <img class="avatar" src="https://mail-images.invalid/avatar.png" onerror="parent.__escaped=true"><h2>Original email layout</h2>
-      <p>Responsive body and account avatar.</p><a class="cta" href="https://example.invalid/activity">View activity</a><div class="spacer"></div></div></body></html>`;
+      <p>Responsive body and account avatar.</p><a class="cta" href="https://example.invalid/activity">View activity</a><div class="spacer"></div></div><table role="presentation" style="width:100%;border-spacing:0;border-collapse:collapse"><tbody>
+      <tr><td style="padding:0"><div id="card-one" style="height:60px;background:#f5ffed;border-radius:24px"></div></td></tr>
+      <tr><td style="padding:0;font-size:0;line-height:0"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="1" height="20" alt="" style="display:block"></td></tr>
+      <tr><td style="padding:0"><div id="card-two" style="height:60px;background:#fff;border-radius:24px"></div></td></tr>
+      </tbody></table></body></html>`;
     const sdk = `export const useWidgetLocale=()=> 'en';
       const meta={id:'message_1',subject:'Email rendering fixture',from:'=?utf-8?q?Google_=E4=BD=BF=E7=94=A8=E6=8A=80=E5=B7=A7?= <sender@example.org>',to:'=?utf-8?B?5L2g5aW9?= <user@example.org>',date:'2026-11-02T00:00:00Z',unread:true};
       export const pudding={locale:{read:()=> 'en'},storage:{read:async()=>({version:0,data:{}}),write:async()=>{throw Error('Unexpected storage write')},subscribe:()=>()=>{}},defineInterface:()=>()=>{},setInstructions:()=>{},
@@ -30,7 +34,7 @@ if (!process.versions.electron) {
     for(const file of built.outputFiles)fs.writeFileSync(file.path,file.contents);
     const css=fs.readFileSync(out+'/widget.css','utf8');
     const csp="default-src 'none'; script-src 'nonce-fixture'; style-src 'unsafe-inline'; img-src data: https:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'";
-    fs.writeFileSync(out+'/widget.html',`<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${csp}"><style>${css}\n.gb-message-content h2{color:magenta!important;border-radius:0!important}</style></head><body><div id="root"></div><script nonce="fixture" src="widget.js"></script></body></html>`);
+    fs.writeFileSync(out+'/widget.html',`<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${csp}"><style>${css}\n.gb-message-content h2{color:magenta!important;border-radius:0!important}</style></head><body><div id="root"></div><script nonce="fixture">window.__runtimeErrors=[];addEventListener("error",event=>window.__runtimeErrors.push(event.message));</script><script nonce="fixture" src="widget.js"></script></body></html>`);
     const env={...process.env};delete env.ELECTRON_RUN_AS_NODE;
     const child=require('node:child_process').spawnSync(require(path.join(desktop,'web/node_modules/electron')),[__filename,out],{env,stdio:'inherit',timeout:60000});
     if(child.error)throw child.error;
@@ -79,6 +83,9 @@ if (!process.versions.electron) {
     assert.equal(await js(`window.__escaped`),undefined);
     assert.equal(await inner(`${doc}.querySelectorAll('script').length`),1);
     assert.equal(await inner(`${doc}.querySelectorAll('[onerror]').length`),0);
+    await waitInner(`document.querySelector('img[height="20"]').complete&&document.querySelector('img[height="20"]').naturalWidth===1`);
+    const gap=await inner(`document.querySelector('#card-two').getBoundingClientRect().top-document.querySelector('#card-one').getBoundingClientRect().bottom`);
+    assert.equal(gap,20,'transparent spacer images retain their declared height between email cards');
     const styles=await inner(`(()=>{const d=${doc},w=d.defaultView;return ['#original-card','.cta','.avatar','h2'].map(s=>{const c=w.getComputedStyle(d.querySelector(s));return {radius:c.borderRadius,color:c.color,background:c.backgroundColor,padding:c.padding}})})()`);
     assert.equal(styles[0].radius,'28px');assert.equal(styles[0].background,'rgb(245, 255, 237)');assert.equal(styles[0].padding,'40px');
     assert.equal(styles[1].radius,'24px');assert.equal(styles[2].radius,'50%');assert.equal(styles[3].color,'rgb(24, 40, 24)');
@@ -102,6 +109,15 @@ if (!process.versions.electron) {
     win.setContentSize(1500,1000);
     await waitInner(`${doc}.defaultView.getComputedStyle(${doc}.querySelector('#original-card')).padding==='40px'`);
     await wait(`Math.abs(parseFloat(document.querySelector('.gb-email-frame').style.height)-${wide})<2`);
+    // Repeat width changes and settle after images/layout have updated; observe
+    // browser error events, which don't necessarily appear as console errors.
+    for (const width of [1000,1400,920,1500]) {
+      win.setContentSize(width,1000);
+      await pause(120);
+    }
+    await waitInner(`${doc}.defaultView.getComputedStyle(${doc}.querySelector('#original-card')).padding==='40px'`);
+    await wait(`Math.abs(parseFloat(document.querySelector('.gb-email-frame').style.height)-${wide})<2`);
+    assert.deepEqual(await js('window.__runtimeErrors'),[],'responsive changes must not trigger window runtime errors');
     await win.webContents.capturePage().then(image=>fs.writeFileSync(out+'/rich.png',image.toPNG()));
     await js(`document.querySelectorAll('.gb-view-toggle button')[1].click()`);
     await wait(`document.querySelector('.gb-plain-body')?.textContent==='Plain alternative'`);
@@ -109,7 +125,8 @@ if (!process.versions.electron) {
     await js(`document.querySelectorAll('.gb-view-toggle button')[0].click();document.documentElement.style.colorScheme='dark'`);
     await waitInner(`!!document.querySelector('#original-card')`);
     assert.equal(await inner(`${doc}.defaultView.getComputedStyle(${doc}.documentElement).colorScheme`),'light');
-    console.log('PASS: encoded names; default image loading; isolated original styles; responsive layout and shrinking height; script removal; safe link forwarding; rich/plain toggle and dark host. Screenshot: '+out+'/rich.png');
+    assert.deepEqual(await js('window.__runtimeErrors'),[],'rich/plain remounts must not trigger window runtime errors');
+    console.log('PASS: encoded names; default image loading; isolated original styles; responsive layout and shrinking height without runtime errors; declared spacer-image gaps; script removal; safe link forwarding; rich/plain toggle and dark host. Screenshot: '+out+'/rich.png');
     win.destroy();app.quit();
   }).catch(error=>{console.error(error);app.exit(1)});
 }

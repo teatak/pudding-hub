@@ -23,8 +23,9 @@ export function sanitizeEmailHtml(html: string): string {
   const referrer = document.createElement("meta");
   referrer.name = "referrer";
   referrer.content = "no-referrer";
+  // Keep declared image sizes: transparent 1px GIFs also carry email spacing.
   const defaults = document.createElement("style");
-  defaults.textContent = "html{color-scheme:light;background:#fff}body{margin:0;color:#202124;font:14px/1.5 Arial,Helvetica,sans-serif;overflow-wrap:break-word}img{max-width:100%;height:auto}";
+  defaults.textContent = "html{color-scheme:light;background:#fff}body{margin:0;color:#202124;font:14px/1.5 Arial,Helvetica,sans-serif;overflow-wrap:break-word}";
   head.prepend(charset, policy, referrer, defaults);
   for (const link of root.querySelectorAll("a[href]")) {
     const href = link.getAttribute("href")!.trim().replace(/^\/\//, "https://");
