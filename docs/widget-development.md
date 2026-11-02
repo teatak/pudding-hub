@@ -121,7 +121,7 @@ A draft may be incomplete while editing. File changes do not alter the running p
 - widget.json uses schemaVersion: 1, sdkVersion: "1" and a TSX entry under src.
 - Source validation accepts TS, TSX, CSS, JSON and SVG in permitted paths, including src, assets and fixtures. Distribute files needed at runtime, without invented business data used for testing.
 - Limits are 32 source files, 512 KiB per file and 2 MiB total. See [Core source policy](https://github.com/teatak/pudding-core/blob/main/contracts/widget.json).
-- The host provides React, React DOM, TanStack Query, react-hook-form, Zod, Recharts, lucide-react, `@pudding/widget` and `@pudding/ui`. Widgets cannot install npm packages or run their own build scripts.
+- The host provides React, React DOM, TanStack Query, react-hook-form, Zod, Recharts, lucide-react, DOMPurify (protocol 60+), `@pudding/widget` and `@pudding/ui`. Widgets cannot install npm packages or run their own build scripts.
 
 Import local CSS from the entry. Support narrow panels, both themes and keyboard input. Handle forms through business functions and prevent native submission. Update React content instead of replacing the host document with document.write or similar methods.
 

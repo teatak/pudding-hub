@@ -14,7 +14,6 @@ import {
   FolderGit2,
   GitPullRequest,
   GitPullRequestDraft,
-  Info,
   Lock,
   MessageSquare,
   RefreshCw,
@@ -699,16 +698,6 @@ export default function App() {
             {t("search")}
           </button>
         </div>
-
-        <details className="ghb-help">
-          <summary aria-label={t("about")}>
-            <Info size={17} />
-          </summary>
-          <div>
-            {t("accountHint")}
-            <p>{t("scope")}</p>
-          </div>
-        </details>
 
         <button
           className="ghb-refresh"

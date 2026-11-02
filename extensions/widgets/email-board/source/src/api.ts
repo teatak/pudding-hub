@@ -151,7 +151,7 @@ export function createMailbox(client: QueryClient) {
     signal?.throwIfAborted(); known.add(id);
     const s=await storage(signal);
     return {account,...messageSummary(message),...cardFor(s.store,account,id),storageVersion:s.raw.version,offset:0,nextOffset:null,
-      messages:[{...message,format:message.text ? "plain" : "unavailable"}], attachments:message.attachments};
+      messages:[{...message,format:message.html ? "html" : message.text ? "plain" : "unavailable"}], attachments:message.attachments};
   }
 
   async function edit(

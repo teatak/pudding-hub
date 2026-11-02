@@ -303,44 +303,6 @@ body {
   font-size: 12px;
 }
 
-.ghb-help {
-  position: relative;
-  flex-shrink: 0;
-  color: var(--muted);
-}
-
-.ghb-help > summary {
-  list-style: none;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 34px;
-  border-radius: 6px;
-}
-
-.ghb-help > summary::-webkit-details-marker {
-  display: none;
-}
-
-.ghb-help > div {
-  position: absolute;
-  top: 40px;
-  right: 0;
-  width: 280px;
-  z-index: 25;
-  padding: 13px;
-  background: var(--surface-pop);
-  border: 1px solid var(--edge);
-  border-radius: 9px;
-  box-shadow: 0 8px 24px #0002;
-  font-size: 12px;
-}
-
-.ghb-help p {
-  margin-top: 8px;
-}
-
 .ghb-app .ghb-refresh {
   width: 34px;
   height: 34px;

@@ -10,7 +10,6 @@ import {
   X,
   FilePenLine,
   CalendarClock,
-  Info,
   Copy,
   Check,
   ExternalLink,
@@ -22,6 +21,7 @@ import { statuses, type Card } from "./model";
 import { t, errorText } from "./text";
 import "./style.css";
 import { copyError } from "./copy";
+import { sanitizeEmailHtml } from "./html";
 
 function ErrorBox({
   error,
@@ -186,10 +186,13 @@ function MessageCard({
     to: string;
     date: string;
     text: string;
+    html?: string;
     format: string;
     truncated?: boolean;
   };
 }) {
+  const html = useMemo(() => sanitizeEmailHtml(m.html ?? ""), [m.html]);
+  const [viewMode, setViewMode] = useState<"html" | "plain">("html");
   const sender = parseSender(m.from);
 
   return (
@@ -216,7 +219,20 @@ function MessageCard({
             To: {m.to || "me"}
           </p>
         </div>
-
+        {html && (
+          <div className="gb-view-toggle" role="group" aria-label={t("messageTab")}>
+            <button type="button" aria-pressed={viewMode === "html"}
+              className={viewMode === "html" ? "is-active" : ""}
+              onClick={() => setViewMode("html")}>
+              <Globe size={12} /><span>{t("viewHtml")}</span>
+            </button>
+            <button type="button" aria-pressed={viewMode === "plain"}
+              className={viewMode === "plain" ? "is-active" : ""}
+              onClick={() => setViewMode("plain")}>
+              <FileText size={12} /><span>{t("viewPlain")}</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {m.format === "unavailable" && (
@@ -224,7 +240,9 @@ function MessageCard({
       )}
 
       <div className="gb-message-content">
-        <FormattedText text={m.text} />
+        {viewMode === "html" && html
+          ? <div className="gb-email-html" dangerouslySetInnerHTML={{ __html: html }} />
+          : <FormattedText text={m.text} />}
       </div>
 
       {m.truncated && <p className="gb-muted gb-truncated">{t("truncated")}</p>}
@@ -585,15 +603,6 @@ export default function App() {
           />
           <button onClick={find}>{t("search")}</button>
         </div>
-        <details className="gb-help">
-          <summary aria-label={t("about")}>
-            <Info size={17} />
-          </summary>
-          <div>
-            {t("accountHint")}
-            <p>{t("scope")}</p>
-          </div>
-        </details>
         <button
           className="gb-refresh"
           aria-label={t("refresh")}

@@ -5,7 +5,7 @@ import {pathToFileURL} from 'node:url';
 import path from 'node:path';
 const require=createRequire(path.resolve(process.env.PUDDING_DESKTOP_DIR||'../pudding-desktop','web/package.json'));
 const source=new URL('../extensions/widgets/email-board/source/src/',import.meta.url);
-let saved,identity,requests,defs,gate;
+let saved,identity,requests,defs,gate,htmlBody;
 const message={id:'message_1',subject:'Hello',from:'sender@example.org',to:'user@example.org',date:'2026-11-02T00:00:00Z',unread:true};
 globalThis.__emailSDK={
  query:async(name,p={},options={})=>{
@@ -15,17 +15,23 @@ globalThis.__emailSDK={
   options.signal?.throwIfAborted();
   if(p.mailboxID!==identity.mailboxID||p.configRevision!==identity.configRevision)throw Error('email_connection_changed');
   if(name==='list')return {data:{messages:[message],nextCursor:''}};
-  if(name==='message')return {data:{...message,text:'private body '+identity.configRevision,attachments:[]}};
+  if(name==='message')return {data:{...message,text:'private body '+identity.configRevision,...(htmlBody?{html:htmlBody}:{}),attachments:[]}};
   throw Error('unexpected operation '+name);
  },
  storage:{read:async()=>structuredClone(saved),write:async v=>{assert.equal(v.expectedVersion,saved.version);saved={version:saved.version+1,data:structuredClone(v.data)};return structuredClone(saved)}},
  locale:{read:()=> 'en'},defineInterface:d=>{defs.set(d.name,d);return()=>{}},setInstructions:()=>{},
 };
-const hook=registerHooks({resolve(s,c,next){if(s==='@pudding/widget')return {url:'data:text/javascript,export const pudding=globalThis.__emailSDK',shortCircuit:true};if(['zod','@tanstack/react-query'].includes(s))return {url:pathToFileURL(require.resolve(s)).href,shortCircuit:true};if(c.parentURL?.startsWith(source.href)&&s.startsWith('./')&&!path.extname(s))return next(s+'.ts',c);return next(s,c)}});
+const hook=registerHooks({resolve(s,c,next){if(s==='@pudding/widget')return {url:'data:text/javascript,export const pudding=globalThis.__emailSDK',shortCircuit:true};if(['zod','@tanstack/react-query','dompurify'].includes(s))return {url:pathToFileURL(require.resolve(s)).href,shortCircuit:true};if(c.parentURL?.startsWith(source.href)&&s.startsWith('./')&&!path.extname(s))return next(s+'.ts',c);return next(s,c)}});
 const {createMailbox,registerInterfaces}=await import(new URL('api.ts',source));
-const {QueryClient}=await import(pathToFileURL(require.resolve('@tanstack/react-query')));hook.deregister();
+const {QueryClient}=await import(pathToFileURL(require.resolve('@tanstack/react-query')));
+const {JSDOM}=require('jsdom');
+const dom=new JSDOM('');
+globalThis.window=dom.window;
+const {sanitizeEmailHtml}=await import(new URL('html.ts',source));
+delete globalThis.window;
+hook.deregister();
 let api;
-beforeEach(()=>{identity={mailboxID:'mb_'+'a'.repeat(64),address:'user@example.org',configRevision:'r1'};saved={version:0,data:{gmailBoard:{legacy:'untouched'}}};requests=[];defs=new Map();gate=null;api=createMailbox(new QueryClient({defaultOptions:{queries:{retry:false,gcTime:0}}}));registerInterfaces(api)});
+beforeEach(()=>{identity={mailboxID:'mb_'+'a'.repeat(64),address:'user@example.org',configRevision:'r1'};saved={version:0,data:{gmailBoard:{legacy:'untouched'}}};requests=[];defs=new Map();gate=null;htmlBody=undefined;api=createMailbox(new QueryClient({defaultOptions:{queries:{retry:false,gcTime:0}}}));registerInterfaces(api)});
 test('generic board batches metadata and persists only local notes/drafts, preserving legacy Gmail data',async()=>{
  const board=await api.board();assert.equal(board.account,identity.mailboxID);assert.equal(api.address(),identity.address);
  assert.deepEqual(requests.filter(r=>r.name!=='profile').map(r=>r.name),['list']);
@@ -40,6 +46,30 @@ test('credential rotation refreshes reads while retaining notes and drafts for t
  await api.read(account,message.id);identity.configRevision='r2';const detail=await api.read(account,message.id);
  assert.equal(detail.note,'Keep');assert.equal(detail.messages[0].text,'private body r2');
  assert.equal(requests.filter(r=>r.name==='message').length,2);
+});
+test('HTML and plain alternatives reach readers without storing either body locally',async()=>{
+ htmlBody='<table><tr><td><strong>Rich message</strong></td></tr></table>';
+ const account=await api.profile();const detail=await api.read(account,message.id);
+ assert.equal(detail.messages[0].html,htmlBody);assert.equal(detail.messages[0].text,'private body r1');assert.equal(detail.messages[0].format,'html');
+ await api.edit(account,0,[{id:message.id,note:'Keep local'}]);
+ assert.ok(!JSON.stringify(saved).includes(htmlBody));assert.ok(!JSON.stringify(saved).includes('private body'));
+});
+test('rich text preserves tables, typography and safe links while removing active content and remote resources',()=>{
+ const html=sanitizeEmailHtml(`<style>body{display:none}</style><script>alert(1)</script>
+ <form action="https://tracker.test"><input autofocus></form><iframe src="https://tracker.test"></iframe>
+ <img src="https://tracker.test/pixel" onerror="alert(1)"><svg><a href="javascript:alert(1)">bad</a></svg>
+ <table class="gb-app" id="root" style="width:100%;background:url(https://tracker.test);position:fixed;z-index:999">
+ <tr><td style="color:rgb(1,2,3);padding:12px;background-image:image-set(url(https://tracker.test) 1x)"><strong>Hello</strong></td></tr></table>
+ <a href="https://example.org/read" ping="https://tracker.test" onclick="alert(1)">Read</a>
+ <a href="mailto:demo@example.org">Reply</a><a href="jav&#x61;script:alert(1)">bad link</a>
+ <a href="data:text/html,evil">bad data</a><a href="/relative">relative</a>`);
+ const view=new JSDOM(html).window.document;
+ assert.ok(view.querySelector('table td strong'));assert.equal(view.querySelector('strong').textContent,'Hello');
+ assert.equal(view.querySelector('table').style.width,'100%');assert.equal(view.querySelector('td').style.padding,'12px');assert.equal(view.querySelector('td').style.color,'rgb(1, 2, 3)');
+ assert.equal(view.querySelectorAll('script,style,form,input,iframe,img,svg,[class],[id],[onclick],[onerror],[ping]').length,0);
+ assert.ok(!html.includes('tracker.test'));assert.ok(!html.includes('position:'));assert.ok(!html.includes('z-index:'));
+ const links=[...view.querySelectorAll('a[href]')];assert.deepEqual(links.map(a=>a.getAttribute('href')),['https://example.org/read','mailto:demo@example.org']);
+ assert.ok(links.every(a=>a.target==='_blank'&&a.rel==='noopener noreferrer'));
 });
 test('switching mailbox rejects old-account edits and isolates local data',async()=>{
  const old=await api.profile();await api.list(old);await api.edit(old,0,[{id:message.id,note:'Mailbox A only'}]);

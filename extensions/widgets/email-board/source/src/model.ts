@@ -111,7 +111,7 @@ export function cardFor(store: BoardStore, account: string, id: string): Card {
 
 export const messageSchema = z.object({
   id: idSchema, subject: z.string(), from: z.string(), to: z.string(), date: z.string(), unread: z.boolean(),
-  text: z.string().default(""), truncated: z.boolean().default(false),
+  text: z.string().default(""), html: z.string().optional(), truncated: z.boolean().default(false),
   attachments: z.array(z.object({name:z.string(), type:z.string(), size:z.number()})).default([]),
 });
 export const listSchema = z.object({messages:z.array(messageSchema), nextCursor:z.string()});

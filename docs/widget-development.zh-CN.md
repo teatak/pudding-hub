@@ -121,7 +121,7 @@ PUDDING_CORE_DIR=../pudding-core PUDDING_DESKTOP_DIR=../pudding-desktop pnpm pac
 - widget.json 使用 schemaVersion: 1、sdkVersion: "1"，入口是 src 下的 TSX 文件。
 - 源码校验允许规定路径下的 TS、TSX、CSS、JSON、SVG 文件，包括 src、assets、fixtures。发布内容只保留运行所需文件，不带测试用的虚构业务数据。
 - 最多 32 个源码文件，单文件不超过 512 KiB，总计不超过 2 MiB。完整规则见 [Core 源码策略](https://github.com/teatak/pudding-core/blob/main/contracts/widget.json)。
-- 依赖由宿主提供，包括 React、React DOM、TanStack Query、react-hook-form、Zod、Recharts、lucide-react、`@pudding/widget`、`@pudding/ui`。组件不能自行安装 npm 包或运行构建脚本。
+- 依赖由宿主提供，包括 React、React DOM、TanStack Query、react-hook-form、Zod、Recharts、lucide-react、DOMPurify（协议 60+）、`@pudding/widget`、`@pudding/ui`。组件不能自行安装 npm 包或运行构建脚本。
 
 从入口导入本地 CSS。界面要适应窄栏、明暗主题和键盘操作。表单通过业务函数处理，阻止原生提交；更新 React 内容即可，不要用 document.write 等方法替换宿主页面。
 

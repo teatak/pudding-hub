@@ -100,7 +100,7 @@ test('new releases contain all eight metadata locales and retain earlier compati
     assert.equal(release.requires.sdkVersion,manifest.requires.sdkVersion);
     if(name==='synology-files'||name==='email-board')assert.equal(manifest.preview,true);
     else assert.ok(!manifest.preview,`${name}: stable release`);
-    if(name==='email-board') {assert.equal(manifest.requires.protocolVersion,58);assert.equal(manifest.title.en,'Email Board');assert.equal(manifest.title['zh-CN'],'邮件看板');}
+    if(name==='email-board') {assert.equal(manifest.requires.protocolVersion,60);assert.equal(manifest.title.en,'Email Board');assert.equal(manifest.title['zh-CN'],'邮件看板');}
   }
   const gomoku=catalog.items.find(item=>item.id.endsWith('/gomoku'));
   const modern=gomoku.releases.find(release=>release.version==='1.0.4');

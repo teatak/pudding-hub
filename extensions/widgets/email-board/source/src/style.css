@@ -144,39 +144,6 @@ body {
   padding: 5px 9px;
   font-size: 12px;
 }
-.gb-help {
-  position: relative;
-  flex-shrink: 0;
-  color: var(--muted);
-}
-.gb-help > summary {
-  list-style: none;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 34px;
-  border-radius: 6px;
-}
-.gb-help > summary::-webkit-details-marker {
-  display: none;
-}
-.gb-help > div {
-  position: absolute;
-  top: 42px;
-  right: 0;
-  width: 280px;
-  z-index: 3;
-  padding: 14px;
-  background: var(--surface);
-  border: 1px solid var(--edge);
-  border-radius: 9px;
-  box-shadow: 0 8px 24px #0002;
-  font-size: 12px;
-}
-.gb-help p {
-  margin-top: 8px;
-}
 .gb-app .gb-refresh {
   width: 34px;
   height: 34px;
@@ -558,6 +525,8 @@ body {
   background: rgba(127, 127, 127, 0.15);
 }
 .gb-email-html {
+  contain: content;
+  isolation: isolate;
   font-size: 14px;
   line-height: 1.6;
   color: var(--text);

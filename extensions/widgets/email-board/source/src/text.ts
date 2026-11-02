@@ -39,7 +39,7 @@ const en = {
   unread: "Unread",
   messages: "messages",
   oneMessage: "1 message",
-  viewHtml: "HTML",
+  viewHtml: "Rich text",
   viewPlain: "Plain text",
   openLink: "Open link",
   copyLink: "Copy link",
@@ -80,7 +80,7 @@ const en = {
   descList:
     "Read a page of mailbox message summaries, with local status, followUpAt and hasDraft. q is plain inbox text (default empty); each page searches up to 5,000 UID positions, cursor is nextCursor from the previous page, limit 1–20. No bodies or drafts returned. Pass the exact account from getBoard; each account is independent.",
   descRead:
-    "Read a message and its local note/draft on demand. Pass account and id from listMessages. The text is bounded to 64 KiB; truncated indicates an incomplete body. HTML is converted to text; external images and attachments are not loaded.",
+    "Read a message and its local note/draft on demand. Pass account and id from listMessages. Plain text and optional untrusted HTML are each bounded to 64 KiB; truncated indicates an incomplete body. The UI sanitizes rich text. External images and attachments are not loaded.",
   descUpdate:
     "Atomically update 1–20 previously read/listed messages in this account. status: todo/reply/followUp/done; note max 2000 characters; followUpAt YYYY-MM-DD or null to clear. Requires account and expectedStorageVersion from a read. Returns only changed IDs and storageVersion. Does not archive or label mailbox mail.",
   descDraft:
@@ -121,7 +121,7 @@ export const messages: Record<WidgetLocale, Record<Key, string>> = {
     unread: "未读",
     messages: "封邮件",
     oneMessage: "1 封邮件",
-    viewHtml: "网页视图",
+    viewHtml: "富文本",
     viewPlain: "纯文本",
     openLink: "打开链接",
     copyLink: "复制链接",
@@ -159,7 +159,7 @@ export const messages: Record<WidgetLocale, Record<Key, string>> = {
     descList:
       "分页读取 邮件摘要和本地 status、followUpAt、hasDraft。q 为收件箱纯文本搜索，默认空，每页最多搜索 5000 个 UID 位置，空页有 cursor 时可继续；cursor 使用上一页 nextCursor；limit 为 1–20。不返回正文和草稿。account 必须使用 getBoard 返回的账号，各账号独立。",
     descRead:
-      "按需读取邮件及本地备注、草稿。account 和 id 来自 listMessages。正文最多读取 64 KiB，truncated 表示内容不完整。HTML 转纯文本，不加载外部图片或附件。",
+      "按需读取邮件及本地备注、草稿。account 和 id 来自 listMessages。纯文本和可选的不可信 HTML 各最多读取 64 KiB，truncated 表示内容不完整。界面清理 HTML 后显示富文本，不加载外部图片或附件。",
     descUpdate:
       "原子更新当前账号已读取或列出的 1–20 封邮件。status 可为 todo/reply/followUp/done；note 最多 2000 字符；followUpAt 为 YYYY-MM-DD 或 null 清除。必须提供 account 和读取结果中的 expectedStorageVersion，只返回变更 ID 和 storageVersion，不会归档或修改邮箱标签。",
     descDraft:
@@ -196,7 +196,7 @@ export const messages: Record<WidgetLocale, Record<Key, string>> = {
     unread: "未讀",
     messages: "封郵件",
     oneMessage: "1 封郵件",
-    viewHtml: "網頁檢視",
+    viewHtml: "豐富文字",
     viewPlain: "純文字",
     openLink: "開啟連結",
     copyLink: "複製連結",
@@ -234,7 +234,7 @@ export const messages: Record<WidgetLocale, Record<Key, string>> = {
     descList:
       "分頁讀取 郵件摘要與本機 status、followUpAt、hasDraft。q 為收件匣純文字搜尋，預設空，每頁最多搜尋 5000 個 UID 位置，空頁有 cursor 時可繼續；cursor 使用前一頁 nextCursor；limit 為 1–20。不回傳內文或草稿。account 必須使用 getBoard 回傳的帳號，各帳號獨立。",
     descRead:
-      "按需讀取郵件與本機備註、草稿。account 與 id 來自 listMessages。內文最多讀取 64 KiB，truncated 表示內容不完整。HTML 轉純文字，不載入外部圖片或附件。",
+      "按需讀取郵件與本機備註、草稿。account 與 id 來自 listMessages。純文字與可選的不可信 HTML 各最多讀取 64 KiB，truncated 表示內容不完整。介面清理 HTML 後顯示豐富文字，不載入外部圖片或附件。",
     descUpdate:
       "原子更新目前帳號已讀取或列出的 1–20 封郵件。status 為 todo/reply/followUp/done；note 最多 2000 字元；followUpAt 為 YYYY-MM-DD 或 null 清除。須提供 account 與讀取結果中的 expectedStorageVersion，只回傳變更 ID 與 storageVersion，不會封存或修改信箱標籤。",
     descDraft:
