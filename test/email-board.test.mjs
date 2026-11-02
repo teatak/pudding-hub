@@ -5,7 +5,7 @@ import {pathToFileURL} from 'node:url';
 import path from 'node:path';
 const require=createRequire(path.resolve(process.env.PUDDING_DESKTOP_DIR||'../pudding-desktop','web/package.json'));
 const source=new URL('../extensions/widgets/email-board/source/src/',import.meta.url);
-let saved,identity,requests,defs,gate,htmlBody;
+let saved,identity,requests,defs,gate,htmlBody,unread,readFailure,readGate;
 const message={id:'message_1',subject:'Hello',from:'sender@example.org',to:'user@example.org',date:'2026-11-02T00:00:00Z',unread:true};
 globalThis.__emailSDK={
  query:async(name,p={},options={})=>{
@@ -14,10 +14,11 @@ globalThis.__emailSDK={
   if(gate)await gate;
   options.signal?.throwIfAborted();
   if(p.mailboxID!==identity.mailboxID||p.configRevision!==identity.configRevision)throw Error('email_connection_changed');
-  if(name==='list')return {data:{messages:[message],nextCursor:''}};
-  if(name==='message')return {data:{...message,text:'private body '+identity.configRevision,...(htmlBody?{html:htmlBody}:{}),attachments:[]}};
+  if(name==='list')return {data:{messages:[{...message,unread}],nextCursor:''}};
+  if(name==='message')return {data:{...message,unread,text:'private body '+identity.configRevision,...(htmlBody?{html:htmlBody}:{}),attachments:[]}};
   throw Error('unexpected operation '+name);
  },
+ action:async(name,p)=>{requests.push({name,p});if(readGate)await readGate;if(readFailure)return {state:'unknown',result:{error:'offline'}};assert.equal(name,'markRead');assert.equal(p.mailboxID,identity.mailboxID);assert.equal(p.configRevision,identity.configRevision);unread=false;return {state:'succeeded',result:{data:{id:p.id,unread:false}}}},
  storage:{read:async()=>structuredClone(saved),write:async v=>{assert.equal(v.expectedVersion,saved.version);saved={version:saved.version+1,data:structuredClone(v.data)};return structuredClone(saved)}},
  locale:{read:()=> 'en'},defineInterface:d=>{defs.set(d.name,d);return()=>{}},setInstructions:()=>{},
 };
@@ -31,7 +32,7 @@ const {sanitizeEmailHtml}=await import(new URL('html.ts',source));
 delete globalThis.window;
 hook.deregister();
 let api;
-beforeEach(()=>{identity={mailboxID:'mb_'+'a'.repeat(64),address:'user@example.org',configRevision:'r1'};saved={version:0,data:{gmailBoard:{legacy:'untouched'}}};requests=[];defs=new Map();gate=null;htmlBody=undefined;api=createMailbox(new QueryClient({defaultOptions:{queries:{retry:false,gcTime:0}}}));registerInterfaces(api)});
+beforeEach(()=>{identity={mailboxID:'mb_'+'a'.repeat(64),address:'user@example.org',configRevision:'r1'};saved={version:0,data:{gmailBoard:{legacy:'untouched'}}};requests=[];defs=new Map();gate=null;htmlBody=undefined;unread=true;readFailure=false;readGate=null;api=createMailbox(new QueryClient({defaultOptions:{queries:{retry:false,gcTime:0}}}));registerInterfaces(api)});
 test('generic board batches metadata and persists only local notes/drafts, preserving legacy Gmail data',async()=>{
  const board=await api.board();assert.equal(board.account,identity.mailboxID);assert.equal(api.address(),identity.address);
  assert.deepEqual(requests.filter(r=>r.name!=='profile').map(r=>r.name),['list']);
@@ -53,6 +54,29 @@ test('HTML and plain alternatives reach readers without storing either body loca
  assert.equal(detail.messages[0].html,htmlBody);assert.equal(detail.messages[0].text,'private body r1');assert.equal(detail.messages[0].format,'html');
  await api.edit(account,0,[{id:message.id,note:'Keep local'}]);
  assert.ok(!JSON.stringify(saved).includes(htmlBody));assert.ok(!JSON.stringify(saved).includes('private body'));
+});
+test('opening synchronizes Seen once and updates cached list/detail while model reads remain read-only',async()=>{
+ const account=await api.profile();await api.list(account);await api.read(account,message.id);
+ assert.equal(requests.filter(r=>r.name==='markRead').length,0);assert.equal(unread,true);
+ let release;readGate=new Promise(resolve=>{release=resolve});
+ const pending=Promise.all([api.markRead(account,message.id),api.markRead(account,message.id)]);
+ while(!requests.some(r=>r.name==='markRead'))await new Promise(resolve=>setTimeout(resolve,0));
+ await new Promise(resolve=>setTimeout(resolve,0));assert.equal(requests.filter(r=>r.name==='markRead').length,1);
+ assert.equal((await api.list(account)).items[0].unread,true);
+ release();await pending;readGate=null;
+ assert.equal((await api.list(account)).items[0].unread,false);assert.equal((await api.read(account,message.id)).unread,false);
+ const other=createMailbox(new QueryClient({defaultOptions:{queries:{retry:false,gcTime:0}}}));
+ assert.equal((await other.list(account)).items[0].unread,false);assert.equal(saved.version,0);
+});
+test('failed Seen synchronization keeps unread and readable content, with explicit retry and account isolation',async()=>{
+ const account=await api.profile();await api.list(account);await api.read(account,message.id);
+ readFailure=true;await assert.rejects(api.markRead(account,message.id),/readSyncFailed/);
+ assert.equal((await api.list(account)).items[0].unread,true);assert.equal((await api.read(account,message.id)).messages[0].text,'private body r1');
+ readFailure=false;await api.markRead(account,message.id);assert.equal((await api.refresh(account)).loadedCount,1);assert.equal((await api.list(account)).items[0].unread,false);
+ identity={...identity,mailboxID:'mb_'+'b'.repeat(64),configRevision:'r2'};unread=true;
+ await assert.rejects(api.markRead(account,message.id),/wrongAccount/);
+ assert.equal((await api.list(identity.mailboxID)).items[0].unread,true);
+ assert.equal(requests.filter(r=>r.name==='markRead').length,2);
 });
 test('rich text preserves tables, typography and safe links while removing active content and remote resources',()=>{
  const html=sanitizeEmailHtml(`<style>body{display:none}</style><script>alert(1)</script>

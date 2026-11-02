@@ -72,9 +72,9 @@
         "en": "Connect popular email providers or custom IMAP/SMTP to search, read and send mail."
       },
       "icon": {
-        "svg": "./email/releases/1.0.0-preview.3/assets/icon.svg"
+        "svg": "./email/releases/1.0.0-preview.4/assets/icon.svg"
       },
-      "icon_sha256": "d8e539ace68c58585f94af4ce113594c94f0fe4f684a0dea63361b026fe75d08",
+      "icon_sha256": "a7761e5372820cddbbbe69d9044babe4eabfa6299954ebdaa7a77710873b896e",
       "tags": [
         "email",
         "imap",
@@ -83,6 +83,18 @@
         "gmail"
       ],
       "releases": [
+        {
+          "version": "1.0.0-preview.4",
+          "manifest": "./email/releases/1.0.0-preview.4/manifest.json",
+          "package": "./email/releases/1.0.0-preview.4/email.pudding-plugin.json",
+          "package_sha256": "a9f6b2195e312f50a56489fffb39c7aa8b500ab9f7fef478b74a220515c6d8eb",
+          "requires": {
+            "pudding_plugin": "1.3.0"
+          },
+          "released_at": "2026-11-02",
+          "channel": "preview",
+          "preview": true
+        },
         {
           "version": "1.0.0-preview.3",
           "manifest": "./email/releases/1.0.0-preview.3/manifest.json",

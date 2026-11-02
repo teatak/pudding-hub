@@ -23,6 +23,7 @@ import { t, errorText } from "./text";
 // never cancel the same request still used by another reader.
 export function createMailbox(client: QueryClient) {
   const known = new Set<string>();
+  const readReceipts = new Map<string, Promise<void>>();
   const profileSchema = z.object({mailboxID:accountSchema,address:z.string(),configRevision:z.string()});
   let current: z.infer<typeof profileSchema> | undefined;
   const loadProfile = async () => {
@@ -154,6 +155,30 @@ export function createMailbox(client: QueryClient) {
       messages:[{...message,format:message.html ? "html" : message.text ? "plain" : "unavailable"}], attachments:message.attachments};
   }
 
+  async function markRead(account: string, id: string) {
+    const identity = await ensure(account);
+    idSchema.parse(id);
+    const key = `${account}:${identity.configRevision}:${id}`;
+    const pending = readReceipts.get(key);
+    if (pending) return pending;
+    const write = (async () => {
+      const action = z.object({state:z.string(),result:z.unknown().optional()})
+        .parse(await pudding.action("markRead", {...identity,id}));
+      if (action.state !== "succeeded") throw new Error("readSyncFailed");
+      const {data} = z.object({data:z.object({id:idSchema,unread:z.literal(false)})}).parse(action.result);
+      if (data.id !== id) throw new Error("Message ID mismatch");
+      client.setQueriesData<Awaited<ReturnType<typeof page>>>({queryKey:["email","page",account]}, cached =>
+        cached ? {...cached,items:cached.items.map(item=>item.id===id?{...item,unread:false}:item)} : cached);
+      client.setQueriesData<z.infer<typeof messageSchema>>({queryKey:["email","message",account,identity.configRevision,id]}, cached =>
+        cached ? {...cached,unread:false} : cached);
+      await client.invalidateQueries({queryKey:["email-board-view","list",account]});
+      await client.invalidateQueries({queryKey:["email-board-view","detail",account,id]});
+    })();
+    readReceipts.set(key, write);
+    try { await write; }
+    finally { readReceipts.delete(key); }
+  }
+
   async function edit(
     account: string,
     expectedStorageVersion: number,
@@ -200,7 +225,7 @@ export function createMailbox(client: QueryClient) {
     });
     return board(signal);
   }
-  return { profile, address, page, list, board, read, edit, refresh };
+  return { profile, address, page, list, board, read, markRead, edit, refresh };
 }
 export type Mailbox = ReturnType<typeof createMailbox>;
 export function registerInterfaces(mail: Mailbox) {

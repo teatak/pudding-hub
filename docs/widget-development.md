@@ -131,7 +131,7 @@ Read the installed plugin's real endpoints and Skill before declaring sources an
 
 Pudding's source selector manages accounts and credentials, so the widget does not handle tokens. Its account is independent of the chat's plugin account. Keep drafts and workflow state separate per account. Clear selections on changes and ignore unfinished requests from the previous account.
 
-Use action for external writes. The endpoint must declare widget_writes: true, and the host asks for confirmation. On query failure, show the error and a retry control rather than substituting sample data.
+Use action for external writes. The endpoint must declare widget_writes: true, and the host asks for confirmation. The sole native exception is Email's idempotent `POST /messages/{id}/read` receipt (protocol 61+), which the host permits without a modal; it still uses action execution and binding checks. On query failure, show the error and a retry control rather than substituting sample data.
 
 ## Expose useful model operations
 

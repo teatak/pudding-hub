@@ -131,7 +131,7 @@ PUDDING_CORE_DIR=../pudding-core PUDDING_DESKTOP_DIR=../pudding-desktop pnpm pac
 
 账号和凭据由 Pudding 的来源选择器管理，小组件无需接触 token。小组件使用的账号与聊天会话中的插件账号独立。按账号分别保存草稿和处理状态；切换后清理当前选中项，并忽略前一个账号尚未返回的请求。
 
-外部写入通过 action 执行。插件端点必须声明 widget_writes: true，宿主还会请用户确认。查询失败应显示错误和重试入口，不能用示例数据代替真实结果。
+外部写入通过 action 执行。插件端点必须声明 widget_writes: true，宿主还会请用户确认。唯一的原生例外是邮件的幂等已读回执 `POST /messages/{id}/read`（协议 61+），宿主允许免弹窗执行，仍保留 action 执行记录与连接校验。查询失败应显示错误和重试入口，不能用示例数据代替真实结果。
 
 ## 提供实用的模型操作
 

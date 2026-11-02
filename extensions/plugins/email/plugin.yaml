@@ -1,7 +1,7 @@
 id: email
 api_version: 1.3.0
 name: Email
-version: 1.0.0-preview.3
+version: 1.0.0-preview.4
 description: Read and search iCloud, Gmail, QQ, NetEase, Yahoo, Fastmail and custom IMAP mail; send new messages and replies over SMTP.
 auth:
   required: true

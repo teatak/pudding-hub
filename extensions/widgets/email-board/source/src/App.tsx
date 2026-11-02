@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useRef } from "react";
+import React, { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { pudding, useWidgetLocale } from "@pudding/widget";
 import {
@@ -254,21 +254,35 @@ function Editor({
   mail,
   account,
   id,
+  onClose,
 }: {
   mail: Mailbox;
   account: string;
   id: string;
+  onClose: () => void;
 }) {
   const client = useQueryClient();
   const [offset, setOffset] = useState(0),
     [busy, setBusy] = useState(false),
     [error, setError] = useState<unknown>(null),
     [tab, setTab] = useState<"message" | "organize">("message");
+  const [readError, setReadError] = useState<unknown>(null);
   const detail = useQuery({
     queryKey: ["email-board-view", "detail", account, id, offset],
     queryFn: ({ signal }) => mail.read(account, id, offset, 5, signal),
     retry: false,
   });
+  const syncRead = useCallback(async () => {
+    setReadError(null);
+    try {
+      await mail.markRead(account, id);
+    } catch {
+      setReadError(new Error(t("readSyncFailed")));
+    }
+  }, [mail, account, id]);
+  useEffect(() => {
+    if (detail.data?.unread && tab === "message") void syncRead();
+  }, [detail.data?.unread, tab, syncRead]);
   const [form, setForm] = useState<Card | null>(null),
     [baseVersion, setBaseVersion] = useState(0),
     [dirty, setDirty] = useState(false);
@@ -338,11 +352,15 @@ function Editor({
           {t("organizeTab")}
           {dirty && <i />}
         </button>
+        <button className="gb-detail-close" aria-label={t("close")} onClick={onClose}>
+          <X size={18} />
+        </button>
       </nav>
       <div className="gb-detail-scroll">
         {detail.error ? (
           <ErrorBox error={detail.error} retry={() => void detail.refetch()} />
         ) : null}
+        {readError ? <ErrorBox error={readError} retry={() => void syncRead()} /> : null}
         {error ? (
           <ErrorBox
             error={error}
@@ -362,11 +380,6 @@ function Editor({
         )}
         {detail.data && (
           <section className="gb-read" hidden={tab !== "message"}>
-            <p className="gb-muted">
-              {detail.data.messageCount === 1
-                ? t("oneMessage")
-                : `${detail.data.messageCount} ${t("messages")}`}
-            </p>
             <section className="gb-messages">
               {detail.data.messages.map((m) => (
                 <MessageCard key={m.id} m={m} />
@@ -494,13 +507,7 @@ function ThreadDetail({
 }) {
   return (
     <aside className="gb-detail" aria-label={t("detailView")}>
-      <div className="gb-detail-top">
-        <span title={mail.address()}>{mail.address()}</span>
-        <button aria-label={t("close")} onClick={onClose}>
-          <X size={18} />
-        </button>
-      </div>
-      <Editor key={`${account}:${id}`} mail={mail} account={account} id={id} />
+      <Editor key={`${account}:${id}`} mail={mail} account={account} id={id} onClose={onClose} />
     </aside>
   );
 }
@@ -689,9 +696,9 @@ export default function App() {
                   </time>
                   {item.unread && <i aria-label={t("unread")} />}
                 </div>
-                <strong title={item.subject}>
+                <span className="gb-card-title" title={item.subject}>
                   {item.subject || t("untitled")}
-                </strong>
+                </span>
                 {item.snippet && <p>{item.snippet}</p>}
                 {(item.hasDraft || item.followUpAt) && (
                   <footer>

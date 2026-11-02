@@ -22,14 +22,15 @@ const en = {
   title: "Email Board",
   accountHint: "Switch accounts in the connection selector above",
   scope:
-    "Board status and drafts are local. Your mailbox stays unchanged.",
+    "Board status and drafts are local. Opening a message marks it read in your mailbox.",
   todo: "To do",
   reply: "To reply",
   followUp: "Follow up",
   done: "Done",
   search: "Search mailbox",
   searchHint: "Search inbox text; older results are loaded by page",
-  refresh: "Refresh",
+  refresh: "Refresh mail",
+  readSyncFailed: "Could not mark this message as read in your mailbox. You can still read it; retry to sync its read status.",
   previous: "Previous",
   next: "Next",
   loading: "Loading mailbox…",
@@ -76,7 +77,7 @@ const en = {
   storageLimit:
     "Local notes and drafts exceed the storage limit. Shorten or clear a draft.",
   descBoard:
-    "Read the connected account, counts for the default inbox page and storageVersion. Connection is selected in the host toolbar. All board statuses, notes and drafts are local; this widget never sends or modifies mailbox messages.",
+    "Read the connected account, counts for the default inbox page and storageVersion. Connection is selected in the host toolbar. Board statuses, notes and drafts are local. Opening a message in the UI marks it read in the mailbox; model reads remain read-only. The board never sends mail.",
   descList:
     "Read a page of mailbox message summaries, with local status, followUpAt and hasDraft. q is plain inbox text (default empty); each page searches up to 5,000 UID positions, cursor is nextCursor from the previous page, limit 1–20. No bodies or drafts returned. Pass the exact account from getBoard; each account is independent.",
   descRead:
@@ -104,14 +105,15 @@ export const messages: Record<WidgetLocale, Record<Key, string>> = {
     reloadSaved: "重新载入已保存内容",
     title: "邮件看板",
     accountHint: "可在上方连接选择器切换账号",
-    scope: "看板状态和草稿仅保存在本地，不修改邮箱。",
+    scope: "看板状态和草稿仅保存在本地，打开邮件会同步邮箱已读状态。",
     todo: "待处理",
     reply: "待回复",
     followUp: "待跟进",
     done: "已处理",
     search: "搜索邮件",
     searchHint: "搜索收件箱内容，较早邮件按页加载",
-    refresh: "刷新",
+    refresh: "刷新邮件",
+    readSyncFailed: "未能同步邮箱已读状态，邮件仍可正常阅读。请重试同步。",
     previous: "上一页",
     next: "下一页",
     loading: "正在读取邮箱…",
@@ -155,7 +157,7 @@ export const messages: Record<WidgetLocale, Record<Key, string>> = {
     batchSize: "每批请选择 1–20 封邮件。",
     storageLimit: "本地备注和草稿超出存储上限，请缩短或清除部分草稿。",
     descBoard:
-      "读取当前连接账号、默认收件箱第一页的各列数量和 storageVersion。在宿主顶部切换连接。所有看板状态、备注和草稿只保存在本地，本组件不会发送或修改邮件。",
+      "读取当前连接账号、默认收件箱第一页的各列数量和 storageVersion。在宿主顶部切换连接。看板状态、备注和草稿只保存在本地。在界面打开邮件会同步邮箱已读状态，模型读取仍只读。看板不会发送邮件。",
     descList:
       "分页读取 邮件摘要和本地 status、followUpAt、hasDraft。q 为收件箱纯文本搜索，默认空，每页最多搜索 5000 个 UID 位置，空页有 cursor 时可继续；cursor 使用上一页 nextCursor；limit 为 1–20。不返回正文和草稿。account 必须使用 getBoard 返回的账号，各账号独立。",
     descRead:
@@ -179,14 +181,15 @@ export const messages: Record<WidgetLocale, Record<Key, string>> = {
     reloadSaved: "重新載入已儲存內容",
     title: "郵件看板",
     accountHint: "可在上方連線選擇器切換帳號",
-    scope: "看板狀態與草稿僅儲存在本機，不修改信箱。",
+    scope: "看板狀態與草稿僅儲存在本機，開啟郵件會同步信箱已讀狀態。",
     todo: "待處理",
     reply: "待回覆",
     followUp: "待追蹤",
     done: "已處理",
     search: "搜尋郵件",
     searchHint: "搜尋收件匣內容，較早郵件分頁載入",
-    refresh: "重新整理",
+    refresh: "重新整理郵件",
+    readSyncFailed: "無法同步信箱已讀狀態，仍可正常閱讀郵件。請重試同步。",
     previous: "上一頁",
     next: "下一頁",
     loading: "正在讀取信箱…",
@@ -230,7 +233,7 @@ export const messages: Record<WidgetLocale, Record<Key, string>> = {
     batchSize: "每批請選擇 1–20 封郵件。",
     storageLimit: "本機備註與草稿超出儲存上限，請縮短或清除部分草稿。",
     descBoard:
-      "讀取目前連線帳號、預設收件匣第一頁的各欄數量與 storageVersion。在宿主頂部切換連線。看板狀態、備註與草稿僅儲存在本機，本元件不會寄出或修改郵件。",
+      "讀取目前連線帳號、預設收件匣第一頁的各欄數量與 storageVersion。在宿主頂部切換連線。看板狀態、備註與草稿僅儲存在本機。在介面開啟郵件會同步信箱已讀狀態，模型讀取仍唯讀。看板不會寄出郵件。",
     descList:
       "分頁讀取 郵件摘要與本機 status、followUpAt、hasDraft。q 為收件匣純文字搜尋，預設空，每頁最多搜尋 5000 個 UID 位置，空頁有 cursor 時可繼續；cursor 使用前一頁 nextCursor；limit 為 1–20。不回傳內文或草稿。account 必須使用 getBoard 回傳的帳號，各帳號獨立。",
     descRead:

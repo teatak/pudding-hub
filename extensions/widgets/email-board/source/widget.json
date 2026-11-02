@@ -129,6 +129,52 @@
           }
         }
       }
+    },
+    "markRead": {
+      "source": "mail",
+      "kind": "rest",
+      "effectHint": "write",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "mailboxID": {
+            "type": "string",
+            "maxLength": 67
+          },
+          "configRevision": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "id": {
+            "type": "string",
+            "maxLength": 2048
+          }
+        },
+        "required": [
+          "mailboxID",
+          "configRevision",
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "request": {
+        "method": "POST",
+        "path": "/messages/{id}/read",
+        "query": {
+          "mailboxID": {
+            "$input": "/mailboxID"
+          },
+          "configRevision": {
+            "$input": "/configRevision"
+          }
+        },
+        "pathParams": {
+          "id": {
+            "$input": "/id"
+          }
+        }
+      },
+      "description": "Mark the opened mailbox message as read"
     }
   }
 }

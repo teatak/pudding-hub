@@ -247,7 +247,7 @@ body {
 }
 .gb-card[aria-pressed="true"] {
   background: var(--panel);
-  box-shadow: inset 3px 0 var(--text);
+  box-shadow: inset 3px 0 light-dark(#2563eb, #60a5fa);
 }
 .gb-card-top {
   display: flex;
@@ -267,10 +267,11 @@ body {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--text);
+  background: light-dark(#dc2626, #f87171);
   flex-shrink: 0;
 }
-.gb-card > strong {
+.gb-card-title {
+  font-weight: 400;
   font-size: 13px;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -311,27 +312,9 @@ body {
   color: var(--text);
   overflow: hidden;
 }
-.gb-detail-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 16px 24px 10px;
-  flex-shrink: 0;
-}
-.gb-detail-top > span {
-  font-size: 12px;
-  color: var(--muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.gb-detail-top button {
-  padding: 5px;
-  border-color: transparent;
-}
 .gb-detail-tabs {
   display: flex;
+  align-items: center;
   gap: 18px;
   padding: 0 24px;
   border-bottom: 1px solid var(--edge);
@@ -348,6 +331,13 @@ body {
 .gb-detail-tabs button[aria-pressed="true"] {
   color: var(--text);
   box-shadow: 0 2px 0 var(--text);
+}
+.gb-detail-tabs .gb-detail-close {
+  display: grid;
+  place-items: center;
+  margin-left: auto;
+  padding: 6px;
+  border-radius: 6px;
 }
 .gb-detail-tabs i {
   width: 5px;
@@ -722,9 +712,6 @@ body {
   }
   .gb-detail-scroll {
     padding: 20px;
-  }
-  .gb-detail-top {
-    padding: 12px 20px 8px;
   }
   .gb-detail-tabs {
     padding: 0 20px;
