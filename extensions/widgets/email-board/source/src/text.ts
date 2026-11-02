@@ -10,7 +10,7 @@ export function normalizeLocale(raw?: string): WidgetLocale {
 
 import { pudding } from "@pudding/widget";
 const en = {
-  instructions: "Email Board reads the connected mailbox and organizes local cards and reply drafts. No seats, candidate join, readiness or event waiting is required. Start with getBoard to learn the account and storage version, then use listMessages and readMessage as needed. updateCards and saveReplyDraft modify Pudding storage only; they do not send email or change mailbox. Use the returned account and expectedStorageVersion for local writes and the latest widget stateVersion for interface calls. Stop when the user’s request is complete.",
+  instructions: "Email Board currently focuses on searching and reading the connected inbox. Start with getBoard for the account, then call listMessages and readMessage as needed; refreshMailbox refreshes reads. Status, note and reply-draft editing are temporarily unavailable; existing local data is retained. Opening mail in the UI marks it read on the server; model reads remain read-only. No activity seats, joining or event waiting are needed. Finish when the user’s request is complete.",
   copied: "Copied",
   attachments: "Attachments (names only)",
   copyFailed: "Copy unavailable. The text is selected; press ⌘C / Ctrl+C.",
@@ -23,6 +23,7 @@ const en = {
   accountHint: "Switch accounts in the connection selector above",
   scope:
     "Board status and drafts are local. Opening a message marks it read in your mailbox.",
+  inbox: "Inbox",
   todo: "To do",
   reply: "To reply",
   followUp: "Follow up",
@@ -77,9 +78,9 @@ const en = {
   storageLimit:
     "Local notes and drafts exceed the storage limit. Shorten or clear a draft.",
   descBoard:
-    "Read the connected account, counts for the default inbox page and storageVersion. Connection is selected in the host toolbar. Board statuses, notes and drafts are local. Opening a message in the UI marks it read in the mailbox; model reads remain read-only. The board never sends mail.",
+    "Read the connected account, loadedCount for the default inbox page and storageVersion. Connection is selected in the host toolbar. The board currently provides inbox browsing and reading; local workflow editing is unavailable. Opening mail in the UI marks it read; model reads are read-only.",
   descList:
-    "Read a page of mailbox message summaries, with local status, followUpAt and hasDraft. q is plain inbox text (default empty); each page searches up to 5,000 UID positions, cursor is nextCursor from the previous page, limit 1–20. No bodies or drafts returned. Pass the exact account from getBoard; each account is independent.",
+    "Read a page of inbox message summaries. q is plain inbox text (default empty); each page searches up to 5,000 UID positions, cursor is nextCursor from the previous page, limit 1–20. No bodies or drafts returned. Pass the exact account from getBoard; each account is independent.",
   descRead:
     "Read a message and its local note/draft on demand. Pass account and id from listMessages. Plain text and optional untrusted HTML are each bounded to 64 KiB; truncated indicates an incomplete body. The UI displays sanitized HTML in an isolated document with sender scripts disabled and loads HTTPS images by default. Attachments expose metadata only.",
   descUpdate:
@@ -94,7 +95,7 @@ export const messages: Record<WidgetLocale, Record<Key, string>> = {
   en,
   ja: extra.ja.messages, ko: extra.ko.messages, es: extra.es.messages, de: extra.de.messages, fr: extra.fr.messages,
   "zh-CN": {
-    instructions: "Email Board 用于读取已连接邮箱、整理本地卡片和回复草稿。不需要席位、加入候选、准备或持续等待。先调用 getBoard 获取账号和存储版本，再按需调用 listMessages、readMessage。updateCards 和 saveReplyDraft 只修改 Pudding 本地存储，不发送邮件、不修改邮箱。写入使用返回的账号和 expectedStorageVersion，接口调用使用最新小组件 stateVersion。完成用户需求后结束。",
+    instructions: "邮件看板目前只提供收件箱搜索与阅读。先调用 getBoard 获取账号，再按需调用 listMessages、readMessage；refreshMailbox 刷新读取。分类、备注和回复草稿编辑暂不开放，已有本地资料保留。在界面打开邮件会同步邮箱已读状态，模型读取仍只读。不需要席位、加入或等待活动事件。完成用户需求后结束。",
     copied: "已复制",
     attachments: "附件（仅显示名称）",
     copyFailed: "无法自动复制，已选中文字，请按 ⌘C / Ctrl+C。",
@@ -106,7 +107,8 @@ export const messages: Record<WidgetLocale, Record<Key, string>> = {
     title: "邮件看板",
     accountHint: "可在上方连接选择器切换账号",
     scope: "看板状态和草稿仅保存在本地，打开邮件会同步邮箱已读状态。",
-    todo: "待处理",
+    inbox: "收件箱",
+  todo: "待处理",
     reply: "待回复",
     followUp: "待跟进",
     done: "已处理",
@@ -157,9 +159,9 @@ export const messages: Record<WidgetLocale, Record<Key, string>> = {
     batchSize: "每批请选择 1–20 封邮件。",
     storageLimit: "本地备注和草稿超出存储上限，请缩短或清除部分草稿。",
     descBoard:
-      "读取当前连接账号、默认收件箱第一页的各列数量和 storageVersion。在宿主顶部切换连接。看板状态、备注和草稿只保存在本地。在界面打开邮件会同步邮箱已读状态，模型读取仍只读。看板不会发送邮件。",
+      "读取当前连接账号、默认收件箱页面的 loadedCount 和 storageVersion。在宿主顶部切换连接。看板目前只提供收件箱浏览与阅读，暂不开放本地处理流程编辑。在界面打开邮件会同步已读状态，模型读取仍只读。",
     descList:
-      "分页读取 邮件摘要和本地 status、followUpAt、hasDraft。q 为收件箱纯文本搜索，默认空，每页最多搜索 5000 个 UID 位置，空页有 cursor 时可继续；cursor 使用上一页 nextCursor；limit 为 1–20。不返回正文和草稿。account 必须使用 getBoard 返回的账号，各账号独立。",
+      "分页读取收件箱邮件摘要。q 为普通文本搜索，默认空；每页最多搜索 5000 个 UID 位置，cursor 使用上一页 nextCursor，limit 为 1–20。不返回正文或草稿。account 使用 getBoard 返回的账号，各账号独立。",
     descRead:
       "按需读取邮件及本地备注、草稿。account 和 id 来自 listMessages。纯文本和可选的不可信 HTML 各最多读取 64 KiB，truncated 表示内容不完整。界面在禁用脚本的隔离文档中显示清理后的 HTML，默认加载 HTTPS 图片；附件仅返回元数据。",
     descUpdate:
@@ -170,7 +172,7 @@ export const messages: Record<WidgetLocale, Record<Key, string>> = {
       "刷新当前连接账号的邮件读取缓存，返回 getBoard 摘要，不重复返回完整邮件。account 来自 getBoard，本地状态和草稿保留。",
   },
   "zh-TW": {
-    instructions: "Email Board 用於讀取已連接信箱、整理本機卡片和回覆草稿。不需要席位、加入候選、準備或持續等待。先呼叫 getBoard 取得帳號和儲存版本，再按需呼叫 listMessages、readMessage。updateCards 和 saveReplyDraft 只修改 Pudding 本機儲存，不寄送郵件、不修改信箱。寫入使用返回的帳號和 expectedStorageVersion，介面呼叫使用最新小元件 stateVersion。完成使用者需求後結束。",
+    instructions: "郵件看板目前只提供收件匣搜尋與閱讀。先呼叫 getBoard 取得帳號，再按需呼叫 listMessages、readMessage；refreshMailbox 重新整理讀取。分類、備註及回覆草稿編輯暫不開放，既有本機資料保留。在介面開啟郵件會同步信箱已讀狀態，模型讀取仍唯讀。不需要席位、加入或等待活動事件。完成使用者需求後結束。",
     copied: "已複製",
     attachments: "附件（僅顯示名稱）",
     copyFailed: "無法自動複製，已選取文字，請按 ⌘C / Ctrl+C。",
@@ -182,7 +184,8 @@ export const messages: Record<WidgetLocale, Record<Key, string>> = {
     title: "郵件看板",
     accountHint: "可在上方連線選擇器切換帳號",
     scope: "看板狀態與草稿僅儲存在本機，開啟郵件會同步信箱已讀狀態。",
-    todo: "待處理",
+    inbox: "收件匣",
+  todo: "待處理",
     reply: "待回覆",
     followUp: "待追蹤",
     done: "已處理",
@@ -233,9 +236,9 @@ export const messages: Record<WidgetLocale, Record<Key, string>> = {
     batchSize: "每批請選擇 1–20 封郵件。",
     storageLimit: "本機備註與草稿超出儲存上限，請縮短或清除部分草稿。",
     descBoard:
-      "讀取目前連線帳號、預設收件匣第一頁的各欄數量與 storageVersion。在宿主頂部切換連線。看板狀態、備註與草稿僅儲存在本機。在介面開啟郵件會同步信箱已讀狀態，模型讀取仍唯讀。看板不會寄出郵件。",
+      "讀取目前連接帳號、預設收件匣頁面的 loadedCount 與 storageVersion。在宿主頂部切換連接。看板目前只提供收件匣瀏覽與閱讀，暫不開放本機處理流程編輯。在介面開啟郵件會同步已讀狀態，模型讀取仍唯讀。",
     descList:
-      "分頁讀取 郵件摘要與本機 status、followUpAt、hasDraft。q 為收件匣純文字搜尋，預設空，每頁最多搜尋 5000 個 UID 位置，空頁有 cursor 時可繼續；cursor 使用前一頁 nextCursor；limit 為 1–20。不回傳內文或草稿。account 必須使用 getBoard 回傳的帳號，各帳號獨立。",
+      "分頁讀取收件匣郵件摘要。q 為一般文字搜尋，預設空；每頁最多搜尋 5000 個 UID 位置，cursor 使用上一頁 nextCursor，limit 為 1–20。不回傳內文或草稿。account 使用 getBoard 回傳的帳號，各帳號獨立。",
     descRead:
       "按需讀取郵件與本機備註、草稿。account 與 id 來自 listMessages。純文字與可選的不可信 HTML 各最多讀取 64 KiB，truncated 表示內容不完整。介面在停用指令碼的隔離文件中顯示清理後的 HTML，預設載入 HTTPS 圖片；附件僅回傳中繼資料。",
     descUpdate:

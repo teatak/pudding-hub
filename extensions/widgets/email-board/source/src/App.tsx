@@ -8,8 +8,6 @@ import {
   ChevronLeft,
   ChevronRight,
   X,
-  FilePenLine,
-  CalendarClock,
   Copy,
   Check,
   ExternalLink,
@@ -17,7 +15,6 @@ import {
   FileText,
 } from "lucide-react";
 import { createMailbox, registerInterfaces, type Mailbox } from "./api";
-import { statuses, type Card } from "./model";
 import { t, errorText } from "./text";
 import "./style.css";
 import { copyError } from "./copy";
@@ -236,249 +233,46 @@ function MessageCard({
   );
 }
 
-function Editor({
-  mail,
-  account,
-  id,
-  onClose,
-}: {
-  mail: Mailbox;
-  account: string;
-  id: string;
-  onClose: () => void;
+function Editor({ mail, account, id, onClose }: {
+  mail: Mailbox; account: string; id: string; onClose: () => void;
 }) {
-  const client = useQueryClient();
-  const [offset, setOffset] = useState(0),
-    [busy, setBusy] = useState(false),
-    [error, setError] = useState<unknown>(null),
-    [tab, setTab] = useState<"message" | "organize">("message");
   const [readError, setReadError] = useState<unknown>(null);
   const detail = useQuery({
-    queryKey: ["email-board-view", "detail", account, id, offset],
-    queryFn: ({ signal }) => mail.read(account, id, offset, 5, signal),
+    queryKey: ["email-board-view", "detail", account, id],
+    queryFn: ({ signal }) => mail.read(account, id, 0, 1, signal),
     retry: false,
   });
   const syncRead = useCallback(async () => {
     setReadError(null);
-    try {
-      await mail.markRead(account, id);
-    } catch {
-      setReadError(new Error(t("readSyncFailed")));
-    }
+    try { await mail.markRead(account, id); }
+    catch { setReadError(new Error(t("readSyncFailed"))); }
   }, [mail, account, id]);
   useEffect(() => {
-    if (detail.data?.unread && tab === "message") void syncRead();
-  }, [detail.data?.unread, tab, syncRead]);
-  const [form, setForm] = useState<Card | null>(null),
-    [baseVersion, setBaseVersion] = useState(0),
-    [dirty, setDirty] = useState(false);
-  useEffect(() => {
-    if (detail.data && !dirty) {
-      const d = detail.data;
-      setForm({
-        status: d.status,
-        note: d.note,
-        followUpAt: d.followUpAt,
-        draft: d.draft,
-      });
-      setBaseVersion(d.storageVersion);
-    }
-  }, [detail.data, dirty]);
-  function change(patch: Partial<Card>) {
-    setForm((v) => (v ? { ...v, ...patch } : v));
-    setDirty(true);
-  }
-  async function save() {
-    if (!form) return;
-    setBusy(true);
-    setError(null);
-    try {
-      await mail.edit(
-        account,
-        baseVersion,
-        [
-          {
-            id,
-            status: form.status,
-            note: form.note,
-            followUpAt: form.followUpAt,
-            meta: {
-              subject: detail.data?.subject || "",
-              from: detail.data?.from || "",
-              snippet: detail.data?.snippet || "",
-              updatedAt: detail.data?.updatedAt || new Date().toISOString(),
-            },
-          },
-        ],
-        {
-          id,
-          value: form.draft?.subject || form.draft?.body ? form.draft : null,
-        },
-      );
-      setDirty(false);
-    } catch (e) {
-      setError(e);
-    } finally {
-      setBusy(false);
-    }
-  }
-  return (
-    <>
-      <nav className="gb-detail-tabs" aria-label={t("detailView")}>
-        <button
-          aria-pressed={tab === "message"}
-          onClick={() => setTab("message")}
-        >
-          {t("messageTab")}
-        </button>
-        <button
-          aria-pressed={tab === "organize"}
-          onClick={() => setTab("organize")}
-        >
-          {t("organizeTab")}
-          {dirty && <i />}
-        </button>
-        <button className="gb-detail-close" aria-label={t("close")} onClick={onClose}>
-          <X size={18} />
-        </button>
-      </nav>
-      <div className="gb-detail-scroll">
-        {detail.error ? (
-          <ErrorBox error={detail.error} retry={() => void detail.refetch()} />
-        ) : null}
-        {readError ? <ErrorBox error={readError} retry={() => void syncRead()} /> : null}
-        {error ? (
-          <ErrorBox
-            error={error}
-            retryLabel={t("reloadSaved")}
-            retry={() => {
-              setError(null);
-              setDirty(false);
-              void client.invalidateQueries({ queryKey: ["email-board-view"] });
-            }}
-          />
-        ) : null}
-        {detail.isPending ? <p className="gb-muted">{t("loading")}</p> : null}
-        {detail.data && (
-          <h2 className="gb-thread-title">
-            {detail.data.subject || t("untitled")}
-          </h2>
-        )}
-        {detail.data && (
-          <section className="gb-read" hidden={tab !== "message"}>
-            <section className="gb-messages">
-              {detail.data.messages.map((m) => (
-                <MessageCard key={m.id} m={m} />
-              ))}
-            </section>
-            {detail.data.attachments.length > 0 ? <div className="gb-muted"><p>{t("attachments")}</p><ul>{detail.data.attachments.map((attachment, index) => <li key={index}>{attachment.name || attachment.type} · {attachment.size.toLocaleString()} B</li>)}</ul></div> : null}
-            {(offset > 0 || detail.data.nextOffset !== null) && (
-              <nav className="gb-pager">
-                <button
-                  disabled={offset === 0}
-                  onClick={() => setOffset(Math.max(0, offset - 5))}
-                >
-                  {t("newer")}
-                </button>
-                <button
-                  disabled={detail.data.nextOffset === null}
-                  onClick={() => setOffset(detail.data!.nextOffset!)}
-                >
-                  {t("older")}
-                </button>
-              </nav>
-            )}
-          </section>
-        )}
-        {form && (
-          <section className="gb-form" hidden={tab !== "organize"}>
-            <div className="gb-form-row">
-              <label>
-                {t("status")}
-                <select
-                  value={form.status}
-                  onChange={(e) =>
-                    change({ status: e.target.value as Card["status"] })
-                  }
-                >
-                  {statuses.map((s) => (
-                    <option key={s} value={s}>
-                      {t(s)}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                {t("followUpAt")}
-                <input
-                  type="date"
-                  value={form.followUpAt ?? ""}
-                  onChange={(e) =>
-                    change({ followUpAt: e.target.value || null })
-                  }
-                />
-              </label>
-            </div>
-            <label>
-              {t("note")}
-              <textarea
-                rows={2}
-                maxLength={2000}
-                value={form.note}
-                onChange={(e) => change({ note: e.target.value })}
-              />
-            </label>
-            <h3>
-              <FilePenLine size={16} />
-              {t("draft")}
-            </h3>
-            <p className="gb-muted">{t("localDraft")}</p>
-            <label>
-              {t("subject")}
-              <input
-                maxLength={500}
-                value={form.draft?.subject ?? ""}
-                onChange={(e) =>
-                  change({
-                    draft: {
-                      subject: e.target.value,
-                      body: form.draft?.body ?? "",
-                    },
-                  })
-                }
-              />
-            </label>
-            <label>
-              {t("body")}
-              <textarea
-                rows={5}
-                maxLength={8000}
-                value={form.draft?.body ?? ""}
-                onChange={(e) =>
-                  change({
-                    draft: {
-                      subject: form.draft?.subject ?? "",
-                      body: e.target.value,
-                    },
-                  })
-                }
-              />
-            </label>
-            <div className="gb-save">
-              <span role="status">{dirty ? t("unsaved") : t("saved")}</span>
-              <button
-                className="gb-primary"
-                disabled={!dirty || busy}
-                onClick={() => void pudding.interaction.handle(save)}
-              >
-                {t("save")}
-              </button>
-            </div>
-          </section>
-        )}
-      </div>
-    </>
-  );
+    if (detail.data?.unread) void syncRead();
+  }, [detail.data?.unread, syncRead]);
+  return <>
+    <div className="gb-detail-header">
+      <span>{t("messageTab")}</span>
+      <button className="gb-detail-close" aria-label={t("close")} onClick={onClose}><X size={18} /></button>
+    </div>
+    <div className="gb-detail-scroll">
+      {detail.error && <ErrorBox error={detail.error} retry={() => void detail.refetch()} />}
+      {readError ? <ErrorBox error={readError} retry={() => void syncRead()} /> : null}
+      {detail.isPending && <p className="gb-muted">{t("loading")}</p>}
+      {detail.data && <>
+        <h2 className="gb-thread-title">{detail.data.subject || t("untitled")}</h2>
+        <section className="gb-messages">
+          {detail.data.messages.map(m => <MessageCard key={m.id} m={m} />)}
+        </section>
+        {detail.data.attachments.length > 0 && <div className="gb-muted">
+          <p>{t("attachments")}</p>
+          <ul>{detail.data.attachments.map((attachment, index) => <li key={index}>
+            {attachment.name || attachment.type} · {attachment.size.toLocaleString()} B
+          </li>)}</ul>
+        </div>}
+      </>}
+    </div>
+  </>;
 }
 function ThreadDetail({
   account,
@@ -522,7 +316,6 @@ export default function App() {
     [q, setQ] = useState(""),
     [cursors, setCursors] = useState([""]),
     [selected, setSelected] = useState<string | null>(null),
-    [status, setStatus] = useState<Card["status"]>("todo"),
     [refreshing, setRefreshing] = useState(false),
     [error, setError] = useState<unknown>(null);
   const cursor = cursors[cursors.length - 1];
@@ -532,23 +325,8 @@ export default function App() {
     enabled: !!account,
     retry: false,
   });
-  const isTodoTab = status === "todo";
-  const taggedList = list.data?.taggedCards ?? [];
-  const items = isTodoTab
-    ? (list.data?.items.filter((item) => item.status === "todo") ?? [])
-    : taggedList.filter((item) => item.status === status);
+  const items = list.data?.items ?? [];
 
-  const tabCounts = useMemo(() => {
-    const todoCount =
-      list.data?.items.filter((item) => item.status === "todo").length ?? 0;
-    const tagged = list.data?.taggedCards ?? [];
-    return {
-      todo: todoCount,
-      reply: tagged.filter((c) => c.status === "reply").length,
-      followUp: tagged.filter((c) => c.status === "followUp").length,
-      done: tagged.filter((c) => c.status === "done").length,
-    };
-  }, [list.data]);
   function find() {
     setQ(search.trim());
     setCursors([""]);
@@ -620,48 +398,14 @@ export default function App() {
       ) : null}
       <div className="gb-workspace">
         <section className="gb-inbox" aria-label={t("title")}>
-          <nav
-            className="gb-status-tabs"
-            role="tablist"
-            aria-label={t("status")}
-          >
-            {statuses.map((value, index) => (
-              <button
-                key={value}
-                role="tab"
-                id={`gb-tab-${value}`}
-                aria-selected={status === value}
-                aria-controls="gb-thread-list"
-                tabIndex={status === value ? 0 : -1}
-                onClick={() => {
-                  setStatus(value);
-                  setSelected(null);
-                }}
-                onKeyDown={(event) => {
-                  let next: number;
-                  if (event.key === "ArrowRight")
-                    next = (index + 1) % statuses.length;
-                  else if (event.key === "ArrowLeft")
-                    next = (index + statuses.length - 1) % statuses.length;
-                  else if (event.key === "Home") next = 0;
-                  else if (event.key === "End") next = statuses.length - 1;
-                  else return;
-                  event.preventDefault();
-                  setStatus(statuses[next]);
-                  setSelected(null);
-                  document.getElementById(`gb-tab-${statuses[next]}`)?.focus();
-                }}
-              >
-                {t(value)}
-                <span>{tabCounts[value]}</span>
-              </button>
-            ))}
-          </nav>
+          <div className="gb-inbox-heading" id="gb-inbox-heading">
+            <span>{t("inbox")}</span><span>{items.length}</span>
+          </div>
           <div
             className="gb-cards"
             id="gb-thread-list"
-            role="tabpanel"
-            aria-labelledby={`gb-tab-${status}`}
+            role="region"
+            aria-labelledby="gb-inbox-heading"
             tabIndex={0}
           >
             {items.map((item) => (
@@ -686,19 +430,6 @@ export default function App() {
                   {item.subject || t("untitled")}
                 </span>
                 {item.snippet && <p>{item.snippet}</p>}
-                {(item.hasDraft || item.followUpAt) && (
-                  <footer>
-                    {item.hasDraft && (
-                      <FilePenLine size={14} aria-label={t("draft")} />
-                    )}
-                    {item.followUpAt && (
-                      <>
-                        <CalendarClock size={14} />
-                        {item.followUpAt}
-                      </>
-                    )}
-                  </footer>
-                )}
               </button>
             ))}
             {!items.length && (
@@ -711,11 +442,8 @@ export default function App() {
             <span aria-live="polite">
               {list.isFetching
                 ? t("loading")
-                : isTodoTab
-                  ? `${items.length} ${t("loaded")}`
-                  : `${items.length} ${t("boardThreads")}`}
+                : `${items.length} ${t("loaded")}`}
             </span>
-            {isTodoTab && (
               <nav className="gb-pager">
                 <button
                   aria-label={t("previous")}
@@ -739,7 +467,6 @@ export default function App() {
                   <ChevronRight size={16} />
                 </button>
               </nav>
-            )}
           </div>
         </section>
         {selected && account ? (

@@ -41,7 +41,7 @@ test('generic board batches metadata and persists only local notes/drafts, prese
  await api.edit(board.account,0,[{id:message.id,status:'reply',note:'Follow up'}],{id:message.id,value:{subject:'Re: Hello',body:'My draft'}});
  assert.deepEqual(saved.data.gmailBoard,{legacy:'untouched'});assert.equal(saved.data.emailBoard.schemaVersion,2);assert.ok(!JSON.stringify(saved).includes('private body'));
  assert.equal(saved.data.emailBoard.accounts[board.account][message.id].draft.body,'My draft');
- assert.ok(defs.has('listMessages')&&defs.has('readMessage'));assert.ok(!defs.has('readThread'));
+ assert.deepEqual([...defs.keys()],['getBoard','listMessages','readMessage','refreshMailbox']);assert.ok(!defs.has('readThread'));
 });
 test('credential rotation refreshes reads while retaining notes and drafts for the same mailbox',async()=>{
  const account=await api.profile();await api.list(account);await api.edit(account,0,[{id:message.id,note:'Keep'}]);

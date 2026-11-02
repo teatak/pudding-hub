@@ -1,6 +1,6 @@
 {
   "id": "teatak/pudding-hub/widgets/email-board",
-  "version": "1.0.0-preview.8",
+  "version": "1.0.0-preview.9",
   "preview": true,
   "channel": "preview",
   "title": {
@@ -14,14 +14,14 @@
     "fr": "Tableau des e-mails"
   },
   "description": {
-    "zh-CN": "连接 iCloud、Gmail 或自定义 IMAP/SMTP 邮箱，阅读邮件、整理本地分类、备注和回复草稿。",
-    "zh-TW": "連接 iCloud、Gmail 或自訂 IMAP/SMTP 信箱，閱讀郵件、整理本機分類、備註及回覆草稿。",
-    "en": "Read iCloud, Gmail or custom IMAP/SMTP mail and organize local cards, notes and reply drafts.",
-    "ja": "iCloud、Gmail、独自の IMAP/SMTP メールを読み、ローカルの分類・メモ・返信下書きを整理します。",
-    "ko": "iCloud, Gmail 또는 사용자 지정 IMAP/SMTP 메일을 읽고 로컬 분류, 메모와 답장 초안을 정리합니다.",
-    "es": "Lee correo de iCloud, Gmail o IMAP/SMTP personalizado y organiza categorías, notas y borradores locales.",
-    "de": "Lesen Sie iCloud-, Gmail- oder eigene IMAP/SMTP-Postfächer und verwalten Sie lokale Kategorien, Notizen und Entwürfe.",
-    "fr": "Lisez vos e-mails iCloud, Gmail ou IMAP/SMTP et organisez les catégories, notes et brouillons locaux."
+    "zh-CN": "连接常见邮箱或自定义 IMAP/SMTP，搜索收件箱、阅读邮件并同步已读状态。",
+    "zh-TW": "連接常見信箱或自訂 IMAP/SMTP，搜尋收件匣、閱讀郵件並同步已讀狀態。",
+    "en": "Connect common mail services or custom IMAP/SMTP, search your inbox, read mail and sync read status.",
+    "ja": "一般的なメールサービスや独自の IMAP/SMTP に接続し、受信トレイの検索、メールの閲覧、既読状態の同期を行えます。",
+    "ko": "일반 메일 서비스나 사용자 지정 IMAP/SMTP에 연결하여 받은편지함을 검색하고 메일을 읽으며 읽음 상태를 동기화합니다.",
+    "es": "Conecta servicios de correo o IMAP/SMTP personalizado, busca en la bandeja de entrada, lee mensajes y sincroniza su estado de lectura.",
+    "de": "Verbinden Sie Maildienste oder eigene IMAP/SMTP-Postfächer, durchsuchen und lesen Sie E-Mails und synchronisieren Sie den Lesestatus.",
+    "fr": "Connectez vos services de messagerie ou IMAP/SMTP, recherchez et lisez les e-mails, puis synchronisez leur état de lecture."
   },
   "requires": {
     "protocolVersion": 61,

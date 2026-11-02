@@ -12,7 +12,6 @@ import {
   updateCards,
   saveDraft,
   statuses,
-  updateSchema,
   type Update,
   type Card,
 } from "./model";
@@ -245,7 +244,6 @@ export type Mailbox = ReturnType<typeof createMailbox>;
 export function registerInterfaces(mail: Mailbox) {
   (pudding as typeof pudding & { setInstructions?: (text: string) => void }).setInstructions?.(t("instructions"));
   const account = { account: accountSchema };
-  const write = { ...account, expectedStorageVersion: z.number().int().min(0) };
   const wrap =
     <I, O>(run: (i: I, signal: AbortSignal) => Promise<O>) =>
     async (i: I, c: { signal: AbortSignal }) => {
@@ -292,65 +290,6 @@ export function registerInterfaces(mail: Mailbox) {
           i: { account: string; id: string },
           s,
         ) => mail.read(i.account, i.id, 0, 1, s),
-      ),
-    }),
-    pudding.defineInterface({
-      name: "updateCards",
-      description: t("descUpdate"),
-      input: z
-        .object({ ...write, updates: z.array(updateSchema).min(1).max(20) })
-        .strict(),
-      run: wrap(
-        (
-          i: {
-            account: string;
-            expectedStorageVersion: number;
-            updates: Update[];
-          },
-          s,
-        ) =>
-          mail.edit(
-            i.account,
-            i.expectedStorageVersion,
-            i.updates,
-            undefined,
-            s,
-          ),
-      ),
-    }),
-    pudding.defineInterface({
-      name: "saveReplyDraft",
-      description: t("descDraft"),
-      input: z
-        .object({
-          ...write,
-          id: idSchema,
-          draft: z
-            .object({
-              subject: z.string().max(500),
-              body: z.string().max(8000),
-            })
-            .strict()
-            .nullable(),
-        })
-        .strict(),
-      run: wrap(
-        (
-          i: {
-            account: string;
-            expectedStorageVersion: number;
-            id: string;
-            draft: Card["draft"];
-          },
-          s,
-        ) =>
-          mail.edit(
-            i.account,
-            i.expectedStorageVersion,
-            [],
-            { id: i.id, value: i.draft },
-            s,
-          ),
       ),
     }),
     pudding.defineInterface({

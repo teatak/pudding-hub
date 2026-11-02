@@ -22,8 +22,10 @@ if (!process.versions.electron) {
       <tr><td style="padding:0"><div id="card-two" style="height:60px;background:#fff;border-radius:24px"></div></td></tr>
       </tbody></table></body></html>`;
     const sdk = `export const useWidgetLocale=()=> 'en';
+      window.__interfaces=[];window.__writes=0;
+      window.__saved={version:7,data:{emailBoard:{schemaVersion:2,accounts:{['mb_'+'a'.repeat(64)]:{message_1:{status:'done',note:'Keep my existing note',followUpAt:null,draft:{subject:'Saved subject',body:'Saved draft'}}}}}}};
       const meta={id:'message_1',subject:'Email rendering fixture',from:'=?utf-8?q?Google_=E4=BD=BF=E7=94=A8=E6=8A=80=E5=B7=A7?= <sender@example.org>',to:'=?utf-8?B?5L2g5aW9?= <user@example.org>',date:'2026-11-02T00:00:00Z',unread:true};
-      export const pudding={locale:{read:()=> 'en'},storage:{read:async()=>({version:0,data:{}}),write:async()=>{throw Error('Unexpected storage write')},subscribe:()=>()=>{}},defineInterface:()=>()=>{},setInstructions:()=>{},
+      export const pudding={locale:{read:()=> 'en'},storage:{read:async()=>structuredClone(window.__saved),write:async()=>{window.__writes++;throw Error('Unexpected storage write')},subscribe:()=>()=>{}},defineInterface:d=>{window.__interfaces.push(d.name);return()=>{}},setInstructions:()=>{},
       action:async(name,p)=>({state:'succeeded',result:{data:{id:p.id,unread:false}}}),
       query:async(name)=>{if(name==='profile')return {data:{mailboxID:'mb_'+'a'.repeat(64),address:'user@example.org',configRevision:'fixture'}};if(name==='list')return {data:{messages:[meta],nextCursor:''}};if(name==='message')return {data:{...meta,text:'Plain alternative',html:${JSON.stringify(html)},attachments:[]}};throw Error(name)}};`;
     const built = await build({
@@ -68,8 +70,13 @@ if (!process.versions.electron) {
     await win.loadURL('email-fixture://runtime/widget.html');
     await wait(`!!document.querySelector('#gb-thread-list button')`);
     assert.equal(await js(`document.querySelector('.gb-card-top span').textContent`),'Google 使用技巧 <sender@example.org>');
+    assert.equal(await js(`document.querySelector('.gb-inbox-heading span').textContent`),'Inbox');
+    assert.equal(await js(`document.querySelectorAll('[role="tablist"]').length`),0);
+    assert.deepEqual(await js('window.__interfaces'),['getBoard','listMessages','readMessage','refreshMailbox']);
     await js(`document.querySelector('#gb-thread-list button').click()`);
     const doc='document';
+    assert.equal(await js(`document.querySelectorAll('.gb-form,select,textarea[maxlength="2000"]').length`),0);
+    assert.equal(await js(`[...document.querySelectorAll('button')].some(b=>b.textContent.includes('Organize & draft'))`),false);
     await wait(`!!document.querySelector('.gb-email-frame')`);
     await waitInner(`!!document.querySelector('#original-card')`);
     await waitInner(`document.querySelector('.avatar').naturalWidth===1`);
@@ -143,7 +150,9 @@ if (!process.versions.electron) {
     await waitInner(`!!document.querySelector('#original-card')`);
     assert.equal(await inner(`${doc}.defaultView.getComputedStyle(${doc}.documentElement).colorScheme`),'light');
     assert.deepEqual(await js('window.__runtimeErrors'),[],'rich/plain remounts must not trigger window runtime errors');
-    console.log('PASS: encoded names; default image loading; isolated original styles; continuous resize without body collapse or runtime errors; capped list width and subtle hover separator; declared spacer-image gaps; script removal; safe link forwarding; rich/plain toggle and dark host. Screenshot: '+out+'/rich.png');
+    assert.equal(await js('window.__writes'),0);
+    assert.deepEqual(await js(`window.__saved.data.emailBoard.accounts['mb_'+'a'.repeat(64)].message_1`),{status:'done',note:'Keep my existing note',followUpAt:null,draft:{subject:'Saved subject',body:'Saved draft'}});
+    console.log('PASS: inbox reading with legacy-status messages visible and existing notes/drafts untouched; readonly board interfaces; encoded names; default image loading; isolated original styles; continuous resize without body collapse or runtime errors; capped list width and subtle hover separator; declared spacer-image gaps; script removal; safe link forwarding; rich/plain toggle and dark host. Screenshot: '+out+'/rich.png');
     win.destroy();app.quit();
   }).catch(error=>{console.error(error);app.exit(1)});
 }

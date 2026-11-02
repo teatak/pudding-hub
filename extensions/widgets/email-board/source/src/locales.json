@@ -1,7 +1,7 @@
 {
   "ja": {
     "messages": {
-      "instructions": "Email Board reads the connected mailbox and organizes local cards and reply drafts. No seats, candidate join, readiness or event waiting is required. Start with getBoard to learn the account and storage version, then use listMessages and readMessage as needed. updateCards and saveReplyDraft modify Pudding storage only; they do not send email or change mailbox. Use the returned account and expectedStorageVersion for local writes and the latest widget stateVersion for interface calls. Stop when the user’s request is complete.",
+      "instructions": "Email Board currently focuses on searching and reading the connected inbox. Start with getBoard for the account, then call listMessages and readMessage as needed; refreshMailbox refreshes reads. Status, note and reply-draft editing are temporarily unavailable; existing local data is retained. Opening mail in the UI marks it read on the server; model reads remain read-only. No activity seats, joining or event waiting are needed. Finish when the user’s request is complete.",
       "copied": "コピーしました",
       "copyFailed": "コピーできません。テキストは選択されています。⌘C / Ctrl+C を押してください。",
       "messageTab": "メール",
@@ -62,18 +62,19 @@
       "duplicate": "各アイテムIDはバッチごとに1回のみ指定できます。",
       "batchSize": "1–20件のアイテムを選択してください。",
       "storageLimit": "ローカルメモと下書きが256 KiBの保存上限を超えています。下書きを短くするか削除してください。",
-      "descBoard": "Read the connected account, counts for the default inbox page and storageVersion. Connection is selected in the host toolbar. Board statuses, notes and drafts are local. Opening a message in the UI marks it read in the mailbox; model reads remain read-only. The board never sends mail.",
-      "descList": "Read a page of mailbox message summaries, with local status, followUpAt and hasDraft. q is plain inbox text (default empty); each page searches up to 5,000 UID positions, cursor is nextCursor from the previous page, limit 1–20. No bodies or drafts returned. Pass the exact account from getBoard; each account is independent.",
+      "descBoard": "Read the connected account, loadedCount for the default inbox page and storageVersion. Connection is selected in the host toolbar. The board currently provides inbox browsing and reading; local workflow editing is unavailable. Opening mail in the UI marks it read; model reads are read-only.",
+      "descList": "Read a page of inbox message summaries. q is plain inbox text (default empty); each page searches up to 5,000 UID positions, cursor is nextCursor from the previous page, limit 1–20. No bodies or drafts returned. Pass the exact account from getBoard; each account is independent.",
       "descRead": "Read a message and its local note/draft on demand. Pass account and id from listMessages. Plain text and optional untrusted HTML are each bounded to 64 KiB; truncated indicates an incomplete body. The UI displays sanitized HTML in an isolated document with sender scripts disabled and loads HTTPS images by default. Attachments expose metadata only.",
       "descUpdate": "Atomically update 1–20 previously read/listed messages in this account. status: todo/reply/followUp/done; note max 2000 characters; followUpAt YYYY-MM-DD or null to clear. Requires account and expectedStorageVersion from a read. Returns only changed IDs and storageVersion. Does not archive or label mailbox mail.",
       "descDraft": "Save a local reply draft (subject max 500, body max 8000 characters), or draft:null to remove it. Requires a previously read/listed message, account and expectedStorageVersion. Does not send mail or create a mailbox server draft.",
       "descRefresh": "Refresh mailbox reads for the connected account. Returns getBoard summary, not full mail. Pass the account from getBoard. Local statuses and drafts are retained.",
-      "attachments": "添付ファイル（名前のみ）"
+      "attachments": "添付ファイル（名前のみ）",
+      "inbox": "受信トレイ"
     }
   },
   "ko": {
     "messages": {
-      "instructions": "Email Board reads the connected mailbox and organizes local cards and reply drafts. No seats, candidate join, readiness or event waiting is required. Start with getBoard to learn the account and storage version, then use listMessages and readMessage as needed. updateCards and saveReplyDraft modify Pudding storage only; they do not send email or change mailbox. Use the returned account and expectedStorageVersion for local writes and the latest widget stateVersion for interface calls. Stop when the user’s request is complete.",
+      "instructions": "Email Board currently focuses on searching and reading the connected inbox. Start with getBoard for the account, then call listMessages and readMessage as needed; refreshMailbox refreshes reads. Status, note and reply-draft editing are temporarily unavailable; existing local data is retained. Opening mail in the UI marks it read on the server; model reads remain read-only. No activity seats, joining or event waiting are needed. Finish when the user’s request is complete.",
       "copied": "복사됨",
       "copyFailed": "복사할 수 없습니다. 텍스트가 선택되어 있습니다. ⌘C / Ctrl+C를 누르세요.",
       "messageTab": "메일",
@@ -134,18 +135,19 @@
       "duplicate": "각 항목 ID는 배치당 한 번만 나타날 수 있습니다.",
       "batchSize": "1–20개 항목을 선택하세요.",
       "storageLimit": "로컬 메모와 초안이 256 KiB 저장 한도를 초과했습니다. 초안을 줄이거나 지우세요.",
-      "descBoard": "Read the connected account, counts for the default inbox page and storageVersion. Connection is selected in the host toolbar. Board statuses, notes and drafts are local. Opening a message in the UI marks it read in the mailbox; model reads remain read-only. The board never sends mail.",
-      "descList": "Read a page of mailbox message summaries, with local status, followUpAt and hasDraft. q is plain inbox text (default empty); each page searches up to 5,000 UID positions, cursor is nextCursor from the previous page, limit 1–20. No bodies or drafts returned. Pass the exact account from getBoard; each account is independent.",
+      "descBoard": "Read the connected account, loadedCount for the default inbox page and storageVersion. Connection is selected in the host toolbar. The board currently provides inbox browsing and reading; local workflow editing is unavailable. Opening mail in the UI marks it read; model reads are read-only.",
+      "descList": "Read a page of inbox message summaries. q is plain inbox text (default empty); each page searches up to 5,000 UID positions, cursor is nextCursor from the previous page, limit 1–20. No bodies or drafts returned. Pass the exact account from getBoard; each account is independent.",
       "descRead": "Read a message and its local note/draft on demand. Pass account and id from listMessages. Plain text and optional untrusted HTML are each bounded to 64 KiB; truncated indicates an incomplete body. The UI displays sanitized HTML in an isolated document with sender scripts disabled and loads HTTPS images by default. Attachments expose metadata only.",
       "descUpdate": "Atomically update 1–20 previously read/listed messages in this account. status: todo/reply/followUp/done; note max 2000 characters; followUpAt YYYY-MM-DD or null to clear. Requires account and expectedStorageVersion from a read. Returns only changed IDs and storageVersion. Does not archive or label mailbox mail.",
       "descDraft": "Save a local reply draft (subject max 500, body max 8000 characters), or draft:null to remove it. Requires a previously read/listed message, account and expectedStorageVersion. Does not send mail or create a mailbox server draft.",
       "descRefresh": "Refresh mailbox reads for the connected account. Returns getBoard summary, not full mail. Pass the account from getBoard. Local statuses and drafts are retained.",
-      "attachments": "첨부파일 (이름만 표시)"
+      "attachments": "첨부파일 (이름만 표시)",
+      "inbox": "받은편지함"
     }
   },
   "es": {
     "messages": {
-      "instructions": "Email Board reads the connected mailbox and organizes local cards and reply drafts. No seats, candidate join, readiness or event waiting is required. Start with getBoard to learn the account and storage version, then use listMessages and readMessage as needed. updateCards and saveReplyDraft modify Pudding storage only; they do not send email or change mailbox. Use the returned account and expectedStorageVersion for local writes and the latest widget stateVersion for interface calls. Stop when the user’s request is complete.",
+      "instructions": "Email Board currently focuses on searching and reading the connected inbox. Start with getBoard for the account, then call listMessages and readMessage as needed; refreshMailbox refreshes reads. Status, note and reply-draft editing are temporarily unavailable; existing local data is retained. Opening mail in the UI marks it read on the server; model reads remain read-only. No activity seats, joining or event waiting are needed. Finish when the user’s request is complete.",
       "copied": "Copiado",
       "copyFailed": "Copia no disponible. El texto está seleccionado; pulsa ⌘C / Ctrl+C.",
       "messageTab": "Mensajes",
@@ -206,18 +208,19 @@
       "duplicate": "Cada ID de elemento puede aparecer solo una vez por lote.",
       "batchSize": "Elige 1–20 elementos.",
       "storageLimit": "Las notas y los borradores locales superan el límite de almacenamiento de 256 KiB. Acorta o vacía un borrador.",
-      "descBoard": "Read the connected account, counts for the default inbox page and storageVersion. Connection is selected in the host toolbar. Board statuses, notes and drafts are local. Opening a message in the UI marks it read in the mailbox; model reads remain read-only. The board never sends mail.",
-      "descList": "Read a page of mailbox message summaries, with local status, followUpAt and hasDraft. q is plain inbox text (default empty); each page searches up to 5,000 UID positions, cursor is nextCursor from the previous page, limit 1–20. No bodies or drafts returned. Pass the exact account from getBoard; each account is independent.",
+      "descBoard": "Read the connected account, loadedCount for the default inbox page and storageVersion. Connection is selected in the host toolbar. The board currently provides inbox browsing and reading; local workflow editing is unavailable. Opening mail in the UI marks it read; model reads are read-only.",
+      "descList": "Read a page of inbox message summaries. q is plain inbox text (default empty); each page searches up to 5,000 UID positions, cursor is nextCursor from the previous page, limit 1–20. No bodies or drafts returned. Pass the exact account from getBoard; each account is independent.",
       "descRead": "Read a message and its local note/draft on demand. Pass account and id from listMessages. Plain text and optional untrusted HTML are each bounded to 64 KiB; truncated indicates an incomplete body. The UI displays sanitized HTML in an isolated document with sender scripts disabled and loads HTTPS images by default. Attachments expose metadata only.",
       "descUpdate": "Atomically update 1–20 previously read/listed messages in this account. status: todo/reply/followUp/done; note max 2000 characters; followUpAt YYYY-MM-DD or null to clear. Requires account and expectedStorageVersion from a read. Returns only changed IDs and storageVersion. Does not archive or label mailbox mail.",
       "descDraft": "Save a local reply draft (subject max 500, body max 8000 characters), or draft:null to remove it. Requires a previously read/listed message, account and expectedStorageVersion. Does not send mail or create a mailbox server draft.",
       "descRefresh": "Refresh mailbox reads for the connected account. Returns getBoard summary, not full mail. Pass the account from getBoard. Local statuses and drafts are retained.",
-      "attachments": "Adjuntos (solo nombres)"
+      "attachments": "Adjuntos (solo nombres)",
+      "inbox": "Bandeja de entrada"
     }
   },
   "de": {
     "messages": {
-      "instructions": "Email Board reads the connected mailbox and organizes local cards and reply drafts. No seats, candidate join, readiness or event waiting is required. Start with getBoard to learn the account and storage version, then use listMessages and readMessage as needed. updateCards and saveReplyDraft modify Pudding storage only; they do not send email or change mailbox. Use the returned account and expectedStorageVersion for local writes and the latest widget stateVersion for interface calls. Stop when the user’s request is complete.",
+      "instructions": "Email Board currently focuses on searching and reading the connected inbox. Start with getBoard for the account, then call listMessages and readMessage as needed; refreshMailbox refreshes reads. Status, note and reply-draft editing are temporarily unavailable; existing local data is retained. Opening mail in the UI marks it read on the server; model reads remain read-only. No activity seats, joining or event waiting are needed. Finish when the user’s request is complete.",
       "copied": "Kopiert",
       "copyFailed": "Kopieren nicht verfügbar. Der Text ist ausgewählt; drücke ⌘C / Ctrl+C.",
       "messageTab": "Nachrichten",
@@ -278,18 +281,19 @@
       "duplicate": "Jede Element-ID darf pro Stapel nur einmal vorkommen.",
       "batchSize": "Wähle 1–20 Elemente.",
       "storageLimit": "Lokale Notizen und Entwürfe überschreiten das Speicherlimit von 256 KiB. Kürze oder lösche einen Entwurf.",
-      "descBoard": "Read the connected account, counts for the default inbox page and storageVersion. Connection is selected in the host toolbar. Board statuses, notes and drafts are local. Opening a message in the UI marks it read in the mailbox; model reads remain read-only. The board never sends mail.",
-      "descList": "Read a page of mailbox message summaries, with local status, followUpAt and hasDraft. q is plain inbox text (default empty); each page searches up to 5,000 UID positions, cursor is nextCursor from the previous page, limit 1–20. No bodies or drafts returned. Pass the exact account from getBoard; each account is independent.",
+      "descBoard": "Read the connected account, loadedCount for the default inbox page and storageVersion. Connection is selected in the host toolbar. The board currently provides inbox browsing and reading; local workflow editing is unavailable. Opening mail in the UI marks it read; model reads are read-only.",
+      "descList": "Read a page of inbox message summaries. q is plain inbox text (default empty); each page searches up to 5,000 UID positions, cursor is nextCursor from the previous page, limit 1–20. No bodies or drafts returned. Pass the exact account from getBoard; each account is independent.",
       "descRead": "Read a message and its local note/draft on demand. Pass account and id from listMessages. Plain text and optional untrusted HTML are each bounded to 64 KiB; truncated indicates an incomplete body. The UI displays sanitized HTML in an isolated document with sender scripts disabled and loads HTTPS images by default. Attachments expose metadata only.",
       "descUpdate": "Atomically update 1–20 previously read/listed messages in this account. status: todo/reply/followUp/done; note max 2000 characters; followUpAt YYYY-MM-DD or null to clear. Requires account and expectedStorageVersion from a read. Returns only changed IDs and storageVersion. Does not archive or label mailbox mail.",
       "descDraft": "Save a local reply draft (subject max 500, body max 8000 characters), or draft:null to remove it. Requires a previously read/listed message, account and expectedStorageVersion. Does not send mail or create a mailbox server draft.",
       "descRefresh": "Refresh mailbox reads for the connected account. Returns getBoard summary, not full mail. Pass the account from getBoard. Local statuses and drafts are retained.",
-      "attachments": "Anhänge (nur Namen)"
+      "attachments": "Anhänge (nur Namen)",
+      "inbox": "Posteingang"
     }
   },
   "fr": {
     "messages": {
-      "instructions": "Email Board reads the connected mailbox and organizes local cards and reply drafts. No seats, candidate join, readiness or event waiting is required. Start with getBoard to learn the account and storage version, then use listMessages and readMessage as needed. updateCards and saveReplyDraft modify Pudding storage only; they do not send email or change mailbox. Use the returned account and expectedStorageVersion for local writes and the latest widget stateVersion for interface calls. Stop when the user’s request is complete.",
+      "instructions": "Email Board currently focuses on searching and reading the connected inbox. Start with getBoard for the account, then call listMessages and readMessage as needed; refreshMailbox refreshes reads. Status, note and reply-draft editing are temporarily unavailable; existing local data is retained. Opening mail in the UI marks it read on the server; model reads remain read-only. No activity seats, joining or event waiting are needed. Finish when the user’s request is complete.",
       "copied": "Copié",
       "copyFailed": "Copie indisponible. Le texte est sélectionné ; appuyez sur ⌘C / Ctrl+C.",
       "messageTab": "Messages",
@@ -350,13 +354,14 @@
       "duplicate": "Chaque ID d’élément ne peut apparaître qu’une seule fois par lot.",
       "batchSize": "Choisissez 1–20 éléments.",
       "storageLimit": "Les notes et brouillons locaux dépassent la limite de stockage de 256 KiB. Raccourcissez ou effacez un brouillon.",
-      "descBoard": "Read the connected account, counts for the default inbox page and storageVersion. Connection is selected in the host toolbar. Board statuses, notes and drafts are local. Opening a message in the UI marks it read in the mailbox; model reads remain read-only. The board never sends mail.",
-      "descList": "Read a page of mailbox message summaries, with local status, followUpAt and hasDraft. q is plain inbox text (default empty); each page searches up to 5,000 UID positions, cursor is nextCursor from the previous page, limit 1–20. No bodies or drafts returned. Pass the exact account from getBoard; each account is independent.",
+      "descBoard": "Read the connected account, loadedCount for the default inbox page and storageVersion. Connection is selected in the host toolbar. The board currently provides inbox browsing and reading; local workflow editing is unavailable. Opening mail in the UI marks it read; model reads are read-only.",
+      "descList": "Read a page of inbox message summaries. q is plain inbox text (default empty); each page searches up to 5,000 UID positions, cursor is nextCursor from the previous page, limit 1–20. No bodies or drafts returned. Pass the exact account from getBoard; each account is independent.",
       "descRead": "Read a message and its local note/draft on demand. Pass account and id from listMessages. Plain text and optional untrusted HTML are each bounded to 64 KiB; truncated indicates an incomplete body. The UI displays sanitized HTML in an isolated document with sender scripts disabled and loads HTTPS images by default. Attachments expose metadata only.",
       "descUpdate": "Atomically update 1–20 previously read/listed messages in this account. status: todo/reply/followUp/done; note max 2000 characters; followUpAt YYYY-MM-DD or null to clear. Requires account and expectedStorageVersion from a read. Returns only changed IDs and storageVersion. Does not archive or label mailbox mail.",
       "descDraft": "Save a local reply draft (subject max 500, body max 8000 characters), or draft:null to remove it. Requires a previously read/listed message, account and expectedStorageVersion. Does not send mail or create a mailbox server draft.",
       "descRefresh": "Refresh mailbox reads for the connected account. Returns getBoard summary, not full mail. Pass the account from getBoard. Local statuses and drafts are retained.",
-      "attachments": "Pièces jointes (noms uniquement)"
+      "attachments": "Pièces jointes (noms uniquement)",
+      "inbox": "Boîte de réception"
     }
   }
 }
