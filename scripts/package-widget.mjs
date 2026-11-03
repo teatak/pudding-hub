@@ -40,12 +40,14 @@ export async function sourceFiles(root) {
 // Keep the original artwork self-contained in both catalog and installed item.
 export async function widgetIcon(dir, icon) {
   if (icon === undefined) return undefined;
-  if (typeof icon !== "string" || !/^\.\/assets\/[a-zA-Z0-9_-]+\.svg$/.test(icon))
+  const svg = typeof icon === "string" ? icon : icon?.svg;
+  if (typeof svg !== "string" || !/^\.\/assets\/[a-zA-Z0-9_-]+\.svg$/.test(svg))
     throw new Error("Widget icon must be ./assets/<name>.svg");
-  const file = path.join(await fs.realpath(dir), icon);
+  const file = path.join(await fs.realpath(dir), svg);
   if (!(await fs.lstat(file)).isFile() || await fs.realpath(file) !== file)
     throw new Error("Widget icon must be a local file without symlinks");
-  return "data:image/svg+xml;base64," + (await fs.readFile(file)).toString("base64");
+  const embedded = "data:image/svg+xml;base64," + (await fs.readFile(file)).toString("base64");
+  return typeof icon === "string" ? embedded : { ...icon, svg: embedded };
 }
 
 export async function packageWidget(

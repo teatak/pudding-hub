@@ -338,3 +338,5 @@ pnpm package-plugins
 已安装的不兼容插件仍显示在列表中，但不能启用或执行，并提示更新。
 新正式包发布到 `extensions/plugins/`，不再更新旧目录。打包时设置
 `PUDDING_CORE_DIR` 指向匹配的 Core 源码目录。
+
+插件与小组件共享图标字段定义：`color` 仅用于单色图形；不设置时保留原始多色、渐变和背景。主题颜色只提供 light 或 dark 时，另一种主题沿用它。颜色接受十六进制、颜色名、RGB、HSL、OKLCH 等 CSS 颜色字面值，不支持 URL、CSS 变量或声明。圆角和显示尺寸由 Desktop 决定，加载失败显示默认图标。

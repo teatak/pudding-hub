@@ -341,3 +341,5 @@ connections and settings. Installed incompatible plugins remain visible, disable
 at execution time, and show an update instruction. New formal releases go to
 `extensions/plugins/`; the legacy catalog is not updated. Configure
 `PUDDING_CORE_DIR` to the matching Core checkout when packaging.
+
+Plugins and widgets share icon fields. Use `color` only for monochrome glyphs; omit it to retain original colors, gradients and backgrounds. A missing light/dark variant reuses the supplied variant. Colors accept literal hex, named, RGB, HSL, OKLCH and other CSS color-function values, not URLs, CSS variables or declarations. Desktop owns size and corner shape; failed loads show a fallback icon.

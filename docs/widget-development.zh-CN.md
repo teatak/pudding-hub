@@ -187,3 +187,24 @@ Desktop 的 widget-hub smoke 可通过 PUDDING_HUB_DIR 读取本地源码。运�
 更新不会覆盖本地修改过的源码。通过校验并启用的新版本成为默认版本，已经打开的页面仍运行原版本，重载后才切换。storage 保留，state 按页面和源码版本区分。安装条目的图标由包提供，名称的语言切换由宿主管理。
 
 正式包、预览包、开发包与目录清单只写入 `extensions/widgets/`。根目录 `widgets/` 已停止维护，只保留冻结的历史文件；禁止向旧目录生成新包或复制镜像。兼容声明遵循 [SDK 版本规则](widget-sdk.zh-CN.md#sdk-版本兼容)，不声明最低 Pudding 版本。
+
+## 图标定义
+
+图标沿用插件的 `svg`、可选 `color` 和可选 `background` 定义。旧的路径字符串继续支持，现有图案不需要重画：
+
+```json
+"icon": "./assets/icon.svg"
+```
+
+新对象格式的示例：
+
+```json
+"icon": {
+  "svg": "./assets/icon.svg",
+  "background": { "light": "#FFFFFF", "dark": "#202124" }
+}
+```
+
+只提供 `svg` 时保留 SVG 自带的配色、渐变和背景。`color` 用于需要统一着色的单色图形，声明后按图片蒙版显示；多彩图标不设置它。`background` 用于由宿主绘制底色的图标，不需要给已有完整背景的图标重复声明。颜色可仅提供一种主题，另一主题沿用它；支持十六进制、颜色名、RGB、HSL、OKLCH 等 CSS 颜色字面值，不支持 URL、CSS 变量和 CSS 声明。
+
+圆角和显示尺寸由 Desktop 决定。打包后 `svg` 会嵌入为自包含图片，字符串和对象形状会贯通注册表、安装、升级和编辑副本。使用对象格式的新发布包须设置 `requires.protocolVersion` 至少为 **62**；历史发布包保持原样。

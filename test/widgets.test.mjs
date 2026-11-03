@@ -122,6 +122,9 @@ test("packages use Core validation and releases cannot be overwritten", async ()
       widgetIcon(path.join(root, "extensions/widgets/shared-todo"), "../icon.svg"),
       /Widget icon/,
     );
+    const structured = { svg: "./assets/icon.svg", color: { dark: "#FFFFFF" }, background: { light: "#2563EB" } };
+    assert.deepEqual(await widgetIcon(path.join(root, "extensions/widgets/shared-todo"), structured), { ...structured, svg: one.pkg.icon });
+    await assert.rejects(widgetIcon(path.join(root, "extensions/widgets/shared-todo"), { svg: "https://bad.test/icon.svg" }), /Widget icon/);
     await fs.appendFile(
       path.join(root, "extensions/widgets/shared-todo/source/src/App.tsx"),
       "\n// local edit\n",
@@ -160,6 +163,17 @@ test("packages use Core validation and releases cannot be overwritten", async ()
     assert.equal(registry.items[0].releases[1].packageHash, one.packageHash);
     assert.equal(await fs.readFile(path.join(legacy, "registry.json"), "utf8"), legacyCatalog);
     assert.deepEqual(await fs.readdir(legacy), ["registry.json"]);
+    const structuredManifest = { ...manifest, version: "1.1.0-preview.2", icon: structured, requires: { ...manifest.requires, protocolVersion: 62 } };
+    await fs.writeFile(manifestPath, JSON.stringify(structuredManifest));
+    const themed = await packageWidget("shared-todo", { root });
+    assert.deepEqual(themed.pkg.icon, { ...structured, svg: one.pkg.icon });
+    registry = JSON.parse(await fs.readFile(path.join(root, "extensions/widgets/registry.json"), "utf8"));
+    assert.deepEqual(registry.items[0].icon, themed.pkg.icon);
+    assert.equal(registry.items[0].releases.at(-1).packageHash, one.packageHash, "legacy release remains unchanged");
+    await fs.writeFile(manifestPath, JSON.stringify({ ...structuredManifest, version: "1.1.0-preview.3", icon: { ...structured, color: { light: "url(https://bad.test)" } } }));
+    await assert.rejects(packageWidget("shared-todo", { root }), /invalid icon color/);
+    await fs.writeFile(manifestPath, JSON.stringify({ ...structuredManifest, version: "1.1.0-preview.3", requires: manifest.requires }));
+    await assert.rejects(packageWidget("shared-todo", { root }), /require protocol 62/);
     await fs.writeFile(
       manifestPath,
       JSON.stringify({ ...manifest, preview: "true" }),

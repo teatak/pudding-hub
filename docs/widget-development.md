@@ -187,3 +187,28 @@ Repeated installation opens the original item. A model's first edit of a downloa
 Updates do not overwrite locally edited source. A validated, activated version becomes the default, while existing pages continue their original revision until reloaded. Storage persists; state is scoped to its page and source revision. The package supplies installed icons, and the host manages localized item names.
 
 Formal, preview and development packages and catalogs are written only to `extensions/widgets/`. The root `widgets/` directory is retired and retains frozen historical files only; never generate new packages there or copy release mirrors into it. Follow the [SDK version rules](widget-sdk.md#sdk-version-compatibility), without a minimum Pudding version.
+
+## Icon definitions
+
+Widgets share the plugin `svg`, optional `color` and optional `background`
+definition. Existing `"icon": "./assets/icon.svg"` strings remain supported and
+require no artwork changes. The object form is:
+
+```json
+"icon": {
+  "svg": "./assets/icon.svg",
+  "background": { "light": "#FFFFFF", "dark": "#202124" }
+}
+```
+
+An SVG-only object preserves the original colors, gradients and background.
+Use `color` only to request monochrome image-mask rendering; leave it unset for
+multicolor artwork. `background` is optional and should not duplicate an existing
+tile painted inside the SVG. A missing light/dark variant reuses the supplied
+variant. Colors accept literal hex, named, RGB, HSL, OKLCH and other CSS color-function values, not URLs,
+CSS variables or declarations. Desktop chooses display size and corner shape.
+
+The packager embeds the SVG as a self-contained image. The catalog, installed
+item, upgrade and editing copy retain the string or object shape. New releases
+using object icons require `requires.protocolVersion` **62** or later; existing
+published packages remain unchanged.
