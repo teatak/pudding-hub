@@ -8,7 +8,7 @@
     "zh-TW": "Todoist",
     "en": "Todoist"
   },
-  "version": "1.0.1",
+  "version": "1.0.2",
   "targets": [
     "desktop",
     "mobile"
@@ -19,7 +19,15 @@
     "en": "Connect Todoist to review, create, update, and complete tasks, and organize plans by project, date, priority, and label."
   },
   "icon": {
-    "svg": "./assets/icon.svg"
+    "svg": "./assets/icon.svg",
+    "color": {
+      "light": "#FFFFFF",
+      "dark": "#FFFFFF"
+    },
+    "background": {
+      "light": "#DE483A",
+      "dark": "#B9382D"
+    }
   },
   "files": [
     "plugin.yaml",
@@ -27,9 +35,9 @@
     "skills/planning/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.1/manifest.json",
-  "package": "./releases/1.0.1/todoist.pudding-plugin.json",
-  "package_sha256": "3cc3cad0860f212b6860a64e0699fc20df6c643080050377664f446d0f46a7d6",
+  "manifest": "./releases/1.0.2/manifest.json",
+  "package": "./releases/1.0.2/todoist.pudding-plugin.json",
+  "package_sha256": "a9bce5bad5b575bb6c5152336aa5fd36c0ba95ffba05487a707fd207f168c566",
   "requires": {
     "pudding_plugin": "^1.0.0"
   },

@@ -1,0 +1,28 @@
+{
+  "kind": "pudding.plugin.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/plugins/jira",
+  "name": "jira",
+  "title": {
+    "zh-CN": "Jira",
+    "zh-TW": "Jira",
+    "en": "Jira"
+  },
+  "version": "1.0.2",
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "color": {
+      "light": "#FFFFFF",
+      "dark": "#FFFFFF"
+    },
+    "background": {
+      "light": "#0C66E4",
+      "dark": "#0A52B8"
+    }
+  },
+  "package": "./jira.pudding-plugin.json",
+  "package_sha256": "0f6ebcd273e62ed4f31a91db80558e7db816f2350ba5101d7683f2299af1efb7",
+  "requires": {
+    "pudding_plugin": "^1.0.0"
+  }
+}

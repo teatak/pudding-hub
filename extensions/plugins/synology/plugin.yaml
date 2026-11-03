@@ -1,6 +1,6 @@
 id: synology
 name: Synology NAS
-version: 1.1.0-preview.1
+version: 1.1.0-preview.2
 description: Access Synology DiskStation Manager (DSM) File Station to list shares, browse directories, search files, inspect metadata, and download files through the Web API.
 auth:
   required: true
@@ -57,6 +57,9 @@ connection:
           name: SynoToken
 icon:
   svg: assets/icon.svg
+  background:
+    light: "#0284C7"
+    dark: "#0369A1"
 endpoints:
   synology_webapi:
     kind: rest

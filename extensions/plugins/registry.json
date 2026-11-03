@@ -551,7 +551,7 @@
         "en": "Connect the Jira Cloud REST API for projects, issues, JQL search, comments, transitions, boards, and sprints."
       },
       "icon": {
-        "svg": "./jira/assets/icon.svg",
+        "svg": "./jira/releases/1.0.2/assets/icon.svg",
         "color": {
           "light": "#FFFFFF",
           "dark": "#FFFFFF"
@@ -561,20 +561,30 @@
           "dark": "#0A52B8"
         }
       },
-      "icon_sha256": "77aa48505446625403c5b8a3f393139074e042b61752298f9fc578d4697fc38c",
+      "icon_sha256": "cbe96d18866402d3a69f955472ac91a6d39bf77386e12561ae8b5af4c93083ea",
       "tags": [
         "jira",
         "issues",
         "projects"
       ],
-      "version": "1.0.1",
-      "manifest": "./jira/releases/1.0.1/manifest.json",
-      "package": "./jira/releases/1.0.1/jira.pudding-plugin.json",
-      "package_sha256": "639351ce6b1fad1eaa306eaa1833ee87d39d60bcaa7ee2b893096bec0473a6e1",
+      "version": "1.0.2",
+      "manifest": "./jira/releases/1.0.2/manifest.json",
+      "package": "./jira/releases/1.0.2/jira.pudding-plugin.json",
+      "package_sha256": "0f6ebcd273e62ed4f31a91db80558e7db816f2350ba5101d7683f2299af1efb7",
       "requires": {
         "pudding_plugin": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.2",
+          "manifest": "./jira/releases/1.0.2/manifest.json",
+          "package": "./jira/releases/1.0.2/jira.pudding-plugin.json",
+          "package_sha256": "0f6ebcd273e62ed4f31a91db80558e7db816f2350ba5101d7683f2299af1efb7",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "released_at": "2026-11-03"
+        },
         {
           "version": "1.0.1",
           "manifest": "./jira/releases/1.0.1/manifest.json",
@@ -765,13 +775,13 @@
         "en": "Work directly with a local Obsidian vault opened as a Pudding Project to search notes and backlinks, organize tags, and safely create or edit Markdown notes."
       },
       "icon": {
-        "svg": "./obsidian/assets/icon.svg",
+        "svg": "./obsidian/releases/1.0.1/assets/icon.svg",
         "background": {
           "light": "#F3F0FF",
           "dark": "#20182D"
         }
       },
-      "icon_sha256": "355116ed30d4816d2e68694c2829a767ea1ff18314cd106ef61224a333f525af",
+      "icon_sha256": "15cbdf40b022a73e8fc2796e15677a383b010eb86d7e861ebae5b5b6102dd6eb",
       "tags": [
         "notes",
         "knowledge",
@@ -779,14 +789,24 @@
         "local",
         "obsidian"
       ],
-      "version": "1.0.0",
-      "manifest": "./obsidian/releases/1.0.0/manifest.json",
-      "package": "./obsidian/releases/1.0.0/obsidian.pudding-plugin.json",
-      "package_sha256": "09397266c9c02f04876909584fd84010d77fc826598127488ac7fbf7d79c4c64",
+      "version": "1.0.1",
+      "manifest": "./obsidian/releases/1.0.1/manifest.json",
+      "package": "./obsidian/releases/1.0.1/obsidian.pudding-plugin.json",
+      "package_sha256": "95395ccb7577f4043b77c1705d52c58ac1665d5ef26700e6680ed6be4ed3bc94",
       "requires": {
         "pudding_plugin": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.1",
+          "manifest": "./obsidian/releases/1.0.1/manifest.json",
+          "package": "./obsidian/releases/1.0.1/obsidian.pudding-plugin.json",
+          "package_sha256": "95395ccb7577f4043b77c1705d52c58ac1665d5ef26700e6680ed6be4ed3bc94",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "released_at": "2026-11-03"
+        },
         {
           "version": "1.0.0",
           "manifest": "./obsidian/releases/1.0.0/manifest.json",
@@ -901,9 +921,13 @@
         "en": "Connect a Synology NAS to browse shared folders, search files and metadata, and download files through the File Station API."
       },
       "icon": {
-        "svg": "./synology/assets/icon.svg"
+        "svg": "./synology/releases/1.1.0-preview.2/assets/icon.svg",
+        "background": {
+          "light": "#0284C7",
+          "dark": "#0369A1"
+        }
       },
-      "icon_sha256": "a53ca9697f2806ac01fe064fb4bed757fd4fc798f01f89ae9458932ada22989f",
+      "icon_sha256": "bea7f5fe0adefb6d60ba30ae6389d065e8d3becfa9c4c4118b90625820673616",
       "tags": [
         "nas",
         "storage",
@@ -912,6 +936,18 @@
         "self-hosted"
       ],
       "releases": [
+        {
+          "version": "1.1.0-preview.2",
+          "manifest": "./synology/releases/1.1.0-preview.2/manifest.json",
+          "package": "./synology/releases/1.1.0-preview.2/synology.pudding-plugin.json",
+          "package_sha256": "7d7e759df23df1efd23c527a98720866ac10ffe1c81610125379d96f445cc220",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "released_at": "2026-11-03",
+          "channel": "preview",
+          "preview": true
+        },
         {
           "version": "1.1.0-preview.1",
           "manifest": "./synology/releases/1.1.0-preview.1/manifest.json",
@@ -940,9 +976,17 @@
         "en": "Connect Todoist to review, create, update, and complete tasks, and organize plans by project, date, priority, and label."
       },
       "icon": {
-        "svg": "./todoist/assets/icon.svg"
+        "svg": "./todoist/releases/1.0.2/assets/icon.svg",
+        "color": {
+          "light": "#FFFFFF",
+          "dark": "#FFFFFF"
+        },
+        "background": {
+          "light": "#DE483A",
+          "dark": "#B9382D"
+        }
       },
-      "icon_sha256": "e220c9dc90d0485861b6e2716b8a9724725feb26f8aa726512a751069f9ff139",
+      "icon_sha256": "1b9fd42850feb1c36f3cba062b09d4cc158e56669803dd06a3caeedccfb10dc8",
       "targets": [
         "desktop",
         "mobile"
@@ -953,14 +997,28 @@
         "planning",
         "todoist"
       ],
-      "version": "1.0.1",
-      "manifest": "./todoist/releases/1.0.1/manifest.json",
-      "package": "./todoist/releases/1.0.1/todoist.pudding-plugin.json",
-      "package_sha256": "3cc3cad0860f212b6860a64e0699fc20df6c643080050377664f446d0f46a7d6",
+      "version": "1.0.2",
+      "manifest": "./todoist/releases/1.0.2/manifest.json",
+      "package": "./todoist/releases/1.0.2/todoist.pudding-plugin.json",
+      "package_sha256": "a9bce5bad5b575bb6c5152336aa5fd36c0ba95ffba05487a707fd207f168c566",
       "requires": {
         "pudding_plugin": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.2",
+          "manifest": "./todoist/releases/1.0.2/manifest.json",
+          "package": "./todoist/releases/1.0.2/todoist.pudding-plugin.json",
+          "package_sha256": "a9bce5bad5b575bb6c5152336aa5fd36c0ba95ffba05487a707fd207f168c566",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "targets": [
+            "desktop",
+            "mobile"
+          ],
+          "released_at": "2026-11-03"
+        },
         {
           "version": "1.0.1",
           "manifest": "./todoist/releases/1.0.1/manifest.json",

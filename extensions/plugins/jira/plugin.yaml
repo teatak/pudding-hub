@@ -1,6 +1,6 @@
 id: jira
 name: Jira
-version: 1.0.1
+version: 1.0.2
 description: Access Jira Cloud projects, issues, boards, sprints, JQL search, comments, transitions, and user work through the Atlassian REST API gateway.
 auth:
   required: true
