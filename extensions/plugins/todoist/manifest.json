@@ -6,7 +6,12 @@
   "title": {
     "zh-CN": "Todoist",
     "zh-TW": "Todoist",
-    "en": "Todoist"
+    "en": "Todoist",
+    "ja": "Todoist",
+    "ko": "Todoist",
+    "es": "Todoist",
+    "de": "Todoist",
+    "fr": "Todoist"
   },
   "version": "1.0.2",
   "targets": [
@@ -16,7 +21,12 @@
   "description": {
     "zh-CN": "连接 Todoist，查看、创建、修改和完成任务，并按项目、日期、优先级和标签整理计划。",
     "zh-TW": "連接 Todoist，查看、建立、修改和完成任務，並按專案、日期、優先順序和標籤整理計畫。",
-    "en": "Connect Todoist to review, create, update, and complete tasks, and organize plans by project, date, priority, and label."
+    "en": "Connect Todoist to review, create, update, and complete tasks, and organize plans by project, date, priority, and label.",
+    "ja": "Todoist に接続し、タスクの確認、作成、更新、完了、およびプロジェクト、日付、優先度、ラベルによる計画の整理を行います。",
+    "ko": "Todoist에 연결하여 작업을 검토, 생성, 업데이트 및 완료하고 프로젝트, 날짜, 우선순위 및 라벨별로 계획을 관리합니다.",
+    "es": "Conecta Todoist para revisar, crear, actualizar y completar tareas, y organizar planes por proyecto, fecha, prioridad y etiqueta.",
+    "de": "Verbinden Sie Todoist, um Aufgaben anzuzeigen, zu erstellen, zu aktualisieren und abzuschließen sowie Pläne nach Projekt, Datum, Priorität und Label zu organisieren.",
+    "fr": "Connectez Todoist pour consulter, créer, mettre à jour et terminer des tâches, et organiser vos plans par projet, date, priorité et étiquette."
   },
   "icon": {
     "svg": "./assets/icon.svg",

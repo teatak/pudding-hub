@@ -6,13 +6,23 @@
   "title": {
     "zh-CN": "Immich",
     "zh-TW": "Immich",
-    "en": "Immich"
+    "en": "Immich",
+    "ja": "Immich",
+    "ko": "Immich",
+    "es": "Immich",
+    "de": "Immich",
+    "fr": "Immich"
   },
   "version": "1.0.0",
   "description": {
     "zh-CN": "连接自托管 Immich，在照片和视频中进行智能搜索、人物与地点查找、OCR 和元数据筛选，并将缩略图展示到小组件。",
     "zh-TW": "連接自架 Immich，在照片和影片中進行智慧搜尋、人物與地點查找、OCR 和中繼資料篩選，並將縮圖展示到小工具。",
-    "en": "Connect a self-hosted Immich library for smart photo and video search, people and place lookup, OCR and metadata filtering, with thumbnail results on a widget."
+    "en": "Connect a self-hosted Immich library for smart photo and video search, people and place lookup, OCR and metadata filtering, with thumbnail results on a widget.",
+    "ja": "セルフホストされた Immich ライブラリに接続し、写真や動画のスマート検索、人物や場所の検索、OCR やメタデータフィルタリングを行い、ウィジェットにサムネイルを表示します。",
+    "ko": "자체 호스팅 Immich 라이브러리에 연결하여 사진과 동영상의 스마트 검색, 인물 및 장소 찾기, OCR 및 메타데이터 필터링을 수행하고 위젯에 썸네일을 표시합니다.",
+    "es": "Conecta una biblioteca Immich autohospedada para búsqueda inteligente de fotos y videos, personas y lugares, OCR y filtros de metadatos, con miniaturas en un widget.",
+    "de": "Verbinden Sie eine selbst gehostete Immich-Bibliothek für intelligente Foto- und Videosuche, Personen- und Ortssuche, OCR und Metadatenfilterung mit Miniaturansichten im Widget.",
+    "fr": "Connectez une bibliothèque Immich auto-hébergée pour la recherche intelligente de photos et vidéos, personnes et lieux, l'OCR et le filtrage des métadonnées, avec aperçus miniatures dans un widget."
   },
   "icon": {
     "svg": "./assets/icon.svg",

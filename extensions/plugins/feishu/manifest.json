@@ -6,13 +6,23 @@
   "title": {
     "zh-CN": "飞书",
     "zh-TW": "飛書",
-    "en": "Feishu"
+    "en": "Feishu",
+    "ja": "Feishu",
+    "ko": "Feishu",
+    "es": "Feishu",
+    "de": "Feishu",
+    "fr": "Feishu"
   },
   "version": "1.0.0",
   "description": {
     "zh-CN": "连接飞书自建应用，读取和编辑新版云文档，并查询多维表格和机器人可见的会话消息。",
     "zh-TW": "連接飛書自建應用，讀取和編輯新版雲端文件，並查詢多維表格和機器人可見的會話訊息。",
-    "en": "Connect a Feishu custom app to read and edit new-format documents and inspect bitables and bot-visible chat history."
+    "en": "Connect a Feishu custom app to read and edit new-format documents and inspect bitables and bot-visible chat history.",
+    "ja": "Feishu カスタムアプリに接続し、新形式のクラウドドキュメントの閲覧・編集、多次元テーブルおよびボットが参照可能なチャット履歴の確認を行います。",
+    "ko": "Feishu 맞춤형 앱에 연결하여 새 형식의 문서를 읽고 편집하며, 다차원 테이블 및 봇이 볼 수 있는 채팅 기록을 조회합니다.",
+    "es": "Conecta una aplicación personalizada de Feishu para leer y editar documentos en el nuevo formato e inspeccionar bitables y el historial de chat visible para el bot.",
+    "de": "Verbinden Sie eine benutzerdefinierte Feishu-App, um neue Dokumentformate zu lesen und zu bearbeiten sowie Bitable-Tabellen und bot-sichtbare Chatverläufe einzusehen.",
+    "fr": "Connectez une application personnalisée Feishu pour lire et modifier des documents au nouveau format et inspecter les bases bitables et l'historique de chat visible par le bot."
   },
   "icon": {
     "svg": "./assets/icon.svg",

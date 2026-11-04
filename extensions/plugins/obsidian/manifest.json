@@ -6,13 +6,23 @@
   "title": {
     "zh-CN": "Obsidian",
     "zh-TW": "Obsidian",
-    "en": "Obsidian"
+    "en": "Obsidian",
+    "ja": "Obsidian",
+    "ko": "Obsidian",
+    "es": "Obsidian",
+    "de": "Obsidian",
+    "fr": "Obsidian"
   },
   "version": "1.0.1",
   "description": {
     "zh-CN": "直接处理作为 Pudding Project 打开的本地 Obsidian Vault，用于检索笔记与双链、整理标签、创建和安全编辑 Markdown 笔记。",
     "zh-TW": "直接處理作為 Pudding Project 開啟的本機 Obsidian Vault，用於搜尋筆記與雙向連結、整理標籤、建立和安全編輯 Markdown 筆記。",
-    "en": "Work directly with a local Obsidian vault opened as a Pudding Project to search notes and backlinks, organize tags, and safely create or edit Markdown notes."
+    "en": "Work directly with a local Obsidian vault opened as a Pudding Project to search notes and backlinks, organize tags, and safely create or edit Markdown notes.",
+    "ja": "Pudding Project として開いたローカルの Obsidian Vault を直接操作し、ノートやバックリンクの検索、タグの整理、Markdown ノートの安全な作成・編集を行います。",
+    "ko": "Pudding Project로 열린 로컬 Obsidian Vault를 직접 처리하여 노트와 백링크를 검색하고, 태그를 정리하며, Markdown 노트를 안전하게 작성하고 편집합니다.",
+    "es": "Trabaja directamente con una bóveda local de Obsidian abierta como Pudding Project para buscar notas y enlaces inversos, organizar etiquetas y crear o editar notas Markdown con seguridad.",
+    "de": "Arbeiten Sie direkt mit einem als Pudding Project geöffneten lokalen Obsidian Vault, um Notizen und Backlinks zu durchsuchen, Tags zu verwalten und Markdown-Notizen sicher zu erstellen oder zu bearbeiten.",
+    "fr": "Travaillez directement avec un coffre local Obsidian ouvert comme Pudding Project pour rechercher des notes et des rétroliens, organiser les étiquettes et créer ou modifier des notes Markdown en toute sécurité."
   },
   "icon": {
     "svg": "./assets/icon.svg",

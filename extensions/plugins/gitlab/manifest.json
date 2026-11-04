@@ -6,9 +6,14 @@
   "title": {
     "zh-CN": "GitLab",
     "zh-TW": "GitLab",
-    "en": "GitLab"
+    "en": "GitLab",
+    "ja": "GitLab",
+    "ko": "GitLab",
+    "es": "GitLab",
+    "de": "GitLab",
+    "fr": "GitLab"
   },
-  "version": "1.0.2",
+  "version": "1.0.3",
   "targets": [
     "desktop",
     "mobile"
@@ -16,7 +21,12 @@
   "description": {
     "zh-CN": "连接 GitLab REST API，用于查询项目、Issue、合并请求、流水线、提交、分支和仓库文件。",
     "zh-TW": "連接 GitLab REST API，用於查詢專案、Issue、合併請求、流水線、提交、分支和倉庫檔案。",
-    "en": "Connect the GitLab REST API for projects, issues, merge requests, pipelines, commits, branches, and repository files."
+    "en": "Connect the GitLab REST API for projects, issues, merge requests, pipelines, commits, branches, and repository files.",
+    "ja": "GitLab REST API に接続し、プロジェクト、Issue、マージリクエスト、パイプライン、コミット、ブランチ、リポジトリファイルを照会します。",
+    "ko": "GitLab REST API에 연결하여 프로젝트, 이슈, 병합 요청, 파이프라인, 커밋, 브랜치 및 저장소 파일을 조회합니다.",
+    "es": "Conecta la API REST de GitLab para proyectos, incidencias, merge requests, canalizaciones, commits, ramas y archivos de repositorio.",
+    "de": "Verbinden Sie die GitLab-REST-API für Projekte, Issues, Merge Requests, Pipelines, Commits, Branches und Repository-Dateien.",
+    "fr": "Connectez l'API REST de GitLab pour les projets, tickets, merge requests, pipelines, commits, branches et fichiers de dépôt."
   },
   "icon": {
     "svg": "./assets/icon.svg",
@@ -31,9 +41,9 @@
     "skills/issues/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.2/manifest.json",
-  "package": "./releases/1.0.2/gitlab.pudding-plugin.json",
-  "package_sha256": "99f3420992548c9383d88225ff86c545e83dcea0ca6f6c6e7c6a6312c33d39b5",
+  "manifest": "./releases/1.0.3/manifest.json",
+  "package": "./releases/1.0.3/gitlab.pudding-plugin.json",
+  "package_sha256": "fe4c6a3b17ab09d03cf9aea604ad8fd19832ac4bf1f944c9abe7a1ce3c1eb578",
   "requires": {
     "pudding_plugin": "^1.0.0"
   },

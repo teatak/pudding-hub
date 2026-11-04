@@ -14,15 +14,25 @@
       "title": {
         "zh-CN": "Cloudflare",
         "zh-TW": "Cloudflare",
-        "en": "Cloudflare"
+        "en": "Cloudflare",
+        "ja": "Cloudflare",
+        "ko": "Cloudflare",
+        "es": "Cloudflare",
+        "de": "Cloudflare",
+        "fr": "Cloudflare"
       },
       "description": {
         "zh-CN": "以只读方式连接 Cloudflare API MCP，用于查看账户、站点、DNS、Workers、存储、安全配置和分析数据。",
         "zh-TW": "以唯讀方式連接 Cloudflare API MCP，用於查看帳戶、網站、DNS、Workers、儲存、安全設定和分析資料。",
-        "en": "Connect the Cloudflare API MCP in read-only mode to inspect accounts, zones, DNS, Workers, storage, security configuration, and analytics."
+        "en": "Connect the Cloudflare API MCP in read-only mode to inspect accounts, zones, DNS, Workers, storage, security configuration, and analytics.",
+        "ja": "Cloudflare API MCP に読み取り専用モードで接続し、アカウント、ゾーン、DNS、Workers、ストレージ、セキュリティ設定、および分析データを検査します。",
+        "ko": "Cloudflare API MCP에 읽기 전용 모드로 연결하여 계정, 영역, DNS, Workers, 스토리지, 보안 설정 및 분석 데이터를 검사합니다.",
+        "es": "Conecta el MCP de la API de Cloudflare en modo de solo lectura para inspeccionar cuentas, zonas, DNS, Workers, almacenamiento, configuración de seguridad y análisis.",
+        "de": "Verbinden Sie das Cloudflare-API-MCP im schreibgeschützten Modus, um Konten, Zonen, DNS, Workers, Speicher, Sicherheitskonfigurationen und Analysen zu überprüfen.",
+        "fr": "Connectez le MCP de l'API Cloudflare en mode lecture seule pour inspecter les comptes, zones, DNS, Workers, stockage, configuration de sécurité et analyses."
       },
       "icon": {
-        "svg": "./cloudflare/assets/icon.svg",
+        "svg": "./cloudflare/releases/1.0.1/assets/icon.svg",
         "color": {
           "light": "#FFFFFF",
           "dark": "#FFFFFF"
@@ -64,15 +74,25 @@
       "title": {
         "zh-CN": "邮件",
         "zh-TW": "郵件",
-        "en": "Email"
+        "en": "Email",
+        "ja": "メール",
+        "ko": "이메일",
+        "es": "Correo",
+        "de": "E-Mail",
+        "fr": "E-mail"
       },
       "description": {
         "zh-CN": "连接常用邮箱或自定义 IMAP/SMTP，搜索、阅读及发送邮件。",
         "zh-TW": "連接常用信箱或自訂 IMAP/SMTP，搜尋、閱讀及寄送郵件。",
-        "en": "Connect popular email providers or custom IMAP/SMTP to search, read and send mail."
+        "en": "Connect popular email providers or custom IMAP/SMTP to search, read and send mail.",
+        "ja": "一般的なメールプロバイダーや独自の IMAP/SMTP に接続し、メールの検索、閲覧、送信を行います。",
+        "ko": "일반 이메일 서비스나 사용자 지정 IMAP/SMTP에 연결하여 메일을 검색하고 읽고 전송합니다.",
+        "es": "Conecta proveedores populares de correo electrónico o IMAP/SMTP personalizado para buscar, leer y enviar correos.",
+        "de": "Verbinden Sie beliebte E-Mail-Anbieter oder eigene IMAP/SMTP-Server zum Suchen, Lesen und Senden von E-Mails.",
+        "fr": "Connectez des fournisseurs de messagerie populaires ou un serveur IMAP/SMTP personnalisé pour rechercher, lire et envoyer des e-mails."
       },
       "icon": {
-        "svg": "./email/releases/1.0.0-preview.5/assets/icon.svg",
+        "svg": "./email/releases/1.0.0/assets/icon.svg",
         "color": {
           "light": "#FFFFFF",
           "dark": "#FFFFFF"
@@ -90,66 +110,23 @@
         "icloud",
         "gmail"
       ],
+      "version": "1.0.0",
+      "manifest": "./email/releases/1.0.0/manifest.json",
+      "package": "./email/releases/1.0.0/email.pudding-plugin.json",
+      "package_sha256": "b418af82b75b7d26737a0a7af49c98c62003cab022752c65081f6fbe1a256d88",
+      "requires": {
+        "pudding_plugin": "1.3.0"
+      },
       "releases": [
         {
-          "version": "1.0.0-preview.5",
-          "manifest": "./email/releases/1.0.0-preview.5/manifest.json",
-          "package": "./email/releases/1.0.0-preview.5/email.pudding-plugin.json",
-          "package_sha256": "214541ddb2b3b0f446d5b6837ebb7d4618188d0e0ab1f05d8d46e9b65cf0ed41",
+          "version": "1.0.0",
+          "manifest": "./email/releases/1.0.0/manifest.json",
+          "package": "./email/releases/1.0.0/email.pudding-plugin.json",
+          "package_sha256": "b418af82b75b7d26737a0a7af49c98c62003cab022752c65081f6fbe1a256d88",
           "requires": {
             "pudding_plugin": "1.3.0"
           },
-          "released_at": "2026-11-03",
-          "channel": "preview",
-          "preview": true
-        },
-        {
-          "version": "1.0.0-preview.4",
-          "manifest": "./email/releases/1.0.0-preview.4/manifest.json",
-          "package": "./email/releases/1.0.0-preview.4/email.pudding-plugin.json",
-          "package_sha256": "a9f6b2195e312f50a56489fffb39c7aa8b500ab9f7fef478b74a220515c6d8eb",
-          "requires": {
-            "pudding_plugin": "1.3.0"
-          },
-          "released_at": "2026-11-02",
-          "channel": "preview",
-          "preview": true
-        },
-        {
-          "version": "1.0.0-preview.3",
-          "manifest": "./email/releases/1.0.0-preview.3/manifest.json",
-          "package": "./email/releases/1.0.0-preview.3/email.pudding-plugin.json",
-          "package_sha256": "a10dd546fd079d0cf2c2a59eec28bdf0f15c258b42005d838c05b7a6bf514035",
-          "requires": {
-            "pudding_plugin": "1.3.0"
-          },
-          "released_at": "2026-11-02",
-          "channel": "preview",
-          "preview": true
-        },
-        {
-          "version": "1.0.0-preview.2",
-          "manifest": "./email/releases/1.0.0-preview.2/manifest.json",
-          "package": "./email/releases/1.0.0-preview.2/email.pudding-plugin.json",
-          "package_sha256": "44a96fda6310a3733cab3bbff575b06518c521afb91819910b5ee9fc78c4d427",
-          "requires": {
-            "pudding_plugin": "1.2.0"
-          },
-          "released_at": "2026-11-02",
-          "channel": "preview",
-          "preview": true
-        },
-        {
-          "version": "1.0.0-preview.1",
-          "manifest": "./email/releases/1.0.0-preview.1/manifest.json",
-          "package": "./email/releases/1.0.0-preview.1/email.pudding-plugin.json",
-          "package_sha256": "f278c06638a2e1085b53df349840e4722a23d1ae81320c949ba067b776336a25",
-          "requires": {
-            "pudding_plugin": "1.2.0"
-          },
-          "released_at": "2026-11-02",
-          "channel": "preview",
-          "preview": true
+          "released_at": "2026-11-04"
         }
       ]
     },
@@ -159,15 +136,25 @@
       "title": {
         "zh-CN": "飞书",
         "zh-TW": "飛書",
-        "en": "Feishu"
+        "en": "Feishu",
+        "ja": "Feishu",
+        "ko": "Feishu",
+        "es": "Feishu",
+        "de": "Feishu",
+        "fr": "Feishu"
       },
       "description": {
         "zh-CN": "连接飞书自建应用，读取和编辑新版云文档，并查询多维表格和机器人可见的会话消息。",
         "zh-TW": "連接飛書自建應用，讀取和編輯新版雲端文件，並查詢多維表格和機器人可見的會話訊息。",
-        "en": "Connect a Feishu custom app to read and edit new-format documents and inspect bitables and bot-visible chat history."
+        "en": "Connect a Feishu custom app to read and edit new-format documents and inspect bitables and bot-visible chat history.",
+        "ja": "Feishu カスタムアプリに接続し、新形式のクラウドドキュメントの閲覧・編集、多次元テーブルおよびボットが参照可能なチャット履歴の確認を行います。",
+        "ko": "Feishu 맞춤형 앱에 연결하여 새 형식의 문서를 읽고 편집하며, 다차원 테이블 및 봇이 볼 수 있는 채팅 기록을 조회합니다.",
+        "es": "Conecta una aplicación personalizada de Feishu para leer y editar documentos en el nuevo formato e inspeccionar bitables y el historial de chat visible para el bot.",
+        "de": "Verbinden Sie eine benutzerdefinierte Feishu-App, um neue Dokumentformate zu lesen und zu bearbeiten sowie Bitable-Tabellen und bot-sichtbare Chatverläufe einzusehen.",
+        "fr": "Connectez une application personnalisée Feishu pour lire et modifier des documents au nouveau format et inspecter les bases bitables et l'historique de chat visible par le bot."
       },
       "icon": {
-        "svg": "./feishu/assets/icon.svg",
+        "svg": "./feishu/releases/1.0.0/assets/icon.svg",
         "background": {
           "light": "#F2F6FF",
           "dark": "#101A33"
@@ -207,15 +194,25 @@
       "title": {
         "zh-CN": "GitHub",
         "zh-TW": "GitHub",
-        "en": "GitHub"
+        "en": "GitHub",
+        "ja": "GitHub",
+        "ko": "GitHub",
+        "es": "GitHub",
+        "de": "GitHub",
+        "fr": "GitHub"
       },
       "description": {
         "zh-CN": "通过 GitHub App 或个人访问令牌连接 GitHub REST 与 GraphQL API，用于仓库、Issue、PR 查询以及发表评论与评审。",
         "zh-TW": "透過 GitHub App 或個人存取權杖連接 GitHub REST 與 GraphQL API，用於倉庫、Issue、PR 查詢以及發表評論與評審。",
-        "en": "Connect GitHub REST and GraphQL APIs through a GitHub App or personal access token for repositories, issues, pull requests, comments, and reviews."
+        "en": "Connect GitHub REST and GraphQL APIs through a GitHub App or personal access token for repositories, issues, pull requests, comments, and reviews.",
+        "ja": "GitHub App または個人用アクセストークンを介して GitHub REST および GraphQL API に接続し、リポジトリ、Issue、プルリクエスト、コメント、レビューを操作します。",
+        "ko": "GitHub App 또는 개인 액세스 토큰을 통해 GitHub REST 및 GraphQL API에 연결하여 저장소, 이슈, PR, 댓글 및 코드 리뷰를 관리합니다.",
+        "es": "Conecta las API REST y GraphQL de GitHub mediante una GitHub App o token de acceso personal para repositorios, incidencias, pull requests, comentarios y revisiones.",
+        "de": "Verbinden Sie die GitHub-REST- und GraphQL-APIs über eine GitHub-App oder ein persönliches Zugriffstoken für Repositorys, Issues, Pull Requests, Kommentare und Reviews.",
+        "fr": "Connectez les API REST et GraphQL de GitHub via une application GitHub ou un jeton d'accès personnel pour les dépôts, tickets, pull requests, commentaires et revues."
       },
       "icon": {
-        "svg": "./github/assets/icon.svg",
+        "svg": "./github/releases/1.0.6/assets/icon.svg",
         "color": {
           "light": "#111111",
           "dark": "#FFFFFF"
@@ -278,15 +275,25 @@
       "title": {
         "zh-CN": "GitLab",
         "zh-TW": "GitLab",
-        "en": "GitLab"
+        "en": "GitLab",
+        "ja": "GitLab",
+        "ko": "GitLab",
+        "es": "GitLab",
+        "de": "GitLab",
+        "fr": "GitLab"
       },
       "description": {
         "zh-CN": "连接 GitLab REST API，用于查询项目、Issue、合并请求、流水线、提交、分支和仓库文件。",
         "zh-TW": "連接 GitLab REST API，用於查詢專案、Issue、合併請求、流水線、提交、分支和倉庫檔案。",
-        "en": "Connect the GitLab REST API for projects, issues, merge requests, pipelines, commits, branches, and repository files."
+        "en": "Connect the GitLab REST API for projects, issues, merge requests, pipelines, commits, branches, and repository files.",
+        "ja": "GitLab REST API に接続し、プロジェクト、Issue、マージリクエスト、パイプライン、コミット、ブランチ、リポジトリファイルを照会します。",
+        "ko": "GitLab REST API에 연결하여 프로젝트, 이슈, 병합 요청, 파이프라인, 커밋, 브랜치 및 저장소 파일을 조회합니다.",
+        "es": "Conecta la API REST de GitLab para proyectos, incidencias, merge requests, canalizaciones, commits, ramas y archivos de repositorio.",
+        "de": "Verbinden Sie die GitLab-REST-API für Projekte, Issues, Merge Requests, Pipelines, Commits, Branches und Repository-Dateien.",
+        "fr": "Connectez l'API REST de GitLab pour les projets, tickets, merge requests, pipelines, commits, branches et fichiers de dépôt."
       },
       "icon": {
-        "svg": "./gitlab/assets/icon.svg",
+        "svg": "./gitlab/releases/1.0.3/assets/icon.svg",
         "background": {
           "light": "#FFF3EC",
           "dark": "#171321"
@@ -302,14 +309,28 @@
         "code",
         "issues"
       ],
-      "version": "1.0.2",
-      "manifest": "./gitlab/releases/1.0.2/manifest.json",
-      "package": "./gitlab/releases/1.0.2/gitlab.pudding-plugin.json",
-      "package_sha256": "99f3420992548c9383d88225ff86c545e83dcea0ca6f6c6e7c6a6312c33d39b5",
+      "version": "1.0.3",
+      "manifest": "./gitlab/releases/1.0.3/manifest.json",
+      "package": "./gitlab/releases/1.0.3/gitlab.pudding-plugin.json",
+      "package_sha256": "fe4c6a3b17ab09d03cf9aea604ad8fd19832ac4bf1f944c9abe7a1ce3c1eb578",
       "requires": {
         "pudding_plugin": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.3",
+          "manifest": "./gitlab/releases/1.0.3/manifest.json",
+          "package": "./gitlab/releases/1.0.3/gitlab.pudding-plugin.json",
+          "package_sha256": "fe4c6a3b17ab09d03cf9aea604ad8fd19832ac4bf1f944c9abe7a1ce3c1eb578",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "targets": [
+            "desktop",
+            "mobile"
+          ],
+          "released_at": "2026-11-04"
+        },
         {
           "version": "1.0.2",
           "manifest": "./gitlab/releases/1.0.2/manifest.json",
@@ -332,15 +353,25 @@
       "title": {
         "zh-CN": "Gmail",
         "zh-TW": "Gmail",
-        "en": "Gmail"
+        "en": "Gmail",
+        "ja": "Gmail",
+        "ko": "Gmail",
+        "es": "Gmail",
+        "de": "Gmail",
+        "fr": "Gmail"
       },
       "description": {
         "zh-CN": "连接 Gmail，搜索和读取邮件、查看会话和标签，以及发送和回复邮件。",
         "zh-TW": "連接 Gmail，搜尋和讀取郵件、查看對話串和標籤，以及傳送和回覆郵件。",
-        "en": "Connect Gmail to search and read mail, view threads and labels, and send emails and replies."
+        "en": "Connect Gmail to search and read mail, view threads and labels, and send emails and replies.",
+        "ja": "Gmail に接続し、メールの検索と閲覧、スレッドやラベルの確認、メールの送信や返信を行います。",
+        "ko": "Gmail에 연결하여 메일을 검색하고 읽으며, 스레드와 라벨을 확인하고, 이메일과 답장을 전송합니다.",
+        "es": "Conecta Gmail para buscar y leer correos, ver hilos y etiquetas, y enviar y responder correos electrónicos.",
+        "de": "Verbinden Sie Gmail, um E-Mails zu suchen und zu lesen, Konversationen und Labels anzuzeigen sowie E-Mails und Antworten zu senden.",
+        "fr": "Connectez Gmail pour rechercher et lire des e-mails, consulter les fils de discussion et les libellés, et envoyer des messages et des réponses."
       },
       "icon": {
-        "svg": "./gmail/assets/icon.svg",
+        "svg": "./gmail/releases/1.0.0-preview.3/assets/icon.svg",
         "background": {
           "light": "#FFFFFF",
           "dark": "#202124"
@@ -396,15 +427,25 @@
       "title": {
         "zh-CN": "Grafana",
         "zh-TW": "Grafana",
-        "en": "Grafana"
+        "en": "Grafana",
+        "ja": "Grafana",
+        "ko": "Grafana",
+        "es": "Grafana",
+        "de": "Grafana",
+        "fr": "Grafana"
       },
       "description": {
         "zh-CN": "连接 Grafana HTTP API，用于只读查询 Dashboard、文件夹、数据源、指标、日志和告警规则。",
         "zh-TW": "連接 Grafana HTTP API，用於唯讀查詢 Dashboard、資料夾、資料來源、指標、日誌和告警規則。",
-        "en": "Connect the Grafana HTTP API for read-only access to dashboards, folders, data sources, metrics, logs, and alert rules."
+        "en": "Connect the Grafana HTTP API for read-only access to dashboards, folders, data sources, metrics, logs, and alert rules.",
+        "ja": "Grafana HTTP API に接続し、ダッシュボード、フォルダ、データソース、メトリクス、ログ、アラートルールへの読み取り専用アクセスを提供します。",
+        "ko": "Grafana HTTP API에 연결하여 대시보드, 폴더, 데이터 소스, 메트릭, 로그 및 알림 규칙에 대한 읽기 전용 액세스를 제공합니다.",
+        "es": "Conecta la API HTTP de Grafana para acceso de solo lectura a paneles, carpetas, fuentes de datos, métricas, registros y reglas de alerta.",
+        "de": "Verbinden Sie die Grafana-HTTP-API für den schreibgeschützten Zugriff auf Dashboards, Ordner, Datenquellen, Metriken, Protokolle und Warnregeln.",
+        "fr": "Connectez l'API HTTP de Grafana pour un accès en lecture seule aux tableaux de bord, dossiers, sources de données, métriques, journaux et règles d'alerte."
       },
       "icon": {
-        "svg": "./grafana/assets/icon.svg",
+        "svg": "./grafana/releases/1.0.4/assets/icon.svg",
         "color": {
           "light": "#FFFFFF",
           "dark": "#FFFFFF"
@@ -446,15 +487,25 @@
       "title": {
         "zh-CN": "Home Assistant",
         "zh-TW": "Home Assistant",
-        "en": "Home Assistant"
+        "en": "Home Assistant",
+        "ja": "Home Assistant",
+        "ko": "Home Assistant",
+        "es": "Home Assistant",
+        "de": "Home Assistant",
+        "fr": "Home Assistant"
       },
       "description": {
         "zh-CN": "连接 Home Assistant REST API，用于查询实体、状态、历史和服务，并在确认后控制家居设备。",
         "zh-TW": "連接 Home Assistant REST API，用於查詢實體、狀態、歷史和服務，並在確認後控制家居裝置。",
-        "en": "Connect the Home Assistant REST API to inspect entities, states, history, and services, and control home devices with confirmation."
+        "en": "Connect the Home Assistant REST API to inspect entities, states, history, and services, and control home devices with confirmation.",
+        "ja": "Home Assistant REST API に接続し、エンティティ、状態、履歴、サービスを確認し、確認を行った上でスマートホーム機器を制御します。",
+        "ko": "Home Assistant REST API에 연결하여 엔티티, 상태, 이력 및 서비스를 확인하고 확인 후 스마트 기기를 제어합니다.",
+        "es": "Conecta la API REST de Home Assistant para inspeccionar entidades, estados, historial y servicios, y controlar dispositivos domésticos con confirmación.",
+        "de": "Verbinden Sie die Home Assistant-REST-API, um Entitäten, Zustände, Verläufe und Dienste einzusehen und Smart-Home-Geräte nach Bestätigung zu steuern.",
+        "fr": "Connectez l'API REST de Home Assistant pour inspecter les entités, états, historiques et services, et contrôler les appareils domestiques après confirmation."
       },
       "icon": {
-        "svg": "./home-assistant/assets/icon.svg",
+        "svg": "./home-assistant/releases/1.0.4/assets/icon.svg",
         "color": {
           "light": "#FFFFFF",
           "dark": "#FFFFFF"
@@ -496,15 +547,25 @@
       "title": {
         "zh-CN": "Immich",
         "zh-TW": "Immich",
-        "en": "Immich"
+        "en": "Immich",
+        "ja": "Immich",
+        "ko": "Immich",
+        "es": "Immich",
+        "de": "Immich",
+        "fr": "Immich"
       },
       "description": {
         "zh-CN": "连接自托管 Immich，在照片和视频中进行智能搜索、人物与地点查找、OCR 和元数据筛选，并将缩略图展示到小组件。",
         "zh-TW": "連接自架 Immich，在照片和影片中進行智慧搜尋、人物與地點查找、OCR 和中繼資料篩選，並將縮圖展示到小工具。",
-        "en": "Connect a self-hosted Immich library for smart photo and video search, people and place lookup, OCR and metadata filtering, with thumbnail results on a widget."
+        "en": "Connect a self-hosted Immich library for smart photo and video search, people and place lookup, OCR and metadata filtering, with thumbnail results on a widget.",
+        "ja": "セルフホストされた Immich ライブラリに接続し、写真や動画のスマート検索、人物や場所の検索、OCR やメタデータフィルタリングを行い、ウィジェットにサムネイルを表示します。",
+        "ko": "자체 호스팅 Immich 라이브러리에 연결하여 사진과 동영상의 스마트 검색, 인물 및 장소 찾기, OCR 및 메타데이터 필터링을 수행하고 위젯에 썸네일을 표시합니다.",
+        "es": "Conecta una biblioteca Immich autohospedada para búsqueda inteligente de fotos y videos, personas y lugares, OCR y filtros de metadatos, con miniaturas en un widget.",
+        "de": "Verbinden Sie eine selbst gehostete Immich-Bibliothek für intelligente Foto- und Videosuche, Personen- und Ortssuche, OCR und Metadatenfilterung mit Miniaturansichten im Widget.",
+        "fr": "Connectez une bibliothèque Immich auto-hébergée pour la recherche intelligente de photos et vidéos, personnes et lieux, l'OCR et le filtrage des métadonnées, avec aperçus miniatures dans un widget."
       },
       "icon": {
-        "svg": "./immich/assets/icon.svg",
+        "svg": "./immich/releases/1.0.0/assets/icon.svg",
         "background": {
           "light": "#F6F7FA",
           "dark": "#1D1F24"
@@ -543,12 +604,22 @@
       "title": {
         "zh-CN": "Jira",
         "zh-TW": "Jira",
-        "en": "Jira"
+        "en": "Jira",
+        "ja": "Jira",
+        "ko": "Jira",
+        "es": "Jira",
+        "de": "Jira",
+        "fr": "Jira"
       },
       "description": {
         "zh-CN": "连接 Jira Cloud REST API，用于查询项目、Issue、JQL、评论、状态流转、看板和 Sprint。",
         "zh-TW": "連接 Jira Cloud REST API，用於查詢專案、Issue、JQL、評論、狀態流轉、看板和 Sprint。",
-        "en": "Connect the Jira Cloud REST API for projects, issues, JQL search, comments, transitions, boards, and sprints."
+        "en": "Connect the Jira Cloud REST API for projects, issues, JQL search, comments, transitions, boards, and sprints.",
+        "ja": "Jira Cloud REST API に接続し、プロジェクト、Issue、JQL 検索、コメント、ステータス遷移、ボード、スプリントを照会します。",
+        "ko": "Jira Cloud REST API에 연결하여 프로젝트, 이슈, JQL 검색, 댓글, 상태 전환, 보드 및 스프린트를 조회합니다.",
+        "es": "Conecta la API REST de Jira Cloud para proyectos, incidencias, búsqueda JQL, comentarios, transiciones, tableros y sprints.",
+        "de": "Verbinden Sie die Jira Cloud-REST-API für Projekte, Issues, JQL-Suchen, Kommentare, Statusübergänge, Boards und Sprints.",
+        "fr": "Connectez l'API REST de Jira Cloud pour les projets, tickets, recherches JQL, commentaires, transitions, tableaux et sprints."
       },
       "icon": {
         "svg": "./jira/releases/1.0.2/assets/icon.svg",
@@ -603,15 +674,25 @@
       "title": {
         "zh-CN": "Linear",
         "zh-TW": "Linear",
-        "en": "Linear"
+        "en": "Linear",
+        "ja": "Linear",
+        "ko": "Linear",
+        "es": "Linear",
+        "de": "Linear",
+        "fr": "Linear"
       },
       "description": {
         "zh-CN": "连接 Linear GraphQL API，用于查询 Issue、项目、团队、周期和路线图。",
         "zh-TW": "連接 Linear GraphQL API，用於查詢 Issue、專案、團隊、週期和路線圖。",
-        "en": "Connect Linear's GraphQL API for issues, projects, teams, cycles, and roadmap data."
+        "en": "Connect Linear's GraphQL API for issues, projects, teams, cycles, and roadmap data.",
+        "ja": "Linear GraphQL API に接続し、Issue、プロジェクト、チーム、サイクル、ロードマップデータを照会します。",
+        "ko": "Linear GraphQL API에 연결하여 이슈, 프로젝트, 팀, 사이클 및 로드맵 데이터를 조회합니다.",
+        "es": "Conecta la API GraphQL de Linear para incidencias, proyectos, equipos, ciclos y datos de hoja de ruta.",
+        "de": "Verbinden Sie die Linear-GraphQL-API für Issues, Projekte, Teams, Zyklen und Roadmap-Daten.",
+        "fr": "Connectez l'API GraphQL de Linear pour les tickets, projets, équipes, cycles et feuilles de route."
       },
       "icon": {
-        "svg": "./linear/assets/icon.svg",
+        "svg": "./linear/releases/1.0.3/assets/icon.svg",
         "color": {
           "light": "#FFFFFF",
           "dark": "#FFFFFF"
@@ -631,14 +712,28 @@
         "issues",
         "projects"
       ],
-      "version": "1.0.2",
-      "manifest": "./linear/releases/1.0.2/manifest.json",
-      "package": "./linear/releases/1.0.2/linear.pudding-plugin.json",
-      "package_sha256": "74e49d907a6a1f86e37bd01b85e3451911adfbb14b208375748f73e6eba21c4b",
+      "version": "1.0.3",
+      "manifest": "./linear/releases/1.0.3/manifest.json",
+      "package": "./linear/releases/1.0.3/linear.pudding-plugin.json",
+      "package_sha256": "c508a46ae49a8c5d689c52673bffcd7b5ccdcadbc1ae1817ef6cf148fe3c6974",
       "requires": {
         "pudding_plugin": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.3",
+          "manifest": "./linear/releases/1.0.3/manifest.json",
+          "package": "./linear/releases/1.0.3/linear.pudding-plugin.json",
+          "package_sha256": "c508a46ae49a8c5d689c52673bffcd7b5ccdcadbc1ae1817ef6cf148fe3c6974",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "targets": [
+            "desktop",
+            "mobile"
+          ],
+          "released_at": "2026-11-04"
+        },
         {
           "version": "1.0.2",
           "manifest": "./linear/releases/1.0.2/manifest.json",
@@ -661,15 +756,25 @@
       "title": {
         "zh-CN": "本地媒体工坊",
         "zh-TW": "本機媒體工坊",
-        "en": "Local Media Studio"
+        "en": "Local Media Studio",
+        "ja": "ローカルメディアスタジオ",
+        "ko": "로컬 미디어 스튜디오",
+        "es": "Estudio de medios local",
+        "de": "Lokales Medienstudio",
+        "fr": "Studio multimédia local"
       },
       "description": {
         "zh-CN": "使用本机 FFmpeg 检查和处理项目内的视频、音频与图片，支持裁剪、转码、压缩、GIF、抽帧、音频提取、波形图和联系表。",
         "zh-TW": "使用本機 FFmpeg 檢查和處理專案內的影片、音訊與圖片，支援裁剪、轉碼、壓縮、GIF、擷取影格、音訊擷取、波形圖和聯絡表。",
-        "en": "Use local FFmpeg to inspect and transform video, audio, and images inside a Project, including trimming, transcoding, compression, GIFs, frames, audio extraction, waveforms, and contact sheets."
+        "en": "Use local FFmpeg to inspect and transform video, audio, and images inside a Project, including trimming, transcoding, compression, GIFs, frames, audio extraction, waveforms, and contact sheets.",
+        "ja": "ローカルの FFmpeg を使用してプロジェクト内の動画・音声・画像を検査・変換し、トリミング、エンコード、圧縮、GIF 生成、フレーム抽出、音声抽出、波形生成、コンタクトシート作成をサポートします。",
+        "ko": "로컬 FFmpeg를 사용하여 프로젝트 내의 비디오, 오디오 및 이미지를 검사하고 변환하며 자르기, 트랜스코딩, 압축, GIF 생성, 프레임 추출, 오디오 추출, 파형 생성 및 밀착 인화를 지원합니다.",
+        "es": "Usa FFmpeg local para inspeccionar y transformar videos, audios e imágenes en el proyecto, incluidos recortes, transcodificación, compresión, GIFs, extracción de fotogramas y audio, formas de onda y hojas de contacto.",
+        "de": "Verwenden Sie lokales FFmpeg, um Videos, Audios und Bilder im Projekt zu prüfen und zu bearbeiten, einschließlich Zuschneiden, Transkodieren, Komprimieren, GIFs, Frame- und Audioextraktion, Wellenformen und Kontaktabzügen.",
+        "fr": "Utilisez FFmpeg localement pour inspecter et transformer vidéos, audios et images dans un projet : découpe, transcodage, compression, GIFs, extraction d'images et audio, formes d'onde et planches-contacts."
       },
       "icon": {
-        "svg": "./media-studio/assets/icon.svg",
+        "svg": "./media-studio/releases/1.0.0/assets/icon.svg",
         "background": {
           "light": "#F3F0FF",
           "dark": "#211B36"
@@ -709,15 +814,25 @@
       "title": {
         "zh-CN": "Notion",
         "zh-TW": "Notion",
-        "en": "Notion"
+        "en": "Notion",
+        "ja": "Notion",
+        "ko": "Notion",
+        "es": "Notion",
+        "de": "Notion",
+        "fr": "Notion"
       },
       "description": {
         "zh-CN": "连接 Notion REST API，用于页面、块、数据源、数据库、用户、评论和搜索。",
         "zh-TW": "連接 Notion REST API，用於頁面、區塊、資料來源、資料庫、使用者、留言和搜尋。",
-        "en": "Connect Notion's REST API for pages, blocks, data sources, databases, users, comments, and search."
+        "en": "Connect Notion's REST API for pages, blocks, data sources, databases, users, comments, and search.",
+        "ja": "Notion REST API に接続し、ページ、ブロック、データソース、データベース、ユーザー、コメント、検索を操作します。",
+        "ko": "Notion REST API에 연결하여 페이지, 블록, 데이터 소스, 데이터베이스, 사용자, 댓글 및 검색을 처리합니다.",
+        "es": "Conecta la API REST de Notion para páginas, bloques, fuentes de datos, bases de datos, usuarios, comentarios y búsquedas.",
+        "de": "Verbinden Sie die Notion-REST-API für Seiten, Blöcke, Datenquellen, Datenbanken, Benutzer, Kommentare und Suchen.",
+        "fr": "Connectez l'API REST de Notion pour les pages, blocs, sources de données, bases de données, utilisateurs, commentaires et recherches."
       },
       "icon": {
-        "svg": "./notion/assets/icon.svg",
+        "svg": "./notion/releases/1.0.3/assets/icon.svg",
         "color": {
           "light": "#111111",
           "dark": "#FFFFFF"
@@ -737,14 +852,28 @@
         "docs",
         "knowledge"
       ],
-      "version": "1.0.2",
-      "manifest": "./notion/releases/1.0.2/manifest.json",
-      "package": "./notion/releases/1.0.2/notion.pudding-plugin.json",
-      "package_sha256": "4d642888f950f9ea1979dc82f7039b65511e6159b85bf340acca0fe463f9622e",
+      "version": "1.0.3",
+      "manifest": "./notion/releases/1.0.3/manifest.json",
+      "package": "./notion/releases/1.0.3/notion.pudding-plugin.json",
+      "package_sha256": "e8fff50380107fe33aa47766c5388d5392f8c7e23ae66d28ae482a4982745361",
       "requires": {
         "pudding_plugin": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.3",
+          "manifest": "./notion/releases/1.0.3/manifest.json",
+          "package": "./notion/releases/1.0.3/notion.pudding-plugin.json",
+          "package_sha256": "e8fff50380107fe33aa47766c5388d5392f8c7e23ae66d28ae482a4982745361",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "targets": [
+            "desktop",
+            "mobile"
+          ],
+          "released_at": "2026-11-04"
+        },
         {
           "version": "1.0.2",
           "manifest": "./notion/releases/1.0.2/manifest.json",
@@ -767,12 +896,22 @@
       "title": {
         "zh-CN": "Obsidian",
         "zh-TW": "Obsidian",
-        "en": "Obsidian"
+        "en": "Obsidian",
+        "ja": "Obsidian",
+        "ko": "Obsidian",
+        "es": "Obsidian",
+        "de": "Obsidian",
+        "fr": "Obsidian"
       },
       "description": {
         "zh-CN": "直接处理作为 Pudding Project 打开的本地 Obsidian Vault，用于检索笔记与双链、整理标签、创建和安全编辑 Markdown 笔记。",
         "zh-TW": "直接處理作為 Pudding Project 開啟的本機 Obsidian Vault，用於搜尋筆記與雙向連結、整理標籤、建立和安全編輯 Markdown 筆記。",
-        "en": "Work directly with a local Obsidian vault opened as a Pudding Project to search notes and backlinks, organize tags, and safely create or edit Markdown notes."
+        "en": "Work directly with a local Obsidian vault opened as a Pudding Project to search notes and backlinks, organize tags, and safely create or edit Markdown notes.",
+        "ja": "Pudding Project として開いたローカルの Obsidian Vault を直接操作し、ノートやバックリンクの検索、タグの整理、Markdown ノートの安全な作成・編集を行います。",
+        "ko": "Pudding Project로 열린 로컬 Obsidian Vault를 직접 처리하여 노트와 백링크를 검색하고, 태그를 정리하며, Markdown 노트를 안전하게 작성하고 편집합니다.",
+        "es": "Trabaja directamente con una bóveda local de Obsidian abierta como Pudding Project para buscar notas y enlaces inversos, organizar etiquetas y crear o editar notas Markdown con seguridad.",
+        "de": "Arbeiten Sie direkt mit einem als Pudding Project geöffneten lokalen Obsidian Vault, um Notizen und Backlinks zu durchsuchen, Tags zu verwalten und Markdown-Notizen sicher zu erstellen oder zu bearbeiten.",
+        "fr": "Travaillez directement avec un coffre local Obsidian ouvert comme Pudding Project pour rechercher des notes et des rétroliens, organiser les étiquettes et créer ou modifier des notes Markdown en toute sécurité."
       },
       "icon": {
         "svg": "./obsidian/releases/1.0.1/assets/icon.svg",
@@ -825,15 +964,25 @@
       "title": {
         "zh-CN": "Sequential Thinking",
         "zh-TW": "Sequential Thinking",
-        "en": "Sequential Thinking"
+        "en": "Sequential Thinking",
+        "ja": "Sequential Thinking",
+        "ko": "Sequential Thinking",
+        "es": "Sequential Thinking",
+        "de": "Sequential Thinking",
+        "fr": "Sequential Thinking"
       },
       "description": {
         "zh-CN": "连接 Sequential Thinking MCP Server，用于分步骤拆解、修订和追踪复杂问题。",
         "zh-TW": "連接 Sequential Thinking MCP Server，用於分步驟拆解、修訂和追蹤複雜問題。",
-        "en": "Connect the Sequential Thinking MCP server for step-by-step decomposition, revision, and tracking of complex problems."
+        "en": "Connect the Sequential Thinking MCP server for step-by-step decomposition, revision, and tracking of complex problems.",
+        "ja": "Sequential Thinking MCP サーバーに接続し、複雑な問題の段階的な分解、推敲、追跡を行います。",
+        "ko": "Sequential Thinking MCP 서버에 연결하여 복잡한 문제를 단계별로 분해, 수정 및 추적합니다.",
+        "es": "Conecta el servidor MCP Sequential Thinking para la descomposición paso a paso, revisión y seguimiento de problemas complejos.",
+        "de": "Verbinden Sie den Sequential Thinking MCP-Server für die schrittweise Zerlegung, Überarbeitung und Verfolgung komplexer Probleme.",
+        "fr": "Connectez le serveur MCP Sequential Thinking pour décomposer, réviser et suivre des problèmes complexes étape par étape."
       },
       "icon": {
-        "svg": "./sequential-thinking/assets/icon.svg",
+        "svg": "./sequential-thinking/releases/1.0.1/assets/icon.svg",
         "background": {
           "light": "#F1F5F9",
           "dark": "#111827"
@@ -841,14 +990,24 @@
       },
       "icon_sha256": "5d2b91b37052b68164fbdd0038100934d3b8e81d76de818ca78fc690b50f4ea0",
       "tags": [],
-      "version": "1.0.0",
-      "manifest": "./sequential-thinking/releases/1.0.0/manifest.json",
-      "package": "./sequential-thinking/releases/1.0.0/sequential-thinking.pudding-plugin.json",
-      "package_sha256": "8fe802603a18d3100f9433ac2d57ed3516cc6dce53b7a8ff438e6f81c0190b98",
+      "version": "1.0.1",
+      "manifest": "./sequential-thinking/releases/1.0.1/manifest.json",
+      "package": "./sequential-thinking/releases/1.0.1/sequential-thinking.pudding-plugin.json",
+      "package_sha256": "c548d48b235cf18722a908f2d463fff32b61c9d1bcc96b454d7eceb634adfbb7",
       "requires": {
         "pudding_plugin": "^1.0.0"
       },
       "releases": [
+        {
+          "version": "1.0.1",
+          "manifest": "./sequential-thinking/releases/1.0.1/manifest.json",
+          "package": "./sequential-thinking/releases/1.0.1/sequential-thinking.pudding-plugin.json",
+          "package_sha256": "c548d48b235cf18722a908f2d463fff32b61c9d1bcc96b454d7eceb634adfbb7",
+          "requires": {
+            "pudding_plugin": "^1.0.0"
+          },
+          "released_at": "2026-11-04"
+        },
         {
           "version": "1.0.0",
           "manifest": "./sequential-thinking/releases/1.0.0/manifest.json",
@@ -867,15 +1026,25 @@
       "title": {
         "zh-CN": "Supabase",
         "zh-TW": "Supabase",
-        "en": "Supabase"
+        "en": "Supabase",
+        "ja": "Supabase",
+        "ko": "Supabase",
+        "es": "Supabase",
+        "de": "Supabase",
+        "fr": "Supabase"
       },
       "description": {
         "zh-CN": "以只读方式连接单个 Supabase 项目，用于查看数据库结构与数据、日志、安全建议、Edge Functions、Storage 和官方文档。",
         "zh-TW": "以唯讀方式連接單個 Supabase 專案，用於查看資料庫結構與資料、日誌、安全建議、Edge Functions、Storage 和官方文件。",
-        "en": "Connect one Supabase project in read-only mode to inspect database schema and data, logs, advisors, Edge Functions, Storage, and official documentation."
+        "en": "Connect one Supabase project in read-only mode to inspect database schema and data, logs, advisors, Edge Functions, Storage, and official documentation.",
+        "ja": "単一の Supabase プロジェクトに読み取り専用モードで接続し、データベーススキーマとデータ、ログ、アドバイザー、Edge Functions、Storage、公式ドキュメントを確認します。",
+        "ko": "단일 Supabase 프로젝트에 읽기 전용 모드로 연결하여 데이터베이스 스키마와 데이터, 로그, 권장 사항, Edge Functions, Storage 및 공식 문서를 검사합니다.",
+        "es": "Conecta un proyecto de Supabase en modo de solo lectura para inspeccionar el esquema y los datos de la base de datos, registros, avisos, Edge Functions, Storage y documentación oficial.",
+        "de": "Verbinden Sie ein Supabase-Projekt im schreibgeschützten Modus, um Datenbankschemata und Daten, Protokolle, Ratgeber, Edge Functions, Storage und die offizielle Dokumentation einzusehen.",
+        "fr": "Connectez un projet Supabase en mode lecture seule pour inspecter les schémas et données de base de données, les journaux, les recommandations, Edge Functions, Storage et la documentation officielle."
       },
       "icon": {
-        "svg": "./supabase/assets/icon.svg",
+        "svg": "./supabase/releases/1.0.1/assets/icon.svg",
         "background": {
           "light": "#ECFDF5",
           "dark": "#10251D"
@@ -913,12 +1082,22 @@
       "title": {
         "zh-CN": "群晖 NAS",
         "zh-TW": "Synology NAS",
-        "en": "Synology NAS"
+        "en": "Synology NAS",
+        "ja": "Synology NAS",
+        "ko": "시놀로지 NAS",
+        "es": "Synology NAS",
+        "de": "Synology NAS",
+        "fr": "Synology NAS"
       },
       "description": {
         "zh-CN": "连接群晖 NAS，通过 File Station API 浏览共享文件夹、检索文件内容与属性，并支持文件下载与外链管理。",
         "zh-TW": "連接 Synology NAS，透過 File Station API 瀏覽共用資料夾、搜尋檔案內容與屬性，並支援檔案下載與分享連結管理。",
-        "en": "Connect a Synology NAS to browse shared folders, search files and metadata, and download files through the File Station API."
+        "en": "Connect a Synology NAS to browse shared folders, search files and metadata, and download files through the File Station API.",
+        "ja": "Synology NAS に接続し、File Station API を介して共有フォルダーの参照、ファイル内容や属性の検索、ファイルのダウンロードや共有リンクの管理を行います。",
+        "ko": "Synology NAS에 연결하여 File Station API를 통해 공유 폴더 탐색, 파일 내용 및 메타데이터 검색, 파일 다운로드 및 공유 링크 관리를 지원합니다.",
+        "es": "Conecta un NAS Synology para examinar carpetas compartidas, buscar archivos y metadatos y descargar archivos a través de la API File Station.",
+        "de": "Verbinden Sie ein Synology NAS, um freigegebene Ordner zu durchsuchen, nach Dateien und Metadaten zu suchen und Dateien über die File Station API herunterzuladen.",
+        "fr": "Connectez un NAS Synology pour parcourir les dossiers partagés, rechercher des fichiers et métadonnées et télécharger des fichiers via l'API File Station."
       },
       "icon": {
         "svg": "./synology/releases/1.1.0-preview.2/assets/icon.svg",
@@ -968,12 +1147,22 @@
       "title": {
         "zh-CN": "Todoist",
         "zh-TW": "Todoist",
-        "en": "Todoist"
+        "en": "Todoist",
+        "ja": "Todoist",
+        "ko": "Todoist",
+        "es": "Todoist",
+        "de": "Todoist",
+        "fr": "Todoist"
       },
       "description": {
         "zh-CN": "连接 Todoist，查看、创建、修改和完成任务，并按项目、日期、优先级和标签整理计划。",
         "zh-TW": "連接 Todoist，查看、建立、修改和完成任務，並按專案、日期、優先順序和標籤整理計畫。",
-        "en": "Connect Todoist to review, create, update, and complete tasks, and organize plans by project, date, priority, and label."
+        "en": "Connect Todoist to review, create, update, and complete tasks, and organize plans by project, date, priority, and label.",
+        "ja": "Todoist に接続し、タスクの確認、作成、更新、完了、およびプロジェクト、日付、優先度、ラベルによる計画の整理を行います。",
+        "ko": "Todoist에 연결하여 작업을 검토, 생성, 업데이트 및 완료하고 프로젝트, 날짜, 우선순위 및 라벨별로 계획을 관리합니다.",
+        "es": "Conecta Todoist para revisar, crear, actualizar y completar tareas, y organizar planes por proyecto, fecha, prioridad y etiqueta.",
+        "de": "Verbinden Sie Todoist, um Aufgaben anzuzeigen, zu erstellen, zu aktualisieren und abzuschließen sowie Pläne nach Projekt, Datum, Priorität und Label zu organisieren.",
+        "fr": "Connectez Todoist pour consulter, créer, mettre à jour et terminer des tâches, et organiser vos plans par projet, date, priorité et étiquette."
       },
       "icon": {
         "svg": "./todoist/releases/1.0.2/assets/icon.svg",

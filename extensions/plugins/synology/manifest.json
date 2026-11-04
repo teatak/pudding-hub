@@ -6,13 +6,23 @@
   "title": {
     "zh-CN": "群晖 NAS",
     "zh-TW": "Synology NAS",
-    "en": "Synology NAS"
+    "en": "Synology NAS",
+    "ja": "Synology NAS",
+    "ko": "시놀로지 NAS",
+    "es": "Synology NAS",
+    "de": "Synology NAS",
+    "fr": "Synology NAS"
   },
   "version": "1.1.0-preview.2",
   "description": {
     "zh-CN": "连接群晖 NAS，通过 File Station API 浏览共享文件夹、检索文件内容与属性，并支持文件下载与外链管理。",
     "zh-TW": "連接 Synology NAS，透過 File Station API 瀏覽共用資料夾、搜尋檔案內容與屬性，並支援檔案下載與分享連結管理。",
-    "en": "Connect a Synology NAS to browse shared folders, search files and metadata, and download files through the File Station API."
+    "en": "Connect a Synology NAS to browse shared folders, search files and metadata, and download files through the File Station API.",
+    "ja": "Synology NAS に接続し、File Station API を介して共有フォルダーの参照、ファイル内容や属性の検索、ファイルのダウンロードや共有リンクの管理を行います。",
+    "ko": "Synology NAS에 연결하여 File Station API를 통해 공유 폴더 탐색, 파일 내용 및 메타데이터 검색, 파일 다운로드 및 공유 링크 관리를 지원합니다.",
+    "es": "Conecta un NAS Synology para examinar carpetas compartidas, buscar archivos y metadatos y descargar archivos a través de la API File Station.",
+    "de": "Verbinden Sie ein Synology NAS, um freigegebene Ordner zu durchsuchen, nach Dateien und Metadaten zu suchen und Dateien über die File Station API herunterzuladen.",
+    "fr": "Connectez un NAS Synology pour parcourir les dossiers partagés, rechercher des fichiers et métadonnées et télécharger des fichiers via l'API File Station."
   },
   "icon": {
     "svg": "./assets/icon.svg",

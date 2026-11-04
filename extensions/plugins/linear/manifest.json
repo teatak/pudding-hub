@@ -6,9 +6,14 @@
   "title": {
     "zh-CN": "Linear",
     "zh-TW": "Linear",
-    "en": "Linear"
+    "en": "Linear",
+    "ja": "Linear",
+    "ko": "Linear",
+    "es": "Linear",
+    "de": "Linear",
+    "fr": "Linear"
   },
-  "version": "1.0.2",
+  "version": "1.0.3",
   "targets": [
     "desktop",
     "mobile"
@@ -16,7 +21,12 @@
   "description": {
     "zh-CN": "连接 Linear GraphQL API，用于查询 Issue、项目、团队、周期和路线图。",
     "zh-TW": "連接 Linear GraphQL API，用於查詢 Issue、專案、團隊、週期和路線圖。",
-    "en": "Connect Linear's GraphQL API for issues, projects, teams, cycles, and roadmap data."
+    "en": "Connect Linear's GraphQL API for issues, projects, teams, cycles, and roadmap data.",
+    "ja": "Linear GraphQL API に接続し、Issue、プロジェクト、チーム、サイクル、ロードマップデータを照会します。",
+    "ko": "Linear GraphQL API에 연결하여 이슈, 프로젝트, 팀, 사이클 및 로드맵 데이터를 조회합니다.",
+    "es": "Conecta la API GraphQL de Linear para incidencias, proyectos, equipos, ciclos y datos de hoja de ruta.",
+    "de": "Verbinden Sie die Linear-GraphQL-API für Issues, Projekte, Teams, Zyklen und Roadmap-Daten.",
+    "fr": "Connectez l'API GraphQL de Linear pour les tickets, projets, équipes, cycles et feuilles de route."
   },
   "icon": {
     "svg": "./assets/icon.svg",
@@ -35,9 +45,9 @@
     "skills/projects/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.2/manifest.json",
-  "package": "./releases/1.0.2/linear.pudding-plugin.json",
-  "package_sha256": "74e49d907a6a1f86e37bd01b85e3451911adfbb14b208375748f73e6eba21c4b",
+  "manifest": "./releases/1.0.3/manifest.json",
+  "package": "./releases/1.0.3/linear.pudding-plugin.json",
+  "package_sha256": "c508a46ae49a8c5d689c52673bffcd7b5ccdcadbc1ae1817ef6cf148fe3c6974",
   "requires": {
     "pudding_plugin": "^1.0.0"
   },

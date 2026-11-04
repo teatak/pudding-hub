@@ -1,0 +1,37 @@
+{
+  "kind": "pudding.plugin.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/plugins/linear",
+  "name": "linear",
+  "title": {
+    "zh-CN": "Linear",
+    "zh-TW": "Linear",
+    "en": "Linear",
+    "ja": "Linear",
+    "ko": "Linear",
+    "es": "Linear",
+    "de": "Linear",
+    "fr": "Linear"
+  },
+  "version": "1.0.3",
+  "targets": [
+    "desktop",
+    "mobile"
+  ],
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "color": {
+      "light": "#FFFFFF",
+      "dark": "#FFFFFF"
+    },
+    "background": {
+      "light": "#5E6AD2",
+      "dark": "#4752B8"
+    }
+  },
+  "package": "./linear.pudding-plugin.json",
+  "package_sha256": "c508a46ae49a8c5d689c52673bffcd7b5ccdcadbc1ae1817ef6cf148fe3c6974",
+  "requires": {
+    "pudding_plugin": "^1.0.0"
+  }
+}

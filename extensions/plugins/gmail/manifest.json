@@ -6,13 +6,23 @@
   "title": {
     "zh-CN": "Gmail",
     "zh-TW": "Gmail",
-    "en": "Gmail"
+    "en": "Gmail",
+    "ja": "Gmail",
+    "ko": "Gmail",
+    "es": "Gmail",
+    "de": "Gmail",
+    "fr": "Gmail"
   },
   "version": "1.0.0-preview.3",
   "description": {
     "zh-CN": "连接 Gmail，搜索和读取邮件、查看会话和标签，以及发送和回复邮件。",
     "zh-TW": "連接 Gmail，搜尋和讀取郵件、查看對話串和標籤，以及傳送和回覆郵件。",
-    "en": "Connect Gmail to search and read mail, view threads and labels, and send emails and replies."
+    "en": "Connect Gmail to search and read mail, view threads and labels, and send emails and replies.",
+    "ja": "Gmail に接続し、メールの検索と閲覧、スレッドやラベルの確認、メールの送信や返信を行います。",
+    "ko": "Gmail에 연결하여 메일을 검색하고 읽으며, 스레드와 라벨을 확인하고, 이메일과 답장을 전송합니다.",
+    "es": "Conecta Gmail para buscar y leer correos, ver hilos y etiquetas, y enviar y responder correos electrónicos.",
+    "de": "Verbinden Sie Gmail, um E-Mails zu suchen und zu lesen, Konversationen und Labels anzuzeigen sowie E-Mails und Antworten zu senden.",
+    "fr": "Connectez Gmail pour rechercher et lire des e-mails, consulter les fils de discussion et les libellés, et envoyer des messages et des réponses."
   },
   "icon": {
     "svg": "./assets/icon.svg",

@@ -6,9 +6,14 @@
   "title": {
     "zh-CN": "Notion",
     "zh-TW": "Notion",
-    "en": "Notion"
+    "en": "Notion",
+    "ja": "Notion",
+    "ko": "Notion",
+    "es": "Notion",
+    "de": "Notion",
+    "fr": "Notion"
   },
-  "version": "1.0.2",
+  "version": "1.0.3",
   "targets": [
     "desktop",
     "mobile"
@@ -16,7 +21,12 @@
   "description": {
     "zh-CN": "连接 Notion REST API，用于页面、块、数据源、数据库、用户、评论和搜索。",
     "zh-TW": "連接 Notion REST API，用於頁面、區塊、資料來源、資料庫、使用者、留言和搜尋。",
-    "en": "Connect Notion's REST API for pages, blocks, data sources, databases, users, comments, and search."
+    "en": "Connect Notion's REST API for pages, blocks, data sources, databases, users, comments, and search.",
+    "ja": "Notion REST API に接続し、ページ、ブロック、データソース、データベース、ユーザー、コメント、検索を操作します。",
+    "ko": "Notion REST API에 연결하여 페이지, 블록, 데이터 소스, 데이터베이스, 사용자, 댓글 및 검색을 처리합니다.",
+    "es": "Conecta la API REST de Notion para páginas, bloques, fuentes de datos, bases de datos, usuarios, comentarios y búsquedas.",
+    "de": "Verbinden Sie die Notion-REST-API für Seiten, Blöcke, Datenquellen, Datenbanken, Benutzer, Kommentare und Suchen.",
+    "fr": "Connectez l'API REST de Notion pour les pages, blocs, sources de données, bases de données, utilisateurs, commentaires et recherches."
   },
   "icon": {
     "svg": "./assets/icon.svg",
@@ -35,9 +45,9 @@
     "skills/data-sources/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.2/manifest.json",
-  "package": "./releases/1.0.2/notion.pudding-plugin.json",
-  "package_sha256": "4d642888f950f9ea1979dc82f7039b65511e6159b85bf340acca0fe463f9622e",
+  "manifest": "./releases/1.0.3/manifest.json",
+  "package": "./releases/1.0.3/notion.pudding-plugin.json",
+  "package_sha256": "e8fff50380107fe33aa47766c5388d5392f8c7e23ae66d28ae482a4982745361",
   "requires": {
     "pudding_plugin": "^1.0.0"
   },

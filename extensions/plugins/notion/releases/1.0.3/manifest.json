@@ -1,0 +1,37 @@
+{
+  "kind": "pudding.plugin.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/plugins/notion",
+  "name": "notion",
+  "title": {
+    "zh-CN": "Notion",
+    "zh-TW": "Notion",
+    "en": "Notion",
+    "ja": "Notion",
+    "ko": "Notion",
+    "es": "Notion",
+    "de": "Notion",
+    "fr": "Notion"
+  },
+  "version": "1.0.3",
+  "targets": [
+    "desktop",
+    "mobile"
+  ],
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "color": {
+      "light": "#111111",
+      "dark": "#FFFFFF"
+    },
+    "background": {
+      "light": "#FFFFFF",
+      "dark": "#111111"
+    }
+  },
+  "package": "./notion.pudding-plugin.json",
+  "package_sha256": "e8fff50380107fe33aa47766c5388d5392f8c7e23ae66d28ae482a4982745361",
+  "requires": {
+    "pudding_plugin": "^1.0.0"
+  }
+}

@@ -6,13 +6,23 @@
   "title": {
     "zh-CN": "Jira",
     "zh-TW": "Jira",
-    "en": "Jira"
+    "en": "Jira",
+    "ja": "Jira",
+    "ko": "Jira",
+    "es": "Jira",
+    "de": "Jira",
+    "fr": "Jira"
   },
   "version": "1.0.2",
   "description": {
     "zh-CN": "连接 Jira Cloud REST API，用于查询项目、Issue、JQL、评论、状态流转、看板和 Sprint。",
     "zh-TW": "連接 Jira Cloud REST API，用於查詢專案、Issue、JQL、評論、狀態流轉、看板和 Sprint。",
-    "en": "Connect the Jira Cloud REST API for projects, issues, JQL search, comments, transitions, boards, and sprints."
+    "en": "Connect the Jira Cloud REST API for projects, issues, JQL search, comments, transitions, boards, and sprints.",
+    "ja": "Jira Cloud REST API に接続し、プロジェクト、Issue、JQL 検索、コメント、ステータス遷移、ボード、スプリントを照会します。",
+    "ko": "Jira Cloud REST API에 연결하여 프로젝트, 이슈, JQL 검색, 댓글, 상태 전환, 보드 및 스프린트를 조회합니다.",
+    "es": "Conecta la API REST de Jira Cloud para proyectos, incidencias, búsqueda JQL, comentarios, transiciones, tableros y sprints.",
+    "de": "Verbinden Sie die Jira Cloud-REST-API für Projekte, Issues, JQL-Suchen, Kommentare, Statusübergänge, Boards und Sprints.",
+    "fr": "Connectez l'API REST de Jira Cloud pour les projets, tickets, recherches JQL, commentaires, transitions, tableaux et sprints."
   },
   "icon": {
     "svg": "./assets/icon.svg",

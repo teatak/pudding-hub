@@ -6,13 +6,23 @@
   "title": {
     "zh-CN": "Supabase",
     "zh-TW": "Supabase",
-    "en": "Supabase"
+    "en": "Supabase",
+    "ja": "Supabase",
+    "ko": "Supabase",
+    "es": "Supabase",
+    "de": "Supabase",
+    "fr": "Supabase"
   },
   "version": "1.0.1",
   "description": {
     "zh-CN": "以只读方式连接单个 Supabase 项目，用于查看数据库结构与数据、日志、安全建议、Edge Functions、Storage 和官方文档。",
     "zh-TW": "以唯讀方式連接單個 Supabase 專案，用於查看資料庫結構與資料、日誌、安全建議、Edge Functions、Storage 和官方文件。",
-    "en": "Connect one Supabase project in read-only mode to inspect database schema and data, logs, advisors, Edge Functions, Storage, and official documentation."
+    "en": "Connect one Supabase project in read-only mode to inspect database schema and data, logs, advisors, Edge Functions, Storage, and official documentation.",
+    "ja": "単一の Supabase プロジェクトに読み取り専用モードで接続し、データベーススキーマとデータ、ログ、アドバイザー、Edge Functions、Storage、公式ドキュメントを確認します。",
+    "ko": "단일 Supabase 프로젝트에 읽기 전용 모드로 연결하여 데이터베이스 스키마와 데이터, 로그, 권장 사항, Edge Functions, Storage 및 공식 문서를 검사합니다.",
+    "es": "Conecta un proyecto de Supabase en modo de solo lectura para inspeccionar el esquema y los datos de la base de datos, registros, avisos, Edge Functions, Storage y documentación oficial.",
+    "de": "Verbinden Sie ein Supabase-Projekt im schreibgeschützten Modus, um Datenbankschemata und Daten, Protokolle, Ratgeber, Edge Functions, Storage und die offizielle Dokumentation einzusehen.",
+    "fr": "Connectez un projet Supabase en mode lecture seule pour inspecter les schémas et données de base de données, les journaux, les recommandations, Edge Functions, Storage et la documentation officielle."
   },
   "icon": {
     "svg": "./assets/icon.svg",

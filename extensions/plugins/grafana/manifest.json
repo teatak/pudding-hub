@@ -6,13 +6,23 @@
   "title": {
     "zh-CN": "Grafana",
     "zh-TW": "Grafana",
-    "en": "Grafana"
+    "en": "Grafana",
+    "ja": "Grafana",
+    "ko": "Grafana",
+    "es": "Grafana",
+    "de": "Grafana",
+    "fr": "Grafana"
   },
   "version": "1.0.4",
   "description": {
     "zh-CN": "连接 Grafana HTTP API，用于只读查询 Dashboard、文件夹、数据源、指标、日志和告警规则。",
     "zh-TW": "連接 Grafana HTTP API，用於唯讀查詢 Dashboard、資料夾、資料來源、指標、日誌和告警規則。",
-    "en": "Connect the Grafana HTTP API for read-only access to dashboards, folders, data sources, metrics, logs, and alert rules."
+    "en": "Connect the Grafana HTTP API for read-only access to dashboards, folders, data sources, metrics, logs, and alert rules.",
+    "ja": "Grafana HTTP API に接続し、ダッシュボード、フォルダ、データソース、メトリクス、ログ、アラートルールへの読み取り専用アクセスを提供します。",
+    "ko": "Grafana HTTP API에 연결하여 대시보드, 폴더, 데이터 소스, 메트릭, 로그 및 알림 규칙에 대한 읽기 전용 액세스를 제공합니다.",
+    "es": "Conecta la API HTTP de Grafana para acceso de solo lectura a paneles, carpetas, fuentes de datos, métricas, registros y reglas de alerta.",
+    "de": "Verbinden Sie die Grafana-HTTP-API für den schreibgeschützten Zugriff auf Dashboards, Ordner, Datenquellen, Metriken, Protokolle und Warnregeln.",
+    "fr": "Connectez l'API HTTP de Grafana pour un accès en lecture seule aux tableaux de bord, dossiers, sources de données, métriques, journaux et règles d'alerte."
   },
   "icon": {
     "svg": "./assets/icon.svg",

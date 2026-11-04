@@ -1,6 +1,6 @@
 id: notion
 name: Notion
-version: 1.0.2
+version: 1.0.3
 description: Access Notion pages, blocks, data sources, databases, users, comments, and search through the Notion REST API.
 auth:
   required: true

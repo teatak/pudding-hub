@@ -6,13 +6,23 @@
   "title": {
     "zh-CN": "Home Assistant",
     "zh-TW": "Home Assistant",
-    "en": "Home Assistant"
+    "en": "Home Assistant",
+    "ja": "Home Assistant",
+    "ko": "Home Assistant",
+    "es": "Home Assistant",
+    "de": "Home Assistant",
+    "fr": "Home Assistant"
   },
   "version": "1.0.4",
   "description": {
     "zh-CN": "连接 Home Assistant REST API，用于查询实体、状态、历史和服务，并在确认后控制家居设备。",
     "zh-TW": "連接 Home Assistant REST API，用於查詢實體、狀態、歷史和服務，並在確認後控制家居裝置。",
-    "en": "Connect the Home Assistant REST API to inspect entities, states, history, and services, and control home devices with confirmation."
+    "en": "Connect the Home Assistant REST API to inspect entities, states, history, and services, and control home devices with confirmation.",
+    "ja": "Home Assistant REST API に接続し、エンティティ、状態、履歴、サービスを確認し、確認を行った上でスマートホーム機器を制御します。",
+    "ko": "Home Assistant REST API에 연결하여 엔티티, 상태, 이력 및 서비스를 확인하고 확인 후 스마트 기기를 제어합니다.",
+    "es": "Conecta la API REST de Home Assistant para inspeccionar entidades, estados, historial y servicios, y controlar dispositivos domésticos con confirmación.",
+    "de": "Verbinden Sie die Home Assistant-REST-API, um Entitäten, Zustände, Verläufe und Dienste einzusehen und Smart-Home-Geräte nach Bestätigung zu steuern.",
+    "fr": "Connectez l'API REST de Home Assistant pour inspecter les entités, états, historiques et services, et contrôler les appareils domestiques après confirmation."
   },
   "icon": {
     "svg": "./assets/icon.svg",

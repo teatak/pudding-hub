@@ -120,103 +120,13 @@
       "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImVtYWlsLXN1cmZhY2UiIHgxPSI4IiB5MT0iNCIgeDI9IjU2IiB5Mj0iNjIiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgICAgPHN0b3Agc3RvcC1jb2xvcj0iIzQ1OUJGRiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMyNTYzRUIiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8Y2xpcFBhdGggaWQ9ImVtYWlsLWVudmVsb3BlIj4KICAgICAgPHJlY3QgeD0iMTMiIHk9IjE4IiB3aWR0aD0iMzgiIGhlaWdodD0iMjciIHJ4PSI0LjUiLz4KICAgIDwvY2xpcFBhdGg+CiAgPC9kZWZzPgogIDxyZWN0IHg9IjIiIHk9IjIiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcng9IjE2IiBmaWxsPSJ1cmwoI2VtYWlsLXN1cmZhY2UpIi8+CiAgPGcgY2xpcC1wYXRoPSJ1cmwoI2VtYWlsLWVudmVsb3BlKSI+CiAgICA8cmVjdCB4PSIxMyIgeT0iMTgiIHdpZHRoPSIzOCIgaGVpZ2h0PSIyNyIgZmlsbD0iI0ZGRkZGRiIvPgogICAgPHBhdGggZD0iTTEyIDIwLjUgMjguOCAzMi43QzMwLjcgMzQuMSAzMy4zIDM0LjEgMzUuMiAzMi43TDUyIDIwLjUiIHN0cm9rZT0idXJsKCNlbWFpbC1zdXJmYWNlKSIgc3Ryb2tlLXdpZHRoPSIyLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDwvZz4KPC9zdmc+Cg==",
       "releases": [
         {
-          "version": "1.0.0-preview.9",
-          "package": "./email-board/releases/1.0.0-preview.9/email-board.pudding-widget.json",
-          "packageHash": "637bdc0fe83e0bacc5a9d90a653ee399a2cb4cd053eb4635a415ea1ac8b00422",
+          "version": "1.0.0",
+          "package": "./email-board/releases/1.0.0/email-board.pudding-widget.json",
+          "packageHash": "128b411fa6221c2dd36e870639b58a3e3bc5978c7bc9622dbb0b70c13c8ebe24",
           "requires": {
             "protocolVersion": 61,
             "sdkVersion": "1.0.0"
-          },
-          "channel": "preview",
-          "preview": true
-        },
-        {
-          "version": "1.0.0-preview.8",
-          "package": "./email-board/releases/1.0.0-preview.8/email-board.pudding-widget.json",
-          "packageHash": "2ae22993a1b96a9627a888f1cf1ec6d18f8372e0cd915070fc77c6c800ca81d4",
-          "requires": {
-            "protocolVersion": 61,
-            "sdkVersion": "1.0.0"
-          },
-          "channel": "preview",
-          "preview": true
-        },
-        {
-          "version": "1.0.0-preview.7",
-          "package": "./email-board/releases/1.0.0-preview.7/email-board.pudding-widget.json",
-          "packageHash": "89afb21b4a4d451fae68999f529e0aa4d40978f501103ca77844af31f60dcf03",
-          "requires": {
-            "protocolVersion": 61,
-            "sdkVersion": "1.0.0"
-          },
-          "channel": "preview",
-          "preview": true
-        },
-        {
-          "version": "1.0.0-preview.6",
-          "package": "./email-board/releases/1.0.0-preview.6/email-board.pudding-widget.json",
-          "packageHash": "f8a64b0f2044c8cb7875c2bdc2526947f8c38d6c8a63c2639c4008cb1770ae94",
-          "requires": {
-            "protocolVersion": 61,
-            "sdkVersion": "1.0.0"
-          },
-          "channel": "preview",
-          "preview": true
-        },
-        {
-          "version": "1.0.0-preview.5",
-          "package": "./email-board/releases/1.0.0-preview.5/email-board.pudding-widget.json",
-          "packageHash": "51e262403f376ce0607388038a6f88e664bf2c74a59be16b8fcbeed26e0c7fe3",
-          "requires": {
-            "protocolVersion": 61,
-            "sdkVersion": "1.0.0"
-          },
-          "channel": "preview",
-          "preview": true
-        },
-        {
-          "version": "1.0.0-preview.4",
-          "package": "./email-board/releases/1.0.0-preview.4/email-board.pudding-widget.json",
-          "packageHash": "d1faa107fbaa09310e09f374603e1ad1538c5064fad777a6535a1eb4e28e002b",
-          "requires": {
-            "protocolVersion": 60,
-            "sdkVersion": "1.0.0"
-          },
-          "channel": "preview",
-          "preview": true
-        },
-        {
-          "version": "1.0.0-preview.3",
-          "package": "./email-board/releases/1.0.0-preview.3/email-board.pudding-widget.json",
-          "packageHash": "4f37099eff090da32b1d05e25f57b38cf43948b4a89968635bceff433243213c",
-          "requires": {
-            "protocolVersion": 58,
-            "sdkVersion": "1.0.0"
-          },
-          "channel": "preview",
-          "preview": true
-        },
-        {
-          "version": "1.0.0-preview.2",
-          "package": "./email-board/releases/1.0.0-preview.2/email-board.pudding-widget.json",
-          "packageHash": "ce60c7af16cd8d690053d7c3f0ea0549a75de80255370f9a682ef8efe73f0261",
-          "requires": {
-            "protocolVersion": 58,
-            "sdkVersion": "1.0.0"
-          },
-          "channel": "preview",
-          "preview": true
-        },
-        {
-          "version": "1.0.0-preview.1",
-          "package": "./email-board/releases/1.0.0-preview.1/email-board.pudding-widget.json",
-          "packageHash": "c759c567f517e980779b6e24fd32742e1810a289ba9c18af24478008106a225c",
-          "requires": {
-            "protocolVersion": 58,
-            "sdkVersion": "1.0.0"
-          },
-          "channel": "preview",
-          "preview": true
+          }
         }
       ]
     },

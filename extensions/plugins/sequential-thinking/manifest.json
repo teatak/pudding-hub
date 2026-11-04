@@ -6,13 +6,23 @@
   "title": {
     "zh-CN": "Sequential Thinking",
     "zh-TW": "Sequential Thinking",
-    "en": "Sequential Thinking"
+    "en": "Sequential Thinking",
+    "ja": "Sequential Thinking",
+    "ko": "Sequential Thinking",
+    "es": "Sequential Thinking",
+    "de": "Sequential Thinking",
+    "fr": "Sequential Thinking"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": {
     "zh-CN": "连接 Sequential Thinking MCP Server，用于分步骤拆解、修订和追踪复杂问题。",
     "zh-TW": "連接 Sequential Thinking MCP Server，用於分步驟拆解、修訂和追蹤複雜問題。",
-    "en": "Connect the Sequential Thinking MCP server for step-by-step decomposition, revision, and tracking of complex problems."
+    "en": "Connect the Sequential Thinking MCP server for step-by-step decomposition, revision, and tracking of complex problems.",
+    "ja": "Sequential Thinking MCP サーバーに接続し、複雑な問題の段階的な分解、推敲、追跡を行います。",
+    "ko": "Sequential Thinking MCP 서버에 연결하여 복잡한 문제를 단계별로 분해, 수정 및 추적합니다.",
+    "es": "Conecta el servidor MCP Sequential Thinking para la descomposición paso a paso, revisión y seguimiento de problemas complejos.",
+    "de": "Verbinden Sie den Sequential Thinking MCP-Server für die schrittweise Zerlegung, Überarbeitung und Verfolgung komplexer Probleme.",
+    "fr": "Connectez le serveur MCP Sequential Thinking pour décomposer, réviser et suivre des problèmes complexes étape par étape."
   },
   "icon": {
     "svg": "./assets/icon.svg",
@@ -26,9 +36,9 @@
     "skills/sequential-thinking/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.0/manifest.json",
-  "package": "./releases/1.0.0/sequential-thinking.pudding-plugin.json",
-  "package_sha256": "8fe802603a18d3100f9433ac2d57ed3516cc6dce53b7a8ff438e6f81c0190b98",
+  "manifest": "./releases/1.0.1/manifest.json",
+  "package": "./releases/1.0.1/sequential-thinking.pudding-plugin.json",
+  "package_sha256": "c548d48b235cf18722a908f2d463fff32b61c9d1bcc96b454d7eceb634adfbb7",
   "requires": {
     "pudding_plugin": "^1.0.0"
   },

@@ -6,13 +6,23 @@
   "title": {
     "zh-CN": "邮件",
     "zh-TW": "郵件",
-    "en": "Email"
+    "en": "Email",
+    "ja": "メール",
+    "ko": "이메일",
+    "es": "Correo",
+    "de": "E-Mail",
+    "fr": "E-mail"
   },
-  "version": "1.0.0-preview.5",
+  "version": "1.0.0",
   "description": {
     "zh-CN": "连接常用邮箱或自定义 IMAP/SMTP，搜索、阅读及发送邮件。",
     "zh-TW": "連接常用信箱或自訂 IMAP/SMTP，搜尋、閱讀及寄送郵件。",
-    "en": "Connect popular email providers or custom IMAP/SMTP to search, read and send mail."
+    "en": "Connect popular email providers or custom IMAP/SMTP to search, read and send mail.",
+    "ja": "一般的なメールプロバイダーや独自の IMAP/SMTP に接続し、メールの検索、閲覧、送信を行います。",
+    "ko": "일반 이메일 서비스나 사용자 지정 IMAP/SMTP에 연결하여 메일을 검색하고 읽고 전송합니다.",
+    "es": "Conecta proveedores populares de correo electrónico o IMAP/SMTP personalizado para buscar, leer y enviar correos.",
+    "de": "Verbinden Sie beliebte E-Mail-Anbieter oder eigene IMAP/SMTP-Server zum Suchen, Lesen und Senden von E-Mails.",
+    "fr": "Connectez des fournisseurs de messagerie populaires ou un serveur IMAP/SMTP personnalisé pour rechercher, lire et envoyer des e-mails."
   },
   "icon": {
     "svg": "./assets/icon.svg",
@@ -30,9 +40,9 @@
     "skills/mailbox/SKILL.md",
     "assets/icon.svg"
   ],
-  "manifest": "./releases/1.0.0-preview.5/manifest.json",
-  "package": "./releases/1.0.0-preview.5/email.pudding-plugin.json",
-  "package_sha256": "214541ddb2b3b0f446d5b6837ebb7d4618188d0e0ab1f05d8d46e9b65cf0ed41",
+  "manifest": "./releases/1.0.0/manifest.json",
+  "package": "./releases/1.0.0/email.pudding-plugin.json",
+  "package_sha256": "b418af82b75b7d26737a0a7af49c98c62003cab022752c65081f6fbe1a256d88",
   "requires": {
     "pudding_plugin": "1.3.0"
   },
@@ -42,7 +52,5 @@
     "smtp",
     "icloud",
     "gmail"
-  ],
-  "channel": "preview",
-  "preview": true
+  ]
 }

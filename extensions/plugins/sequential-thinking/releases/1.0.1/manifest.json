@@ -1,0 +1,29 @@
+{
+  "kind": "pudding.plugin.manifest",
+  "schema_version": 1,
+  "id": "teatak/pudding-hub/plugins/sequential-thinking",
+  "name": "sequential-thinking",
+  "title": {
+    "zh-CN": "Sequential Thinking",
+    "zh-TW": "Sequential Thinking",
+    "en": "Sequential Thinking",
+    "ja": "Sequential Thinking",
+    "ko": "Sequential Thinking",
+    "es": "Sequential Thinking",
+    "de": "Sequential Thinking",
+    "fr": "Sequential Thinking"
+  },
+  "version": "1.0.1",
+  "icon": {
+    "svg": "./assets/icon.svg",
+    "background": {
+      "light": "#F1F5F9",
+      "dark": "#111827"
+    }
+  },
+  "package": "./sequential-thinking.pudding-plugin.json",
+  "package_sha256": "c548d48b235cf18722a908f2d463fff32b61c9d1bcc96b454d7eceb634adfbb7",
+  "requires": {
+    "pudding_plugin": "^1.0.0"
+  }
+}

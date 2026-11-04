@@ -6,7 +6,12 @@
   "title": {
     "zh-CN": "GitHub",
     "zh-TW": "GitHub",
-    "en": "GitHub"
+    "en": "GitHub",
+    "ja": "GitHub",
+    "ko": "GitHub",
+    "es": "GitHub",
+    "de": "GitHub",
+    "fr": "GitHub"
   },
   "version": "1.0.6",
   "targets": [
@@ -16,7 +21,12 @@
   "description": {
     "zh-CN": "通过 GitHub App 或个人访问令牌连接 GitHub REST 与 GraphQL API，用于仓库、Issue、PR 查询以及发表评论与评审。",
     "zh-TW": "透過 GitHub App 或個人存取權杖連接 GitHub REST 與 GraphQL API，用於倉庫、Issue、PR 查詢以及發表評論與評審。",
-    "en": "Connect GitHub REST and GraphQL APIs through a GitHub App or personal access token for repositories, issues, pull requests, comments, and reviews."
+    "en": "Connect GitHub REST and GraphQL APIs through a GitHub App or personal access token for repositories, issues, pull requests, comments, and reviews.",
+    "ja": "GitHub App または個人用アクセストークンを介して GitHub REST および GraphQL API に接続し、リポジトリ、Issue、プルリクエスト、コメント、レビューを操作します。",
+    "ko": "GitHub App 또는 개인 액세스 토큰을 통해 GitHub REST 및 GraphQL API에 연결하여 저장소, 이슈, PR, 댓글 및 코드 리뷰를 관리합니다.",
+    "es": "Conecta las API REST y GraphQL de GitHub mediante una GitHub App o token de acceso personal para repositorios, incidencias, pull requests, comentarios y revisiones.",
+    "de": "Verbinden Sie die GitHub-REST- und GraphQL-APIs über eine GitHub-App oder ein persönliches Zugriffstoken für Repositorys, Issues, Pull Requests, Kommentare und Reviews.",
+    "fr": "Connectez les API REST et GraphQL de GitHub via une application GitHub ou un jeton d'accès personnel pour les dépôts, tickets, pull requests, commentaires et revues."
   },
   "icon": {
     "svg": "./assets/icon.svg",

@@ -1,6 +1,6 @@
 id: sequential-thinking
 name: Sequential Thinking
-version: 1.0.0
+version: 1.0.1
 description: Run the Sequential Thinking MCP server for step-by-step problem decomposition and revision.
 auth:
   required: false

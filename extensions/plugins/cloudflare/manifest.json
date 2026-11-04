@@ -6,13 +6,23 @@
   "title": {
     "zh-CN": "Cloudflare",
     "zh-TW": "Cloudflare",
-    "en": "Cloudflare"
+    "en": "Cloudflare",
+    "ja": "Cloudflare",
+    "ko": "Cloudflare",
+    "es": "Cloudflare",
+    "de": "Cloudflare",
+    "fr": "Cloudflare"
   },
   "version": "1.0.1",
   "description": {
     "zh-CN": "以只读方式连接 Cloudflare API MCP，用于查看账户、站点、DNS、Workers、存储、安全配置和分析数据。",
     "zh-TW": "以唯讀方式連接 Cloudflare API MCP，用於查看帳戶、網站、DNS、Workers、儲存、安全設定和分析資料。",
-    "en": "Connect the Cloudflare API MCP in read-only mode to inspect accounts, zones, DNS, Workers, storage, security configuration, and analytics."
+    "en": "Connect the Cloudflare API MCP in read-only mode to inspect accounts, zones, DNS, Workers, storage, security configuration, and analytics.",
+    "ja": "Cloudflare API MCP に読み取り専用モードで接続し、アカウント、ゾーン、DNS、Workers、ストレージ、セキュリティ設定、および分析データを検査します。",
+    "ko": "Cloudflare API MCP에 읽기 전용 모드로 연결하여 계정, 영역, DNS, Workers, 스토리지, 보안 설정 및 분석 데이터를 검사합니다.",
+    "es": "Conecta el MCP de la API de Cloudflare en modo de solo lectura para inspeccionar cuentas, zonas, DNS, Workers, almacenamiento, configuración de seguridad y análisis.",
+    "de": "Verbinden Sie das Cloudflare-API-MCP im schreibgeschützten Modus, um Konten, Zonen, DNS, Workers, Speicher, Sicherheitskonfigurationen und Analysen zu überprüfen.",
+    "fr": "Connectez le MCP de l'API Cloudflare en mode lecture seule pour inspecter les comptes, zones, DNS, Workers, stockage, configuration de sécurité et analyses."
   },
   "icon": {
     "svg": "./assets/icon.svg",
