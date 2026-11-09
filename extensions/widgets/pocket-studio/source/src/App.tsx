@@ -314,8 +314,6 @@ export default function App() {
     duration: number;
   } | null>(null);
 
-  const [expandedTrackKey, setExpandedTrackKey] = useState<string | null>(null);
-
   const timelineScrollRef = useRef<HTMLDivElement>(null);
   const isPlayingRef = useRef(isPlaying);
   isPlayingRef.current = isPlaying;
@@ -883,266 +881,9 @@ export default function App() {
                 }
               });
 
-              const isExpanded = expandedTrackKey === tConfig.trackKey;
-              const isMelodic = inst.category !== "Drums";
-
-              // 计算该音轨所有音符所包含的独特音高（按 MIDI 音高从高到低排序，高音在顶部）
-              const noteMidiList = notes
-                .map((n) => {
-                  const p = getResolvedPitch(tConfig.instId, n.stepIdx, n.pitch);
-                  return p ? freqToMidi(p) : 60;
-                })
-                .filter((m) => m > 0);
-
-              let pitchMidis = Array.from(new Set(noteMidiList)).sort((a, b) => b - a);
-              if (pitchMidis.length < 5 && isMelodic) {
-                const base = pitchMidis[0] || (inst.category === "Bass" ? 36 : 60);
-                const defaultScale = [base + 12, base + 9, base + 7, base + 4, base + 2, base].sort((a, b) => b - a);
-                pitchMidis = Array.from(new Set([...pitchMidis, ...defaultScale])).sort((a, b) => b - a);
-              }
-
-              if (isExpanded && isMelodic) {
-                // ==========================================
-                // 方案 B：微型展开式钢琴卷帘 (In-Place Mini Piano Roll)
-                // ==========================================
-                return (
-                  <div
-                    key={tConfig.trackKey}
-                    className={`ps-timeline-track-row is-expanded ${tConfig.muted ? "is-muted" : ""}`}
-                  >
-                    {/* 展开态左侧：音高键盘标尺 */}
-                    <div className="ps-track-header-cell sticky is-expanded">
-                      <div className="ps-roll-header-topbar">
-                        <div className="ps-card-main">
-                          <div
-                            className="ps-card-icon"
-                            style={{ color: `var(--ps-${inst.colorClass.replace("is-", "")})` }}
-                          >
-                            <InstrumentSvgIcon type={inst.iconType} />
-                          </div>
-                          <div className="ps-row-name">
-                            <span className="ps-row-name-text" title={getInstName(tConfig.instId)}>
-                              {getInstName(tConfig.instId)}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="ps-card-actions">
-                          <button
-                            type="button"
-                            className={`ps-btn-rev ${(tConfig.reverb ?? getDefaultReverb(tConfig.instId)) > 0.05 ? "is-active" : ""}`}
-                            title={`${t("trackReverb")}: ${Math.round((tConfig.reverb ?? getDefaultReverb(tConfig.instId)) * 100)}%`}
-                            aria-label={t("trackReverb")}
-                            disabled={busy}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              const rect = e.currentTarget.getBoundingClientRect();
-                              setActiveReverbPopover((prev) =>
-                                prev?.trackKey === tConfig.trackKey
-                                  ? null
-                                  : {
-                                      trackKey: tConfig.trackKey,
-                                      instId: tConfig.instId,
-                                      reverb: tConfig.reverb ?? getDefaultReverb(tConfig.instId),
-                                      anchor: {
-                                        x: Math.min(window.innerWidth - 240, Math.max(10, rect.left)),
-                                        y: rect.bottom + 6,
-                                        showBelow: true,
-                                      },
-                                    }
-                              );
-                            }}
-                          >
-                            R
-                          </button>
-                          <button
-                            type="button"
-                            className={`ps-btn-mute ${tConfig.muted ? "is-active" : ""}`}
-                            title={tConfig.muted ? t("unmuteTrack") : t("muteTrack")}
-                            aria-label={tConfig.muted ? t("unmuteTrack") : t("muteTrack")}
-                            disabled={busy}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              void perform({ action: "toggleMuteTrack", trackKey: tConfig.trackKey });
-                            }}
-                          >
-                            M
-                          </button>
-                          <button
-                            type="button"
-                            className="ps-btn-roll is-active"
-                            title={t("closeRoll")}
-                            disabled={busy}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setExpandedTrackKey(null);
-                            }}
-                          >
-                            {t("closeRoll")}
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* 音高音阶列 */}
-                      <div className="ps-roll-keys-column">
-                        {pitchMidis.map((pMidi) => {
-                          const pName = midiToNoteName(pMidi);
-                          const pFreq = midiToFreq(pMidi);
-                          const isBlack = pName.includes("#");
-                          const hasNotesOnLane = notes.some(
-                            (n) => freqToMidi(getResolvedPitch(tConfig.instId, n.stepIdx, n.pitch) || 0) === pMidi
-                          );
-                          return (
-                            <div
-                              key={pMidi}
-                              className={`ps-roll-key-lane ${isBlack ? "is-black" : ""} ${hasNotesOnLane ? "is-active-pitch" : ""}`}
-                              onClick={() => {
-                                const now = getAudioContext().currentTime;
-                                inst.playSound(now, 0, pFreq, 0.25, tConfig.volume ?? 1, tConfig.reverb);
-                              }}
-                              title={`试听 ${pName} (${pFreq.toFixed(1)}Hz)`}
-                            >
-                              <span>{pName}</span>
-                              <span className="ps-pitch-hz">{pFreq.toFixed(0)}Hz</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* 展开态右侧：多行音高网格与长音符自由编辑 */}
-                    <div className="ps-roll-timeline" style={{ width: `${totalSteps * STEP_PITCH}px` }}>
-                      <div className="ps-roll-timeline-topbar">
-                        <span>💡 {t("openRoll")} · 单独音高行编辑，横向拉长音物理错开不卡死</span>
-                      </div>
-
-                      {pitchMidis.map((laneMidi) => {
-                        const laneFreq = midiToFreq(laneMidi);
-                        const laneNotes = notes.filter(
-                          (n) => freqToMidi(getResolvedPitch(tConfig.instId, n.stepIdx, n.pitch) || 0) === laneMidi
-                        );
-                        const isBlack = midiToNoteName(laneMidi).includes("#");
-
-                        return (
-                          <div
-                            key={laneMidi}
-                            className={`ps-roll-pitch-row ${isBlack ? "is-black-row" : ""} ${laneNotes.length > 0 ? "is-active-row" : ""}`}
-                          >
-                            {/* 空白背景格：点击在当前音高行添加音符 */}
-                            <div className="ps-grid-slots">
-                              {Array.from({ length: totalSteps }).map((_, g) => {
-                                const bIdx = Math.floor(g / 16);
-                                const sIdx = g % 16;
-                                const isBarStart = sIdx === 0 && g > 0;
-                                const isBeat = sIdx % 4 === 0;
-                                const isCurrentBeat = isPlaying && playStep === g;
-
-                                return (
-                                  <div
-                                    key={g}
-                                    className={`ps-pad-btn ${isBarStart ? "bar-start" : ""} ${isBeat ? "bar-beat" : ""} ${
-                                      isCurrentBeat ? "playhead" : ""
-                                    }`}
-                                    style={{ width: `${STEP_WIDTH}px` }}
-                                    onClick={() => {
-                                      const now = getAudioContext().currentTime;
-                                      inst.playSound(now, g, laneFreq, 0.25, tConfig.volume ?? 1, tConfig.reverb);
-                                      void perform({
-                                        action: "toggleStep",
-                                        barIndex: bIdx,
-                                        trackKey: tConfig.trackKey,
-                                        stepIndex: sIdx,
-                                        pitch: laneFreq,
-                                        duration: 1,
-                                      });
-                                    }}
-                                  />
-                                );
-                              })}
-                            </div>
-
-                            {/* 该音高行上的音符条：支持拉伸放长，不受其他音高音符阻挡！ */}
-                            {laneNotes.map((note, idxInLane) => {
-                              const isDraggingThis =
-                                draggingNote &&
-                                draggingNote.trackKey === tConfig.trackKey &&
-                                draggingNote.gStep === note.gStep;
-                              const currentDur = isDraggingThis ? draggingNote.duration : note.duration;
-                              const isPlayingThisNote =
-                                isPlaying && playStep >= note.gStep && playStep < note.gStep + currentDur;
-                              const noteName = midiToNoteName(laneMidi);
-                              const nextSamePitchNote = laneNotes[idxInLane + 1];
-
-                              return (
-                                <div
-                                  key={note.gStep}
-                                  className={`ps-roll-note-strip ${inst.colorClass} ${isPlayingThisNote ? "active-playing" : ""}`}
-                                  style={{
-                                    left: `${note.gStep * STEP_PITCH}px`,
-                                    width: `${currentDur * STEP_PITCH - STEP_GAP}px`,
-                                  }}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    const now = getAudioContext().currentTime;
-                                    inst.playSound(now, note.stepIdx, laneFreq, 0.25, tConfig.volume ?? 1, tConfig.reverb);
-                                  }}
-                                >
-                                  <div className="ps-roll-note-body">
-                                    <span>{noteName}</span>
-                                    {currentDur > 1 ? (
-                                      <span className="ps-note-len-badge">{currentDur}</span>
-                                    ) : null}
-                                    <button
-                                      type="button"
-                                      className="ps-roll-btn-del"
-                                      title={t("deleteNote")}
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        void perform({
-                                          action: "toggleStep",
-                                          barIndex: note.barIdx,
-                                          trackKey: tConfig.trackKey,
-                                          stepIndex: note.stepIdx,
-                                        });
-                                      }}
-                                    >
-                                      ×
-                                    </button>
-                                  </div>
-                                  <div
-                                    className="ps-roll-drag-handle"
-                                    title={t("dragToExtend")}
-                                    onPointerDown={(e) => {
-                                      startDrag(
-                                        e,
-                                        tConfig.trackKey,
-                                        note.barIdx,
-                                        note.stepIdx,
-                                        note.gStep,
-                                        note.duration,
-                                        totalSteps,
-                                        nextSamePitchNote ? nextSamePitchNote.gStep - note.gStep : undefined
-                                      );
-                                    }}
-                                  >
-                                    <div className="ps-handle-grip" />
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              }
-
-              // ==========================================
-              // 方案 A：收起常态单行紧凑总览 (52px，带超窄延音尾线，不要求编辑)
-              // ==========================================
               return (
                 <div key={tConfig.trackKey} className={`ps-timeline-track-row ${tConfig.muted ? "is-muted" : ""}`}>
-                  {/* 左侧固定乐器头容器 (Sticky Left - 宽敞 208px，乐器名 100% 完整显示) */}
+                  {/* 左侧固定乐器头容器 (Sticky Left - 宽敞 208px，乐器名 100% 完整显示，z-index: 40) */}
                   <div className="ps-track-header-cell sticky">
                     <div
                       className="ps-card-info"
@@ -1214,20 +955,6 @@ export default function App() {
                         >
                           M
                         </button>
-                        {isMelodic && (
-                          <button
-                            type="button"
-                            className="ps-btn-roll"
-                            title={t("openRoll")}
-                            disabled={busy}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setExpandedTrackKey(tConfig.trackKey);
-                            }}
-                          >
-                            {t("openRoll")}
-                          </button>
-                        )}
                       </div>
                     </div>
                   </div>
@@ -1281,22 +1008,33 @@ export default function App() {
                         const noteName = noteMidi !== null ? midiToNoteName(noteMidi) : null;
 
                         return (
-                          <div key={note.gStep}>
-                            {/* 音符块本体 (紧凑单格方块) */}
+                          <span key={note.gStep}>
+                            {/* 方案 A 超窄延音尾线 (非常窄的窄线，z-index: 2，后方音符自然盖在上方) */}
+                            {currentDur > 1 && (
+                              <div
+                                className={`ps-note-tail-line ${inst.colorClass}`}
+                                style={{
+                                  left: `${(note.gStep + 1) * STEP_PITCH - STEP_GAP}px`,
+                                  width: `${(currentDur - 1) * STEP_PITCH}px`,
+                                  zIndex: 2,
+                                }}
+                              />
+                            )}
+
+                            {/* 音符块本体 (紧凑单格方块，z-index: 3) */}
                             <div
                               className={`ps-note-block ${inst.colorClass} ${isPlayingThisNote ? "active-playing" : ""}`}
                               style={{
                                 left: `${note.gStep * STEP_PITCH}px`,
                                 width: `${STEP_WIDTH - STEP_GAP}px`,
-                                zIndex: 10 + note.gStep,
+                                zIndex: 3,
                               }}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 const now = getAudioContext().currentTime;
                                 inst.playSound(now, note.stepIdx, effectivePitch, 0.25, tConfig.volume ?? 1, tConfig.reverb);
 
-                                const noteX = HEADER_WIDTH + note.gStep * STEP_PITCH;
-                                const noteY = 48 + trackIdx * 52;
+                                const rect = e.currentTarget.getBoundingClientRect();
                                 const showBelow = trackIdx <= 1;
 
                                 setActivePopover({
@@ -1308,8 +1046,8 @@ export default function App() {
                                   duration: currentDur,
                                   pitch: effectivePitch,
                                   anchor: {
-                                    x: noteX,
-                                    y: noteY,
+                                    x: rect.left,
+                                    y: rect.top,
                                     width: STEP_WIDTH - STEP_GAP,
                                     height: 52,
                                     showBelow,
@@ -1324,19 +1062,7 @@ export default function App() {
                                 ) : null}
                               </div>
                             </div>
-
-                            {/* 方案 A 超窄延音尾线 (非常窄的窄线，后方音符自然盖在上方) */}
-                            {currentDur > 1 && (
-                              <div
-                                className={`ps-note-tail-line ${inst.colorClass}`}
-                                style={{
-                                  left: `${(note.gStep + 1) * STEP_PITCH - STEP_GAP}px`,
-                                  width: `${(currentDur - 1) * STEP_PITCH}px`,
-                                  zIndex: note.gStep,
-                                }}
-                              />
-                            )}
-                          </div>
+                          </span>
                         );
                       })}
                     </div>
@@ -1517,6 +1243,44 @@ export default function App() {
                       </div>
                     </>
                   )}
+
+                  {/* 持续时长快捷调节 (1键设定长音，彻底告别拖拽手柄卡死) */}
+                  <div className="ps-popover-dur-row">
+                    <span className="ps-popover-dur-label">持续时长</span>
+                    <div className="ps-popover-dur-buttons">
+                      {[
+                        { steps: 1, label: "1步", hint: "1/4拍" },
+                        { steps: 2, label: "2步", hint: "半拍" },
+                        { steps: 4, label: "4步", hint: "1拍" },
+                        { steps: 6, label: "6步", hint: "1.5拍" },
+                        { steps: 8, label: "8步", hint: "2拍" },
+                        { steps: 12, label: "12步", hint: "3拍" },
+                        { steps: 16, label: "16步", hint: "1小节" },
+                      ].map((d) => {
+                        const isCur = (activePopover.duration || 1) === d.steps;
+                        return (
+                          <button
+                            key={d.steps}
+                            type="button"
+                            className={`ps-btn-dur-opt ${isCur ? "is-active" : ""}`}
+                            title={`${d.label} (${d.hint})`}
+                            onClick={() => {
+                              setActivePopover((prev) => (prev ? { ...prev, duration: d.steps } : null));
+                              void perform({
+                                action: "setNoteDuration",
+                                barIndex: activePopover.barIdx,
+                                trackKey: activePopover.trackKey,
+                                stepIndex: activePopover.stepIdx,
+                                duration: d.steps,
+                              });
+                            }}
+                          >
+                            <span>{d.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
 
                   {/* 底部操作区：安全删除与完成 */}
                   <div className="ps-popover-actions">
