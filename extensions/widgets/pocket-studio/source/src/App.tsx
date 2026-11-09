@@ -320,7 +320,7 @@ export default function App() {
   const songRef = useRef(song);
   songRef.current = song;
 
-  const HEADER_WIDTH = 186;
+  const HEADER_WIDTH = 208;
   const STEP_WIDTH = 34;
   const STEP_GAP = 4;
   const STEP_PITCH = STEP_WIDTH + STEP_GAP;
@@ -547,7 +547,8 @@ export default function App() {
     stepIdx: number,
     gStep: number,
     initialDuration: number,
-    totalTimelineSteps: number
+    totalTimelineSteps: number,
+    maxStepsToNextNote?: number
   ) {
     e.preventDefault();
     e.stopPropagation();
@@ -556,7 +557,10 @@ export default function App() {
 
     setDraggingNote({ trackKey, barIdx, stepIdx, gStep, duration: initialDuration });
 
-    const maxAllowedDuration = Math.min(32, totalTimelineSteps - gStep);
+    const maxAllowedDuration = Math.min(
+      maxStepsToNextNote ?? 32,
+      Math.min(32, totalTimelineSteps - gStep)
+    );
 
     const onPointerMove = (moveEvent: PointerEvent) => {
       const deltaX = moveEvent.clientX - startX;
@@ -908,7 +912,7 @@ export default function App() {
                         <button
                           type="button"
                           className={`ps-btn-rev ${(tConfig.reverb ?? getDefaultReverb(tConfig.instId)) > 0.05 ? "is-active" : ""}`}
-                          title={t("trackReverbTooltip")}
+                          title={`${t("trackReverb")}: ${Math.round((tConfig.reverb ?? getDefaultReverb(tConfig.instId)) * 100)}%`}
                           aria-label={t("trackReverb")}
                           disabled={busy}
                           onClick={(e) => {
@@ -930,10 +934,7 @@ export default function App() {
                             );
                           }}
                         >
-                          <span className="ps-btn-rev-label">REV</span>
-                          <span className="ps-btn-rev-val">
-                            {Math.round((tConfig.reverb ?? getDefaultReverb(tConfig.instId)) * 100)}%
-                          </span>
+                          R
                         </button>
                         <button
                           type="button"
@@ -1005,7 +1006,7 @@ export default function App() {
 
                     {/* 上层音符块层：渲染实际音符，支持长音药丸条、拖拽手柄、点击弹出音调气泡 */}
                     <div className="ps-notes-layer">
-                      {notes.map((note) => {
+                      {notes.map((note, noteIdx) => {
                         const isDraggingThis =
                           draggingNote &&
                           draggingNote.trackKey === tConfig.trackKey &&
@@ -1013,6 +1014,11 @@ export default function App() {
                         const currentDur = isDraggingThis ? draggingNote.duration : note.duration;
                         const isPlayingThisNote =
                           isPlaying && playStep >= note.gStep && playStep < note.gStep + currentDur;
+
+                        const nextNote = notes[noteIdx + 1];
+                        // 视觉保护：不遮挡后一个音符，后音符自然接续
+                        const maxVisualSteps = nextNote ? Math.max(1, nextNote.gStep - note.gStep) : currentDur;
+                        const displayDur = isDraggingThis ? currentDur : Math.min(currentDur, maxVisualSteps);
 
                         const effectivePitch = getResolvedPitch(tConfig.instId, note.stepIdx, note.pitch);
                         const noteMidi = effectivePitch ? freqToMidi(effectivePitch) : null;
@@ -1024,7 +1030,8 @@ export default function App() {
                             className={`ps-note-block ${inst.colorClass} ${isPlayingThisNote ? "active-playing" : ""}`}
                             style={{
                               left: `${note.gStep * STEP_PITCH}px`,
-                              width: `${currentDur * STEP_PITCH - STEP_GAP}px`
+                              width: `${displayDur * STEP_PITCH - STEP_GAP}px`,
+                              zIndex: note.gStep + 1,
                             }}
                             onClick={(e) => {
                               e.stopPropagation();
@@ -1046,7 +1053,7 @@ export default function App() {
                                 anchor: {
                                   x: noteX,
                                   y: noteY,
-                                  width: currentDur * STEP_PITCH - STEP_GAP,
+                                  width: displayDur * STEP_PITCH - STEP_GAP,
                                   height: 52,
                                   showBelow
                                 }
@@ -1071,7 +1078,8 @@ export default function App() {
                                   note.stepIdx,
                                   note.gStep,
                                   note.duration,
-                                  totalSteps
+                                  totalSteps,
+                                  nextNote ? nextNote.gStep - note.gStep : undefined
                                 );
                               }}
                             >
@@ -1333,9 +1341,14 @@ export default function App() {
                   min="0"
                   max="100"
                   value={Math.round(activeReverbPopover.reverb * 100)}
+                  onInput={(e) => {
+                    const val = Number((e.target as HTMLInputElement).value) / 100;
+                    setActiveReverbPopover((prev) => (prev ? { ...prev, reverb: val } : null));
+                    const currentT = songRef.current.tracks.find(t => t.trackKey === activeReverbPopover.trackKey);
+                    if (currentT) currentT.reverb = val;
+                  }}
                   onChange={(e) => {
                     const val = Number(e.target.value) / 100;
-                    setActiveReverbPopover((prev) => (prev ? { ...prev, reverb: val } : null));
                     void perform({
                       action: "setTrackReverb",
                       trackKey: activeReverbPopover.trackKey,
@@ -1359,6 +1372,8 @@ export default function App() {
                     className={`ps-reverb-preset-btn ${Math.abs(activeReverbPopover.reverb - preset.val) < 0.05 ? "is-active" : ""}`}
                     onClick={() => {
                       setActiveReverbPopover((prev) => (prev ? { ...prev, reverb: preset.val } : null));
+                      const currentT = songRef.current.tracks.find(t => t.trackKey === activeReverbPopover.trackKey);
+                      if (currentT) currentT.reverb = preset.val;
                       void perform({
                         action: "setTrackReverb",
                         trackKey: activeReverbPopover.trackKey,
@@ -1367,7 +1382,8 @@ export default function App() {
                       const inst = INSTRUMENT_MAP[activeReverbPopover.instId];
                       if (inst) {
                         const now = getAudioContext().currentTime;
-                        inst.playSound(now, 0, undefined, 0.4, 1, preset.val);
+                        // 试听 0.75s 饱满长音，给足 2.2 秒空间扩散尾音
+                        inst.playSound(now, 0, 261.63, 0.75, 1, preset.val);
                       }
                     }}
                   >
@@ -1384,7 +1400,8 @@ export default function App() {
                     const inst = INSTRUMENT_MAP[activeReverbPopover.instId];
                     if (inst) {
                       const now = getAudioContext().currentTime;
-                      inst.playSound(now, 0, undefined, 0.45, 1, activeReverbPopover.reverb);
+                      // 试听 0.75s 饱满长音，给足 2.2 秒空间扩散尾音
+                      inst.playSound(now, 0, 261.63, 0.75, 1, activeReverbPopover.reverb);
                     }
                   }}
                 >

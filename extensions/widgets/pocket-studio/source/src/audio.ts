@@ -28,8 +28,8 @@ type MasterBus = {
 };
 const masterBusMap = new WeakMap<BaseAudioContext, MasterBus>();
 
-// 琴体共鸣箱与空气混响脉冲响应 (算法指数衰减，温暖木质厅堂感)
-function createSoundboardImpulse(ctx: BaseAudioContext, duration = 1.5, decay = 2.4): AudioBuffer {
+// 琴体共鸣箱与空气混响脉冲响应 (真实声学早期反射 + 漫反射自然长衰减)
+function createSoundboardImpulse(ctx: BaseAudioContext, duration = 2.2, decay = 1.8): AudioBuffer {
   const rate = ctx.sampleRate;
   const length = Math.floor(rate * duration);
   const impulse = ctx.createBuffer(2, length, rate);
@@ -38,9 +38,12 @@ function createSoundboardImpulse(ctx: BaseAudioContext, duration = 1.5, decay = 
 
   for (let i = 0; i < length; i++) {
     const t = i / rate;
-    const env = Math.exp(-t * decay);
-    left[i] = (Math.random() * 2 - 1) * env;
-    right[i] = (Math.random() * 2 - 1) * env;
+    const early = t < 0.04 ? Math.sin(t * 1500) * 0.35 : 0;
+    const tail = Math.exp(-t * decay);
+    const noiseL = Math.random() * 2 - 1;
+    const noiseR = Math.random() * 2 - 1;
+    left[i] = (noiseL + early) * tail;
+    right[i] = (noiseR - early) * tail;
   }
   return impulse;
 }
@@ -57,12 +60,12 @@ export function getMasterBus(ctx: BaseAudioContext = getAudioContext()): MasterB
     compressor.release.setValueAtTime(0.08, ctx.currentTime);
     compressor.connect(ctx.destination);
 
-    // 2. 算法卷积混响器
+    // 2. 算法卷积混响器 (提供饱满充分的增益补偿，杜绝被干声吞没)
     const convolver = ctx.createConvolver();
-    convolver.buffer = createSoundboardImpulse(ctx, 1.5, 2.4);
+    convolver.buffer = createSoundboardImpulse(ctx, 2.2, 1.8);
 
     const reverbGain = ctx.createGain();
-    reverbGain.gain.setValueAtTime(0.55, ctx.currentTime);
+    reverbGain.gain.setValueAtTime(1.45, ctx.currentTime);
     convolver.connect(reverbGain);
     reverbGain.connect(compressor);
 
@@ -82,17 +85,19 @@ export function createVoiceOutput(
   const voiceNode = ctx.createGain();
   voiceNode.gain.setValueAtTime(volume, ctx.currentTime);
 
-  // 干声分支 (Direct Dry Bus)
+  const clampedRev = Math.max(0, Math.min(1, reverb));
+  // 干湿互补曲线：reverb=0 时 100% 紧致纯干声；拉大时混响深邃包裹
+  const dryLevel = Math.max(0.3, Math.cos(clampedRev * Math.PI * 0.45));
   const dryGain = ctx.createGain();
-  const dryLevel = Math.max(0.2, 1.0 - reverb * 0.4);
   dryGain.gain.setValueAtTime(dryLevel, ctx.currentTime);
   voiceNode.connect(dryGain);
   dryGain.connect(bus.compressor);
 
-  // 湿声混响分支 (Reverb Send Bus)
-  if (reverb > 0.01) {
+  // 湿声混响分支
+  if (clampedRev > 0.01) {
     const wetSend = ctx.createGain();
-    wetSend.gain.setValueAtTime(Math.min(1.0, reverb * 0.65), ctx.currentTime);
+    const wetLevel = Math.min(1.4, Math.sin(clampedRev * Math.PI * 0.5) * 1.35);
+    wetSend.gain.setValueAtTime(wetLevel, ctx.currentTime);
     voiceNode.connect(wetSend);
     wetSend.connect(bus.convolver);
   }

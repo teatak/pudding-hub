@@ -377,8 +377,8 @@ body {
 .ps-ruler-corner {
   position: sticky;
   left: 0;
-  width: 186px;
-  min-width: 186px;
+  width: 208px;
+  min-width: 208px;
   height: 100%;
   background: var(--ps-header-sticky-bg);
   border-right: 2px solid var(--ps-edge);
@@ -538,8 +538,8 @@ body {
 .ps-track-header-cell.sticky {
   position: sticky;
   left: 0;
-  width: 186px;
-  min-width: 186px;
+  width: 208px;
+  min-width: 208px;
   height: 52px;
   z-index: 10;
   background: var(--ps-header-sticky-bg);
@@ -555,8 +555,8 @@ body {
 .ps-timeline-add-row.sticky {
   position: sticky;
   left: 0;
-  width: 186px;
-  min-width: 186px;
+  width: 208px;
+  min-width: 208px;
   height: 52px;
   z-index: 10;
   background: var(--ps-header-sticky-bg);
@@ -686,14 +686,15 @@ body {
 }
 .ps-btn-rev {
   flex: 0 0 auto;
+  width: 20px;
   height: 20px;
-  padding: 0 5px;
+  padding: 0;
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  justify-content: center;
   border-radius: 4px;
-  font-size: 9px;
-  font-weight: 700;
+  font-size: 10px;
+  font-weight: 800;
   font-family: ui-monospace, monospace;
   background: var(--ps-well);
   color: var(--ps-dim);
@@ -706,17 +707,10 @@ body {
   border-color: var(--ps-muted);
 }
 .ps-btn-rev.is-active {
-  background: rgba(99, 102, 241, 0.16);
-  color: #818cf8;
-  border-color: rgba(99, 102, 241, 0.5);
-  box-shadow: 0 0 6px rgba(99, 102, 241, 0.25);
-}
-.ps-btn-rev-label {
-  font-size: 8px;
-  opacity: 0.8;
-}
-.ps-btn-rev-val {
-  font-size: 9px;
+  background: #6366f1;
+  color: #ffffff;
+  border-color: #4f46e5;
+  box-shadow: 0 0 6px rgba(99, 102, 241, 0.45);
 }
 .ps-btn-mute {
   flex: 0 0 auto;
@@ -748,15 +742,30 @@ body {
 }
 .ps-btn-del {
   flex: 0 0 auto;
+  width: 18px;
+  height: 20px;
   opacity: 0;
+  pointer-events: none;
   background: transparent;
   border: none;
   color: var(--ps-dim);
   cursor: pointer;
-  font-size: 12px;
-  padding: 2px 4px;
+  font-size: 11px;
+  padding: 0;
   border-radius: 4px;
-  transition: all 0.15s;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.ps-card-info:hover .ps-btn-del {
+  opacity: 0.75;
+  pointer-events: auto;
+}
+.ps-card-info:hover .ps-btn-del:hover {
+  opacity: 1;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
 }
 .ps-timeline-track-row:hover .ps-btn-del { opacity: 1; }
 .ps-btn-del:hover {
