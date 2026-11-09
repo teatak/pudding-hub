@@ -289,36 +289,181 @@ export function createOrientalSong(): SongState {
 }
 
 // -------------------------------------------------------------
-// 4. Lo-Fi 慢摇 (Chill Lo-Fi)
+// 4. 塞尔达传说：时之笛 · 迷失森林 (Zelda: Ocarina of Time - Lost Woods / Saria's Song)
 // -------------------------------------------------------------
 export function createLofiSong(): SongState {
   const tracks = [
-    { trackKey: "t_epiano", instId: "epiano" },
-    { trackKey: "t_bass", instId: "bass" },
+    { trackKey: "t_lead", instId: "lead", reverb: 0.35 },
+    { trackKey: "t_marimba", instId: "marimba", reverb: 0.28 },
+    { trackKey: "t_bass", instId: "marioBass", reverb: 0.05 },
     { trackKey: "t_kick", instId: "kick" },
     { trackKey: "t_snare", instId: "snare" },
     { trackKey: "t_hat", instId: "hat" }
   ];
 
-  const song = emptySong(85, tracks);
-  const setNote = (bar: number, track: string, step: number) => {
+  const bars = Array.from({ length: 8 }, () => {
+    const steps: Record<string, boolean[]> = {};
+    const pitches: Record<string, (number | null)[]> = {};
+    const durations: Record<string, (number | null)[]> = {};
+    tracks.forEach((t) => {
+      steps[t.trackKey] = new Array(16).fill(false);
+      pitches[t.trackKey] = new Array(16).fill(null);
+      durations[t.trackKey] = new Array(16).fill(null);
+    });
+    return { steps, pitches, durations };
+  });
+
+  const song: SongState = { bpm: 140, tracks, bars };
+
+  const setNote = (bar: number, track: string, step: number, freq: number | null, duration = 1) => {
     song.bars[bar].steps[track][step] = true;
+    song.bars[bar].pitches![track][step] = freq;
+    song.bars[bar].durations![track][step] = duration;
   };
 
-  for (let b = 0; b < 4; b++) {
-    setNote(b, "t_kick", 0);
-    setNote(b, "t_kick", 6);
-    setNote(b, "t_snare", 4);
-    setNote(b, "t_snare", 12);
-    setNote(b, "t_hat", 2);
-    setNote(b, "t_hat", 6);
-    setNote(b, "t_hat", 10);
-    setNote(b, "t_hat", 14);
-    setNote(b, "t_bass", 0);
-    setNote(b, "t_bass", 8);
-    setNote(b, "t_epiano", 0);
-    setNote(b, "t_epiano", 6);
-    setNote(b, "t_epiano", 10);
+  // 小节 1 (Fmaj7): F4 - A4 - B4 __ | F4 - A4 - B4 __
+  setNote(0, "t_lead", 0, NOTES.F4, 2);
+  setNote(0, "t_lead", 2, NOTES.A4, 2);
+  setNote(0, "t_lead", 4, NOTES.B4, 4);
+  setNote(0, "t_lead", 8, NOTES.F4, 2);
+  setNote(0, "t_lead", 10, NOTES.A4, 2);
+  setNote(0, "t_lead", 12, NOTES.B4, 4);
+
+  setNote(0, "t_marimba", 4, NOTES.C5, 2);
+  setNote(0, "t_marimba", 6, NOTES.A4, 2);
+  setNote(0, "t_marimba", 12, NOTES.C5, 2);
+  setNote(0, "t_marimba", 14, NOTES.A4, 2);
+
+  setNote(0, "t_bass", 0, NOTES.F3, 2);
+  setNote(0, "t_bass", 4, NOTES.C3, 2);
+  setNote(0, "t_bass", 8, NOTES.F3, 2);
+  setNote(0, "t_bass", 12, NOTES.C3, 2);
+
+  // 小节 2 (G / Em): F4 - A4 - B4 - E5 | D5 __ B4 - C5
+  setNote(1, "t_lead", 0, NOTES.F4, 2);
+  setNote(1, "t_lead", 2, NOTES.A4, 2);
+  setNote(1, "t_lead", 4, NOTES.B4, 2);
+  setNote(1, "t_lead", 6, NOTES.E5, 2);
+  setNote(1, "t_lead", 8, NOTES.D5, 4);
+  setNote(1, "t_lead", 12, NOTES.B4, 2);
+  setNote(1, "t_lead", 14, NOTES.C5, 2);
+
+  setNote(1, "t_marimba", 4, NOTES.D5, 2);
+  setNote(1, "t_marimba", 8, NOTES.B4, 2);
+  setNote(1, "t_marimba", 10, NOTES.G4, 2);
+
+  setNote(1, "t_bass", 0, NOTES.G3, 2);
+  setNote(1, "t_bass", 4, NOTES.D3, 2);
+  setNote(1, "t_bass", 8, NOTES.G3, 2);
+  setNote(1, "t_bass", 12, NOTES.D3, 2);
+
+  // 小节 3 (Em / Am): B4 - G4 - E4 (长音) - D4 + 木琴森林回声
+  setNote(2, "t_lead", 0, NOTES.B4, 2);
+  setNote(2, "t_lead", 2, NOTES.G4, 2);
+  setNote(2, "t_lead", 4, NOTES.E4, 10);
+  setNote(2, "t_lead", 14, NOTES.D4, 2);
+
+  setNote(2, "t_marimba", 8, NOTES.B5, 2);
+  setNote(2, "t_marimba", 10, NOTES.G5, 2);
+  setNote(2, "t_marimba", 12, NOTES.E5, 2);
+
+  setNote(2, "t_bass", 0, NOTES.E3, 2);
+  setNote(2, "t_bass", 4, NOTES.B3, 2);
+  setNote(2, "t_bass", 8, NOTES.A3, 2);
+  setNote(2, "t_bass", 12, NOTES.E3, 2);
+
+  // 小节 4 (Dm / Em): E4 - G4 - E4 (长音) + 木琴森林回声
+  setNote(3, "t_lead", 0, NOTES.E4, 2);
+  setNote(3, "t_lead", 2, NOTES.G4, 2);
+  setNote(3, "t_lead", 4, NOTES.E4, 12);
+
+  setNote(3, "t_marimba", 8, NOTES.E5, 2);
+  setNote(3, "t_marimba", 10, NOTES.G5, 2);
+  setNote(3, "t_marimba", 12, NOTES.E5, 4);
+
+  setNote(3, "t_bass", 0, NOTES.D3, 2);
+  setNote(3, "t_bass", 4, NOTES.A3, 2);
+  setNote(3, "t_bass", 8, NOTES.E3, 2);
+  setNote(3, "t_bass", 12, NOTES.B3, 2);
+
+  // 小节 5 (Fmaj7 主题再现): F4 - A4 - B4 __ | F4 - A4 - B4 __
+  setNote(4, "t_lead", 0, NOTES.F4, 2);
+  setNote(4, "t_lead", 2, NOTES.A4, 2);
+  setNote(4, "t_lead", 4, NOTES.B4, 4);
+  setNote(4, "t_lead", 8, NOTES.F4, 2);
+  setNote(4, "t_lead", 10, NOTES.A4, 2);
+  setNote(4, "t_lead", 12, NOTES.B4, 4);
+
+  setNote(4, "t_marimba", 4, NOTES.C5, 2);
+  setNote(4, "t_marimba", 6, NOTES.A4, 2);
+  setNote(4, "t_marimba", 12, NOTES.C5, 2);
+  setNote(4, "t_marimba", 14, NOTES.A4, 2);
+
+  setNote(4, "t_bass", 0, NOTES.F3, 2);
+  setNote(4, "t_bass", 4, NOTES.C3, 2);
+  setNote(4, "t_bass", 8, NOTES.F3, 2);
+  setNote(4, "t_bass", 12, NOTES.C3, 2);
+
+  // 小节 6 (G / Em): F4 - A4 - B4 - E5 | D5 __ B4 - C5
+  setNote(5, "t_lead", 0, NOTES.F4, 2);
+  setNote(5, "t_lead", 2, NOTES.A4, 2);
+  setNote(5, "t_lead", 4, NOTES.B4, 2);
+  setNote(5, "t_lead", 6, NOTES.E5, 2);
+  setNote(5, "t_lead", 8, NOTES.D5, 4);
+  setNote(5, "t_lead", 12, NOTES.B4, 2);
+  setNote(5, "t_lead", 14, NOTES.C5, 2);
+
+  setNote(5, "t_marimba", 4, NOTES.D5, 2);
+  setNote(5, "t_marimba", 8, NOTES.B4, 2);
+  setNote(5, "t_marimba", 10, NOTES.G4, 2);
+
+  setNote(5, "t_bass", 0, NOTES.G3, 2);
+  setNote(5, "t_bass", 4, NOTES.D3, 2);
+  setNote(5, "t_bass", 8, NOTES.G3, 2);
+  setNote(5, "t_bass", 12, NOTES.D3, 2);
+
+  // 小节 7 (高音华彩句): E5 - B4 - G4 (长音) - B4 + 木琴回声
+  setNote(6, "t_lead", 0, NOTES.E5, 2);
+  setNote(6, "t_lead", 2, NOTES.B4, 2);
+  setNote(6, "t_lead", 4, NOTES.G4, 10);
+  setNote(6, "t_lead", 14, NOTES.B4, 2);
+
+  setNote(6, "t_marimba", 8, NOTES.E5, 2);
+  setNote(6, "t_marimba", 10, NOTES.B4, 2);
+  setNote(6, "t_marimba", 12, NOTES.G4, 2);
+
+  setNote(6, "t_bass", 0, NOTES.E3, 2);
+  setNote(6, "t_bass", 4, NOTES.B3, 2);
+  setNote(6, "t_bass", 8, NOTES.C3, 2);
+  setNote(6, "t_bass", 12, NOTES.G3, 2);
+
+  // 小节 8 (收尾解决句 Am): G4 - D4 - E4 (长音) + 木琴和弦回响
+  setNote(7, "t_lead", 0, NOTES.G4, 2);
+  setNote(7, "t_lead", 2, NOTES.D4, 2);
+  setNote(7, "t_lead", 4, NOTES.E4, 12);
+
+  setNote(7, "t_marimba", 8, NOTES.B4, 2);
+  setNote(7, "t_marimba", 10, NOTES.G4, 2);
+  setNote(7, "t_marimba", 12, NOTES.E5, 4);
+
+  setNote(7, "t_bass", 0, NOTES.G3, 2);
+  setNote(7, "t_bass", 4, NOTES.D3, 2);
+  setNote(7, "t_bass", 8, NOTES.A3, 2);
+  setNote(7, "t_bass", 12, NOTES.E3, 4);
+
+  // 森林行进打击乐律动
+  for (let b = 0; b < 8; b++) {
+    setNote(b, "t_kick", 0, null);
+    setNote(b, "t_kick", 8, null);
+    setNote(b, "t_snare", 4, null);
+    setNote(b, "t_snare", 12, null);
+    for (let s = 2; s < 16; s += 4) {
+      setNote(b, "t_hat", s, null);
+    }
+    if (b === 3 || b === 7) {
+      setNote(b, "t_snare", 14, null);
+      setNote(b, "t_snare", 15, null);
+    }
   }
 
   return song;

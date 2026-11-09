@@ -182,9 +182,9 @@ export const DICT: Record<string, Record<"zh-CN" | "zh-TW" | "en", string>> = {
     en: "Oriental"
   },
   presetLofi: {
-    "zh-CN": "Lo-Fi 慢摇",
-    "zh-TW": "Lo-Fi 慢搖",
-    en: "Chill Lo-Fi"
+    "zh-CN": "时之笛 · Lost Woods",
+    "zh-TW": "時之笛 · Lost Woods",
+    en: "Zelda · Lost Woods"
   },
   copyNext: {
     "zh-CN": "复制到下一节",
@@ -499,8 +499,8 @@ export const DICT: Record<string, Record<"zh-CN" | "zh-TW" | "en", string>> = {
     en: "Set song playback tempo (BPM 60-180)"
   },
   descLoadPreset: {
-    "zh-CN": "加载预设经典曲目 (mario 超级马里奥 / donkeyKong 大金刚 / oriental 国风 / lofi 慢摇)",
-    "zh-TW": "加載預設經典曲目 (mario 超級瑪利歐 / donkeyKong 大金剛 / oriental 國風 / lofi 慢搖)",
+    "zh-CN": "加载预设经典曲目 (mario 超级马里奥 / donkeyKong 大金刚 / oriental 国风 / lofi 塞尔达时之笛 Lost Woods)",
+    "zh-TW": "加載預設經典曲目 (mario 超級瑪利歐 / donkeyKong 大金剛 / oriental 國風 / lofi 薩爾達時之笛 Lost Woods)",
     en: "Load a preset song (mario, donkeyKong, oriental, lofi)"
   },
   descToggleStep: {
