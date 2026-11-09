@@ -13,7 +13,7 @@ export function resolvePitch(id: string, step: number, raw?: number | null): num
 }
 
 export function soundDuration(id: string, duration: number) {
-  return id === "kick" ? 0.35 : id === "snare" ? 0.18 : id === "hat" ? 0.04 : duration;
+  return id === "kick" ? 0.35 : id === "snare" ? 0.18 : id === "hat" ? 0.04 : id === "epiano" ? duration + 0.1 : duration;
 }
 
 export function playInstrument(id: string, time: number, step: number, pitch?: number | null, duration: number | undefined = undefined, ctx: BaseAudioContext = getAudioContext(), volume = 1) {

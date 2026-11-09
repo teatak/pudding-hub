@@ -277,24 +277,27 @@ export default function App() {
   const [activePopover, setActivePopover] = useState<ActivePopoverState | null>(null);
   const [theme, setTheme] = useState<"light" | "dark">(() => {
     try {
-      const saved = localStorage.getItem("pocket-studio-theme");
-      if (saved === "light" || saved === "dark") return saved;
+      localStorage.removeItem("pocket-studio-theme");
     } catch {}
+    if (typeof window !== "undefined" && window.matchMedia) {
+      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
     return "light";
   });
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const updateTheme = () => setTheme(media.matches ? "dark" : "light");
+    updateTheme();
+    media.addEventListener("change", updateTheme);
+    return () => media.removeEventListener("change", updateTheme);
+  }, []);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     document.body.dataset.theme = theme;
   }, [theme]);
-
-  const toggleTheme = () => {
-    const next = theme === "light" ? "dark" : "light";
-    setTheme(next);
-    try {
-      localStorage.setItem("pocket-studio-theme", next);
-    } catch {}
-  };
 
   const [draggingNote, setDraggingNote] = useState<{
     trackKey: string;
@@ -726,26 +729,6 @@ export default function App() {
           <button type="button" className="ps-btn-pill ps-file-export" data-music-action="wav" disabled={fileBusy} aria-busy={exporting === "wav"} aria-label={t(exporting === "wav" ? "renderingWav" : "exportWav")} title={exporting === "wav" ? t("renderingWav") : canExportWav() ? undefined : t("wavRequiresUpdate")} onClick={() => void saveSong("wav")}>
             <span className="ps-file-label">{t("exportWav")}</span>
             {exporting === "wav" && <span className="ps-file-spinner" aria-hidden="true" />}
-          </button>
-        </div>
-        <div className="ps-theme-actions" role="group" aria-label={t("themeToggle")}>
-          <button
-            type="button"
-            className="ps-btn-pill ps-btn-theme"
-            title={theme === "light" ? t("themeDark") : t("themeLight")}
-            aria-label={theme === "light" ? t("themeDark") : t("themeLight")}
-            onClick={toggleTheme}
-          >
-            {theme === "light" ? (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-              </svg>
-            ) : (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="4" />
-                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-              </svg>
-            )}
           </button>
         </div>
         </div>

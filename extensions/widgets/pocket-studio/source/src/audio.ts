@@ -263,82 +263,70 @@ export function playSoftPluck(freq: number, time: number, duration = 0.38, ctx: 
   osc2.stop(time + duration);
 }
 
-// 8. 钢琴 / 电钢琴 (Piano): 真实声学击弦物理多谐波建模 + 三琴弦同度微失谐 + 琴槌敲击瞬态 + 动态共鸣低通滤波
+// 8. 经典电钢琴 (Rhodes EPiano): 音簧金属敲击钟鸣瞬态 (Tine Bell Chime) + 暖色谐波振荡 + 真实按住保持 (Sustain) 与松开制音 (Damper Release)
 export function playRhodes(freq: number, time: number, duration = 0.5, ctx: BaseAudioContext = getAudioContext(), output: AudioNode = ctx.destination) {
   const masterGain = ctx.createGain();
-
-  // 1. 真实钢琴琴弦振动频谱 (Fourier Partial Spectrum)
-  // 基频与谐波依照大钢琴声学模型严谨递减，彻底摆脱单调塑料的单正弦波哨音
-  const n = 16;
-  const real = new Float32Array(n);
-  const imag = new Float32Array(n);
-  const partials = [0, 1.0, 0.72, 0.48, 0.34, 0.24, 0.16, 0.11, 0.07, 0.045, 0.03, 0.02, 0.012];
-  for (let i = 1; i < partials.length; i++) imag[i] = partials[i];
-  const pianoWave = ctx.createPeriodicWave(real, imag, { disableNormalization: false });
-
-  // 2. 声学低通共振滤波 (击弦瞬间高频完全绽放，随后数十毫秒内快速衰减至温润木质琴身频点)
   const filter = ctx.createBiquadFilter();
   filter.type = "lowpass";
-  const peakCutoff = Math.min(7500, Math.max(2600, freq * 5.2));
-  const bodyCutoff = Math.min(2800, Math.max(850, freq * 2.1));
+
+  // 1. 动态温和低通滤波 (起音明亮，按住时平滑保留温润音簧质感)
+  const peakCutoff = Math.min(6500, Math.max(2200, freq * 4.8));
+  const bodyCutoff = Math.min(2600, Math.max(800, freq * 2.0));
   filter.frequency.setValueAtTime(peakCutoff, time);
-  const filterDecay = Math.min(0.22, duration * 0.45);
+  const filterDecay = Math.min(0.25, duration * 0.4);
   filter.frequency.exponentialRampToValueAtTime(bodyCutoff, time + filterDecay);
-  filter.Q.setValueAtTime(1.8, time);
+  filter.Q.setValueAtTime(1.2, time);
 
-  // 3. 三琴弦同度微失谐 (Triple-String Unison Detune: 主弦 + 偏弦 ±2.5 cents，呈现真实三角钢琴的立体感与自然共鸣)
-  const osc1 = ctx.createOscillator();
-  const osc2 = ctx.createOscillator();
-  const osc3 = ctx.createOscillator();
-  osc1.setPeriodicWave(pianoWave);
-  osc2.setPeriodicWave(pianoWave);
-  osc3.setPeriodicWave(pianoWave);
+  // 2. 金属音簧触键钟鸣瞬态 (Tine Bell Chime: 5.0x 谐波，约 35ms 迅速收束)
+  const chimeOsc = ctx.createOscillator();
+  const chimeGain = ctx.createGain();
+  chimeOsc.type = "sine";
+  chimeOsc.frequency.setValueAtTime(freq * 5.0, time);
+  chimeGain.gain.setValueAtTime(0.32, time);
+  chimeGain.gain.exponentialRampToValueAtTime(0.0001, time + 0.038);
+  chimeOsc.connect(chimeGain);
+  chimeGain.connect(filter);
 
-  osc1.frequency.setValueAtTime(freq, time);
-  osc2.frequency.setValueAtTime(freq, time);
-  osc2.detune.setValueAtTime(2.5, time);
-  osc3.frequency.setValueAtTime(freq, time);
-  osc3.detune.setValueAtTime(-2.5, time);
+  // 3. 音簧主体振荡器 (基音 + 2次暖谐波)
+  const oscBase = ctx.createOscillator();
+  oscBase.type = "sine";
+  oscBase.frequency.setValueAtTime(freq, time);
 
-  // 4. 击弦打击乐器双阶段衰减包络 (极速 Attack 2.5ms -> 初段能量迅速释放 -> 后段悠长余音指数衰减)
+  const oscHarmonic = ctx.createOscillator();
+  oscHarmonic.type = "sine";
+  oscHarmonic.frequency.setValueAtTime(freq * 2.0, time);
+  const harmGain = ctx.createGain();
+  harmGain.gain.setValueAtTime(0.24, time);
+  harmGain.gain.exponentialRampToValueAtTime(0.001, time + Math.min(1.2, duration));
+  oscHarmonic.connect(harmGain);
+  harmGain.connect(filter);
+
+  // 4. 真实物理触键包络：按住保持 (Sustain) + 抬起制音 (Release)
   const stringGain = ctx.createGain();
-  const attack = 0.0025;
-  const promptDecay = Math.min(0.09, duration * 0.25);
-  stringGain.gain.setValueAtTime(0.001, time);
-  stringGain.gain.linearRampToValueAtTime(0.48, time + attack);
-  stringGain.gain.exponentialRampToValueAtTime(0.28, time + promptDecay);
-  stringGain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+  const attack = 0.003;
+  const releaseTime = 0.08;
+  const totalDuration = duration + releaseTime;
 
-  osc1.connect(stringGain);
-  osc2.connect(stringGain);
-  osc3.connect(stringGain);
+  stringGain.gain.setValueAtTime(0.0001, time);
+  stringGain.gain.linearRampToValueAtTime(0.55, time + attack);
+  // 按住期间 (Hold/Sustain): 随机械阻尼自然微衰减，不提前掉电
+  const holdDecayTarget = Math.max(0.25, 0.55 * Math.exp(-duration * 0.45));
+  stringGain.gain.exponentialRampToValueAtTime(holdDecayTarget, time + duration);
+  // 松键制音 (Release/Damper): 制音器回落贴紧，80ms 内平滑消退
+  stringGain.gain.exponentialRampToValueAtTime(0.0001, time + totalDuration);
+
+  oscBase.connect(stringGain);
   stringGain.connect(filter);
-
-  // 5. 琴槌毛毡敲击瞬态 (Hammer Strike Transient: 140Hz 降至 40Hz 的 10ms 物理下键敲击脉冲)
-  const hammerOsc = ctx.createOscillator();
-  const hammerGain = ctx.createGain();
-  hammerOsc.type = "sine";
-  hammerOsc.frequency.setValueAtTime(140, time);
-  hammerOsc.frequency.exponentialRampToValueAtTime(40, time + 0.012);
-  hammerGain.gain.setValueAtTime(0.25, time);
-  hammerGain.gain.exponentialRampToValueAtTime(0.001, time + 0.012);
-
-  hammerOsc.connect(hammerGain);
-  hammerGain.connect(filter);
-
-  // 6. 输出连接
-  masterGain.gain.setValueAtTime(1.0, time);
   filter.connect(masterGain);
   masterGain.connect(output);
 
-  osc1.start(time);
-  osc1.stop(time + duration);
-  osc2.start(time);
-  osc2.stop(time + duration);
-  osc3.start(time);
-  osc3.stop(time + duration);
-  hammerOsc.start(time);
-  hammerOsc.stop(time + 0.015);
+  // 5. 启动与停止管理
+  oscBase.start(time);
+  oscBase.stop(time + totalDuration + 0.01);
+  oscHarmonic.start(time);
+  oscHarmonic.stop(time + totalDuration + 0.01);
+  chimeOsc.start(time);
+  chimeOsc.stop(time + 0.045);
 }
 
 // 9. 木琴 Marimba: 木槌物理打击瞬态 (Click) + 木管谐振与第 4 泛音
