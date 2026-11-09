@@ -1,5 +1,6 @@
-import type { SongState, EditAction, BarData, ReadOptions } from "./types";
+import type { SongState, EditAction, BarData, ReadOptions, ExtraNote } from "./types";
 import { createMarioSong, createDonkeyKongSong, createOrientalSong, createLofiSong } from "./demoTracks";
+import { resolvePitch } from "./instruments";
 import { t } from "./text";
 
 export const INSTRUMENT_IDS = [
@@ -14,6 +15,11 @@ export const INSTRUMENT_IDS = [
   "epiano",
   "marimba"
 ] as const;
+
+function sameMidi(f1: number, f2: number): boolean {
+  if (!f1 || !f2 || f1 <= 0 || f2 <= 0) return false;
+  return Math.round(69 + 12 * Math.log2(f1 / 440)) === Math.round(69 + 12 * Math.log2(f2 / 440));
+}
 
 export function getDefaultSong(): SongState {
   return createMarioSong();
@@ -63,6 +69,8 @@ function validateAction(song: SongState, action: EditAction) {
   if ("trackKey" in action) checkTrack(song, action.trackKey);
   if ("stepIndex" in action) integer(action.stepIndex, 0, 15, "stepIndex");
   if ("pitch" in action && action.pitch !== undefined) checkPitch(action.pitch);
+  if ("fromPitch" in action && action.fromPitch !== undefined) checkPitch(action.fromPitch);
+  if ("toPitch" in action && action.toPitch !== undefined) checkPitch(action.toPitch);
   if ("duration" in action && action.duration !== undefined) integer(action.duration, 1, 32, "duration");
   if ("instId" in action && !(INSTRUMENT_IDS as readonly string[]).includes(action.instId)) fail("invalidInstrument");
   switch (action.action) {
@@ -243,9 +251,33 @@ export function editSong(current: SongState, action: EditAction): SongState {
         if (nextPitches) delete nextPitches[action.trackKey];
         const nextDurations = bar.durations ? { ...bar.durations } : undefined;
         if (nextDurations) delete nextDurations[action.trackKey];
-        return { steps: nextSteps, pitches: nextPitches, durations: nextDurations };
+        const nextExtra = bar.extraNotes ? { ...bar.extraNotes } : undefined;
+        if (nextExtra) delete nextExtra[action.trackKey];
+        return {
+          steps: nextSteps,
+          pitches: nextPitches,
+          durations: nextDurations,
+          ...(nextExtra && Object.keys(nextExtra).length > 0 ? { extraNotes: nextExtra } : {}),
+        };
       });
       return { ...current, tracks: newTracks, bars: newBars };
+    }
+
+    case "clearTrack": {
+      const newBars = current.bars.map((bar) => {
+        const nextSteps = { ...bar.steps, [action.trackKey]: new Array(16).fill(false) };
+        const nextPitches = bar.pitches ? { ...bar.pitches, [action.trackKey]: new Array(16).fill(null) } : undefined;
+        const nextDurations = bar.durations ? { ...bar.durations, [action.trackKey]: new Array(16).fill(null) } : undefined;
+        const nextExtra = bar.extraNotes ? { ...bar.extraNotes } : undefined;
+        if (nextExtra) delete nextExtra[action.trackKey];
+        return {
+          steps: nextSteps,
+          pitches: nextPitches,
+          durations: nextDurations,
+          ...(nextExtra && Object.keys(nextExtra).length > 0 ? { extraNotes: nextExtra } : {}),
+        };
+      });
+      return { ...current, bars: newBars };
     }
 
     case "addBar": {
@@ -253,6 +285,7 @@ export function editSong(current: SongState, action: EditAction): SongState {
       const steps: Record<string, boolean[]> = {};
       const pitches: Record<string, (number | null)[]> = {};
       const durations: Record<string, (number | null)[]> = {};
+      let extraNotes: Record<string, ExtraNote[]> | undefined;
       if (action.copyFrom !== undefined && current.bars[action.copyFrom]) {
         const src = current.bars[action.copyFrom];
         current.tracks.forEach((t) => {
@@ -260,6 +293,9 @@ export function editSong(current: SongState, action: EditAction): SongState {
           pitches[t.trackKey] = [...(src.pitches?.[t.trackKey] || new Array(16).fill(null))];
           durations[t.trackKey] = [...(src.durations?.[t.trackKey] || new Array(16).fill(null))];
         });
+        if (src.extraNotes) {
+          extraNotes = JSON.parse(JSON.stringify(src.extraNotes)) as Record<string, ExtraNote[]>;
+        }
       } else {
         current.tracks.forEach((t) => {
           steps[t.trackKey] = new Array(16).fill(false);
@@ -267,7 +303,10 @@ export function editSong(current: SongState, action: EditAction): SongState {
           durations[t.trackKey] = new Array(16).fill(null);
         });
       }
-      return { ...current, bars: [...current.bars, { steps, pitches, durations }] };
+      return {
+        ...current,
+        bars: [...current.bars, { steps, pitches, durations, ...(extraNotes ? { extraNotes } : {}) }],
+      };
     }
 
     case "removeBar": {
@@ -277,6 +316,138 @@ export function editSong(current: SongState, action: EditAction): SongState {
           ? action.barIndex
           : current.bars.length - 1;
       return { ...current, bars: current.bars.filter((_, idx) => idx !== targetIdx) };
+    }
+
+    case "togglePitchStep": {
+      const bIdx = action.barIndex;
+      const sIdx = action.stepIndex;
+      const targetFreq = Number(action.pitch.toFixed(2));
+      const dur = action.duration ?? 1;
+      const instId = current.tracks.find((t) => t.trackKey === action.trackKey)?.instId || "lead";
+
+      const newBars = current.bars.map((bar, idx) => {
+        if (idx !== bIdx) return bar;
+        const trackSteps = [...(bar.steps[action.trackKey] || new Array(16).fill(false))];
+        const trackPitches = [...(bar.pitches?.[action.trackKey] || new Array(16).fill(null))];
+        const trackDurations = [...(bar.durations?.[action.trackKey] || new Array(16).fill(null))];
+        const trackExtras = [...(bar.extraNotes?.[action.trackKey] || [])];
+
+        const primaryOn = Boolean(trackSteps[sIdx]);
+        const primaryPitch = primaryOn ? (resolvePitch(instId, sIdx, trackPitches[sIdx]) ?? 440) : null;
+
+        if (!primaryOn) {
+          // 当前步进还没有主音符：直接写入主音符槽
+          trackSteps[sIdx] = true;
+          trackPitches[sIdx] = targetFreq;
+          trackDurations[sIdx] = dur;
+        } else if (primaryPitch !== null && sameMidi(primaryPitch, targetFreq)) {
+          // 点击的是当前主音符所在的音高行：若同位置还有其他音高的附加音块，则提升第一个附加音块为主音符；否则关闭主音符
+          const sameStepExtraIdx = trackExtras.findIndex((e) => e.step === sIdx);
+          if (sameStepExtraIdx >= 0) {
+            const promoted = trackExtras[sameStepExtraIdx];
+            trackExtras.splice(sameStepExtraIdx, 1);
+            trackSteps[sIdx] = true;
+            trackPitches[sIdx] = promoted.pitch;
+            trackDurations[sIdx] = promoted.duration;
+          } else {
+            trackSteps[sIdx] = false;
+            trackPitches[sIdx] = null;
+            trackDurations[sIdx] = null;
+          }
+        } else {
+          // 当前步进已有其他音高的主音符：在 extraNotes 中独立开关该音高的音块（支持同位置多音块/和弦）
+          const existingIdx = trackExtras.findIndex((e) => e.step === sIdx && sameMidi(e.pitch, targetFreq));
+          if (existingIdx >= 0) {
+            trackExtras.splice(existingIdx, 1);
+          } else {
+            trackExtras.push({ step: sIdx, pitch: targetFreq, duration: dur });
+          }
+        }
+
+        const nextExtraNotes = { ...(bar.extraNotes || {}) };
+        if (trackExtras.length > 0) {
+          nextExtraNotes[action.trackKey] = trackExtras;
+        } else {
+          delete nextExtraNotes[action.trackKey];
+        }
+
+        return {
+          steps: { ...bar.steps, [action.trackKey]: trackSteps },
+          pitches: { ...(bar.pitches || {}), [action.trackKey]: trackPitches },
+          durations: { ...(bar.durations || {}), [action.trackKey]: trackDurations },
+          ...(Object.keys(nextExtraNotes).length > 0 ? { extraNotes: nextExtraNotes } : {}),
+        };
+      });
+      return { ...current, bars: newBars };
+    }
+
+    case "setPitchNoteDuration": {
+      const bIdx = action.barIndex;
+      const sIdx = action.stepIndex;
+      const targetFreq = Number(action.pitch.toFixed(2));
+      const instId = current.tracks.find((t) => t.trackKey === action.trackKey)?.instId || "lead";
+
+      const newBars = current.bars.map((bar, idx) => {
+        if (idx !== bIdx) return bar;
+        const primaryOn = Boolean(bar.steps[action.trackKey]?.[sIdx]);
+        const primaryPitch = primaryOn ? (resolvePitch(instId, sIdx, bar.pitches?.[action.trackKey]?.[sIdx]) ?? 440) : null;
+
+        if (primaryOn && primaryPitch !== null && sameMidi(primaryPitch, targetFreq)) {
+          const trackDurations = [...(bar.durations?.[action.trackKey] || new Array(16).fill(null))];
+          trackDurations[sIdx] = action.duration;
+          return {
+            ...bar,
+            durations: { ...(bar.durations || {}), [action.trackKey]: trackDurations },
+          };
+        }
+
+        const trackExtras = [...(bar.extraNotes?.[action.trackKey] || [])];
+        const existingIdx = trackExtras.findIndex((e) => e.step === sIdx && sameMidi(e.pitch, targetFreq));
+        if (existingIdx >= 0) {
+          trackExtras[existingIdx] = { ...trackExtras[existingIdx], duration: action.duration };
+          return {
+            ...bar,
+            extraNotes: { ...(bar.extraNotes || {}), [action.trackKey]: trackExtras },
+          };
+        }
+        return bar;
+      });
+      return { ...current, bars: newBars };
+    }
+
+    case "changePitchNote": {
+      const bIdx = action.barIndex;
+      const sIdx = action.stepIndex;
+      const fromFreq = Number(action.fromPitch.toFixed(2));
+      const toFreq = Number(action.toPitch.toFixed(2));
+      const instId = current.tracks.find((t) => t.trackKey === action.trackKey)?.instId || "lead";
+
+      const newBars = current.bars.map((bar, idx) => {
+        if (idx !== bIdx) return bar;
+        const primaryOn = Boolean(bar.steps[action.trackKey]?.[sIdx]);
+        const primaryPitch = primaryOn ? (resolvePitch(instId, sIdx, bar.pitches?.[action.trackKey]?.[sIdx]) ?? 440) : null;
+
+        if (primaryOn && primaryPitch !== null && sameMidi(primaryPitch, fromFreq)) {
+          const trackPitches = [...(bar.pitches?.[action.trackKey] || new Array(16).fill(null))];
+          trackPitches[sIdx] = toFreq;
+          return {
+            ...bar,
+            pitches: { ...(bar.pitches || {}), [action.trackKey]: trackPitches },
+          };
+        }
+
+        const trackExtras = [...(bar.extraNotes?.[action.trackKey] || [])];
+        const existingIdx = trackExtras.findIndex((e) => e.step === sIdx && sameMidi(e.pitch, fromFreq));
+        if (existingIdx >= 0) {
+          trackExtras[existingIdx] = { ...trackExtras[existingIdx], pitch: toFreq };
+          return {
+            ...bar,
+            extraNotes: { ...(bar.extraNotes || {}), [action.trackKey]: trackExtras },
+          };
+        }
+        return bar;
+      });
+      return { ...current, bars: newBars };
     }
 
     case "setStep":
@@ -307,7 +478,12 @@ export function editSong(current: SongState, action: EditAction): SongState {
           nextDurations = { ...bar.durations, [action.trackKey]: trackDurations };
         }
 
-        return { steps: nextSteps, pitches: nextPitches, durations: nextDurations };
+        return {
+          ...bar,
+          steps: nextSteps,
+          pitches: nextPitches,
+          durations: nextDurations,
+        };
       });
       return { ...current, bars: newBars };
     }
@@ -362,7 +538,12 @@ export function editSong(current: SongState, action: EditAction): SongState {
           // 未显式指定 durations 时，默认激活音符为 1，非音符为 null，绝不残留旧预设时值
           nextDurations[action.trackKey] = rawSteps.map((on) => (on ? 1 : null));
         }
-        return { steps: nextSteps, pitches: nextPitches, durations: nextDurations };
+        return {
+          ...bar,
+          steps: nextSteps,
+          pitches: nextPitches,
+          durations: nextDurations,
+        };
       });
       return { ...current, bars: newBars };
     }
@@ -380,7 +561,10 @@ export function editSong(current: SongState, action: EditAction): SongState {
             : undefined,
           durations: sourceBar.durations
             ? (JSON.parse(JSON.stringify(sourceBar.durations)) as Record<string, (number | null)[]>)
-            : undefined
+            : undefined,
+          ...(sourceBar.extraNotes
+            ? { extraNotes: JSON.parse(JSON.stringify(sourceBar.extraNotes)) as Record<string, ExtraNote[]> }
+            : {}),
         };
       });
       return { ...current, bars: newBars };
@@ -424,4 +608,3 @@ export function editSong(current: SongState, action: EditAction): SongState {
       return current;
   }
 }
-

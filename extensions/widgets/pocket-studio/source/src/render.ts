@@ -15,6 +15,14 @@ export async function renderSongWav(input: SongState) {
       notes.push({ id: track.instId, step, pitch: bar.pitches?.[track.trackKey]?.[stepIndex] ?? null, duration, volume: track.volume ?? 1, reverb: track.reverb });
       end = Math.max(end, step * stepSeconds + soundDuration(track.instId, duration));
     });
+    const extras = bar.extraNotes?.[track.trackKey];
+    if (extras) {
+      extras.forEach((extra) => {
+        const step = barIndex * 16 + extra.step, duration = (extra.duration || 1) * stepSeconds;
+        notes.push({ id: track.instId, step, pitch: extra.pitch, duration, volume: track.volume ?? 1, reverb: track.reverb });
+        end = Math.max(end, step * stepSeconds + soundDuration(track.instId, duration));
+      });
+    }
   }));
   const ctx = new OfflineAudioContext(1, Math.ceil((end + 0.8) * sampleRate), sampleRate);
   for (const note of notes) playInstrument(note.id, note.step * stepSeconds, note.step, note.pitch, note.duration, ctx, note.volume, note.reverb);

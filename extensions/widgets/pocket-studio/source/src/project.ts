@@ -1,24 +1,37 @@
 import { z } from "zod";
-import type { SongState } from "./types";
+import type { SongState, ExtraNote } from "./types";
 import { INSTRUMENT_IDS } from "./song";
 import { t } from "./text";
 
 export const projectFormat = "pudding.pocket-studio";
 export const maxProjectBytes = 256 * 1024;
 const key = z.string().regex(/^[A-Za-z0-9_-]{1,80}$/);
+const extraNoteSchema = z.object({
+  step: z.number().int().min(0).max(15),
+  pitch: z.number().min(20).max(10000),
+  duration: z.number().int().min(1).max(32),
+}).strict();
+
 const songSchema = z.object({
   bpm: z.number().int().min(60).max(180),
-  tracks: z.array(z.object({ trackKey: key, instId: z.enum(INSTRUMENT_IDS), volume: z.number().min(0).max(1).optional(), muted: z.boolean().optional() }).strict()).min(1).max(8),
+  tracks: z.array(z.object({
+    trackKey: key,
+    instId: z.enum(INSTRUMENT_IDS),
+    volume: z.number().min(0).max(1).optional(),
+    muted: z.boolean().optional(),
+    reverb: z.number().min(0).max(1).optional(),
+  }).strict()).min(1).max(8),
   bars: z.array(z.object({
     steps: z.record(key, z.array(z.boolean()).length(16)),
     pitches: z.record(key, z.array(z.number().min(20).max(10000).nullable()).length(16)).optional(),
     durations: z.record(key, z.array(z.number().int().min(1).max(32).nullable()).length(16)).optional(),
+    extraNotes: z.record(key, z.array(extraNoteSchema)).optional(),
   }).strict()).min(1).max(16),
 }).strict().superRefine((song, context) => {
   const keys = song.tracks.map(track => track.trackKey);
   if (new Set(keys).size !== keys.length) context.addIssue({ code: "custom", path: ["tracks"], message: "Duplicate track keys" });
   song.bars.forEach((bar, barIndex) => {
-    for (const field of ["steps", "pitches", "durations"] as const) {
+    for (const field of ["steps", "pitches", "durations", "extraNotes"] as const) {
       const record = bar[field];
       if (record && (Object.keys(record).some(key => !keys.includes(key)) || field === "steps" && keys.some(key => !Object.hasOwn(record, key)))) {
         context.addIssue({ code: "custom", path: ["bars", barIndex, field], message: "Track keys do not match the track list" });
@@ -44,12 +57,23 @@ export function normalizeSong(value: unknown): SongState {
       instId: t.instId,
       ...(t.volume !== undefined ? { volume: t.volume } : {}),
       ...(t.muted ? { muted: true } : {}),
+      ...(t.reverb !== undefined ? { reverb: t.reverb } : {}),
     })),
-    bars: song.bars.map(bar => ({
-      steps: Object.fromEntries(song.tracks.map(({ trackKey }) => [trackKey, [...bar.steps[trackKey]]])),
-      pitches: Object.fromEntries(song.tracks.map(({ trackKey }) => [trackKey, bar.steps[trackKey].map((on, i) => on ? bar.pitches?.[trackKey]?.[i] ?? null : null)])),
-      durations: Object.fromEntries(song.tracks.map(({ trackKey }) => [trackKey, bar.steps[trackKey].map((on, i) => on ? bar.durations?.[trackKey]?.[i] ?? 1 : null)])),
-    })),
+    bars: song.bars.map(bar => {
+      const extraEntries: [string, ExtraNote[]][] = [];
+      for (const { trackKey } of song.tracks) {
+        const list = bar.extraNotes?.[trackKey];
+        if (list && list.length > 0) {
+          extraEntries.push([trackKey, list.map(n => ({ step: n.step, pitch: n.pitch, duration: n.duration }))]);
+        }
+      }
+      return {
+        steps: Object.fromEntries(song.tracks.map(({ trackKey }) => [trackKey, [...bar.steps[trackKey]]])),
+        pitches: Object.fromEntries(song.tracks.map(({ trackKey }) => [trackKey, bar.steps[trackKey].map((on, i) => on ? bar.pitches?.[trackKey]?.[i] ?? null : null)])),
+        durations: Object.fromEntries(song.tracks.map(({ trackKey }) => [trackKey, bar.steps[trackKey].map((on, i) => on ? bar.durations?.[trackKey]?.[i] ?? 1 : null)])),
+        ...(extraEntries.length > 0 ? { extraNotes: Object.fromEntries(extraEntries) } : {}),
+      };
+    }),
   };
 }
 
