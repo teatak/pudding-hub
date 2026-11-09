@@ -871,8 +871,9 @@ export default function App() {
                     key={barIdx}
                     className="ps-ruler-bar-badge"
                     style={{
-                      width: `${16 * STEP_PITCH - 4}px`,
-                      margin: "0 2px",
+                      width: `${16 * STEP_PITCH - 5}px`,
+                      marginLeft: "3px",
+                      marginRight: "2px",
                     }}
                   >
                     <span>BAR {barIdx + 1}</span>
@@ -1239,7 +1240,7 @@ export default function App() {
                                       className={`ps-note-tail-line ${inst.colorClass}`}
                                       style={{
                                         left: `${note.gStep * STEP_PITCH + STEP_PITCH - 2}px`,
-                                        width: `${(currentDur - 1) * STEP_PITCH - 2}px`,
+                                        width: `${(currentDur - 1) * STEP_PITCH}px`,
                                         zIndex: 2,
                                       }}
                                     />
@@ -1247,11 +1248,11 @@ export default function App() {
 
                                   <div
                                     className={`ps-note-block ${inst.colorClass} ${
-                                      currentDur === 1 ? "is-single-step" : ""
+                                      currentDur === 1 ? "is-single-step" : "is-multi-step"
                                     } ${isPlayingThisNote ? "active-playing" : ""}`}
                                     style={{
-                                      left: `${note.gStep * STEP_PITCH + 2}px`,
-                                      width: `${STEP_PITCH - 4}px`,
+                                      left: `${note.gStep * STEP_PITCH + 3}px`,
+                                      width: `${STEP_PITCH - 5}px`,
                                       zIndex: 3,
                                     }}
                                     onContextMenu={(e) => {
@@ -1427,8 +1428,8 @@ export default function App() {
                                       currentDur === 1 ? "is-single-step" : "is-multi-step"
                                     } ${isPlayingThisNote ? "active-playing" : ""}`}
                                     style={{
-                                      left: `${note.gStep * STEP_PITCH + 2}px`,
-                                      width: `${currentDur * STEP_PITCH - 4}px`,
+                                      left: `${note.gStep * STEP_PITCH + 3}px`,
+                                      width: `${currentDur * STEP_PITCH - 5}px`,
                                     }}
                                     onContextMenu={(e) => {
                                       e.preventDefault();

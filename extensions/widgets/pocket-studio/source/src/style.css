@@ -971,7 +971,7 @@ body {
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  padding: 0 6px;
+  padding: 0 4px;
   font-size: 10px;
   font-weight: 800;
   font-family: ui-monospace, monospace;
@@ -997,7 +997,7 @@ body {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   overflow: hidden;
   color: #ffffff;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
@@ -1005,7 +1005,7 @@ body {
 .ps-roll-note-strip.is-single-step .ps-roll-note-body {
   justify-content: center;
 }
-.ps-roll-note-strip.is-single-step .ps-note-pitch-tag {
+.ps-roll-note-strip .ps-note-pitch-tag {
   margin-right: 0;
 }
 .ps-roll-btn-del {
@@ -1136,7 +1136,7 @@ body {
   pointer-events: none;
 }
 
-/* 底层步进槽：38px 零间距连续网格，竖向网格线与音块左右各留 2px 边距严格居中对齐 */
+/* 底层步进槽：38px 零间距连续网格，所有竖线统一 1px 宽，与音块左右各留 2px 边距严格居中对齐 */
 .ps-grid-slots {
   position: absolute;
   left: 0;
@@ -1171,7 +1171,7 @@ body {
   border-left-color: transparent;
 }
 .ps-grid-slots .ps-pad-btn.bar-start {
-  border-left: 2px solid rgba(99, 102, 241, 0.55) !important;
+  border-left: 1px solid rgba(129, 140, 248, 0.85) !important;
 }
 .ps-grid-slots .ps-pad-btn.playhead {
   background: rgba(16, 185, 129, 0.12);
@@ -1187,7 +1187,7 @@ body {
   pointer-events: none;
 }
 
-/* 现代 DAW 风格音符卡片 (收起态与展开态统一为 34px 宽，在 38px 格内左右各留 2px 居中对齐) */
+/* 现代 DAW 风格音符卡片 (收起态与展开态在 38px 格内左右各距 1px 网格线 2px，严格居中对齐) */
 .ps-note-block {
   position: absolute;
   top: 7px;
@@ -1226,7 +1226,11 @@ body {
   overflow: hidden;
   pointer-events: none;
 }
-.ps-note-block.is-single-step .ps-note-pitch-tag {
+.ps-note-block.is-multi-step .ps-note-body {
+  justify-content: flex-start;
+  padding: 0 4px;
+}
+.ps-note-block .ps-note-pitch-tag {
   margin-right: 0;
 }
 .ps-note-len-badge {
