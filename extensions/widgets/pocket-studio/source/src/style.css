@@ -594,20 +594,31 @@ body {
   transform: scale(0.97);
 }
 
-/* 静音轨道整体灰显半透明状态 */
+/* 音轨分组与静音状态 */
+.ps-track-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+}
+.ps-track-group.is-expanded {
+  border-bottom: 2px solid var(--ps-edge);
+}
+.ps-track-group.is-muted,
 .ps-timeline-track-row.is-muted {
   opacity: 0.48;
   filter: grayscale(0.6);
-  transition: opacity 0.2s ease, filter 0.2s ease;
 }
+.ps-track-group.is-muted:hover,
 .ps-timeline-track-row.is-muted:hover {
   opacity: 0.78;
 }
+.ps-track-group.is-muted .ps-card-info,
 .ps-timeline-track-row.is-muted .ps-card-info {
   background: var(--ps-well);
 }
 
-/* 乐器卡片本体 (四周对称完整圆角) */
+/* 乐器卡片本体 (四周对称完整圆角，无过渡动画) */
 .ps-card-info {
   display: flex;
   align-items: center;
@@ -620,7 +631,6 @@ body {
   border-radius: 8px;
   padding: 0 8px;
   cursor: pointer;
-  transition: all 0.15s;
   box-sizing: border-box;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
@@ -700,7 +710,6 @@ body {
   color: var(--ps-dim);
   border: 1px solid var(--ps-edge);
   cursor: pointer;
-  transition: all 0.15s ease;
 }
 .ps-btn-rev:hover:not(:disabled) {
   color: var(--ps-text);
@@ -728,7 +737,6 @@ body {
   color: var(--ps-dim);
   border: 1px solid var(--ps-edge);
   cursor: pointer;
-  transition: all 0.15s ease;
 }
 .ps-btn-mute:hover:not(:disabled) {
   color: var(--ps-text);
@@ -741,7 +749,7 @@ body {
   box-shadow: 0 0 8px rgba(245, 158, 11, 0.45);
 }
 
-/* 展开/收起卷帘按钮 */
+/* 展开/收起卷帘按钮 (无动画) */
 .ps-btn-roll {
   flex: 0 0 auto;
   height: 20px;
@@ -757,7 +765,6 @@ body {
   color: var(--ps-dim);
   border: 1px solid var(--ps-edge);
   cursor: pointer;
-  transition: all 0.15s ease;
   white-space: nowrap;
 }
 .ps-btn-roll:hover:not(:disabled) {
@@ -771,41 +778,32 @@ body {
   box-shadow: 0 0 6px rgba(0, 210, 255, 0.3);
 }
 
-/* 展开态音轨行与 Sticky Header (卡片始终完整置顶展示) */
-.ps-timeline-track-row.is-expanded {
-  height: auto;
-  align-items: stretch;
-  background: rgba(0, 0, 0, 0.18);
-  border-bottom: 2px solid var(--ps-edge);
+/* 展开态分音高子音轨行 */
+.ps-timeline-track-row.is-pitch-subrow {
+  height: 36px;
 }
-.ps-track-header-cell.sticky.is-expanded {
-  height: auto;
-  min-height: 52px;
-  flex-direction: column;
-  align-items: stretch;
-  padding: 0;
-  z-index: 40;
-}
-.ps-roll-keys-column {
-  display: flex;
-  flex-direction: column;
-  border-top: 1px solid var(--ps-edge);
+.ps-track-header-cell.sticky.is-pitch-subrow {
+  height: 36px;
+  padding: 0 6px 0 18px;
+  background: var(--ps-header-sticky-bg);
 }
 .ps-roll-key-lane {
-  height: 38px;
+  width: 100%;
+  height: 28px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 10px;
-  border-bottom: 1px solid var(--ps-edge);
+  border-radius: 6px;
+  border: 1px solid var(--ps-card-border);
+  border-left-width: 3px;
   font-family: ui-monospace, monospace;
   font-size: 11px;
   font-weight: 700;
   color: var(--ps-muted);
   background: var(--ps-card-bg);
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
 }
 .ps-roll-key-lane:hover {
   background: var(--ps-card-hover-bg);
@@ -816,8 +814,10 @@ body {
   color: var(--ps-dim);
 }
 .ps-roll-key-lane.is-active-pitch {
-  color: #00d2ff;
-  background: rgba(0, 210, 255, 0.08);
+  color: var(--ps-text);
+}
+.ps-roll-key-name {
+  font-weight: 800;
 }
 .ps-pitch-hz {
   font-size: 9px;
@@ -825,56 +825,60 @@ body {
   font-weight: normal;
 }
 
-/* 展开态时间轴右侧 */
-.ps-roll-timeline {
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
-.ps-roll-timeline-topbar {
-  height: 52px;
-  min-height: 52px;
-  display: flex;
-  align-items: center;
-  padding-left: 12px;
-  border-bottom: 1px solid var(--ps-edge);
-  font-size: 11px;
-  color: var(--ps-muted);
-  background: var(--ps-well);
-}
+/* 展开态分音高右侧音轨带 (连续横向音轨槽，非块状卡片) */
 .ps-roll-pitch-row {
-  height: 38px;
+  height: 36px;
   position: relative;
   display: flex;
   align-items: center;
+  background: var(--ps-grid-bg);
   border-bottom: 1px solid var(--ps-edge);
   box-sizing: border-box;
 }
+.ps-roll-pitch-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--ps-edge);
+  opacity: 0.65;
+  pointer-events: none;
+}
 .ps-roll-pitch-row.is-black-row {
-  background: rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.14);
 }
 .ps-roll-pitch-row.is-active-row {
-  background: rgba(0, 210, 255, 0.03);
+  background: rgba(99, 102, 241, 0.04);
 }
 
 .ps-roll-note-strip {
   position: absolute;
-  top: 3px;
-  bottom: 3px;
+  top: 4px;
+  bottom: 4px;
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  padding: 0 4px;
+  padding: 0 0 0 6px;
   font-size: 10px;
   font-weight: 800;
   font-family: ui-monospace, monospace;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.35);
   cursor: pointer;
+  pointer-events: auto;
   user-select: none;
-  z-index: 3;
+  z-index: 5;
   overflow: hidden;
+}
+.ps-roll-note-strip:hover {
+  filter: brightness(1.12);
+}
+.ps-roll-note-strip.active-playing {
+  filter: brightness(1.4) !important;
+  box-shadow: 0 0 16px currentColor;
 }
 .ps-roll-note-body {
   flex: 1;
@@ -886,18 +890,19 @@ body {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 .ps-roll-btn-del {
-  opacity: 0.6;
+  opacity: 0.7;
   background: transparent;
   border: none;
   color: #ffffff;
   cursor: pointer;
-  padding: 0 2px;
+  padding: 0 3px;
   font-size: 11px;
 }
 .ps-roll-btn-del:hover {
   opacity: 1;
-  color: #ff4d4f;
+  color: #fee2e2;
 }
+
 /* 方案 A：超窄延音尾线 (非常窄的窄线，高度 4px，半透明微发光，z-index: 2) */
 .ps-note-tail-line {
   position: absolute;
@@ -908,7 +913,6 @@ body {
   pointer-events: none;
   opacity: 0.6;
   box-shadow: 0 0 6px currentColor;
-  transition: opacity 0.15s;
   z-index: 2;
 }
 .ps-note-tail-line.is-kick { background: #ff3366; color: #ff3366; }
@@ -953,7 +957,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.12s;
   padding: 0;
 }
 .ps-btn-dur-opt:hover {
@@ -987,14 +990,13 @@ body {
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.15s;
 }
 .ps-btn-modal-delete-track:hover:not(:disabled) {
   background: #ef4444;
   color: #ffffff;
 }
 
-/* 时间轴步进区域 */
+/* 时间轴步进区域：连续横向音轨槽 (去掉块状卡片背景，以横向音轨线+节拍刻度标识) */
 .ps-track-timeline {
   position: relative;
   height: 52px;
@@ -1004,43 +1006,49 @@ body {
   border-bottom: 1px solid var(--ps-edge);
   box-sizing: border-box;
 }
+.ps-track-timeline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--ps-edge);
+  pointer-events: none;
+}
 
-/* 底层网格格子 */
+/* 底层步进槽：透明音轨分段刻度，不再渲染成一个个凸起方块 */
 .ps-grid-slots {
   position: absolute;
   left: 0;
   top: 0;
   bottom: 0;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 4px;
 }
 .ps-grid-slots .ps-pad-btn {
-  height: 38px;
-  border-radius: 6px;
-  background: var(--ps-slot-bg);
-  border: 1px solid var(--ps-slot-border);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  height: 100%;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  border-left: 1px solid var(--ps-slot-border);
+  box-shadow: none;
   cursor: pointer;
-  transition: all 0.1s ease;
   box-sizing: border-box;
 }
 .ps-grid-slots .ps-pad-btn:hover {
   background: var(--ps-slot-hover-bg);
-  border-color: var(--ps-muted);
-  transform: translateY(-1px);
 }
 .ps-grid-slots .ps-pad-btn.bar-beat {
-  background: var(--ps-slot-beat-bg);
-  border-color: var(--ps-slot-border);
+  border-left: 1px solid var(--ps-edge);
+  background: rgba(255, 255, 255, 0.015);
 }
 .ps-grid-slots .ps-pad-btn.bar-start {
-  border-left: 2px solid rgba(99, 102, 241, 0.6) !important;
+  border-left: 2px solid rgba(99, 102, 241, 0.55) !important;
 }
 .ps-grid-slots .ps-pad-btn.playhead {
-  border-color: var(--ps-text) !important;
-  box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
-  filter: brightness(1.2);
+  background: rgba(16, 185, 129, 0.12);
 }
 
 /* 上层音符块层 */
@@ -1053,11 +1061,11 @@ body {
   pointer-events: none;
 }
 
-/* 现代 DAW 风格音符块 (支持拖拽放长) */
+/* 现代 DAW 风格音符卡片 */
 .ps-note-block {
   position: absolute;
-  top: 3px;
-  bottom: 3px;
+  top: 7px;
+  bottom: 7px;
   border-radius: 6px;
   pointer-events: auto;
   cursor: pointer;
@@ -1066,7 +1074,6 @@ body {
   justify-content: space-between;
   box-sizing: border-box;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.35);
-  transition: box-shadow 0.15s, filter 0.1s;
   overflow: hidden;
   user-select: none;
   z-index: 5;
@@ -1099,7 +1106,7 @@ body {
   font-family: ui-monospace, monospace;
 }
 
-/* 方案 A：右侧拖拽手柄 */
+/* 右侧拖拽手柄 */
 .ps-note-handle {
   width: 12px;
   height: 100%;
@@ -1110,7 +1117,6 @@ body {
   justify-content: center;
   border-top-right-radius: 6px;
   border-bottom-right-radius: 6px;
-  transition: background 0.15s;
 }
 .ps-note-handle:hover {
   background: rgba(255, 255, 255, 0.4);
@@ -1122,14 +1128,21 @@ body {
   border-radius: 1px;
 }
 
-/* 音符块色彩主题 */
-.ps-note-block.is-kick { background: linear-gradient(135deg, #ff3366, #be123c); color: #ff3366; }
-.ps-note-block.is-snare { background: linear-gradient(135deg, #00d2ff, #0284c7); color: #00d2ff; }
-.ps-note-block.is-hat { background: linear-gradient(135deg, #ffb703, #b45309); color: #ffb703; }
-.ps-note-block.is-bass { background: linear-gradient(135deg, #a855f7, #6b21a8); color: #a855f7; }
-.ps-note-block.is-lead { background: linear-gradient(135deg, #10b981, #047857); color: #10b981; }
-.ps-note-block.is-mario { background: linear-gradient(135deg, #ef4444, #991b1b); color: #ef4444; }
-.ps-note-block.is-kong { background: linear-gradient(135deg, #f59e0b, #b45309); color: #f59e0b; }
+/* 音符卡片色彩主题 (同时覆盖主音轨 .ps-note-block 与展开态 .ps-roll-note-strip) */
+.ps-note-block.is-kick,
+.ps-roll-note-strip.is-kick { background: linear-gradient(135deg, #ff3366, #be123c); color: #ff3366; }
+.ps-note-block.is-snare,
+.ps-roll-note-strip.is-snare { background: linear-gradient(135deg, #00d2ff, #0284c7); color: #00d2ff; }
+.ps-note-block.is-hat,
+.ps-roll-note-strip.is-hat { background: linear-gradient(135deg, #ffb703, #b45309); color: #ffb703; }
+.ps-note-block.is-bass,
+.ps-roll-note-strip.is-bass { background: linear-gradient(135deg, #a855f7, #6b21a8); color: #a855f7; }
+.ps-note-block.is-lead,
+.ps-roll-note-strip.is-lead { background: linear-gradient(135deg, #10b981, #047857); color: #10b981; }
+.ps-note-block.is-mario,
+.ps-roll-note-strip.is-mario { background: linear-gradient(135deg, #ef4444, #991b1b); color: #ef4444; }
+.ps-note-block.is-kong,
+.ps-roll-note-strip.is-kong { background: linear-gradient(135deg, #f59e0b, #b45309); color: #f59e0b; }
 
 /* 弹窗 */
 .ps-modal-overlay {
