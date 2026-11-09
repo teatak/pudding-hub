@@ -1112,26 +1112,16 @@ export default function App() {
                       </div>
                     </div>
 
-                    {/* 右侧区域：展开时显示操作栏（增加子条、手动选音高添加、清空、删除音轨）；收起时显示音轨步进条 */}
+                    {/* 右侧区域：展开时显示操作栏（选音高添加、清空本轨、删除音轨）；收起时显示音轨步进条 */}
                     {isExpanded && isMelodic ? (
                       <div className="ps-expanded-topbar" style={{ width: `${totalSteps * STEP_PITCH}px` }}>
                         <div className="ps-expanded-actions">
-                          <button
-                            type="button"
-                            className="ps-exp-action-btn is-primary"
-                            disabled={busy}
-                            onClick={() => addPitchSubrow(tConfig.trackKey, tConfig.instId, pitchMidis)}
-                            title="自动在当前音轨增加一条新的音高子条"
-                          >
-                            ＋ 增加子条
-                          </button>
-
                           <div className="ps-exp-manual-add">
                             <select
                               className="ps-exp-pitch-select"
                               value={manualMidiToAdd}
                               onChange={(e) => setManualMidiToAdd(Number(e.target.value))}
-                              aria-label="选择要添加的音高"
+                              aria-label={t("selectPitchToAdd")}
                             >
                               {SELECTABLE_MIDIS.map((m) => (
                                 <option key={m} value={m}>
@@ -1141,13 +1131,13 @@ export default function App() {
                             </select>
                             <button
                               type="button"
-                              className="ps-exp-action-btn"
+                              className="ps-exp-action-btn is-primary"
                               disabled={busy}
                               onClick={() =>
                                 addPitchSubrow(tConfig.trackKey, tConfig.instId, pitchMidis, manualMidiToAdd)
                               }
                             >
-                              ＋ 手动添加 {midiToNoteName(manualMidiToAdd)}
+                              ＋ {t("addPitchRow")} {midiToNoteName(manualMidiToAdd)}
                             </button>
                           </div>
 
@@ -1156,9 +1146,9 @@ export default function App() {
                             className="ps-exp-action-btn"
                             disabled={busy || notes.length === 0}
                             onClick={() => void perform({ action: "clearTrack", trackKey: tConfig.trackKey })}
-                            title="清空当前音轨的所有音符"
+                            title={t("clearTrackTooltip")}
                           >
-                            清空本轨
+                            {t("clearTrack")}
                           </button>
 
                           {song.tracks.length > 1 && (
@@ -1348,7 +1338,7 @@ export default function App() {
                                 const now = getAudioContext().currentTime;
                                 inst.playSound(now, 0, laneFreq, 0.25, tConfig.volume ?? 1, tConfig.reverb);
                               }}
-                              title={`试听 ${pName} (${laneFreq.toFixed(1)}Hz)`}
+                              title={`${t("audition")} ${pName} (${laneFreq.toFixed(1)}Hz)`}
                             >
                               <span className="ps-roll-key-name">{pName}</span>
                               <div className="ps-roll-key-right">
@@ -1357,7 +1347,7 @@ export default function App() {
                                   <button
                                     type="button"
                                     className="ps-roll-key-del"
-                                    title={`移除空子条 ${pName}`}
+                                    title={`${t("removePitchRow")}: ${pName}`}
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       removePitchSubrow(tConfig.trackKey, laneMidi, pitchMidis);
@@ -1649,7 +1639,7 @@ export default function App() {
                   <div className="ps-popover-header">
                     <div className="ps-popover-title-row">
                       {isPercussion ? (
-                        <span style={{ fontSize: 13, fontWeight: 700, color: "#e2e8f0" }}>
+                        <span style={{ fontSize: 13, fontWeight: 700, color: "var(--ps-text)" }}>
                           {getInstName(inst.id)}
                         </span>
                       ) : (
@@ -1762,16 +1752,16 @@ export default function App() {
 
                   {/* 持续时长快捷调节 */}
                   <div className="ps-popover-dur-row">
-                    <span className="ps-popover-dur-label">持续时长</span>
+                    <span className="ps-popover-dur-label">{t("noteDuration")}</span>
                     <div className="ps-popover-dur-buttons">
                       {[
-                        { steps: 1, label: "1步", hint: "1/4拍" },
-                        { steps: 2, label: "2步", hint: "半拍" },
-                        { steps: 4, label: "4步", hint: "1拍" },
-                        { steps: 6, label: "6步", hint: "1.5拍" },
-                        { steps: 8, label: "8步", hint: "2拍" },
-                        { steps: 12, label: "12步", hint: "3拍" },
-                        { steps: 16, label: "16步", hint: "1小节" },
+                        { steps: 1, label: t("dur1Step"), hint: t("dur1Hint") },
+                        { steps: 2, label: t("dur2Step"), hint: t("dur2Hint") },
+                        { steps: 4, label: t("dur4Step"), hint: t("dur4Hint") },
+                        { steps: 6, label: t("dur6Step"), hint: t("dur6Hint") },
+                        { steps: 8, label: t("dur8Step"), hint: t("dur8Hint") },
+                        { steps: 12, label: t("dur12Step"), hint: t("dur12Hint") },
+                        { steps: 16, label: t("dur16Step"), hint: t("dur16Hint") },
                       ].map((d) => {
                         const isCur = (activePopover.duration || 1) === d.steps;
                         return (
@@ -1968,7 +1958,7 @@ export default function App() {
         <div className="ps-picker-modal" onClick={(e) => e.stopPropagation()}>
           <div className="ps-modal-header">
             <div className="ps-modal-title">{t("pickerTitle")}</div>
-            <span style={{ cursor: "pointer", color: "#94a3b8" }} onClick={() => setIsPickerOpen(false)}>
+            <span style={{ cursor: "pointer", color: "var(--ps-muted)" }} onClick={() => setIsPickerOpen(false)}>
               ✕
             </span>
           </div>

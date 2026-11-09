@@ -1,39 +1,49 @@
 :root {
   color-scheme: light;
-  --ps-bg: #f8fafc;
+  --ps-bg: #f1f5f9;
   --ps-chassis: #ffffff;
-  --ps-well: #f1f5f9;
-  --ps-edge: rgba(15, 23, 42, 0.08);
+  --ps-well: #e2e8f0;
+  --ps-edge: rgba(15, 23, 42, 0.14);
 
   --ps-header-sticky-bg: #ffffff;
   --ps-card-bg: #ffffff;
-  --ps-card-border: rgba(15, 23, 42, 0.09);
-  --ps-card-hover-bg: #f1f5f9;
-  --ps-grid-bg: rgba(15, 23, 42, 0.03);
+  --ps-card-border: rgba(15, 23, 42, 0.15);
+  --ps-card-hover-bg: #e2e8f0;
+  --ps-grid-bg: #f8fafc;
   --ps-slot-bg: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
-  --ps-slot-border: rgba(15, 23, 42, 0.08);
+  --ps-slot-border: rgba(15, 23, 42, 0.1);
   --ps-slot-beat-bg: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
-  --ps-slot-hover-bg: rgba(15, 23, 42, 0.06);
+  --ps-beat-col-bg: rgba(15, 23, 42, 0.04);
+  --ps-black-row-bg: rgba(15, 23, 42, 0.055);
+  --ps-slot-hover-bg: rgba(79, 70, 229, 0.1);
   --ps-btn-pill-bg: #ffffff;
-  --ps-btn-pill-border: rgba(15, 23, 42, 0.12);
-  --ps-btn-pill-color: #334155;
-  --ps-btn-pill-hover-bg: #f8fafc;
+  --ps-btn-pill-border: rgba(15, 23, 42, 0.18);
+  --ps-btn-pill-color: #1e293b;
+  --ps-btn-pill-hover-bg: #f1f5f9;
   --ps-popover-bg: #ffffff;
-  --ps-popover-border: rgba(15, 23, 42, 0.12);
+  --ps-popover-border: rgba(15, 23, 42, 0.18);
   --ps-popover-text: #0f172a;
-  --ps-modal-overlay: rgba(15, 23, 42, 0.4);
+  --ps-modal-overlay: rgba(15, 23, 42, 0.45);
 
-  --ps-kick: #ff3366;
-  --ps-snare: #00a4cc;
-  --ps-hat: #d97706;
-  --ps-bass: #9333ea;
-  --ps-lead: #059669;
+  --ps-kick: #e11d48;
+  --ps-snare: #0284c7;
+  --ps-hat: #b45309;
+  --ps-bass: #7e22ce;
+  --ps-lead: #047857;
   --ps-mario: #dc2626;
-  --ps-kong: #d97706;
+  --ps-kong: #b45309;
+
+  --ps-accent: #4338ca;
+  --ps-danger-text: #dc2626;
+  --ps-danger-bg: rgba(220, 38, 38, 0.1);
+  --ps-danger-border: rgba(220, 38, 38, 0.35);
+  --ps-roll-active-color: #0369a1;
+  --ps-roll-active-bg: rgba(2, 132, 199, 0.14);
+  --ps-roll-active-border: rgba(2, 132, 199, 0.45);
 
   --ps-text: #0f172a;
-  --ps-muted: #64748b;
-  --ps-dim: #94a3b8;
+  --ps-muted: #334155;
+  --ps-dim: #475569;
 }
 
 [data-theme="dark"],
@@ -42,24 +52,26 @@
   --ps-bg: #090b10;
   --ps-chassis: #12151d;
   --ps-well: #0c0e14;
-  --ps-edge: rgba(255, 255, 255, 0.08);
+  --ps-edge: rgba(255, 255, 255, 0.12);
 
   --ps-header-sticky-bg: #111520;
   --ps-card-bg: #181d2a;
-  --ps-card-border: rgba(255, 255, 255, 0.08);
-  --ps-card-hover-bg: #222a3a;
+  --ps-card-border: rgba(255, 255, 255, 0.12);
+  --ps-card-hover-bg: #242d3f;
   --ps-grid-bg: rgba(0, 0, 0, 0.22);
   --ps-slot-bg: linear-gradient(180deg, #181d28 0%, #12151e 100%);
-  --ps-slot-border: rgba(255, 255, 255, 0.05);
+  --ps-slot-border: rgba(255, 255, 255, 0.07);
   --ps-slot-beat-bg: linear-gradient(180deg, #1e2432 0%, #151922 100%);
-  --ps-slot-hover-bg: rgba(255, 255, 255, 0.08);
-  --ps-btn-pill-bg: rgba(255, 255, 255, 0.05);
-  --ps-btn-pill-border: rgba(255, 255, 255, 0.12);
-  --ps-btn-pill-color: #cbd5e1;
-  --ps-btn-pill-hover-bg: rgba(255, 255, 255, 0.1);
+  --ps-beat-col-bg: rgba(255, 255, 255, 0.022);
+  --ps-black-row-bg: rgba(0, 0, 0, 0.22);
+  --ps-slot-hover-bg: rgba(255, 255, 255, 0.09);
+  --ps-btn-pill-bg: rgba(255, 255, 255, 0.06);
+  --ps-btn-pill-border: rgba(255, 255, 255, 0.15);
+  --ps-btn-pill-color: #e2e8f0;
+  --ps-btn-pill-hover-bg: rgba(255, 255, 255, 0.12);
   --ps-popover-bg: #181d2a;
-  --ps-popover-border: rgba(255, 255, 255, 0.16);
-  --ps-popover-text: #e2e8f0;
+  --ps-popover-border: rgba(255, 255, 255, 0.18);
+  --ps-popover-text: #f8fafc;
   --ps-modal-overlay: rgba(0, 0, 0, 0.75);
 
   --ps-kick: #ff3366;
@@ -70,9 +82,17 @@
   --ps-mario: #ef4444;
   --ps-kong: #f59e0b;
 
+  --ps-accent: #818cf8;
+  --ps-danger-text: #fca5a5;
+  --ps-danger-bg: rgba(239, 68, 68, 0.15);
+  --ps-danger-border: rgba(239, 68, 68, 0.35);
+  --ps-roll-active-color: #38bdf8;
+  --ps-roll-active-bg: rgba(0, 210, 255, 0.18);
+  --ps-roll-active-border: rgba(0, 210, 255, 0.5);
+
   --ps-text: #f8fafc;
-  --ps-muted: #94a3b8;
-  --ps-dim: #475569;
+  --ps-muted: #cbd5e1;
+  --ps-dim: #94a3b8;
 }
 
 * {
@@ -164,7 +184,7 @@ body {
   white-space: pre-wrap;
   user-select: text;
 }
-.ps-file-notice[data-error="true"] { color: #fca5a5; }
+.ps-file-notice[data-error="true"] { color: var(--ps-danger-text); }
 .ps-notice-dismiss {
   flex: 0 0 20px;
   width: 20px;
@@ -302,7 +322,7 @@ body {
 .ps-tempo-label { color: var(--ps-muted); }
 .ps-tempo-val {
   font-family: ui-monospace, monospace;
-  color: #f59e0b;
+  color: var(--ps-kong);
   font-size: 13px;
   font-weight: 800;
   min-width: 28px;
@@ -323,8 +343,8 @@ body {
   transition: all 0.15s;
 }
 .ps-tempo-step-btn:hover:not(:disabled) {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.1);
+  color: var(--ps-text);
+  background: var(--ps-card-hover-bg);
 }
 .ps-tempo-step-btn:disabled {
   opacity: 0.3;
@@ -396,9 +416,9 @@ body {
 .ps-total-bars-pill {
   font-size: 9px;
   font-weight: 800;
-  color: #818cf8;
-  background: rgba(99, 102, 241, 0.15);
-  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: var(--ps-accent);
+  background: rgba(99, 102, 241, 0.14);
+  border: 1px solid rgba(99, 102, 241, 0.32);
   padding: 2px 6px;
   border-radius: 6px;
   width: fit-content;
@@ -425,14 +445,14 @@ body {
   align-items: center;
   justify-content: space-between;
   height: 100%;
-  background: rgba(99, 102, 241, 0.08);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.28);
   border-radius: 4px;
   padding: 0 8px;
   box-sizing: border-box;
   font-size: 10px;
   font-weight: 800;
-  color: #818cf8;
+  color: var(--ps-accent);
   letter-spacing: 0.5px;
   flex-shrink: 0;
 }
@@ -446,20 +466,20 @@ body {
   padding: 0 4px;
   border-radius: 3px;
   line-height: 1;
-  opacity: 0.6;
+  opacity: 0.75;
   transition: all 0.15s;
 }
 .ps-ruler-bar-del:hover {
   opacity: 1;
-  background: rgba(239, 68, 68, 0.25);
+  background: rgba(239, 68, 68, 0.2);
 }
 .ps-ruler-add-bar-btn {
   height: 20px;
   padding: 0 8px;
   border-radius: 4px;
-  border: 1px dashed rgba(99, 102, 241, 0.4);
+  border: 1px dashed rgba(99, 102, 241, 0.45);
   background: rgba(99, 102, 241, 0.12);
-  color: #818cf8;
+  color: var(--ps-accent);
   font-weight: 800;
   font-size: 12px;
   cursor: pointer;
@@ -469,8 +489,8 @@ body {
   flex-shrink: 0;
 }
 .ps-ruler-add-bar-btn:hover {
-  background: rgba(99, 102, 241, 0.25);
-  color: #fff;
+  background: #6366f1;
+  color: #ffffff;
 }
 
 /* 1:1 步进刻度条 (与 38px 网格槽严格 1:1 对齐) */
@@ -493,11 +513,11 @@ body {
   flex-shrink: 0;
 }
 .ps-ruler-tick-cell.beat-head {
-  color: #e2e8f0;
+  color: var(--ps-text);
   font-weight: 700;
 }
 .ps-ruler-tick-cell.bar-head {
-  color: #10b981;
+  color: var(--ps-lead);
   font-weight: 800;
 }
 
@@ -772,10 +792,10 @@ body {
   border-color: var(--ps-muted);
 }
 .ps-btn-roll.is-active {
-  background: rgba(0, 210, 255, 0.18);
-  color: #00d2ff;
-  border-color: rgba(0, 210, 255, 0.5);
-  box-shadow: 0 0 6px rgba(0, 210, 255, 0.3);
+  background: var(--ps-roll-active-bg);
+  color: var(--ps-roll-active-color);
+  border-color: var(--ps-roll-active-border);
+  box-shadow: 0 0 6px rgba(2, 132, 199, 0.2);
 }
 
 /* 展开态顶部操作栏 (替代重复的汇总音轨条，固定在左侧乐器卡片旁) */
@@ -844,12 +864,12 @@ body {
   border-color: var(--ps-muted);
 }
 .ps-exp-action-btn:disabled {
-  opacity: 0.35;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 .ps-exp-action-btn.is-primary {
-  background: rgba(99, 102, 241, 0.16);
-  color: #818cf8;
+  background: rgba(99, 102, 241, 0.14);
+  color: var(--ps-accent);
   border-color: rgba(99, 102, 241, 0.4);
 }
 .ps-exp-action-btn.is-primary:hover:not(:disabled) {
@@ -858,9 +878,9 @@ body {
   border-color: #6366f1;
 }
 .ps-exp-action-btn.is-danger {
-  background: rgba(239, 68, 68, 0.12);
-  color: #fca5a5;
-  border-color: rgba(239, 68, 68, 0.3);
+  background: var(--ps-danger-bg);
+  color: var(--ps-danger-text);
+  border-color: var(--ps-danger-border);
 }
 .ps-exp-action-btn.is-danger:hover:not(:disabled) {
   background: #ef4444;
@@ -901,7 +921,7 @@ body {
 }
 .ps-roll-key-lane.is-black {
   background: var(--ps-well);
-  color: var(--ps-dim);
+  color: var(--ps-muted);
 }
 .ps-roll-key-lane.is-active-pitch {
   color: var(--ps-text);
@@ -916,8 +936,9 @@ body {
 }
 .ps-pitch-hz {
   font-size: 9px;
-  opacity: 0.55;
-  font-weight: normal;
+  color: var(--ps-dim);
+  opacity: 0.9;
+  font-weight: 600;
 }
 .ps-roll-key-del {
   background: transparent;
@@ -956,7 +977,7 @@ body {
   pointer-events: none;
 }
 .ps-roll-pitch-row.is-black-row {
-  background: rgba(0, 0, 0, 0.14);
+  background: var(--ps-black-row-bg);
 }
 .ps-roll-pitch-row.is-active-row {
   background: rgba(99, 102, 241, 0.04);
@@ -1160,18 +1181,19 @@ body {
 .ps-grid-slots .ps-pad-btn.first-step {
   border-left-color: transparent;
 }
-.ps-grid-slots .ps-pad-btn:hover {
-  background: var(--ps-slot-hover-bg);
-}
 .ps-grid-slots .ps-pad-btn.bar-beat {
   border-left: 1px solid var(--ps-edge);
-  background: rgba(255, 255, 255, 0.015);
+  background: var(--ps-beat-col-bg);
 }
 .ps-grid-slots .ps-pad-btn.bar-beat.first-step {
   border-left-color: transparent;
 }
 .ps-grid-slots .ps-pad-btn.bar-start {
   border-left: 1px solid rgba(129, 140, 248, 0.85) !important;
+}
+.ps-grid-slots .ps-pad-btn:hover,
+.ps-grid-slots .ps-pad-btn.bar-beat:hover {
+  background: var(--ps-slot-hover-bg);
 }
 .ps-grid-slots .ps-pad-btn.playhead {
   background: rgba(16, 185, 129, 0.12);
@@ -1475,20 +1497,21 @@ body {
 .ps-popover-note-name {
   font-size: 16px;
   font-weight: 800;
-  color: #818cf8;
+  color: var(--ps-accent);
   font-family: ui-monospace, monospace;
 }
 
 .ps-popover-note-freq {
   font-size: 10px;
   color: var(--ps-dim);
+  font-weight: 600;
   font-family: ui-monospace, monospace;
 }
 
 .ps-popover-close-btn {
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--ps-muted);
   font-size: 14px;
   cursor: pointer;
   padding: 2px 4px;
@@ -1496,8 +1519,8 @@ body {
   border-radius: 4px;
 }
 .ps-popover-close-btn:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.1);
+  color: var(--ps-text);
+  background: var(--ps-card-hover-bg);
 }
 
 .ps-popover-quick-row {
@@ -1505,7 +1528,8 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 6px;
-  background: rgba(0, 0, 0, 0.25);
+  background: var(--ps-well);
+  border: 1px solid var(--ps-edge);
   border-radius: 6px;
   padding: 4px 6px;
 }
@@ -1517,9 +1541,9 @@ body {
 }
 
 .ps-btn-micro {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #cbd5e1;
+  background: var(--ps-btn-pill-bg);
+  border: 1px solid var(--ps-btn-pill-border);
+  color: var(--ps-btn-pill-color);
   font-size: 10px;
   font-weight: 700;
   padding: 3px 6px;
@@ -1528,9 +1552,13 @@ body {
   user-select: none;
 }
 .ps-btn-micro:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.15);
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.3);
+  background: var(--ps-card-hover-bg);
+  color: var(--ps-text);
+  border-color: var(--ps-muted);
+}
+.ps-btn-micro:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 
 /* 迷你单八度钢琴键盘：加高至 68px，黑键仅占上半部 36px，下半部 30px 白键完全露出不遮挡 */
@@ -1543,13 +1571,13 @@ body {
   padding: 3px;
   box-sizing: border-box;
   display: flex;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--ps-edge);
 }
 
 .ps-piano-white-key {
   flex: 1;
   height: 100%;
-  background: #cbd5e1;
+  background: #e2e8f0;
   border-radius: 0 0 4px 4px;
   margin: 0 1px;
   cursor: pointer;
@@ -1559,17 +1587,17 @@ body {
   padding-bottom: 5px;
   font-size: 10px;
   font-family: ui-monospace, monospace;
-  color: #334155;
+  color: #0f172a;
   font-weight: 800;
   user-select: none;
   z-index: 1;
   box-sizing: border-box;
 }
 .ps-piano-white-key:hover {
-  background: #f1f5f9;
+  background: #ffffff;
 }
 .ps-piano-white-key:active {
-  background: #e2e8f0;
+  background: #cbd5e1;
 }
 .ps-piano-white-key.is-active {
   background: #6366f1 !important;
@@ -1586,7 +1614,7 @@ body {
   border-radius: 0 0 4px 4px;
   cursor: pointer;
   z-index: 2;
-  border: 1px solid #0f172a;
+  border: 1px solid #090b10;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: flex-end;
@@ -1594,7 +1622,7 @@ body {
   padding-bottom: 4px;
   font-size: 8px;
   font-family: ui-monospace, monospace;
-  color: #94a3b8;
+  color: #e2e8f0;
   font-weight: 700;
   user-select: none;
   box-sizing: border-box;
@@ -1617,15 +1645,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--ps-edge);
   padding-top: 6px;
   margin-top: 2px;
 }
 
 .ps-btn-note-del {
-  background: rgba(239, 68, 68, 0.12);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #fca5a5;
+  background: var(--ps-danger-bg);
+  border: 1px solid var(--ps-danger-border);
+  color: var(--ps-danger-text);
   font-size: 11px;
   font-weight: 700;
   padding: 4px 8px;
@@ -1636,24 +1664,24 @@ body {
   gap: 4px;
 }
 .ps-btn-note-del:hover {
-  background: rgba(239, 68, 68, 0.25);
+  background: #ef4444;
   border-color: #ef4444;
   color: #ffffff;
 }
 
 .ps-btn-note-done {
-  background: #242b3b;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #e2e8f0;
+  background: #4f46e5;
+  border: 1px solid #4338ca;
+  color: #ffffff;
   font-size: 11px;
   font-weight: 700;
-  padding: 4px 10px;
+  padding: 4px 12px;
   border-radius: 6px;
   cursor: pointer;
 }
 .ps-btn-note-done:hover {
-  background: #323b50;
-  color: #fff;
+  background: #4338ca;
+  color: #ffffff;
 }
 
 /* 空间混响悬浮窗样式 */
@@ -1686,7 +1714,7 @@ body {
   font-size: 10px;
   font-weight: 800;
   font-family: ui-monospace, monospace;
-  color: #818cf8;
+  color: var(--ps-accent);
   background: rgba(99, 102, 241, 0.12);
   padding: 1px 6px;
   border-radius: 4px;
