@@ -263,63 +263,82 @@ export function playSoftPluck(freq: number, time: number, duration = 0.38, ctx: 
   osc2.stop(time + duration);
 }
 
-// 8. 电钢琴 Rhodes: 主体基频正弦波 + 音叉击打金属泛音 (Tine) + 微颤音 (Tremolo)
+// 8. 钢琴 / 电钢琴 (Piano): 真实声学击弦物理多谐波建模 + 三琴弦同度微失谐 + 琴槌敲击瞬态 + 动态共鸣低通滤波
 export function playRhodes(freq: number, time: number, duration = 0.5, ctx: BaseAudioContext = getAudioContext(), output: AudioNode = ctx.destination) {
   const masterGain = ctx.createGain();
+
+  // 1. 真实钢琴琴弦振动频谱 (Fourier Partial Spectrum)
+  // 基频与谐波依照大钢琴声学模型严谨递减，彻底摆脱单调塑料的单正弦波哨音
+  const n = 16;
+  const real = new Float32Array(n);
+  const imag = new Float32Array(n);
+  const partials = [0, 1.0, 0.72, 0.48, 0.34, 0.24, 0.16, 0.11, 0.07, 0.045, 0.03, 0.02, 0.012];
+  for (let i = 1; i < partials.length; i++) imag[i] = partials[i];
+  const pianoWave = ctx.createPeriodicWave(real, imag, { disableNormalization: false });
+
+  // 2. 声学低通共振滤波 (击弦瞬间高频完全绽放，随后数十毫秒内快速衰减至温润木质琴身频点)
   const filter = ctx.createBiquadFilter();
   filter.type = "lowpass";
-  filter.frequency.setValueAtTime(2600, time);
+  const peakCutoff = Math.min(7500, Math.max(2600, freq * 5.2));
+  const bodyCutoff = Math.min(2800, Math.max(850, freq * 2.1));
+  filter.frequency.setValueAtTime(peakCutoff, time);
+  const filterDecay = Math.min(0.22, duration * 0.45);
+  filter.frequency.exponentialRampToValueAtTime(bodyCutoff, time + filterDecay);
+  filter.Q.setValueAtTime(1.8, time);
 
-  // 主基频正弦波 (温暖琴身)
-  const baseOsc = ctx.createOscillator();
-  const baseGain = ctx.createGain();
-  baseOsc.type = "sine";
-  baseOsc.frequency.setValueAtTime(freq, time);
+  // 3. 三琴弦同度微失谐 (Triple-String Unison Detune: 主弦 + 偏弦 ±2.5 cents，呈现真实三角钢琴的立体感与自然共鸣)
+  const osc1 = ctx.createOscillator();
+  const osc2 = ctx.createOscillator();
+  const osc3 = ctx.createOscillator();
+  osc1.setPeriodicWave(pianoWave);
+  osc2.setPeriodicWave(pianoWave);
+  osc3.setPeriodicWave(pianoWave);
 
-  const attack = 0.01;
-  const release = Math.min(0.09, duration * 0.22);
-  const sustainTime = Math.max(attack, duration - release);
+  osc1.frequency.setValueAtTime(freq, time);
+  osc2.frequency.setValueAtTime(freq, time);
+  osc2.detune.setValueAtTime(2.5, time);
+  osc3.frequency.setValueAtTime(freq, time);
+  osc3.detune.setValueAtTime(-2.5, time);
 
-  baseGain.gain.setValueAtTime(0.001, time);
-  baseGain.gain.linearRampToValueAtTime(0.55, time + attack);
-  baseGain.gain.setValueAtTime(0.42, time + sustainTime);
-  baseGain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+  // 4. 击弦打击乐器双阶段衰减包络 (极速 Attack 2.5ms -> 初段能量迅速释放 -> 后段悠长余音指数衰减)
+  const stringGain = ctx.createGain();
+  const attack = 0.0025;
+  const promptDecay = Math.min(0.09, duration * 0.25);
+  stringGain.gain.setValueAtTime(0.001, time);
+  stringGain.gain.linearRampToValueAtTime(0.48, time + attack);
+  stringGain.gain.exponentialRampToValueAtTime(0.28, time + promptDecay);
+  stringGain.gain.exponentialRampToValueAtTime(0.001, time + duration);
 
-  baseOsc.connect(baseGain);
-  baseGain.connect(filter);
+  osc1.connect(stringGain);
+  osc2.connect(stringGain);
+  osc3.connect(stringGain);
+  stringGain.connect(filter);
 
-  // 音叉金属敲击泛音 (Tine Component，约 3 倍频，快速衰减)
-  const tineOsc = ctx.createOscillator();
-  const tineGain = ctx.createGain();
-  tineOsc.type = "sine";
-  tineOsc.frequency.setValueAtTime(freq * 3.01, time);
+  // 5. 琴槌毛毡敲击瞬态 (Hammer Strike Transient: 140Hz 降至 40Hz 的 10ms 物理下键敲击脉冲)
+  const hammerOsc = ctx.createOscillator();
+  const hammerGain = ctx.createGain();
+  hammerOsc.type = "sine";
+  hammerOsc.frequency.setValueAtTime(140, time);
+  hammerOsc.frequency.exponentialRampToValueAtTime(40, time + 0.012);
+  hammerGain.gain.setValueAtTime(0.25, time);
+  hammerGain.gain.exponentialRampToValueAtTime(0.001, time + 0.012);
 
-  const tineDur = Math.min(0.06, duration * 0.4);
-  tineGain.gain.setValueAtTime(0.22, time);
-  tineGain.gain.exponentialRampToValueAtTime(0.001, time + tineDur);
+  hammerOsc.connect(hammerGain);
+  hammerGain.connect(filter);
 
-  tineOsc.connect(tineGain);
-  tineGain.connect(filter);
-
-  // 微颤音 (Tremolo LFO) 产生流动温暖感
-  const lfo = ctx.createOscillator();
-  const lfoGain = ctx.createGain();
-  lfo.frequency.setValueAtTime(4.6, time);
-  lfoGain.gain.setValueAtTime(0.06, time);
-  lfo.connect(lfoGain);
-
-  masterGain.gain.setValueAtTime(0.9, time);
-  lfoGain.connect(masterGain.gain);
-
+  // 6. 输出连接
+  masterGain.gain.setValueAtTime(1.0, time);
   filter.connect(masterGain);
   masterGain.connect(output);
 
-  baseOsc.start(time);
-  baseOsc.stop(time + duration);
-  tineOsc.start(time);
-  tineOsc.stop(time + tineDur);
-  lfo.start(time);
-  lfo.stop(time + duration);
+  osc1.start(time);
+  osc1.stop(time + duration);
+  osc2.start(time);
+  osc2.stop(time + duration);
+  osc3.start(time);
+  osc3.stop(time + duration);
+  hammerOsc.start(time);
+  hammerOsc.stop(time + 0.015);
 }
 
 // 9. 木琴 Marimba: 木槌物理打击瞬态 (Click) + 木管谐振与第 4 泛音
