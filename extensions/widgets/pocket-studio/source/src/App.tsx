@@ -641,36 +641,37 @@ export default function App() {
     window.addEventListener("pointerup", onPointerUp);
   }
 
-  // 为指定音轨添加一个音高子条
-  function addPitchSubrow(trackKey: string, instId: string, existingMidis: number[], explicitMidi?: number) {
-    let targetMidi = explicitMidi;
-    if (targetMidi === undefined) {
-      // 自动挑选一个尚未存在的相邻音阶音高（优先向上大二度/小三度，若过高则向下）
-      const scaleOffsets = [2, 3, 4, 5, 7, -2, -3, -5, -7, 1, -1];
-      const base = existingMidis[0] ?? (INSTRUMENT_MAP[instId]?.category === "Bass" ? 48 : 64);
-      targetMidi = base + 2;
-      for (const offset of scaleOffsets) {
-        const candidate = base + offset;
-        if (candidate >= 36 && candidate <= 84 && !existingMidis.includes(candidate)) {
-          targetMidi = candidate;
-          break;
-        }
-      }
-      if (existingMidis.includes(targetMidi)) {
-        for (let m = 72; m >= 36; m--) {
-          if (!existingMidis.includes(m)) {
-            targetMidi = m;
-            break;
-          }
-        }
+  // 计算音轨推荐的下一个未添加音高 (MIDI)
+  function getNextSuggestedMidi(instId: string, existingMidis: number[]): number {
+    const scaleOffsets = [2, 3, 4, 5, 7, -2, -3, -5, -7, 1, -1];
+    const base = existingMidis[0] ?? (INSTRUMENT_MAP[instId]?.category === "Bass" ? 48 : 64);
+    for (const offset of scaleOffsets) {
+      const candidate = base + offset;
+      if (candidate >= 36 && candidate <= 84 && !existingMidis.includes(candidate)) {
+        return candidate;
       }
     }
+    for (let m = 72; m >= 36; m--) {
+      if (!existingMidis.includes(m)) {
+        return m;
+      }
+    }
+    return 60;
+  }
+
+  // 为指定音轨添加一个音高子条
+  function addPitchSubrow(trackKey: string, instId: string, existingMidis: number[], explicitMidi?: number) {
+    const targetMidi = explicitMidi ?? getNextSuggestedMidi(instId, existingMidis);
+    const updatedMidis = Array.from(new Set([...(customPitchesByTrack[trackKey] || []), ...existingMidis, targetMidi])).sort(
+      (a, b) => b - a
+    );
     setCustomPitchesByTrack((prev) => {
-      const merged = Array.from(new Set([...(prev[trackKey] || []), ...existingMidis, targetMidi!])).sort(
+      const merged = Array.from(new Set([...(prev[trackKey] || []), ...existingMidis, targetMidi])).sort(
         (a, b) => b - a
       );
       return { ...prev, [trackKey]: merged };
     });
+    setManualMidiToAdd(getNextSuggestedMidi(instId, updatedMidis));
     const inst = INSTRUMENT_MAP[instId];
     const trackConf = songRef.current.tracks.find((t) => t.trackKey === trackKey);
     if (inst && targetMidi !== undefined) {
@@ -870,8 +871,8 @@ export default function App() {
                     key={barIdx}
                     className="ps-ruler-bar-badge"
                     style={{
-                      width: `${16 * STEP_PITCH - STEP_GAP}px`,
-                      marginRight: `${STEP_GAP}px`
+                      width: `${16 * STEP_PITCH - 4}px`,
+                      margin: "0 2px",
                     }}
                   >
                     <span>BAR {barIdx + 1}</span>
@@ -924,7 +925,7 @@ export default function App() {
                     <div
                       key={g}
                       className={`ps-ruler-tick-cell ${isBarStart ? "bar-head" : ""} ${isBeat ? "beat-head" : ""}`}
-                      style={{ width: `${STEP_WIDTH}px` }}
+                      style={{ width: `${STEP_PITCH}px` }}
                     >
                       {text}
                     </div>
@@ -938,7 +939,7 @@ export default function App() {
           {isPlaying && (
             <div
               className="ps-playhead-line"
-              style={{ left: `${HEADER_WIDTH + playStep * STEP_PITCH + STEP_WIDTH / 2}px` }}
+              style={{ left: `${HEADER_WIDTH + playStep * STEP_PITCH + STEP_PITCH / 2}px` }}
             />
           )}
 
@@ -1089,12 +1090,14 @@ export default function App() {
                                 e.stopPropagation();
                                 if (!isExpanded) {
                                   // 展开时将当前已有的音高固定到列表，防止删除音符时子条突然消失
+                                  const merged = Array.from(
+                                    new Set([...(customPitchesByTrack[tConfig.trackKey] || []), ...pitchMidis])
+                                  ).sort((a, b) => b - a);
                                   setCustomPitchesByTrack((prev) => ({
                                     ...prev,
-                                    [tConfig.trackKey]: Array.from(
-                                      new Set([...(prev[tConfig.trackKey] || []), ...pitchMidis])
-                                    ).sort((a, b) => b - a),
+                                    [tConfig.trackKey]: merged,
                                   }));
+                                  setManualMidiToAdd(getNextSuggestedMidi(tConfig.instId, merged));
                                   setExpandedTrackKey(tConfig.trackKey);
                                 } else {
                                   setExpandedTrackKey(null);
@@ -1132,7 +1135,6 @@ export default function App() {
                               {SELECTABLE_MIDIS.map((m) => (
                                 <option key={m} value={m}>
                                   {midiToNoteName(m)} ({midiToFreq(m).toFixed(0)}Hz)
-                                  {pitchMidis.includes(m) ? " ✓" : ""}
                                 </option>
                               ))}
                             </select>
@@ -1187,10 +1189,10 @@ export default function App() {
                             return (
                               <div
                                 key={g}
-                                className={`ps-pad-btn ${isBarStart ? "bar-start" : ""} ${isBeat ? "bar-beat" : ""} ${
-                                  isCurrentBeat ? "playhead" : ""
-                                }`}
-                                style={{ width: `${STEP_WIDTH}px` }}
+                                className={`ps-pad-btn ${g === 0 ? "first-step" : ""} ${
+                                  isBarStart ? "bar-start" : ""
+                                } ${isBeat ? "bar-beat" : ""} ${isCurrentBeat ? "playhead" : ""}`}
+                                style={{ width: `${STEP_PITCH}px` }}
                                 onClick={() => {
                                   if (activePopover) setActivePopover(null);
                                   const defaultPitch = getResolvedPitch(tConfig.instId, sIdx, null);
@@ -1236,8 +1238,8 @@ export default function App() {
                                     <div
                                       className={`ps-note-tail-line ${inst.colorClass}`}
                                       style={{
-                                        left: `${(note.gStep + 1) * STEP_PITCH - STEP_GAP}px`,
-                                        width: `${(currentDur - 1) * STEP_PITCH}px`,
+                                        left: `${note.gStep * STEP_PITCH + STEP_PITCH - 2}px`,
+                                        width: `${(currentDur - 1) * STEP_PITCH - 2}px`,
                                         zIndex: 2,
                                       }}
                                     />
@@ -1245,12 +1247,23 @@ export default function App() {
 
                                   <div
                                     className={`ps-note-block ${inst.colorClass} ${
-                                      isPlayingThisNote ? "active-playing" : ""
-                                    }`}
+                                      currentDur === 1 ? "is-single-step" : ""
+                                    } ${isPlayingThisNote ? "active-playing" : ""}`}
                                     style={{
-                                      left: `${note.gStep * STEP_PITCH}px`,
-                                      width: `${STEP_WIDTH - STEP_GAP}px`,
+                                      left: `${note.gStep * STEP_PITCH + 2}px`,
+                                      width: `${STEP_PITCH - 4}px`,
                                       zIndex: 3,
+                                    }}
+                                    onContextMenu={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      if (activePopover) setActivePopover(null);
+                                      void perform({
+                                        action: "toggleStep",
+                                        barIndex: note.barIdx,
+                                        trackKey: tConfig.trackKey,
+                                        stepIndex: note.stepIdx,
+                                      });
                                     }}
                                     onClick={(e) => {
                                       e.stopPropagation();
@@ -1373,10 +1386,10 @@ export default function App() {
                                 return (
                                   <div
                                     key={g}
-                                    className={`ps-pad-btn ${isBarStart ? "bar-start" : ""} ${isBeat ? "bar-beat" : ""} ${
-                                      isCurrentBeat ? "playhead" : ""
-                                    }`}
-                                    style={{ width: `${STEP_WIDTH}px` }}
+                                    className={`ps-pad-btn ${g === 0 ? "first-step" : ""} ${
+                                      isBarStart ? "bar-start" : ""
+                                    } ${isBeat ? "bar-beat" : ""} ${isCurrentBeat ? "playhead" : ""}`}
+                                    style={{ width: `${STEP_PITCH}px` }}
                                     onClick={() => {
                                       if (activePopover) setActivePopover(null);
                                       const now = getAudioContext().currentTime;
@@ -1411,11 +1424,23 @@ export default function App() {
                                   <div
                                     key={`${note.gStep}-${laneMidi}`}
                                     className={`ps-roll-note-strip ${inst.colorClass} ${
-                                      isPlayingThisNote ? "active-playing" : ""
-                                    }`}
+                                      currentDur === 1 ? "is-single-step" : "is-multi-step"
+                                    } ${isPlayingThisNote ? "active-playing" : ""}`}
                                     style={{
-                                      left: `${note.gStep * STEP_PITCH}px`,
-                                      width: `${currentDur * STEP_PITCH - STEP_GAP}px`,
+                                      left: `${note.gStep * STEP_PITCH + 2}px`,
+                                      width: `${currentDur * STEP_PITCH - 4}px`,
+                                    }}
+                                    onContextMenu={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      if (activePopover) setActivePopover(null);
+                                      void perform({
+                                        action: "togglePitchStep",
+                                        barIndex: note.barIdx,
+                                        trackKey: tConfig.trackKey,
+                                        stepIndex: note.stepIdx,
+                                        pitch: laneFreq,
+                                      });
                                     }}
                                     onClick={(e) => {
                                       e.stopPropagation();
@@ -1449,26 +1474,28 @@ export default function App() {
                                   >
                                     <div className="ps-roll-note-body">
                                       <span className="ps-note-pitch-tag">{pName}</span>
-                                      {currentDur > 1 ? (
-                                        <span className="ps-note-len-badge">{currentDur}</span>
-                                      ) : null}
-                                      <button
-                                        type="button"
-                                        className="ps-roll-btn-del"
-                                        title={t("deleteNote")}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          void perform({
-                                            action: "togglePitchStep",
-                                            barIndex: note.barIdx,
-                                            trackKey: tConfig.trackKey,
-                                            stepIndex: note.stepIdx,
-                                            pitch: laneFreq,
-                                          });
-                                        }}
-                                      >
-                                        ×
-                                      </button>
+                                      {currentDur > 1 && (
+                                        <>
+                                          <span className="ps-note-len-badge">{currentDur}</span>
+                                          <button
+                                            type="button"
+                                            className="ps-roll-btn-del"
+                                            title={t("deleteNote")}
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              void perform({
+                                                action: "togglePitchStep",
+                                                barIndex: note.barIdx,
+                                                trackKey: tConfig.trackKey,
+                                                stepIndex: note.stepIdx,
+                                                pitch: laneFreq,
+                                              });
+                                            }}
+                                          >
+                                            ×
+                                          </button>
+                                        </>
+                                      )}
                                     </div>
                                     <div
                                       className="ps-note-handle"

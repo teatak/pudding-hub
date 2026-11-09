@@ -473,11 +473,11 @@ body {
   color: #fff;
 }
 
-/* 1:1 步进刻度条 */
+/* 1:1 步进刻度条 (与 38px 网格槽严格 1:1 对齐) */
 .ps-ruler-ticks-strip {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 0;
   height: 16px;
 }
 .ps-ruler-tick-cell {
@@ -815,7 +815,7 @@ body {
   font-size: 11px;
   font-weight: 700;
   font-family: ui-monospace, monospace;
-  padding: 0 4px;
+  padding: 0 6px;
   cursor: pointer;
   outline: none;
 }
@@ -868,13 +868,13 @@ body {
   border-color: #ef4444;
 }
 
-/* 展开态分音高子音轨行 */
+/* 展开态分音高子音轨行 (与上方主音轨卡片左边缘严密对齐) */
 .ps-timeline-track-row.is-pitch-subrow {
   height: 36px;
 }
 .ps-track-header-cell.sticky.is-pitch-subrow {
   height: 36px;
-  padding: 0 6px 0 18px;
+  padding: 0 6px;
   background: var(--ps-header-sticky-bg);
 }
 .ps-roll-key-lane {
@@ -971,7 +971,7 @@ body {
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  padding: 0 0 0 6px;
+  padding: 0 6px;
   font-size: 10px;
   font-weight: 800;
   font-family: ui-monospace, monospace;
@@ -981,6 +981,10 @@ body {
   user-select: none;
   z-index: 5;
   overflow: hidden;
+}
+.ps-roll-note-strip.is-single-step {
+  padding: 0 2px;
+  justify-content: center;
 }
 .ps-roll-note-strip:hover {
   filter: brightness(1.12);
@@ -997,6 +1001,12 @@ body {
   overflow: hidden;
   color: #ffffff;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+.ps-roll-note-strip.is-single-step .ps-roll-note-body {
+  justify-content: center;
+}
+.ps-roll-note-strip.is-single-step .ps-note-pitch-tag {
+  margin-right: 0;
 }
 .ps-roll-btn-del {
   opacity: 0.7;
@@ -1126,7 +1136,7 @@ body {
   pointer-events: none;
 }
 
-/* 底层步进槽：透明音轨分段刻度，不再渲染成一个个凸起方块 */
+/* 底层步进槽：38px 零间距连续网格，竖向网格线与音块左右各留 2px 边距严格居中对齐 */
 .ps-grid-slots {
   position: absolute;
   left: 0;
@@ -1134,7 +1144,7 @@ body {
   bottom: 0;
   display: flex;
   align-items: stretch;
-  gap: 4px;
+  gap: 0;
 }
 .ps-grid-slots .ps-pad-btn {
   height: 100%;
@@ -1145,6 +1155,10 @@ body {
   box-shadow: none;
   cursor: pointer;
   box-sizing: border-box;
+  flex-shrink: 0;
+}
+.ps-grid-slots .ps-pad-btn.first-step {
+  border-left-color: transparent;
 }
 .ps-grid-slots .ps-pad-btn:hover {
   background: var(--ps-slot-hover-bg);
@@ -1152,6 +1166,9 @@ body {
 .ps-grid-slots .ps-pad-btn.bar-beat {
   border-left: 1px solid var(--ps-edge);
   background: rgba(255, 255, 255, 0.015);
+}
+.ps-grid-slots .ps-pad-btn.bar-beat.first-step {
+  border-left-color: transparent;
 }
 .ps-grid-slots .ps-pad-btn.bar-start {
   border-left: 2px solid rgba(99, 102, 241, 0.55) !important;
@@ -1170,7 +1187,7 @@ body {
   pointer-events: none;
 }
 
-/* 现代 DAW 风格音符卡片 */
+/* 现代 DAW 风格音符卡片 (收起态与展开态统一为 34px 宽，在 38px 格内左右各留 2px 居中对齐) */
 .ps-note-block {
   position: absolute;
   top: 7px;
@@ -1199,7 +1216,9 @@ body {
   height: 100%;
   display: flex;
   align-items: center;
-  padding-left: 6px;
+  justify-content: center;
+  gap: 2px;
+  padding: 0 2px;
   font-size: 10px;
   font-weight: 800;
   color: #fff;
@@ -1207,32 +1226,46 @@ body {
   overflow: hidden;
   pointer-events: none;
 }
+.ps-note-block.is-single-step .ps-note-pitch-tag {
+  margin-right: 0;
+}
 .ps-note-len-badge {
   background: rgba(0, 0, 0, 0.4);
   border-radius: 4px;
-  padding: 1px 5px;
+  padding: 1px 4px;
   font-size: 9px;
   font-family: ui-monospace, monospace;
 }
 
-/* 右侧拖拽手柄 */
+/* 右侧拖拽手柄：默认隐藏避免单步音块出现白色竖条干扰，悬停音块时显现可拖拽 */
 .ps-note-handle {
-  width: 12px;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.25);
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 9px;
+  background: rgba(0, 0, 0, 0.28);
   cursor: ew-resize;
   display: flex;
   align-items: center;
   justify-content: center;
   border-top-right-radius: 6px;
   border-bottom-right-radius: 6px;
+  opacity: 0;
+  transition: opacity 0.12s ease, background 0.12s ease;
+}
+.ps-roll-note-strip.is-multi-step .ps-note-handle {
+  opacity: 0.55;
+}
+.ps-roll-note-strip:hover .ps-note-handle {
+  opacity: 1;
 }
 .ps-note-handle:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.35);
 }
 .ps-handle-grip {
   width: 2px;
-  height: 14px;
+  height: 12px;
   background: rgba(255, 255, 255, 0.85);
   border-radius: 1px;
 }
