@@ -740,37 +740,235 @@ body {
   border-color: #d97706;
   box-shadow: 0 0 8px rgba(245, 158, 11, 0.45);
 }
-.ps-btn-del {
+/* 展开卷帘按钮 */
+.ps-btn-roll {
   flex: 0 0 auto;
-  width: 18px;
   height: 20px;
-  opacity: 0;
-  pointer-events: none;
-  background: transparent;
-  border: none;
-  color: var(--ps-dim);
-  cursor: pointer;
-  font-size: 11px;
-  padding: 0;
-  border-radius: 4px;
-  transition: all 0.15s ease;
+  padding: 0 5px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: inherit;
+  background: var(--ps-well);
+  color: var(--ps-dim);
+  border: 1px solid var(--ps-edge);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
 }
-.ps-card-info:hover .ps-btn-del {
-  opacity: 0.75;
-  pointer-events: auto;
+.ps-btn-roll:hover:not(:disabled) {
+  color: var(--ps-text);
+  border-color: var(--ps-muted);
 }
-.ps-card-info:hover .ps-btn-del:hover {
+.ps-btn-roll.is-active {
+  background: rgba(0, 210, 255, 0.16);
+  color: #00d2ff;
+  border-color: rgba(0, 210, 255, 0.5);
+  box-shadow: 0 0 6px rgba(0, 210, 255, 0.3);
+}
+
+/* 方案 A：收起态超窄延音尾线 (非常窄的窄线，高度 4px，半透明微发光) */
+.ps-note-tail-line {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 4px;
+  border-radius: 2px;
+  pointer-events: none;
+  opacity: 0.6;
+  box-shadow: 0 0 6px currentColor;
+  transition: opacity 0.15s;
+}
+.ps-note-tail-line.is-kick { background: #ff3366; color: #ff3366; }
+.ps-note-tail-line.is-snare { background: #00d2ff; color: #00d2ff; }
+.ps-note-tail-line.is-hat { background: #ffb703; color: #ffb703; }
+.ps-note-tail-line.is-bass { background: #a855f7; color: #a855f7; }
+.ps-note-tail-line.is-lead { background: #10b981; color: #10b981; }
+.ps-note-tail-line.is-mario { background: #ef4444; color: #ef4444; }
+.ps-note-tail-line.is-kong { background: #f59e0b; color: #f59e0b; }
+
+/* 方案 B：微型展开式钢琴卷帘 (In-Place Mini Piano Roll) */
+.ps-timeline-track-row.is-expanded {
+  height: auto;
+  align-items: stretch;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 2px solid var(--ps-edge);
+}
+.ps-track-header-cell.sticky.is-expanded {
+  height: auto;
+  align-items: stretch;
+  flex-direction: column;
+  padding: 0;
+}
+.ps-roll-header-topbar {
+  height: 32px;
+  min-height: 32px;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--ps-edge);
+  background: var(--ps-well);
+  gap: 6px;
+}
+.ps-roll-keys-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.ps-roll-key-lane {
+  height: 22px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--ps-edge);
+  font-family: ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ps-muted);
+  background: var(--ps-card-bg);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.ps-roll-key-lane:hover {
+  background: var(--ps-card-hover-bg);
+  color: var(--ps-text);
+}
+.ps-roll-key-lane.is-black {
+  background: var(--ps-well);
+  color: var(--ps-dim);
+}
+.ps-roll-key-lane.is-active-pitch {
+  color: #00d2ff;
+  background: rgba(0, 210, 255, 0.08);
+}
+.ps-pitch-hz {
+  font-size: 9px;
+  opacity: 0.55;
+  font-weight: normal;
+}
+
+/* 钢琴卷帘右侧时间轴多行网格 */
+.ps-roll-timeline {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.ps-roll-timeline-topbar {
+  height: 32px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  padding-left: 12px;
+  border-bottom: 1px solid var(--ps-edge);
+  font-size: 11px;
+  color: var(--ps-muted);
+  background: var(--ps-well);
+}
+.ps-roll-pitch-row {
+  height: 22px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--ps-edge);
+  box-sizing: border-box;
+}
+.ps-roll-pitch-row.is-black-row {
+  background: rgba(0, 0, 0, 0.12);
+}
+.ps-roll-pitch-row.is-active-row {
+  background: rgba(0, 210, 255, 0.03);
+}
+
+/* 钢琴卷帘内音符条：独立音高行，自由水平拉长，绝不撞车 */
+.ps-roll-note-strip {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: 0 4px;
+  font-size: 10px;
+  font-weight: 800;
+  font-family: ui-monospace, monospace;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  user-select: none;
+  z-index: 5;
+  overflow: hidden;
+}
+.ps-roll-note-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow: hidden;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+.ps-roll-drag-handle {
+  width: 10px;
+  height: 100%;
+  cursor: ew-resize;
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: -4px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  transition: background 0.15s;
+}
+.ps-roll-drag-handle:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+.ps-roll-btn-del {
+  opacity: 0.6;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 0 2px;
+  font-size: 10px;
+}
+.ps-roll-btn-del:hover {
   opacity: 1;
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.15);
+  color: #ff4d4f;
 }
-.ps-timeline-track-row:hover .ps-btn-del { opacity: 1; }
-.ps-btn-del:hover {
+
+/* 乐器弹窗底部删除音轨按钮 */
+.ps-modal-footer-delete {
+  padding-top: 12px;
+  margin-top: 12px;
+  border-top: 1px solid var(--ps-edge);
+  display: flex;
+  justify-content: flex-end;
+}
+.ps-btn-modal-delete-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
   color: #ef4444;
-  background: rgba(239, 68, 68, 0.15);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.ps-btn-modal-delete-track:hover:not(:disabled) {
+  background: #ef4444;
+  color: #ffffff;
 }
 
 /* 时间轴步进区域 */
