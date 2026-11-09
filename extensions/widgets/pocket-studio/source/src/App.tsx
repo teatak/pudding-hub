@@ -5,7 +5,7 @@ import { type SongState, type Instrument } from "./types";
 import { edit, editSong, readSong, getDefaultSong, registerPlaybackController, importSong, exportSong, canExportWav } from "./api";
 import "./api";
 import { getAudioContext, audioState } from "./audio";
-import { playInstrument, resolvePitch } from "./instruments";
+import { playInstrument, resolvePitch, getDefaultReverb } from "./instruments";
 import { parseProject, maxProjectBytes } from "./project";
 import { t, setLocale, errorText } from "./text";
 import "./style.css";
@@ -176,9 +176,9 @@ const INSTRUMENTS: Instrument[] = [
     "desc": "清脆热带木质"
   }
 ];
-const INSTRUMENT_MAP: Record<string, Instrument & { playSound: (time: number, step: number, pitch?: number | null, duration?: number, volume?: number) => void }> = Object.fromEntries(INSTRUMENTS.map(inst => [inst.id, {
+const INSTRUMENT_MAP: Record<string, Instrument & { playSound: (time: number, step: number, pitch?: number | null, duration?: number, volume?: number, reverb?: number) => void }> = Object.fromEntries(INSTRUMENTS.map(inst => [inst.id, {
   ...inst,
-  playSound: (time: number, step: number, pitch?: number | null, duration?: number, volume = 1) => playInstrument(inst.id, time, step, pitch, duration, undefined, volume),
+  playSound: (time: number, step: number, pitch?: number | null, duration?: number, volume = 1, reverb?: number) => playInstrument(inst.id, time, step, pitch, duration, undefined, volume, reverb),
 }]));
 
 function getInstName(instId: string): string {
@@ -299,6 +299,13 @@ export default function App() {
     document.body.dataset.theme = theme;
   }, [theme]);
 
+  const [activeReverbPopover, setActiveReverbPopover] = useState<{
+    trackKey: string;
+    instId: string;
+    reverb: number;
+    anchor: { x: number; y: number; showBelow: boolean };
+  } | null>(null);
+
   const [draggingNote, setDraggingNote] = useState<{
     trackKey: string;
     barIdx: number;
@@ -313,7 +320,7 @@ export default function App() {
   const songRef = useRef(song);
   songRef.current = song;
 
-  const HEADER_WIDTH = 168;
+  const HEADER_WIDTH = 186;
   const STEP_WIDTH = 34;
   const STEP_GAP = 4;
   const STEP_PITCH = STEP_WIDTH + STEP_GAP;
@@ -447,7 +454,7 @@ export default function App() {
                 const pitch = barData.pitches?.[t.trackKey]?.[stepInBar];
                 const durSteps = barData.durations?.[t.trackKey]?.[stepInBar] || 1;
                 const durSec = durSteps * stepSec;
-                inst.playSound(now, currentGlobalStep, pitch, durSec, t.volume ?? 1);
+                inst.playSound(now, currentGlobalStep, pitch, durSec, t.volume ?? 1, t.reverb);
               }
             }
           });
@@ -579,7 +586,7 @@ export default function App() {
         if (inst) {
           const pitch = songRef.current.bars[barIdx]?.pitches?.[trackKey]?.[stepIdx];
           const stepSec = 60 / songRef.current.bpm / 4;
-          inst.playSound(now, gStep, pitch, lastDur * stepSec);
+          inst.playSound(now, gStep, pitch, lastDur * stepSec, trackConf?.volume ?? 1, trackConf?.reverb);
         }
       }
     };
@@ -900,6 +907,36 @@ export default function App() {
                       <div className="ps-card-actions">
                         <button
                           type="button"
+                          className={`ps-btn-rev ${(tConfig.reverb ?? getDefaultReverb(tConfig.instId)) > 0.05 ? "is-active" : ""}`}
+                          title={t("trackReverbTooltip")}
+                          aria-label={t("trackReverb")}
+                          disabled={busy}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const rect = e.currentTarget.getBoundingClientRect();
+                            setActiveReverbPopover((prev) =>
+                              prev?.trackKey === tConfig.trackKey
+                                ? null
+                                : {
+                                    trackKey: tConfig.trackKey,
+                                    instId: tConfig.instId,
+                                    reverb: tConfig.reverb ?? getDefaultReverb(tConfig.instId),
+                                    anchor: {
+                                      x: Math.min(window.innerWidth - 240, Math.max(10, rect.left)),
+                                      y: rect.bottom + 6,
+                                      showBelow: true,
+                                    },
+                                  }
+                            );
+                          }}
+                        >
+                          <span className="ps-btn-rev-label">REV</span>
+                          <span className="ps-btn-rev-val">
+                            {Math.round((tConfig.reverb ?? getDefaultReverb(tConfig.instId)) * 100)}%
+                          </span>
+                        </button>
+                        <button
+                          type="button"
                           className={`ps-btn-mute ${tConfig.muted ? "is-active" : ""}`}
                           title={tConfig.muted ? t("unmuteTrack") : t("muteTrack")}
                           aria-label={tConfig.muted ? t("unmuteTrack") : t("muteTrack")}
@@ -951,7 +988,7 @@ export default function App() {
                               if (activePopover) setActivePopover(null);
                               const defaultPitch = getResolvedPitch(tConfig.instId, sIdx, null);
                               const now = getAudioContext().currentTime;
-                              inst.playSound(now, g, defaultPitch, 0.2);
+                              inst.playSound(now, g, defaultPitch, 0.2, tConfig.volume ?? 1, tConfig.reverb);
                               void perform({
                                 action: "toggleStep",
                                 barIndex: bIdx,
@@ -992,7 +1029,7 @@ export default function App() {
                             onClick={(e) => {
                               e.stopPropagation();
                               const now = getAudioContext().currentTime;
-                              inst.playSound(now, note.stepIdx, effectivePitch, 0.25);
+                              inst.playSound(now, note.stepIdx, effectivePitch, 0.25, tConfig.volume ?? 1, tConfig.reverb);
 
                               const noteX = HEADER_WIDTH + note.gStep * STEP_PITCH;
                               const noteY = 48 + trackIdx * 52;
@@ -1088,7 +1125,8 @@ export default function App() {
               const clampedMidi = Math.max(24, Math.min(96, targetMidi));
               const newFreq = midiToFreq(clampedMidi);
               const now = getAudioContext().currentTime;
-              inst.playSound(now, activePopover.stepIdx, newFreq, 0.25);
+              const targetTrack = song.tracks.find((t) => t.trackKey === activePopover.trackKey);
+              inst.playSound(now, activePopover.stepIdx, newFreq, 0.25, targetTrack?.volume ?? 1, targetTrack?.reverb);
               setActivePopover((prev) => (prev ? { ...prev, pitch: newFreq } : null));
               void perform({
                 action: "setNotePitch",
@@ -1261,6 +1299,109 @@ export default function App() {
           })()}
         </div>
       </div>
+
+      {/* 音轨空间混响 Popover 悬浮窗 */}
+      {activeReverbPopover &&
+        createPortal(
+          <>
+            <div
+              className="ps-popover-backdrop"
+              onClick={() => setActiveReverbPopover(null)}
+            />
+            <div
+              className="ps-reverb-popover"
+              style={{
+                position: "fixed",
+                left: `${activeReverbPopover.anchor.x}px`,
+                top: `${activeReverbPopover.anchor.y}px`,
+                zIndex: 9999,
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="ps-reverb-header">
+                <span className="ps-reverb-title">
+                  {getInstName(activeReverbPopover.instId)} · {t("trackReverb")}
+                </span>
+                <span className="ps-reverb-val-badge">
+                  {Math.round(activeReverbPopover.reverb * 100)}%
+                </span>
+              </div>
+
+              <div className="ps-reverb-slider-row">
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={Math.round(activeReverbPopover.reverb * 100)}
+                  onChange={(e) => {
+                    const val = Number(e.target.value) / 100;
+                    setActiveReverbPopover((prev) => (prev ? { ...prev, reverb: val } : null));
+                    void perform({
+                      action: "setTrackReverb",
+                      trackKey: activeReverbPopover.trackKey,
+                      reverb: val,
+                    });
+                  }}
+                  className="ps-reverb-slider"
+                />
+              </div>
+
+              <div className="ps-reverb-presets">
+                {[
+                  { label: t("reverbDry"), val: 0.0 },
+                  { label: t("reverbRoom"), val: 0.2 },
+                  { label: t("reverbHall"), val: 0.35 },
+                  { label: t("reverbCathedral"), val: 0.65 },
+                ].map((preset) => (
+                  <button
+                    key={preset.val}
+                    type="button"
+                    className={`ps-reverb-preset-btn ${Math.abs(activeReverbPopover.reverb - preset.val) < 0.05 ? "is-active" : ""}`}
+                    onClick={() => {
+                      setActiveReverbPopover((prev) => (prev ? { ...prev, reverb: preset.val } : null));
+                      void perform({
+                        action: "setTrackReverb",
+                        trackKey: activeReverbPopover.trackKey,
+                        reverb: preset.val,
+                      });
+                      const inst = INSTRUMENT_MAP[activeReverbPopover.instId];
+                      if (inst) {
+                        const now = getAudioContext().currentTime;
+                        inst.playSound(now, 0, undefined, 0.4, 1, preset.val);
+                      }
+                    }}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="ps-reverb-footer">
+                <button
+                  type="button"
+                  className="ps-reverb-audition-btn"
+                  onClick={() => {
+                    const inst = INSTRUMENT_MAP[activeReverbPopover.instId];
+                    if (inst) {
+                      const now = getAudioContext().currentTime;
+                      inst.playSound(now, 0, undefined, 0.45, 1, activeReverbPopover.reverb);
+                    }
+                  }}
+                >
+                  ▶ {t("auditionReverb")}
+                </button>
+                <button
+                  type="button"
+                  className="ps-reverb-done-btn"
+                  onClick={() => setActiveReverbPopover(null)}
+                >
+                  {t("done")}
+                </button>
+              </div>
+            </div>
+          </>,
+          document.body
+        )}
 
       {/* 乐器库选择弹窗 */}
       <div

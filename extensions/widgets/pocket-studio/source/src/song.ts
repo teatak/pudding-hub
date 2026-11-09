@@ -67,6 +67,11 @@ function validateAction(song: SongState, action: EditAction) {
   if ("instId" in action && !(INSTRUMENT_IDS as readonly string[]).includes(action.instId)) fail("invalidInstrument");
   switch (action.action) {
     case "setBpm": integer(action.bpm, 60, 180, "bpm"); break;
+    case "setTrackReverb":
+      if (typeof action.reverb !== "number" || !Number.isFinite(action.reverb) || action.reverb < 0 || action.reverb > 1) {
+        fail("invalidRange", "reverb", { min: 0, max: 1 });
+      }
+      break;
     case "addTrack": if (song.tracks.length >= 8) fail("trackLimit"); break;
     case "removeTrack": if (song.tracks.length <= 1) fail("lastTrack"); break;
     case "addBar":
@@ -128,6 +133,9 @@ export function editSummary(before: SongState, after: SongState, action: EditAct
   if (action.action === "setBpm" || action.action === "loadPreset") result.bpm = after.bpm;
   if (action.action === "toggleMuteTrack" || action.action === "setTrackMute") {
     result.muted = Boolean(after.tracks.find(t => t.trackKey === action.trackKey)?.muted);
+  }
+  if (action.action === "setTrackReverb") {
+    result.reverb = after.tracks.find(t => t.trackKey === action.trackKey)?.reverb ?? null;
   }
   if (action.action === "addTrack") {
     result.trackKey = after.tracks.find((track) => !before.tracks.some((old) => old.trackKey === track.trackKey))!.trackKey;
@@ -197,6 +205,16 @@ export function editSong(current: SongState, action: EditAction): SongState {
         ...current,
         tracks: current.tracks.map((t) =>
           t.trackKey === action.trackKey ? { ...t, muted: action.muted } : t
+        )
+      };
+
+    case "setTrackReverb":
+      return {
+        ...current,
+        tracks: current.tracks.map((t) =>
+          t.trackKey === action.trackKey
+            ? { ...t, reverb: Math.max(0, Math.min(1, Number(action.reverb.toFixed(2)))) }
+            : t
         )
       };
 

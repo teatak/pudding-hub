@@ -1,4 +1,4 @@
-import { getAudioContext, playSquareWave, playTriangleBass, playKick, playSnare, playHat, playAnalogBass, playSoftPluck, playRhodes, playMarimba } from "./audio";
+import { getAudioContext, createVoiceOutput, playSquareWave, playTriangleBass, playKick, playSnare, playHat, playAnalogBass, playSoftPluck, playRhodes, playMarimba } from "./audio";
 
 export function resolvePitch(id: string, step: number, raw?: number | null): number | null {
   if (["kick", "snare", "hat"].includes(id)) return null;
@@ -16,14 +16,34 @@ export function soundDuration(id: string, duration: number) {
   return id === "kick" ? 0.35 : id === "snare" ? 0.18 : id === "hat" ? 0.04 : id === "epiano" ? duration + 0.1 : duration;
 }
 
-export function playInstrument(id: string, time: number, step: number, pitch?: number | null, duration: number | undefined = undefined, ctx: BaseAudioContext = getAudioContext(), volume = 1) {
-  let output: AudioNode = ctx.destination;
-  if (volume !== 1) {
-    const gain = ctx.createGain();
-    gain.gain.value = volume;
-    gain.connect(ctx.destination);
-    output = gain;
+export function getDefaultReverb(id: string): number {
+  switch (id) {
+    case "epiano": return 0.35;
+    case "lead": return 0.30;
+    case "marimba": return 0.25;
+    case "snare": return 0.18;
+    case "hat": return 0.12;
+    case "marioLead":
+    case "kongLead": return 0.15;
+    case "bass": return 0.06;
+    case "marioBass": return 0.04;
+    case "kick": return 0.0;
+    default: return 0.2;
   }
+}
+
+export function playInstrument(
+  id: string,
+  time: number,
+  step: number,
+  pitch?: number | null,
+  duration: number | undefined = undefined,
+  ctx: BaseAudioContext = getAudioContext(),
+  volume = 1,
+  reverb?: number
+) {
+  const effectiveReverb = reverb !== undefined ? reverb : getDefaultReverb(id);
+  const output = createVoiceOutput(ctx, volume, effectiveReverb);
   const frequency = resolvePitch(id, step, pitch) ?? 440;
   duration ??= ({ marioLead: 0.12, kongLead: 0.16, marioBass: 0.18, bass: 0.32, lead: 0.38, epiano: 0.5, marimba: 0.22 } as Record<string, number>)[id] ?? 0.12;
   switch (id) {

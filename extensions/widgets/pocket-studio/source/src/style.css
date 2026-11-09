@@ -377,8 +377,8 @@ body {
 .ps-ruler-corner {
   position: sticky;
   left: 0;
-  width: 168px;
-  min-width: 168px;
+  width: 186px;
+  min-width: 186px;
   height: 100%;
   background: var(--ps-header-sticky-bg);
   border-right: 2px solid var(--ps-edge);
@@ -538,8 +538,8 @@ body {
 .ps-track-header-cell.sticky {
   position: sticky;
   left: 0;
-  width: 168px;
-  min-width: 168px;
+  width: 186px;
+  min-width: 186px;
   height: 52px;
   z-index: 10;
   background: var(--ps-header-sticky-bg);
@@ -555,8 +555,8 @@ body {
 .ps-timeline-add-row.sticky {
   position: sticky;
   left: 0;
-  width: 168px;
-  min-width: 168px;
+  width: 186px;
+  min-width: 186px;
   height: 52px;
   z-index: 10;
   background: var(--ps-header-sticky-bg);
@@ -683,6 +683,40 @@ body {
   align-items: center;
   gap: 4px;
   flex: 0 0 auto;
+}
+.ps-btn-rev {
+  flex: 0 0 auto;
+  height: 20px;
+  padding: 0 5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+  background: var(--ps-well);
+  color: var(--ps-dim);
+  border: 1px solid var(--ps-edge);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.ps-btn-rev:hover:not(:disabled) {
+  color: var(--ps-text);
+  border-color: var(--ps-muted);
+}
+.ps-btn-rev.is-active {
+  background: rgba(99, 102, 241, 0.16);
+  color: #818cf8;
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 6px rgba(99, 102, 241, 0.25);
+}
+.ps-btn-rev-label {
+  font-size: 8px;
+  opacity: 0.8;
+}
+.ps-btn-rev-val {
+  font-size: 9px;
 }
 .ps-btn-mute {
   flex: 0 0 auto;
@@ -1259,5 +1293,112 @@ body {
 .ps-btn-note-done:hover {
   background: #323b50;
   color: #fff;
+}
+
+/* 空间混响悬浮窗样式 */
+.ps-reverb-popover {
+  width: 230px;
+  background: var(--ps-card-bg);
+  border: 1px solid var(--ps-edge);
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-sizing: border-box;
+  animation: ps-popover-in 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ps-reverb-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ps-reverb-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ps-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ps-reverb-val-badge {
+  font-size: 10px;
+  font-weight: 800;
+  font-family: ui-monospace, monospace;
+  color: #818cf8;
+  background: rgba(99, 102, 241, 0.12);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+.ps-reverb-slider-row {
+  display: flex;
+  align-items: center;
+}
+.ps-reverb-slider {
+  width: 100%;
+  accent-color: #6366f1;
+  cursor: pointer;
+}
+.ps-reverb-presets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+.ps-reverb-preset-btn {
+  padding: 4px 6px;
+  border-radius: 5px;
+  border: 1px solid var(--ps-edge);
+  background: var(--ps-well);
+  color: var(--ps-muted);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  text-align: center;
+}
+.ps-reverb-preset-btn:hover {
+  background: var(--ps-card-hover-bg);
+  color: var(--ps-text);
+}
+.ps-reverb-preset-btn.is-active {
+  background: #6366f1;
+  color: #ffffff;
+  border-color: #4f46e5;
+  box-shadow: 0 1px 4px rgba(99, 102, 241, 0.3);
+}
+.ps-reverb-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--ps-edge);
+  padding-top: 8px;
+  margin-top: 2px;
+}
+.ps-reverb-audition-btn {
+  background: transparent;
+  border: 1px solid var(--ps-edge);
+  color: var(--ps-text);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ps-reverb-audition-btn:hover {
+  background: var(--ps-well);
+}
+.ps-reverb-done-btn {
+  background: #6366f1;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.ps-reverb-done-btn:hover {
+  background: #4f46e5;
 }
 

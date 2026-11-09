@@ -20,6 +20,86 @@ export function getAudioContext(): AudioContext {
   return audioCtx;
 }
 
+// 母线硬件压限器与混响系统缓存 (按 AudioContext 隔离，兼容实时 AudioContext 与离线 OfflineAudioContext)
+type MasterBus = {
+  compressor: DynamicsCompressorNode;
+  convolver: ConvolverNode;
+  reverbGain: GainNode;
+};
+const masterBusMap = new WeakMap<BaseAudioContext, MasterBus>();
+
+// 琴体共鸣箱与空气混响脉冲响应 (算法指数衰减，温暖木质厅堂感)
+function createSoundboardImpulse(ctx: BaseAudioContext, duration = 1.5, decay = 2.4): AudioBuffer {
+  const rate = ctx.sampleRate;
+  const length = Math.floor(rate * duration);
+  const impulse = ctx.createBuffer(2, length, rate);
+  const left = impulse.getChannelData(0);
+  const right = impulse.getChannelData(1);
+
+  for (let i = 0; i < length; i++) {
+    const t = i / rate;
+    const env = Math.exp(-t * decay);
+    left[i] = (Math.random() * 2 - 1) * env;
+    right[i] = (Math.random() * 2 - 1) * env;
+  }
+  return impulse;
+}
+
+export function getMasterBus(ctx: BaseAudioContext = getAudioContext()): MasterBus {
+  let bus = masterBusMap.get(ctx);
+  if (!bus) {
+    // 1. 硬件级动态压限器 (DynamicsCompressorNode): 彻底杜绝多轨、和弦与混响累加带来的破音/削波
+    const compressor = ctx.createDynamicsCompressor();
+    compressor.threshold.setValueAtTime(-14, ctx.currentTime);
+    compressor.knee.setValueAtTime(6, ctx.currentTime);
+    compressor.ratio.setValueAtTime(5, ctx.currentTime);
+    compressor.attack.setValueAtTime(0.003, ctx.currentTime);
+    compressor.release.setValueAtTime(0.08, ctx.currentTime);
+    compressor.connect(ctx.destination);
+
+    // 2. 算法卷积混响器
+    const convolver = ctx.createConvolver();
+    convolver.buffer = createSoundboardImpulse(ctx, 1.5, 2.4);
+
+    const reverbGain = ctx.createGain();
+    reverbGain.gain.setValueAtTime(0.55, ctx.currentTime);
+    convolver.connect(reverbGain);
+    reverbGain.connect(compressor);
+
+    bus = { compressor, convolver, reverbGain };
+    masterBusMap.set(ctx, bus);
+  }
+  return bus;
+}
+
+// 为每个音符创建分流输出节点 (按音轨的 volume 和 reverb 混响发送量分别路由至干声母线与混响母线)
+export function createVoiceOutput(
+  ctx: BaseAudioContext,
+  volume = 1,
+  reverb = 0
+): AudioNode {
+  const bus = getMasterBus(ctx);
+  const voiceNode = ctx.createGain();
+  voiceNode.gain.setValueAtTime(volume, ctx.currentTime);
+
+  // 干声分支 (Direct Dry Bus)
+  const dryGain = ctx.createGain();
+  const dryLevel = Math.max(0.2, 1.0 - reverb * 0.4);
+  dryGain.gain.setValueAtTime(dryLevel, ctx.currentTime);
+  voiceNode.connect(dryGain);
+  dryGain.connect(bus.compressor);
+
+  // 湿声混响分支 (Reverb Send Bus)
+  if (reverb > 0.01) {
+    const wetSend = ctx.createGain();
+    wetSend.gain.setValueAtTime(Math.min(1.0, reverb * 0.65), ctx.currentTime);
+    voiceNode.connect(wetSend);
+    wetSend.connect(bus.convolver);
+  }
+
+  return voiceNode;
+}
+
 // 1. 8-Bit 方波 (经典街机/红白机风格，加入平滑低通滤除尖锐数码毛刺)
 export function playSquareWave(freq: number, time: number, duration = 0.12, ctx: BaseAudioContext = getAudioContext(), output: AudioNode = ctx.destination) {
   const osc = ctx.createOscillator();
@@ -263,31 +343,21 @@ export function playSoftPluck(freq: number, time: number, duration = 0.38, ctx: 
   osc2.stop(time + duration);
 }
 
-// 8. 经典电钢琴 (Rhodes EPiano): 音簧金属敲击钟鸣瞬态 (Tine Bell Chime) + 暖色谐波振荡 + 真实按住保持 (Sustain) 与松开制音 (Damper Release)
+// 8. 经典电钢琴 (Rhodes EPiano): 天鹅绒柔和起音 + 暖色谐波振荡 + 4.8Hz 经典颤音 + 真实按住保持 (Sustain) 与松开制音 (Damper Release)
 export function playRhodes(freq: number, time: number, duration = 0.5, ctx: BaseAudioContext = getAudioContext(), output: AudioNode = ctx.destination) {
   const masterGain = ctx.createGain();
   const filter = ctx.createBiquadFilter();
   filter.type = "lowpass";
 
-  // 1. 动态温和低通滤波 (起音明亮，按住时平滑保留温润音簧质感)
-  const peakCutoff = Math.min(6500, Math.max(2200, freq * 4.8));
-  const bodyCutoff = Math.min(2600, Math.max(800, freq * 2.0));
+  // 1. 动态温和低通滤波 (过滤生硬木质撞击与高频毛刺，呈现温润的天鹅绒质感)
+  const peakCutoff = Math.min(3200, Math.max(1000, freq * 2.8));
+  const bodyCutoff = Math.min(2200, Math.max(700, freq * 1.8));
   filter.frequency.setValueAtTime(peakCutoff, time);
   const filterDecay = Math.min(0.25, duration * 0.4);
   filter.frequency.exponentialRampToValueAtTime(bodyCutoff, time + filterDecay);
-  filter.Q.setValueAtTime(1.2, time);
+  filter.Q.setValueAtTime(0.7, time); // 平缓温润无刺
 
-  // 2. 金属音簧触键钟鸣瞬态 (Tine Bell Chime: 5.0x 谐波，约 35ms 迅速收束)
-  const chimeOsc = ctx.createOscillator();
-  const chimeGain = ctx.createGain();
-  chimeOsc.type = "sine";
-  chimeOsc.frequency.setValueAtTime(freq * 5.0, time);
-  chimeGain.gain.setValueAtTime(0.32, time);
-  chimeGain.gain.exponentialRampToValueAtTime(0.0001, time + 0.038);
-  chimeOsc.connect(chimeGain);
-  chimeGain.connect(filter);
-
-  // 3. 音簧主体振荡器 (基音 + 2次暖谐波)
+  // 2. 音簧主体振荡器 (基频 + 温暖二次谐波 + 轻微合唱失谐)
   const oscBase = ctx.createOscillator();
   oscBase.type = "sine";
   oscBase.frequency.setValueAtTime(freq, time);
@@ -295,29 +365,40 @@ export function playRhodes(freq: number, time: number, duration = 0.5, ctx: Base
   const oscHarmonic = ctx.createOscillator();
   oscHarmonic.type = "sine";
   oscHarmonic.frequency.setValueAtTime(freq * 2.0, time);
+  oscHarmonic.detune.setValueAtTime(1.5, time); // 1.5 cents 微失谐，营造立体声流动感
+
   const harmGain = ctx.createGain();
-  harmGain.gain.setValueAtTime(0.24, time);
+  harmGain.gain.setValueAtTime(0.0001, time);
+  harmGain.gain.linearRampToValueAtTime(0.14, time + 0.008);
   harmGain.gain.exponentialRampToValueAtTime(0.001, time + Math.min(1.2, duration));
   oscHarmonic.connect(harmGain);
   harmGain.connect(filter);
+  oscBase.connect(filter);
 
-  // 4. 真实物理触键包络：按住保持 (Sustain) + 抬起制音 (Release)
+  // 3. 经典电钢琴微颤音 (Suitcase Tremolo: 4.8Hz 轻柔呼吸感)
+  const tremoloOsc = ctx.createOscillator();
+  const tremoloGain = ctx.createGain();
+  tremoloOsc.frequency.setValueAtTime(4.8, time);
+  tremoloGain.gain.setValueAtTime(0.06, time);
+  tremoloOsc.connect(tremoloGain);
+
+  // 4. 真实物理触键包络：8ms 软起音 (Soft Attack，彻底根除敲木头声) + 按住保持 (Sustain) + 抬起制音 (Release)
   const stringGain = ctx.createGain();
-  const attack = 0.003;
+  const attack = 0.008;
   const releaseTime = 0.08;
   const totalDuration = duration + releaseTime;
 
   stringGain.gain.setValueAtTime(0.0001, time);
-  stringGain.gain.linearRampToValueAtTime(0.55, time + attack);
-  // 按住期间 (Hold/Sustain): 随机械阻尼自然微衰减，不提前掉电
-  const holdDecayTarget = Math.max(0.25, 0.55 * Math.exp(-duration * 0.45));
+  // 8ms 软淡入，彻底消除任何 DAC 阶跃与硬木击声
+  stringGain.gain.linearRampToValueAtTime(0.42, time + attack);
+  // 按住期间 (Hold/Sustain): 随机械阻尼自然微衰减，不提前熄灭
+  const holdDecayTarget = Math.max(0.18, 0.42 * Math.exp(-duration * 0.4));
   stringGain.gain.exponentialRampToValueAtTime(holdDecayTarget, time + duration);
   // 松键制音 (Release/Damper): 制音器回落贴紧，80ms 内平滑消退
   stringGain.gain.exponentialRampToValueAtTime(0.0001, time + totalDuration);
 
-  oscBase.connect(stringGain);
-  stringGain.connect(filter);
-  filter.connect(masterGain);
+  filter.connect(stringGain);
+  stringGain.connect(masterGain);
   masterGain.connect(output);
 
   // 5. 启动与停止管理
@@ -325,8 +406,8 @@ export function playRhodes(freq: number, time: number, duration = 0.5, ctx: Base
   oscBase.stop(time + totalDuration + 0.01);
   oscHarmonic.start(time);
   oscHarmonic.stop(time + totalDuration + 0.01);
-  chimeOsc.start(time);
-  chimeOsc.stop(time + 0.045);
+  tremoloOsc.start(time);
+  tremoloOsc.stop(time + totalDuration + 0.01);
 }
 
 // 9. 木琴 Marimba: 木槌物理打击瞬态 (Click) + 木管谐振与第 4 泛音

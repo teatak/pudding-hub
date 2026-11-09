@@ -66,6 +66,13 @@ export const DICT: Record<string, Record<"zh-CN" | "zh-TW" | "en", string>> = {
   descCopyBar: {"zh-CN": "将一个已有小节的全部音轨、音高和时值复制到另一个已有小节；不新增小节。", "zh-TW": "將一個已有小節的全部音軌、音高和時值複製到另一個已有小節；不新增小節。", "en": "Copy all patterns, pitches and durations from one existing bar to another; does not append a bar."},
   mutationHint: {"zh-CN": "返回精简修改回执，不返回整曲；支持 dryRun 和 expectedStorageVersion。", "zh-TW": "回傳精簡修改回執，不回傳整曲；支援 dryRun 和 expectedStorageVersion。", "en": "Returns a compact edit receipt, not the whole song. Supports dryRun and expectedStorageVersion."},
   trackLimit: {"zh-CN": "最多支持 8 条音轨。", "zh-TW": "最多支援 8 條音軌。", "en": "A song supports up to eight tracks."},
+  trackReverb: {"zh-CN": "空间混响", "zh-TW": "空間混響", "en": "Space Reverb"},
+  trackReverbTooltip: {"zh-CN": "调节此音轨的空气共鸣与空间混响", "zh-TW": "調節此音軌的空氣共鳴與空間混響", "en": "Adjust spatial reverb for this track"},
+  reverbDry: {"zh-CN": "干声", "zh-TW": "乾聲", "en": "Dry"},
+  reverbRoom: {"zh-CN": "房间", "zh-TW": "房間", "en": "Room"},
+  reverbHall: {"zh-CN": "音乐大厅", "zh-TW": "音樂大廳", "en": "Hall"},
+  reverbCathedral: {"zh-CN": "大教堂", "zh-TW": "大教堂", "en": "Cathedral"},
+  auditionReverb: {"zh-CN": "试听音效", "zh-TW": "試聽音效", "en": "Audition"},
 
   appName: {
     "zh-CN": "音乐工坊",

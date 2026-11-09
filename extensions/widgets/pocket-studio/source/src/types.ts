@@ -3,6 +3,7 @@ export type TrackConfig = {
   instId: string;
   volume?: number;
   muted?: boolean;
+  reverb?: number; // 混响发送量 (0 ~ 1)
 };
 
 export type BarData = {
@@ -42,6 +43,7 @@ export type EditAction =
   | { action: "removeTrack"; trackKey: string }
   | { action: "toggleMuteTrack"; trackKey: string }
   | { action: "setTrackMute"; trackKey: string; muted: boolean }
+  | { action: "setTrackReverb"; trackKey: string; reverb: number }
   | { action: "addBar"; copyFrom?: number }
   | { action: "removeBar"; barIndex?: number }
   | { action: "copyBar"; fromBar: number; toBar: number }
