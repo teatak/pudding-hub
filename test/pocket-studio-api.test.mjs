@@ -318,3 +318,23 @@ test("WAV encoding has valid PCM16 mono headers, correct duration and normalized
   assert.deepEqual(Uint8Array.from(atob(bytesToBase64(bytes)), c => c.charCodeAt(0)), bytes);
   assert.throws(() => encodeWav(new Float32Array(1), 0));
 });
+
+test("track mute mutations toggle and set mute state, rejecting nonexistent tracks", async () => {
+  const tKey = stored.data.song.tracks[0].trackKey;
+  assert.equal(stored.data.song.tracks[0].muted, undefined);
+
+  const res1 = await invoke("toggleMuteTrack", { trackKey: tKey });
+  assert.equal(res1.committed, true);
+  assert.equal(stored.data.song.tracks[0].muted, true);
+  assert.deepEqual(res1.changes[0], { action: "toggleMuteTrack", trackKey: tKey, muted: true });
+
+  const res2 = await invoke("toggleMuteTrack", { trackKey: tKey });
+  assert.equal(stored.data.song.tracks[0].muted, false);
+  assert.deepEqual(res2.changes[0], { action: "toggleMuteTrack", trackKey: tKey, muted: false });
+
+  const res3 = await invoke("setTrackMute", { trackKey: tKey, muted: true });
+  assert.equal(stored.data.song.tracks[0].muted, true);
+  assert.deepEqual(res3.changes[0], { action: "setTrackMute", trackKey: tKey, muted: true });
+
+  await assert.rejects(async () => invoke("toggleMuteTrack", { trackKey: "nonexistent_track" }), /does not exist/);
+});

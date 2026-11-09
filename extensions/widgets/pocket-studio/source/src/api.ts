@@ -132,12 +132,15 @@ function register() {
     addTrack: z.object({ action: z.literal("addTrack"), instId }).strict(),
     removeTrack: z.object({ action: z.literal("removeTrack"), trackKey }).strict(),
     changeInstrument: z.object({ action: z.literal("changeInstrument"), trackKey, instId }).strict(),
+    toggleMuteTrack: z.object({ action: z.literal("toggleMuteTrack"), trackKey }).strict(),
+    setTrackMute: z.object({ action: z.literal("setTrackMute"), trackKey, muted: z.boolean().describe(t("paramMuted")) }).strict(),
     loadPreset: z.object({ action: z.literal("loadPreset"), presetName: z.enum(["mario", "donkeyKong", "oriental", "lofi"]) }).strict(),
   };
   const batchAction = z.discriminatedUnion("action", [
     schemas.setStep, schemas.setTrackPattern, schemas.copyBar, schemas.clearBar,
     schemas.setNotePitch, schemas.setNoteDuration, schemas.setBpm, schemas.addBar,
     schemas.removeBar, schemas.addTrack, schemas.removeTrack, schemas.changeInstrument,
+    schemas.toggleMuteTrack, schemas.setTrackMute,
     schemas.clearSong, schemas.loadPreset,
   ]);
   const wrap = <T, R>(run: (input: T, signal?: AbortSignal) => Promise<R>) =>
@@ -191,6 +194,7 @@ function register() {
     mutation("setTrackPattern", "descSetTrackPattern"), mutation("toggleStep", "descToggleStep"),
     mutation("setNoteDuration", "descSetNoteDuration"), mutation("setNotePitch", "descSetNotePitch"),
     mutation("changeInstrument", "descChangeInstrument"), mutation("addTrack", "descAddTrack"),
+    mutation("toggleMuteTrack", "descToggleMuteTrack"), mutation("setTrackMute", "descSetTrackMute"),
     mutation("removeTrack", "descRemoveTrack"), mutation("clearBar", "descClearBar"), mutation("clearSong", "descClearSong"),
     pudding.defineInterface({
       name: "play", description: t("descPlay"), input: z.object({}).strict(),

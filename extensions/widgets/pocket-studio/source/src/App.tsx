@@ -275,6 +275,26 @@ export default function App() {
   const importDialog = useRef<HTMLDialogElement>(null);
   const presetMenu = useRef<HTMLDetailsElement>(null);
   const [activePopover, setActivePopover] = useState<ActivePopoverState | null>(null);
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    try {
+      const saved = localStorage.getItem("pocket-studio-theme");
+      if (saved === "light" || saved === "dark") return saved;
+    } catch {}
+    return "light";
+  });
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.body.dataset.theme = theme;
+  }, [theme]);
+
+  const toggleTheme = () => {
+    const next = theme === "light" ? "dark" : "light";
+    setTheme(next);
+    try {
+      localStorage.setItem("pocket-studio-theme", next);
+    } catch {}
+  };
 
   const [draggingNote, setDraggingNote] = useState<{
     trackKey: string;
@@ -417,6 +437,7 @@ export default function App() {
         const barData = currentSong.bars[barIdx];
         if (barData) {
           currentSong.tracks.forEach((t) => {
+            if (t.muted) return;
             if (barData.steps[t.trackKey]?.[stepInBar]) {
               const inst = INSTRUMENT_MAP[t.instId];
               if (inst) {
@@ -567,7 +588,7 @@ export default function App() {
   const currentPlayingBar = Math.floor(playStep / 16);
 
   return (
-    <main className="ps-console" data-playing={isPlaying} data-play-step={playStep}>
+    <main className="ps-console" data-theme={theme} data-playing={isPlaying} data-play-step={playStep}>
       {/* 顶部控制栏 */}
       <header className="ps-top-bar">
         <div className="ps-toolbar-primary">
@@ -705,6 +726,26 @@ export default function App() {
           <button type="button" className="ps-btn-pill ps-file-export" data-music-action="wav" disabled={fileBusy} aria-busy={exporting === "wav"} aria-label={t(exporting === "wav" ? "renderingWav" : "exportWav")} title={exporting === "wav" ? t("renderingWav") : canExportWav() ? undefined : t("wavRequiresUpdate")} onClick={() => void saveSong("wav")}>
             <span className="ps-file-label">{t("exportWav")}</span>
             {exporting === "wav" && <span className="ps-file-spinner" aria-hidden="true" />}
+          </button>
+        </div>
+        <div className="ps-theme-actions" role="group" aria-label={t("themeToggle")}>
+          <button
+            type="button"
+            className="ps-btn-pill ps-btn-theme"
+            title={theme === "light" ? t("themeDark") : t("themeLight")}
+            aria-label={theme === "light" ? t("themeDark") : t("themeLight")}
+            onClick={toggleTheme}
+          >
+            {theme === "light" ? (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+              </svg>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+              </svg>
+            )}
           </button>
         </div>
         </div>
@@ -847,7 +888,7 @@ export default function App() {
               });
 
               return (
-                <div key={tConfig.trackKey} className="ps-timeline-track-row">
+                <div key={tConfig.trackKey} className={`ps-timeline-track-row ${tConfig.muted ? "is-muted" : ""}`}>
                   {/* 左侧固定乐器头容器 (Sticky Left) */}
                   <div className="ps-track-header-cell sticky">
                     <div
@@ -873,20 +914,35 @@ export default function App() {
                           <div className="ps-row-desc" title={getInstDesc(tConfig.instId)}>{getInstDesc(tConfig.instId)}</div>
                         </div>
                       </div>
-                      {song.tracks.length > 1 && (
+                      <div className="ps-card-actions">
                         <button
                           type="button"
-                          className="ps-btn-del"
-                          title={t("deleteTrackTooltip")}
+                          className={`ps-btn-mute ${tConfig.muted ? "is-active" : ""}`}
+                          title={tConfig.muted ? t("unmuteTrack") : t("muteTrack")}
+                          aria-label={tConfig.muted ? t("unmuteTrack") : t("muteTrack")}
                           disabled={busy}
                           onClick={(e) => {
                             e.stopPropagation();
-                            void perform({ action: "removeTrack", trackKey: tConfig.trackKey });
+                            void perform({ action: "toggleMuteTrack", trackKey: tConfig.trackKey });
                           }}
                         >
-                          ✕
+                          M
                         </button>
-                      )}
+                        {song.tracks.length > 1 && (
+                          <button
+                            type="button"
+                            className="ps-btn-del"
+                            title={t("deleteTrackTooltip")}
+                            disabled={busy}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              void perform({ action: "removeTrack", trackKey: tConfig.trackKey });
+                            }}
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
 

@@ -98,7 +98,7 @@ test('new releases contain all eight metadata locales and retain earlier compati
     const release=item.releases.find(r=>r.version===manifest.version);
     assert.ok(release,`${name}: current release remains discoverable`);
     assert.equal(release.requires.sdkVersion,manifest.requires.sdkVersion);
-    if(name==='synology-files')assert.equal(manifest.preview,true);
+    if(name==='synology-files'||name==='pocket-studio')assert.equal(manifest.preview,true);
     else assert.ok(!manifest.preview,`${name}: stable release`);
     if(name==='email-board') {assert.equal(manifest.requires.protocolVersion,61);assert.equal(manifest.title.en,'Email Board');assert.equal(manifest.title['zh-CN'],'邮件看板');}
   }

@@ -8,7 +8,7 @@ export const maxProjectBytes = 256 * 1024;
 const key = z.string().regex(/^[A-Za-z0-9_-]{1,80}$/);
 const songSchema = z.object({
   bpm: z.number().int().min(60).max(180),
-  tracks: z.array(z.object({ trackKey: key, instId: z.enum(INSTRUMENT_IDS), volume: z.number().min(0).max(1).optional() }).strict()).min(1).max(8),
+  tracks: z.array(z.object({ trackKey: key, instId: z.enum(INSTRUMENT_IDS), volume: z.number().min(0).max(1).optional(), muted: z.boolean().optional() }).strict()).min(1).max(8),
   bars: z.array(z.object({
     steps: z.record(key, z.array(z.boolean()).length(16)),
     pitches: z.record(key, z.array(z.number().min(20).max(10000).nullable()).length(16)).optional(),
@@ -38,7 +38,13 @@ export function normalizeSong(value: unknown): SongState {
   }
   const song = result.data;
   return {
-    bpm: song.bpm, tracks: song.tracks,
+    bpm: song.bpm,
+    tracks: song.tracks.map(t => ({
+      trackKey: t.trackKey,
+      instId: t.instId,
+      ...(t.volume !== undefined ? { volume: t.volume } : {}),
+      ...(t.muted ? { muted: true } : {}),
+    })),
     bars: song.bars.map(bar => ({
       steps: Object.fromEntries(song.tracks.map(({ trackKey }) => [trackKey, [...bar.steps[trackKey]]])),
       pitches: Object.fromEntries(song.tracks.map(({ trackKey }) => [trackKey, bar.steps[trackKey].map((on, i) => on ? bar.pitches?.[trackKey]?.[i] ?? null : null)])),

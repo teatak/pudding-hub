@@ -126,6 +126,9 @@ export function editSummary(before: SongState, after: SongState, action: EditAct
   }
   if (action.action === "setTrackPattern") result.enabledSteps = action.steps.filter(Boolean).length;
   if (action.action === "setBpm" || action.action === "loadPreset") result.bpm = after.bpm;
+  if (action.action === "toggleMuteTrack" || action.action === "setTrackMute") {
+    result.muted = Boolean(after.tracks.find(t => t.trackKey === action.trackKey)?.muted);
+  }
   if (action.action === "addTrack") {
     result.trackKey = after.tracks.find((track) => !before.tracks.some((old) => old.trackKey === track.trackKey))!.trackKey;
   }
@@ -178,6 +181,22 @@ export function editSong(current: SongState, action: EditAction): SongState {
         ...current,
         tracks: current.tracks.map((t) =>
           t.trackKey === action.trackKey ? { ...t, instId: action.instId } : t
+        )
+      };
+
+    case "toggleMuteTrack":
+      return {
+        ...current,
+        tracks: current.tracks.map((t) =>
+          t.trackKey === action.trackKey ? { ...t, muted: !t.muted } : t
+        )
+      };
+
+    case "setTrackMute":
+      return {
+        ...current,
+        tracks: current.tracks.map((t) =>
+          t.trackKey === action.trackKey ? { ...t, muted: action.muted } : t
         )
       };
 

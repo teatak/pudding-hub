@@ -2,6 +2,7 @@ export type TrackConfig = {
   trackKey: string;
   instId: string;
   volume?: number;
+  muted?: boolean;
 };
 
 export type BarData = {
@@ -39,6 +40,8 @@ export type EditAction =
   | { action: "changeInstrument"; trackKey: string; instId: string }
   | { action: "addTrack"; instId: string }
   | { action: "removeTrack"; trackKey: string }
+  | { action: "toggleMuteTrack"; trackKey: string }
+  | { action: "setTrackMute"; trackKey: string; muted: boolean }
   | { action: "addBar"; copyFrom?: number }
   | { action: "removeBar"; barIndex?: number }
   | { action: "copyBar"; fromBar: number; toBar: number }

@@ -503,6 +503,46 @@ export const DICT: Record<string, Record<"zh-CN" | "zh-TW" | "en", string>> = {
     "zh-CN": "删除指定的乐器音轨",
     "zh-TW": "刪除指定的樂器音軌",
     en: "Remove an instrument track from the studio"
+  },
+  paramMuted: {
+    "zh-CN": "是否静音音轨",
+    "zh-TW": "是否靜音音軌",
+    en: "Whether to mute the track"
+  },
+  descToggleMuteTrack: {
+    "zh-CN": "切换指定音轨的静音状态",
+    "zh-TW": "切換指定音軌的靜音狀態",
+    en: "Toggle mute state for a track"
+  },
+  descSetTrackMute: {
+    "zh-CN": "明确设置指定音轨的静音状态",
+    "zh-TW": "明確設定指定音軌的靜音狀態",
+    en: "Explicitly set mute state for a track"
+  },
+  muteTrack: {
+    "zh-CN": "静音音轨",
+    "zh-TW": "靜音音軌",
+    en: "Mute track"
+  },
+  unmuteTrack: {
+    "zh-CN": "取消静音",
+    "zh-TW": "取消靜音",
+    en: "Unmute track"
+  },
+  themeToggle: {
+    "zh-CN": "切换主题",
+    "zh-TW": "切換主題",
+    en: "Toggle theme"
+  },
+  themeLight: {
+    "zh-CN": "浅色模式",
+    "zh-TW": "淺色模式",
+    en: "Light mode"
+  },
+  themeDark: {
+    "zh-CN": "深色模式",
+    "zh-TW": "深色模式",
+    en: "Dark mode"
   }
 };
 
