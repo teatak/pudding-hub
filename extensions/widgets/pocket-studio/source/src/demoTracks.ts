@@ -289,7 +289,7 @@ export function createOrientalSong(): SongState {
 }
 
 // -------------------------------------------------------------
-// 4. 塞尔达传说：时之笛 · 迷失森林 (Zelda: Ocarina of Time - Lost Woods / Saria's Song)
+// 4. 迷雾森林 (Lost Woods / Forest Theme)
 // -------------------------------------------------------------
 export function createLofiSong(): SongState {
   const tracks = [
