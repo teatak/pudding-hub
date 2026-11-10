@@ -102,6 +102,14 @@ PUDDING_CORE_DIR=../pudding-core PUDDING_DESKTOP_DIR=../pudding-desktop pnpm pac
 
 `--dev` writes to the ignored dev directory without creating a formal release. Packaging runs Core source validation and Desktop's TypeScript/JS/CSS compiler; compilation failure prevents output. This checks whether source builds. Verify actual interaction in Pudding separately.
 
+## Local debugging in Desktop
+
+Enable **Local widget debugging** in Settings → Advanced → Developer, then choose **Debug widget** in the Studio sidebar. Select a Hub widget directory containing `source/widget.json`, or a source directory containing `widget.json`.
+
+Desktop maintains an independent development copy for that directory. Saving files synchronizes, compiles and updates the development page, including file deletions. No public version bump or Hub release is needed. Failed builds show diagnostics and leave the last working page running; save a repair to continue. The copy uses the real Desktop SDK and plugin connections.
+
+Closing its Studio tab, stopping debugging or disabling the setting stops watching without deleting the copy or its data. Selecting the same directory reuses it. Storage remains associated with the copy; changing source revisions reloads the page and may reset revision-scoped state and React state. Existing widget DevTools can inspect the development page. Release packages still require validation against the minimum supported host.
+
 ## Model authoring workflow
 
 Models edit drafts through Pudding tools rather than writing into installation directories:

@@ -102,6 +102,14 @@ PUDDING_CORE_DIR=../pudding-core PUDDING_DESKTOP_DIR=../pudding-desktop pnpm pac
 
 `--dev` 将结果写入忽略的 dev 目录，不生成正式发布记录。打包器会运行 Core 的源码包校验和 Desktop 的 TypeScript／JS／CSS 编译；编译失败时不会生成包。此步骤验证源码能否构建，实际交互仍需在 Pudding 中检查。
 
+## 在 Desktop 中本地调试
+
+在「设置 → 高级 → 开发者」开启「小组件本地调试」，然后点击 Studio 侧栏的「调试小组件」。选择包含 `source/widget.json` 的 Hub 小组件目录，或直接选择包含 `widget.json` 的源码目录。
+
+Desktop 会为目录创建固定的独立开发副本。保存源码后自动同步、编译并切换开发页，无需增加公开版本号或上传发布包；删除文件同样同步。编译失败时显示诊断并保留上一次成功画面，修复保存后继续更新。此功能使用当前 Desktop 的真实 SDK 和插件连接。
+
+关闭开发标签、停止调试或关闭开关都会停止监听，副本及数据保留。再次选择同一目录会复用副本。storage 随同一副本保留；切换源码版本会重载页面，state 和 React 临时状态可能重置。调试其他页面使用现有小组件 DevTools。正式发布仍需执行最低支持版本的兼容检查。
+
 ## 模型创作流程
 
 模型通过 Pudding 内置工具编辑草稿，不直接改写安装目录：
