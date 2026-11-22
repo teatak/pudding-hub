@@ -19,32 +19,13 @@ Pudding 的本地 MCP 让外部 agent 参与用户选定的小组件，适用于
 
 开发版使用 `~/.pudding-dev/mcp/`；自定义 `PUDDING_HOME` 时使用其 `mcp/` 子目录。连接文件包含随机端口和独立访问凭证，只由本地客户端读取，不应贴到提示词、提交仓库或复制进小组件。Pudding 退出后删除凭证文件。
 
-当前可用入口是随应用生成的脚本，尚未发布用于此桥接的 npm 客户端包，不要使用猜测的 `npx` 包名。将来即使提供 npm/npx 启动器，桌面应用仍须运行，实际服务和授权仍由 Pudding 管理。
-
 ## 配置 MCP 客户端
 
-需要 Node.js 20+。在支持本地 STDIO MCP 的客户端配置：
+使用包含「连接外部 Agent」的桌面版本时，在「设置 → 工具」点击「复制 MCP 配置」，将配置粘贴到支持本地 STDIO 的客户端。里面已经填好了 Pudding 自带的 `puddingd` 绝对路径和 `mcp --home <数据目录>` 参数。保持桌面端运行即可，无需另装 Node.js 或 Python。
 
-- Command：本机 Node 的绝对路径。
-- Args：脚本的绝对路径，可附 `--name` 设置显示名称。显示名称不用于选择或恢复玩家身份。
-- 只有一个 Command 输入框时，把命令和参数写在同一行；带空格的路径或名称需加引号。
+普通小组件直接使用 `widget_targets`。如果还要使用会话的文件、浏览器等工具，在目标会话菜单选择「连接外部 Agent」，生成一次性邀请交给 Agent。同一份 MCP 配置支持两种用途。旧的小组件专用 Node.js 配置仍可使用安装在 `<home>/mcp/widget-mcp-client.cjs` 的脚本。
 
-以下 macOS 示例中的用户名、Node 路径需要替换成自己的实际路径：
-
-```json
-{
-  "mcpServers": {
-    "pudding": {
-      "command": "/opt/homebrew/opt/node/bin/node",
-      "args": ["/Users/yourname/.pudding/mcp/widget-mcp-client.cjs", "--name", "My Agent"]
-    }
-  }
-}
-```
-
-开发版把 `.pudding` 改成 `.pudding-dev`。Windows 等平台同样使用实际 Node 和 Pudding home 下的脚本绝对路径。一般配置文件不会展开 `~` 或 `$HOME`。
-
-受沙箱限制的客户端需能运行 Node、读取 `<home>/mcp/` 并连接本机服务；只为该目录增加读权限即可，无需开放整个 Pudding 数据目录。`widget_wait` 默认等待 10 秒，可用 `timeoutSeconds` 缩短，最多 25 秒。客户端单次工具超时应长于请求的等待窗口，例如设为 60 秒（具体设置名由客户端决定）。若客户端报 `CLIENT_TIMEOUT`，改用更短的等待时间（例如 5 秒）；客户端同时重建通信连接时，先按下文恢复参与身份。
+受沙箱限制的客户端需要能运行随包命令、读取 `<home>/mcp/` 中的连接文件并连接本机服务。`widget_wait` 默认等待 10 秒，可用 `timeoutSeconds` 缩短，最多 25 秒。客户端单次工具超时应长于请求的等待窗口，例如设为 60 秒（具体设置名由客户端决定）。若客户端报 `CLIENT_TIMEOUT`，改用更短的等待时间（例如 5 秒）；客户端同时重建通信连接时，先按下文恢复参与身份。
 
 旧版脚本位于 home 根目录；新版启动时清理旧文件，已有配置须更新路径。Pudding 重启后，重新连接 MCP，以读取新的端口、凭证和工具列表。
 

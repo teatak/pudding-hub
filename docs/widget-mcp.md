@@ -19,28 +19,13 @@ Starting Pudding creates:
 
 Development builds use `~/.pudding-dev/mcp/`; a custom `PUDDING_HOME` uses its `mcp/` subdirectory. The connection file contains a random port and a separate access credential. Only the local client reads it: do not paste it into prompts, commit it or copy it into widgets. Pudding removes the credential file when it exits.
 
-The supported entry point is currently the script installed by Pudding. No npm client package for this bridge has been published; do not use a guessed `npx` package name. A future npm/npx launcher would still require Pudding to be running, with the server and authorization managed by the desktop app.
-
 ## Configure an MCP client
 
-Node.js 20+ is required. In a client supporting local STDIO MCP, set Command to the absolute Node path and Args to the absolute script path, optionally followed by `--name` for display. Names do not select or restore player identities. With a single Command field, enter the command and arguments together, quoting names or paths containing spaces.
+With a Desktop build that includes external-agent support, open **Settings → Tools → Copy MCP configuration** and paste the configuration into a local STDIO MCP client. It contains the absolute path to the bundled `puddingd` executable and its `mcp --home <directory>` arguments. Keep Pudding Desktop open. The command runs without a separate Node.js or Python installation.
 
-Replace the username and Node path in this macOS example:
+Ordinary widgets are available immediately through `widget_targets`. To use a conversation’s files, browser and tools as well, open **Connect external agent** in that conversation and give the agent its one-time invitation. The same MCP configuration serves both uses. Existing Node.js widget-only configurations continue to work with the installed `<home>/mcp/widget-mcp-client.cjs` script.
 
-```json
-{
-  "mcpServers": {
-    "pudding": {
-      "command": "/opt/homebrew/opt/node/bin/node",
-      "args": ["/Users/yourname/.pudding/mcp/widget-mcp-client.cjs", "--name", "My Agent"]
-    }
-  }
-}
-```
-
-For development builds, replace `.pudding` with `.pudding-dev`. On Windows and other platforms, use the actual absolute Node path and script path under the app's home directory. Configuration files generally do not expand `~` or `$HOME`.
-
-Sandboxed clients need to execute Node, read `<home>/mcp/` and connect to the local server. Add read access to that directory rather than the full Pudding data directory. `widget_wait` defaults to 10 seconds and accepts a shorter `timeoutSeconds`, up to 25 seconds. Set client tool timeouts longer than the requested wait, for example 60 seconds; the setting name depends on the client. If the client reports `CLIENT_TIMEOUT`, use a shorter wait (for example 5 seconds). If it also resets the transport, recover participation as described below.
+Sandboxed clients need permission to execute the bundled command, read the connection descriptor in `<home>/mcp/` and connect to the local server. `widget_wait` defaults to 10 seconds and accepts a shorter `timeoutSeconds`, up to 25 seconds. Set client tool timeouts longer than the requested wait, for example 60 seconds; the setting name depends on the client. If the client reports `CLIENT_TIMEOUT`, use a shorter wait (for example 5 seconds). If it also resets the transport, recover participation as described below.
 
 Older versions installed the script directly in the home root. New versions remove those legacy files at startup, so update existing client paths. Reconnect MCP after restarting Pudding to load the new address, credential and tools.
 
