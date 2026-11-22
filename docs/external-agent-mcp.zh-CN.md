@@ -28,6 +28,8 @@
 | 中断后查看 | `pudding_session_status` 传 `bindingID` 查看自己的活动轮次，再加 `turnID` 可查看该轮状态及 Pudding 用户追加的消息。 |
 | 收尾 | `pudding_turn_end` 传两个 ID，将 `status` 设为 `completed`、`failed` 或 `cancelled`，可加 `summary`。本轮临时授权随之结束。 |
 
+两次工具调用之间空闲满 10 分钟，Pudding 会取消这一轮。执行工具和等待该工具审批的时间不计入空闲。绑定仍然有效。如果用户希望继续，先核对前面调用的结果，再开新 Turn 完成剩下的工作。
+
 在 Code 模式下，开始 Turn 时可从 `projectInstructions` 读取已授权目录的项目规则。需要某个全局 Skill 时，用 `builtin_skill_read` 传入目录中的 `skill_id` 获取当前正文。用户在 Pudding 点击停止后，可用 `pudding_session_status` 确认该轮已取消。
 
 例如，用户说“查一下新加坡和 UTC 的当前时间”，开始一个 Turn，先用以下参数调用 `pudding_session_call`，再用同一对 ID 把 `timezone` 改为 `UTC` 调用第二次，最后结束这一轮。

@@ -28,6 +28,8 @@ The binding inherits the conversation’s current mode, tools and permissions. R
 | Check after interruption | Call `pudding_session_status` with the `bindingID` to find this binding’s active turn. Include the `turnID` to read that turn’s status and any follow-up messages from the user in Pudding. |
 | Finish | Call `pudding_turn_end` with both IDs and `status` set to `completed`, `failed` or `cancelled`. A `summary` is optional. Turn-scoped permissions expire when the turn ends. |
 
+A Turn is cancelled after 10 idle minutes between tool calls. Time spent running a tool or waiting for its approval is excluded. The binding stays valid. If the user wants to continue after cancellation, check the outcome of earlier calls and start a new Turn for the remaining work.
+
 In Code mode, check `projectInstructions` when the Turn begins for rules from the authorized project directories. To read a global Skill, call `builtin_skill_read` with its catalog ID as `skill_id`. If the user stops the Turn in Pudding, check `pudding_session_status` to confirm cancellation.
 
 For example, if the user asks for the current time in Singapore and UTC, begin one Turn. Call `pudding_session_call` with the following arguments, call it again with the same IDs and `timezone` set to `UTC`, then end the Turn.

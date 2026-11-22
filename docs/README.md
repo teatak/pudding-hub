@@ -2,7 +2,7 @@
 
 [中文](README.zh-CN.md) · [Hub home](../README.md)
 
-Pudding has two extension types. **Plugins** connect external services. **Widgets** display content and provide interactive interfaces. They can work together or independently: the Gmail plugin provides mail APIs for the GitHub Board widget, while a Gomoku widget needs no external service.
+Pudding has two extension types. **Plugins** connect external services. **Widgets** display content and provide interactive interfaces. GitHub Board uses the GitHub plugin to read repository data. A Gomoku widget can run independently.
 
 App was the old name for a plugin and is no longer a separate extension type. New plugins use `plugin.yaml`.
 
