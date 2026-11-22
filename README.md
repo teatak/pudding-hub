@@ -17,6 +17,7 @@ Start at the [developer index](docs/README.md):
 | --- | --- |
 | [Plugin development](docs/plugin-development.md) | Services, authentication, connections, Skills, verification and publishing |
 | [Widget development](docs/widget-development.md) | Complete example, model authoring workflow, data integration, testing and publishing |
+| [External agent MCP](docs/external-agent-mcp.md) | Configure a local client, access widgets or use the tools of a bound conversation |
 | [Widget SDK](docs/widget-sdk.md) | Persistence, model interfaces, collaboration, clipboard, system notifications and export |
 
 The [Chinese guides](docs/README.zh-CN.md) cover the same content.

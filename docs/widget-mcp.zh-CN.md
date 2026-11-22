@@ -6,7 +6,7 @@ Pudding 的本地 MCP 让外部 agent 参与用户选定的小组件，适用于
 
 ## 服务与客户端
 
-实际 MCP 服务内置于 Pudding Desktop，随应用启动，只监听本机 `127.0.0.1`，无需单独部署。STDIO 客户端负责把 MCP 请求转发给桌面服务，不运行模型。源码随 Desktop 维护、随应用安装；Hub 提供接入与作者文档。
+实际 MCP 服务内置于 Pudding Desktop，随应用启动，只监听本机 `127.0.0.1`，无需单独部署。STDIO 客户端负责把 MCP 请求转发给桌面服务，不运行模型。启动程序和小组件适配器随桌面端安装。Hub 提供接入与开发文档。
 
 启动 Pudding 后自动生成：
 
@@ -21,9 +21,7 @@ Pudding 的本地 MCP 让外部 agent 参与用户选定的小组件，适用于
 
 ## 配置 MCP 客户端
 
-使用包含「连接外部 Agent」的桌面版本时，在「设置 → 工具」点击「复制 MCP 配置」，将配置粘贴到支持本地 STDIO 的客户端。里面已经填好了 Pudding 自带的 `puddingd` 绝对路径和 `mcp --home <数据目录>` 参数。保持桌面端运行即可，无需另装 Node.js 或 Python。
-
-普通小组件直接使用 `widget_targets`。如果还要使用会话的文件、浏览器等工具，在目标会话菜单选择「连接外部 Agent」，生成一次性邀请交给 Agent。同一份 MCP 配置支持两种用途。旧的小组件专用 Node.js 配置仍可使用安装在 `<home>/mcp/widget-mcp-client.cjs` 的脚本。
+按[外部 Agent MCP 接入指南](external-agent-mcp.zh-CN.md)配置 Pudding 自带的 `puddingd mcp`。普通小组件无需会话邀请，连接后直接调用 `widget_targets`。已有的小组件专用 Node.js 配置仍可使用 `<home>/mcp/widget-mcp-client.cjs`。
 
 受沙箱限制的客户端需要能运行随包命令、读取 `<home>/mcp/` 中的连接文件并连接本机服务。`widget_wait` 默认等待 10 秒，可用 `timeoutSeconds` 缩短，最多 25 秒。客户端单次工具超时应长于请求的等待窗口，例如设为 60 秒（具体设置名由客户端决定）。若客户端报 `CLIENT_TIMEOUT`，改用更短的等待时间（例如 5 秒）；客户端同时重建通信连接时，先按下文恢复参与身份。
 
@@ -36,7 +34,7 @@ Pudding 的本地 MCP 让外部 agent 参与用户选定的小组件，适用于
 ## 多参与者活动
 
 1. 配置 MCP。初始化、发现、心跳和模型自报都不会创建候选条目。
-2. 只有用户要求参与时，首次调用一次 `widget_join({})` 创建本对话的玩家，保留返回的公开 `participantID`。随后调用 `widget_set_profile({participantID, model, provider})` 自报已知模型。重复加入或重连恢复使用 `widget_join({participantID})`；不带 ID 表示新建玩家，不能用于超时重试。恢复凭据由桥接管理，不交给模型。
+2. 只有用户要求参与时，首次调用一次 `widget_join({})` 创建本对话的玩家，保留返回的公开 `participantID`。已知模型与提供商时，可在首次加入时传入 `model` 和 `provider`，后续通过 `widget_set_profile` 更新。重复加入或重连恢复使用 `widget_join({participantID})`；不带 ID 表示新建玩家，不能用于超时重试。恢复凭据由桥接管理，不交给模型。
 3. 持续调用 `widget_wait({participantID})` 等待分配，未分配时不带 `targetID`。`widget_targets` 也可能返回普通页面和 `participation_required` 活动，发现目标不等于获得席位或私有状态访问权。
 4. 小组件通过 `interaction.candidates()` 读取候选。五子棋优先将新加入的在线 Agent 补入空位；用户可以手动移除或取消勾选，也可以补充内部对话或自己，然后点击开始。人数足够不会自动启动活动。
 5. 小组件连接选定参与者并分配角色。活动工具都携带自己的 `participantID`。Agent 获得对应 `targetID` 后，通过 `widget_observe` 读取该实例的说明、角色、规则和结束条件，使用最新 `stateVersion` 调用接口。
@@ -76,7 +74,7 @@ MCP 初始化说明负责通用的加入、等待、发现和退出流程。小�
 
 已加入的参与者断线后保留并标记离线，由用户手动移除，或由 Agent 主动退出自己的玩家。未加入的连接不会留下候选项。STDIO 初始化不会认领任何旧玩家；只有 `widget_join({participantID})`，或携带该 ID 的参与工具调用，才恢复对应玩家、模型显示和已有席位。只撤销该玩家的旧内部 HTTP 通道及其待执行请求，其他玩家与普通发现通道不受影响。恢复后先观察当前状态，不重放结果不明的旧操作。
 
-同一个 STDIO 进程包含普通发现通道，以及每个 participantID 独立的 HTTP 通道。多个 Gemini 对话可共用同一份 MCP 配置而不合并身份。`--name` 只控制显示；不再根据 `--identity`、对应环境变量、应用名或 CODEX_THREAD_ID 选择恢复槽位。各对话必须在工具参数中使用自己的公开 ID。ID 用于已获本地授权的 MCP 配置内路由，不是对话身份认证凭证；不能冒用其他对话的 ID。客户端不提供稳定会话标识时，桥接无法自行推断。
+同一个 STDIO 进程包含普通发现通道，以及每个 participantID 独立的 HTTP 通道。多个 Gemini 对话可共用同一份 MCP 配置而不合并身份。旧版脚本的 `--name` 只控制显示；不再根据 `--identity`、对应环境变量、应用名或 CODEX_THREAD_ID 选择恢复槽位。各对话必须在工具参数中使用自己的公开 ID。ID 用于已获本地授权的 MCP 配置内路由，不是对话身份认证凭证；不能冒用其他对话的 ID。客户端不提供稳定会话标识时，桥接无法自行推断。
 
 Pudding 将私有恢复记录原子写入 `mcp/widget-identities/<participantID>.json`，绑定服务实例 ID，目录和文件仅当前用户可访问。适配器只读取该玩家的凭据，模型不保存、不传入凭据；沙箱客户端仍只需 mcp 目录读取权限。文件不能交给模型或其他参与者。保存失败则加入失败；同一桥接内并发恢复同一 ID 只打开一个玩家通道，不同 ID 不合并。
 
@@ -84,4 +82,4 @@ Pudding 将私有恢复记录原子写入 `mcp/widget-identities/<participantID>
 
 以上流程需要更新后的 Pudding 和随应用生成的 participantID 桥接；升级后重启 MCP。小组件业务规则无需修改。
 
-此桥接不暴露 Core 凭证、通用文件操作、会话管理或小组件源码编辑。
+会话中的文件和浏览器工具由 `pudding_session_call` 按绑定会话的权限执行。顶层 `widget_*` 工具只访问相应的小组件。

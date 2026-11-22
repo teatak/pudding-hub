@@ -6,7 +6,7 @@ Pudding's local MCP lets external agents participate in widgets selected by the 
 
 ## Server and client
 
-The MCP server is built into Pudding Desktop, starts with the app and listens only on local `127.0.0.1`. No separate deployment is needed. A STDIO client forwards MCP requests to it; the client does not run a model. Client source is maintained and shipped with Desktop; Hub hosts setup and authoring documentation.
+The MCP server is built into Pudding Desktop, starts with the app and listens only on local `127.0.0.1`. No separate deployment is needed. A STDIO client forwards MCP requests to it; the client does not run a model. Desktop ships the bundled launcher and the widget adapter. Hub hosts the setup and authoring guides.
 
 Starting Pudding creates:
 
@@ -21,9 +21,7 @@ Development builds use `~/.pudding-dev/mcp/`; a custom `PUDDING_HOME` uses its `
 
 ## Configure an MCP client
 
-With a Desktop build that includes external-agent support, open **Settings → Tools → Copy MCP configuration** and paste the configuration into a local STDIO MCP client. It contains the absolute path to the bundled `puddingd` executable and its `mcp --home <directory>` arguments. Keep Pudding Desktop open. The command runs without a separate Node.js or Python installation.
-
-Ordinary widgets are available immediately through `widget_targets`. To use a conversation’s files, browser and tools as well, open **Connect external agent** in that conversation and give the agent its one-time invitation. The same MCP configuration serves both uses. Existing Node.js widget-only configurations continue to work with the installed `<home>/mcp/widget-mcp-client.cjs` script.
+Follow the [external agent MCP setup guide](external-agent-mcp.md) to configure the bundled `puddingd mcp` command. Ordinary widgets need no conversation invitation. Call `widget_targets` as soon as the client connects. Existing widget-only Node.js configurations can still use `<home>/mcp/widget-mcp-client.cjs`.
 
 Sandboxed clients need permission to execute the bundled command, read the connection descriptor in `<home>/mcp/` and connect to the local server. `widget_wait` defaults to 10 seconds and accepts a shorter `timeoutSeconds`, up to 25 seconds. Set client tool timeouts longer than the requested wait, for example 60 seconds; the setting name depends on the client. If the client reports `CLIENT_TIMEOUT`, use a shorter wait (for example 5 seconds). If it also resets the transport, recover participation as described below.
 
@@ -36,7 +34,7 @@ Ask the agent directly: “Summarize the issues in the GitHub Board currently op
 ## Multi-participant activities
 
 1. Configure MCP. Initialization, discovery, heartbeats and model profiles never create candidate entries.
-2. Only when asked to participate, call `widget_join({})` once to create this conversation’s player. Keep the returned public `participantID`. Then report your known model/provider with `widget_set_profile({participantID, model, provider})`. To restore or rejoin this player use `widget_join({participantID})`; calling without an ID creates a new player and must not be used as a timeout retry. Private recovery credentials stay in the bridge.
+2. Only when asked to participate, call `widget_join({})` once to create this conversation’s player. Keep the returned public `participantID`. If known, pass both `model` and `provider` when joining. Use `widget_set_profile` for later changes. To restore or rejoin this player use `widget_join({participantID})`; calling without an ID creates a new player and must not be used as a timeout retry. Private recovery credentials stay in the bridge.
 3. Keep calling `widget_wait({participantID})` without `targetID` until assigned. `widget_targets` can also list ordinary pages and activities requiring participation; discovering one does not assign a seat or authorize its private state.
 4. The widget reads candidates with `interaction.candidates()`. Gomoku fills vacant choices with newly joined online agents; the user can remove agents, deselect them or supplement with internal conversations or themselves, then click Start. Having enough candidates never starts the activity automatically.
 5. The widget connects the chosen participants and assigns its own roles. Include your `participantID` in activity tools. Use the assigned `targetID` with `widget_observe` to learn that instance's instructions, roles, rules and completion conditions. Invoke interfaces with the latest `stateVersion`.
@@ -76,7 +74,7 @@ MCP initialization instructions describe the generic join, wait, discovery and e
 
 Joined participants remain listed as offline after transport disconnection. Users may remove them manually; agents may explicitly leave their own player. Unjoined connections leave no picker entries. Initializing the STDIO process never claims a player. Only `widget_join({participantID})` or a participation tool carrying that ID restores the corresponding player, profile and seats. Only that player’s old internal HTTP channel and pending requests lose access; other players and ordinary discovery stay connected. Observe current state before acting; never replay an uncertain operation.
 
-One STDIO process keeps a discovery channel and an independent HTTP channel per participantID. Multiple Gemini conversations can share the same MCP configuration without sharing identity. `--name` is display metadata only; `--identity`, its environment variable, app names and CODEX_THREAD_ID no longer select recovery slots. The conversation must use its public ID in tool calls. This ID routes requests within the locally authorized MCP configuration; it is not proof of chat ownership. Do not use other conversations’ IDs. A client that supplies no stable conversation identifier cannot have one inferred by the bridge.
+One STDIO process keeps a discovery channel and an independent HTTP channel per participantID. Multiple Gemini conversations can share the same MCP configuration without sharing identity. The legacy script’s `--name` is display metadata only; `--identity`, its environment variable, app names and CODEX_THREAD_ID no longer select recovery slots. The conversation must use its public ID in tool calls. This ID routes requests within the locally authorized MCP configuration; it is not proof of chat ownership. Do not use other conversations’ IDs. A client that supplies no stable conversation identifier cannot have one inferred by the bridge.
 
 Pudding atomically writes `mcp/widget-identities/<participantID>.json` with user-only directory/file permissions and the Pudding instance ID. The adapter reads the private credential from that record; models neither retain nor supply it. Sandboxed clients still need only read access to mcp/. Never give these files to models or other participants. Persistence failure fails joining. Concurrent recovery of the same ID within one bridge opens one player channel, while distinct IDs never merge.
 
@@ -84,4 +82,4 @@ Explicit leave, manual removal and Pudding restart revoke recovery. Missing, cor
 
 This workflow requires an updated Pudding host and its installed participantID-based adapter. Restart MCP after upgrading. It requires no changes to widget game rules.
 
-This bridge exposes no Core credential, general file access, session management or widget source editing.
+Conversation file and browser tools run through `pudding_session_call` under the bound conversation’s permissions. Top-level `widget_*` tools access only their widget targets.

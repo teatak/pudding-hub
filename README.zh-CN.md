@@ -17,6 +17,7 @@ Pudding Hub 是 Pudding 的官方扩展仓库，保存插件、小组件的源�
 | --- | --- |
 | [插件开发](docs/plugin-development.zh-CN.md) | 定义服务、配置认证和连接、编写 Skill、验证与发布 |
 | [小组件开发](docs/widget-development.zh-CN.md) | 完整示例、模型创作流程、接入数据、测试与发布 |
+| [外部 Agent MCP 接入](docs/external-agent-mcp.zh-CN.md) | 配置本地客户端，直接操作小组件或使用已绑定会话的工具 |
 | [小组件 SDK](docs/widget-sdk.zh-CN.md) | 状态保存、模型接口、协作、剪贴板、系统通知与文件导出 |
 
 [英文文档](docs/README.md)覆盖相同内容。

@@ -124,7 +124,7 @@ The host's source selector manages accounts independently of a chat's plugin bin
 
 ## Model interfaces and page input
 
-Use `pudding.setInstructions(text)` to describe this widget's purpose, roles, rules, workflow and completion conditions. The host returns that string as `instructions` in every authorized `widget_observe({targetID, ...})` result, independently of `include`. The MCP connection itself has no selected widget; an external agent learns this guidance only after the user selects it in a widget and starts participation. Joining, waiting and leaving are explained by the MCP server, not by individual widgets. See [External widget MCP](widget-mcp.md).
+Use `pudding.setInstructions(text)` to describe this widget's purpose, roles, rules, workflow and completion conditions. The host returns that string as `instructions` in every authorized `widget_observe({targetID, ...})` result, independently of `include`. An external agent can observe a discovered ordinary widget directly. A multiplayer activity’s private instructions become available after the agent receives a seat. Joining, waiting and leaving are explained by the MCP server, not by individual widgets. See [External widget MCP](widget-mcp.md).
 
 ```ts
 pudding.setInstructions('Review only the items assigned to your role. Finish when every item is reviewed.');

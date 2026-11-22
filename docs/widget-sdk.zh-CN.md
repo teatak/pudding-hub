@@ -124,7 +124,7 @@ Hook 在页面可见且 enabled 不为 false 时发起读取。它不因聚焦�
 
 ## 模型接口与页面输入
 
-通过 `pudding.setInstructions(text)` 声明本小组件的用途、角色、规则、操作流程和完成条件。宿主在每次已授权的 `widget_observe({targetID, ...})` 结果中返回这个 `instructions` 字符串，不受 `include` 影响。MCP 刚连接时还没有选定小组件；外部 agent 只有被用户在小组件中选中并开始参与后，才能读取该目标的说明。加入、等待和退出由 MCP 服务说明，具体小组件只声明自身业务规则。参见[外部小组件 MCP](widget-mcp.zh-CN.md)。
+通过 `pudding.setInstructions(text)` 声明本小组件的用途、角色、规则、操作流程和完成条件。宿主在每次已授权的 `widget_observe({targetID, ...})` 结果中返回这个 `instructions` 字符串，不受 `include` 影响。外部 Agent 可直接观察已发现的普通小组件；多人活动的私有说明在分配席位后可读。加入、等待和退出由 MCP 服务说明，具体小组件只声明自身业务规则。参见[外部小组件 MCP](widget-mcp.zh-CN.md)。
 
 ```ts
 pudding.setInstructions('只检查分配给自己角色的条目；全部条目检查完成后结束。');
