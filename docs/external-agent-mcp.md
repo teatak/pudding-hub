@@ -22,7 +22,7 @@ The binding inherits the conversation’s current mode, tools and permissions. R
 
 | When | Agent call |
 | --- | --- |
-| Discover tools | Give `pudding_session_tools` the `bindingID`. Add a `query` to look up a tool’s input schema. The catalog reflects the conversation’s current tools, plugins and Skill instructions. |
+| Discover tools | Give `pudding_session_tools` the `bindingID`. Add a `query` to look up a tool’s input schema. Omit the query to list the current tools, plugins and skills. |
 | Start the task | Give `pudding_turn_begin` the `bindingID` and a short `task`. Keep the returned `turnID`. |
 | Make successive calls | Pass the same `bindingID` and `turnID` to each `pudding_session_call`, with the chosen `tool` and its `arguments`. After loading a plugin, look up its tools and follow the updated instructions in the results. |
 | Check after interruption | Call `pudding_session_status` with the `bindingID` to find this binding’s active turn. Include the `turnID` to read that turn’s status and any follow-up messages from the user in Pudding. |
@@ -30,7 +30,7 @@ The binding inherits the conversation’s current mode, tools and permissions. R
 
 A Turn is cancelled after 10 idle minutes between tool calls. Time spent running a tool or waiting for its approval is excluded. The binding stays valid. If the user wants to continue after cancellation, check the outcome of earlier calls and start a new Turn for the remaining work.
 
-In Code mode, check `projectInstructions` when the Turn begins for rules from the authorized project directories. To read a global Skill, call `builtin_skill_read` with its catalog ID as `skill_id`. If the user stops the Turn in Pudding, check `pudding_session_status` to confirm cancellation.
+In Code mode, read `projectInstructions` when first supplied and whenever it changes. If context compaction drops the instructions, call `pudding_session_tools` with your `bindingID` and `refresh: true`. Omit `query` to recover project rules and all active guides, or supply a tool name to recover its guide. To read a global Skill, call `builtin_skill_read` with its catalog ID as `skill_id`. If the user stops the Turn in Pudding, check `pudding_session_status` to confirm cancellation.
 
 For example, if the user asks for the current time in Singapore and UTC, begin one Turn. Call `pudding_session_call` with the following arguments, call it again with the same IDs and `timezone` set to `UTC`, then end the Turn.
 

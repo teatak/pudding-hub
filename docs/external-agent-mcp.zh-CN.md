@@ -22,7 +22,7 @@
 
 | 时机 | Agent 调用 |
 | --- | --- |
-| 查找工具 | `pudding_session_tools` 传 `bindingID`，可加 `query` 按名称查参数定义。目录反映当前会话可用的工具、插件和 Skill 说明。 |
+| 查找工具 | `pudding_session_tools` 传 `bindingID`，可加 `query` 按名称查参数定义。省略 `query` 可查看当前工具、插件和 Skill 的完整目录。 |
 | 开始任务 | `pudding_turn_begin` 传 `bindingID` 和简短的 `task`，保留返回的 `turnID`。 |
 | 连续执行 | 每次 `pudding_session_call` 传同一组 `bindingID`、`turnID`，以及本次的 `tool` 和 `arguments`。加载插件后可重新查目录，按回包中的最新说明继续。 |
 | 中断后查看 | `pudding_session_status` 传 `bindingID` 查看自己的活动轮次，再加 `turnID` 可查看该轮状态及 Pudding 用户追加的消息。 |
@@ -30,7 +30,7 @@
 
 两次工具调用之间空闲满 10 分钟，Pudding 会取消这一轮。执行工具和等待该工具审批的时间不计入空闲。绑定仍然有效。如果用户希望继续，先核对前面调用的结果，再开新 Turn 完成剩下的工作。
 
-在 Code 模式下，开始 Turn 时可从 `projectInstructions` 读取已授权目录的项目规则。需要某个全局 Skill 时，用 `builtin_skill_read` 传入目录中的 `skill_id` 获取当前正文。用户在 Pudding 点击停止后，可用 `pudding_session_status` 确认该轮已取消。
+在 Code 模式下，首次收到 `projectInstructions` 或它发生变化时，读取其中的项目规则。如果上下文压缩后丢了说明，用当前 `bindingID` 调用 `pudding_session_tools`，传入 `refresh: true`。省略 `query` 可重取项目规则和所有已生效的说明，传入工具名可单独重取相关说明。需要某个全局 Skill 时，用 `builtin_skill_read` 传入目录中的 `skill_id` 获取当前正文。用户在 Pudding 点击停止后，可用 `pudding_session_status` 确认该轮已取消。
 
 例如，用户说“查一下新加坡和 UTC 的当前时间”，开始一个 Turn，先用以下参数调用 `pudding_session_call`，再用同一对 ID 把 `timezone` 改为 `UTC` 调用第二次，最后结束这一轮。
 
